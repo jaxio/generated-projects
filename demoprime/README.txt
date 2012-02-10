@@ -1,4 +1,3 @@
-
 Step 1) create the sample database:
 mvn -Pdb initialize
 
