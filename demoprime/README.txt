@@ -13,3 +13,6 @@ use admin/admin to log in
 Enjoy!
 
 Please report ideas/feedbacks/bugs
+@springfuse
+www.springfuse.com
+
