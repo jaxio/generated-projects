@@ -1,0 +1,15 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<p:commandButton 
+		ajax="false"
+		action="#{action.toString()}"
+		process="@this"
+		disabled="#{readonly}"
+		rendered="#{empty rendered or rendered}"
+		immediate="#{not empty immediate and immediate}" 
+		icon="iconSelect"
+		title="${msg.icon_select} ${empty title? '' : title}">
+		<ui:insert/>
+	</p:commandButton>		
+</ui:composition>

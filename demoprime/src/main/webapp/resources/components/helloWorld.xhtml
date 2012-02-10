@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:composite="http://java.sun.com/jsf/composite">
+<head>
+<title>Simple composite component</title>
+</head>
+<body>
+	<composite:interface>
+		<composite:attribute name="who" required="true" />
+	</composite:interface>
+
+	<composite:implementation>
+		<h:outputText value="Hello #{cc.attrs.who}, from a composite component" rendered="#{!(userContext.locale eq 'fr')}"/>
+		<h:outputText value="Bonjour #{cc.attrs.who}, depuis un composant composite" rendered="#{userContext.locale eq 'fr'}"/>		
+	</composite:implementation>
+</body>
+</html>

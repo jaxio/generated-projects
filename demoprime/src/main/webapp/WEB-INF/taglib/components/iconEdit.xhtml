@@ -1,0 +1,14 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<p:commandButton 
+		ajax="false" 
+		action="#{action.toString()}" 
+		process="${empty process? '@form' : process}" 
+		disabled="#{readonly}"
+		rendered="#{empty rendered or rendered}"		
+		icon="iconEdit"
+		title="${msg.icon_edit} ${empty title? '' : title}">
+		<ui:insert/>
+	</p:commandButton>		
+</ui:composition>
