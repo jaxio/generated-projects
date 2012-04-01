@@ -85,8 +85,7 @@
 	<entry key="login.login.title">Sign in</entry>
 	<entry key="login.tip">Tip</entry>
 	<entry key="login.tip.database"><![CDATA[
-		You can sign in using one of the accounts present in the ACCOUNT table.<br/>
-		If you use the database from the tutorial, you may sign in using <strong>user/user</strong> or <strong>admin/admin</strong>
+		You can sign in using one of the accounts present in the ACCOUNT table.
 	]]></entry>
 	<entry key="login.tip.virtual"><![CDATA[
 		You can sign in with <strong>user/user</strong> or <strong>admin/admin</strong>.<br/>

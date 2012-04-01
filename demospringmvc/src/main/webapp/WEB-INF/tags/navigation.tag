@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"
 %><%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
 %><%@ attribute name="totalSize" type="java.lang.Integer" required="true"
-%><%@ attribute name="search" type="com.jaxio.demo.web.util.SearchParameters" required="true"
+%><%@ attribute name="search" type="com.company.demo.repository.support.SearchParameters" required="true"
 %><%@ attribute name="url" type="java.lang.String"
 %><%
 int pageSize = search.getPageSize();

@@ -18,8 +18,6 @@
 	<span class="ui-state-highlight button button-create"><fmt:message key="crud.functionalities.create" /></span>
 	<form:form action="${pageContext.request.contextPath}/domain/document/create" modelAttribute="document" enctype="multipart/form-data" method="POST">
 		<form:errors cssClass="error"/>
-		<form:hidden path="id"/>
-		<form:hidden path="version"/>
 		<table class="create">
 			<tbody>
 				<c:choose>

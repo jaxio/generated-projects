@@ -194,7 +194,7 @@
 		/* label */
 		label { font-weight: normal;}
 		/* markers */
-		.error, .alert, .notice, .success, .info { padding: 0.4em;}
+		.error, .alert, .notice, .success, .info { display: inline-block}
 	</style>
 </head>
 <body>
@@ -237,7 +237,7 @@
 		// example with asynchronous google analytics
 		var _gaq = _gaq || [];
 		_gaq.push([ '_setAccount', 'UA-166864-24' ]); // change with your google id
-		_gaq.push([ '_setCustomVar', 1, 'rootPackage', 'springMVC3_com.jaxio.demo', 1 ]); // example of user defined variable
+		_gaq.push([ '_setCustomVar', 1, 'rootPackage', 'SPRING_MVC_3_com.company.demo', 1 ]); // example of user defined variable
 		_gaq.push([ '_trackPageview' ]);
 
 		(function() {

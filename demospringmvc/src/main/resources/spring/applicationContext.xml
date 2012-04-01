@@ -25,9 +25,9 @@
 	]]></description>
 
 	<!-- context -->
-	<context:component-scan base-package="com.jaxio.demo" name-generator="com.jaxio.demo.util.WithoutTrailingImplBeanNameGenerator">
+	<context:component-scan base-package="com.company.demo" name-generator="com.company.demo.util.WithoutTrailingImplBeanNameGenerator">
 		<!-- Let springmvc context scan the web package -->
-		<context:exclude-filter type="regex" expression="com/jaxio/demo/web/.*" />
+		<context:exclude-filter type="regex" expression="com/company/demo/web/.*" />
 	</context:component-scan>
 	<context:property-placeholder location="classpath*:database.properties,classpath*:hibernate.properties" />
 
@@ -73,7 +73,7 @@
 	<context:mbean-export registration="ignoreExisting" default-domain="demospringmvc" />
 	
 	<!-- jpa -->
-    <jpa:repositories base-package="com.jaxio.demo.repository" factory-class="com.jaxio.demo.repository.support.CustomRepositoryFactoryBean" transaction-manager-ref="transactionManager" entity-manager-factory-ref="entityManagerFactory"/>
+    <jpa:repositories base-package="com.company.demo.repository" factory-class="com.company.demo.repository.support.CustomRepositoryFactoryBean" transaction-manager-ref="transactionManager" entity-manager-factory-ref="entityManagerFactory"/>
     
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager" 
 		p:entityManagerFactory-ref="entityManagerFactory">

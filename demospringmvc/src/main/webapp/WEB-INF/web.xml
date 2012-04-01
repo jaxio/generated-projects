@@ -9,26 +9,26 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
 	<!-- Filters -->
-    <filter>
-        <description><![CDATA[
-            Specify a character encoding for requests.
-            This is useful because current browsers typically do not set a character encoding even if specified in the HTML page or form.
-        ]]></description>
-        <filter-name>encodingFilter</filter-name>
-        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-        <init-param>
-            <param-name>encoding</param-name>
-            <param-value>UTF-8</param-value>
-        </init-param>
-        <init-param>
-            <param-name>forceEncoding</param-name>
-            <param-value>true</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>encodingFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>    
+	<filter>
+		<description><![CDATA[
+			Specify a character encoding for requests.
+			This is useful because current browsers typically do not set a character encoding even if specified in the HTML page or form.
+		]]></description>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 	<filter>
 		<description><![CDATA[
 			Url rewrite engine that acts as a mod_rewrite, uses the configuration located at WEB-INF/urlrewrite.xml
@@ -148,11 +148,11 @@
 			Context listener creation and destruction to ensure that conditions such as
 			file.encoding=UTF-8 are met.
 		]]></description>
-		<listener-class>com.jaxio.demo.web.listener.StartupListener</listener-class>
+		<listener-class>com.company.demo.web.listener.StartupListener</listener-class>
 	</listener>
 	<listener>
 		<description>Example of hooks on http session creation and destruction</description>
-		<listener-class>com.jaxio.demo.web.listener.SessionListener</listener-class>
+		<listener-class>com.company.demo.web.listener.SessionListener</listener-class>
 	</listener>
 	<!-- Servlets -->
 	<servlet>

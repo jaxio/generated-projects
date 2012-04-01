@@ -8,24 +8,25 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.jaxio.demo</groupId>
+	<groupId>com.company.demo</groupId>
 	<artifactId>demospringmvc</artifactId>
 	<packaging>war</packaging>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>demospringmvc</name>
 	<properties>
+		<!-- ~~~~~~~~ -->
+		<!-- Database -->
+		<!-- ~~~~~~~~ -->
 		<!-- Note: during development using the same value for your login, password, database name and project name is really convenient -->
 		<database.name>${project.name}</database.name>
 		<database.host>localhost</database.host>
 		<database.user>${project.name}</database.user>
 		<database.password>${project.name}</database.password>
-
 		<!-- Default values when no database profile is set -->
 		<!-- jdbc driver dependency -->
 		<jdbc.groupId>com.h2database</jdbc.groupId>
 		<jdbc.artifactId>h2</jdbc.artifactId>
 		<jdbc.version>1.2.131</jdbc.version>
-
 		<!-- jdbc settings -->
 		<jdbc.type>h2</jdbc.type>
 		<jdbc.driver>org.h2.Driver</jdbc.driver>
@@ -34,42 +35,35 @@
 		<jdbc.password>demospringmvc-1.0.0</jdbc.password>
 		<hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
 		<sql-maven-plugin.delimiter>;</sql-maven-plugin.delimiter>
+		<!-- ~~~~~~ -->
+		<!-- System -->
+		<!-- ~~~~~~ -->
 		<jdk.version>1.6</jdk.version>
-
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 		<!-- Version dependencies when used in multiple dependencies -->
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-
-<hibernate.version>3.6.9.Final</hibernate.version>
-		<hibernate-validator.version>4.2.0.Final</hibernate-validator.version>
-
-<spring.version>3.0.5.RELEASE</spring.version>
-		<spring-data-jpa.version>1.0.2.RELEASE</spring-data-jpa.version>        
-		<spring-security.version>3.0.5.RELEASE</spring-security.version>
-
-		<slf4j.version>1.5.10</slf4j.version>
-		<jetty.version>7.5.1.v20110908</jetty.version>
-
+		<hibernate.version>3.6.9.Final</hibernate.version>
+		<spring.version>3.0.7.RELEASE</spring.version>
+		<spring-security.version>3.0.7.RELEASE</spring-security.version>
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 		<!-- Variables substituted in resources file at build time -->
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-
 		<application.name>${project.name}</application.name>
 		<application.version>${project.version}</application.version>
 		<application.description>${project.description}</application.description>
-
 		<!-- host port where the application will be deployed -->
 		<application.host>localhost</application.host>
 		<application.port>8080</application.port>
 		<application.contextpath>/demospringmvc</application.contextpath>
 		<log4j.level>DEBUG</log4j.level>
-
 		<!-- hibernate, see by src/main/resource/hibernate.properties -->
 		<hibernate.show.sql>true</hibernate.show.sql>
 		<hibernate.format.sql>true</hibernate.format.sql>
 		<hibernate.generate_statistics>true</hibernate.generate_statistics>
 		<hibernate.use_sql_comments>true</hibernate.use_sql_comments>
-				<!-- Control hibernate 2d level caching -->
+		<!-- Control hibernate 2d level caching -->
 		<hibernate.ehcache.configuration.file>ehcache.xml</hibernate.ehcache.configuration.file>
 		<hibernate.use.second.level.cache>true</hibernate.use.second.level.cache>
 		<hibernate.use.query.cache>true</hibernate.use.query.cache>
@@ -100,55 +94,55 @@
 				<hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
 			</properties>
 		</profile>
-        <profile>
-            <id>oracle</id>
-            <properties>
-                <!-- jdbc driver dependency -->
-                <!-- Please deploy this driver in your local maven repository -->
-                <jdbc.groupId>com.oracle</jdbc.groupId>
-                <jdbc.artifactId>ojdbc14</jdbc.artifactId>
-                <jdbc.version>10.2.0.3</jdbc.version>
-                <!-- jdbc settings -->
-                <jdbc.type>oracle</jdbc.type>
-                <jdbc.driver>oracle.jdbc.driver.OracleDriver</jdbc.driver>
-                <jdbc.url>jdbc:oracle:thin:@${database.host}:1521:XE</jdbc.url>
-                <jdbc.catalog>${database.name}</jdbc.catalog>
-                <jdbc.user>${database.user}</jdbc.user>
-                <jdbc.password>${database.password}</jdbc.password>
-                <!-- hibernate -->
-                <hibernate.dialect>org.hibernate.dialect.Oracle10gDialect</hibernate.dialect>
-                <!-- misc -->
-                <sql-maven-plugin.delimiter>/</sql-maven-plugin.delimiter>
-            </properties>
-        </profile>
-        <profile>
-            <id>db2</id>
-            <properties>
-                <!-- jdbc driver dependency -->
-                <!-- Please deploy this driver in your local maven repository -->
-                <jdbc.groupId>com.ibm.db2</jdbc.groupId>
-                <jdbc.artifactId>db2jcc4</jdbc.artifactId>
-                <jdbc.version>9.7.0.4</jdbc.version>
-                <!-- jdbc settings -->
-                <jdbc.type>db2</jdbc.type>
-                <jdbc.driver>com.ibm.db2.jcc.DB2Driver</jdbc.driver>
-                <jdbc.url>jdbc:db2://${database.host}:50000/${database.name}</jdbc.url>
-                <jdbc.user>${database.user}</jdbc.user>
-                <jdbc.password>${database.password}</jdbc.password>
-                <!-- hibernate -->
-                <hibernate.dialect>org.hibernate.dialect.DB2Dialect</hibernate.dialect>
-                <!-- misc -->
-                <sql-maven-plugin.delimiter>;</sql-maven-plugin.delimiter>
-            </properties>
-            <dependencies>
-                <!-- db2 License dependency -->
-                <dependency>
-                    <groupId>com.ibm.db2</groupId>
-                    <artifactId>db2jcc_license_cu</artifactId>
-                    <version>9.7.0.4</version>
-                </dependency>                         
-            </dependencies>            
-        </profile>
+		<profile>
+			<id>oracle</id>
+			<properties>
+				<!-- jdbc driver dependency -->
+				<!-- Please deploy this driver in your local maven repository -->
+				<jdbc.groupId>com.oracle</jdbc.groupId>
+				<jdbc.artifactId>ojdbc14</jdbc.artifactId>
+				<jdbc.version>10.2.0.3</jdbc.version>
+				<!-- jdbc settings -->
+				<jdbc.type>oracle</jdbc.type>
+				<jdbc.driver>oracle.jdbc.driver.OracleDriver</jdbc.driver>
+				<jdbc.url>jdbc:oracle:thin:@${database.host}:1521:XE</jdbc.url>
+				<jdbc.catalog>${database.name}</jdbc.catalog>
+				<jdbc.user>${database.user}</jdbc.user>
+				<jdbc.password>${database.password}</jdbc.password>
+				<!-- hibernate -->
+				<hibernate.dialect>org.hibernate.dialect.Oracle10gDialect</hibernate.dialect>
+				<!-- misc -->
+				<sql-maven-plugin.delimiter>/</sql-maven-plugin.delimiter>
+			</properties>
+		</profile>
+		<profile>
+			<id>db2</id>
+			<properties>
+				<!-- jdbc driver dependency -->
+				<!-- Please deploy this driver in your local maven repository -->
+				<jdbc.groupId>com.ibm.db2</jdbc.groupId>
+				<jdbc.artifactId>db2jcc4</jdbc.artifactId>
+				<jdbc.version>9.7.0.4</jdbc.version>
+				<!-- jdbc settings -->
+				<jdbc.type>db2</jdbc.type>
+				<jdbc.driver>com.ibm.db2.jcc.DB2Driver</jdbc.driver>
+				<jdbc.url>jdbc:db2://${database.host}:50000/${database.name}</jdbc.url>
+				<jdbc.user>${database.user}</jdbc.user>
+				<jdbc.password>${database.password}</jdbc.password>
+				<!-- hibernate -->
+				<hibernate.dialect>org.hibernate.dialect.DB2Dialect</hibernate.dialect>
+				<!-- misc -->
+				<sql-maven-plugin.delimiter>;</sql-maven-plugin.delimiter>
+			</properties>
+			<dependencies>
+				<!-- db2 License dependency -->
+				<dependency>
+					<groupId>com.ibm.db2</groupId>
+					<artifactId>db2jcc_license_cu</artifactId>
+					<version>9.7.0.4</version>
+				</dependency>
+			</dependencies>
+		</profile>
 		<profile>
 			<id>mysql</id>
 			<properties>
@@ -191,7 +185,7 @@
 				<!-- jdbc driver dependency -->
 				<jdbc.groupId>com.h2database</jdbc.groupId>
 				<jdbc.artifactId>h2</jdbc.artifactId>
-                <jdbc.version>1.3.157</jdbc.version>
+				<jdbc.version>1.3.164</jdbc.version>
 				<!-- jdbc settings -->
 				<jdbc.type>h2</jdbc.type>
 				<jdbc.driver>org.h2.Driver</jdbc.driver>
@@ -246,7 +240,7 @@
 						<!-- http://mojo.codehaus.org/sql-maven-plugin/ -->
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>sql-maven-plugin</artifactId>
-						<version>1.4</version>
+						<version>1.5</version>
 						<configuration>
 							<driver>${jdbc.driver}</driver>
 							<url>${jdbc.url}</url>
@@ -395,10 +389,10 @@
 				<!-- http://maven.apache.org/plugins/maven-surefire-report-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.4.3</version>
+				<version>2.12</version>
 				<configuration>
 					<showSuccess>false</showSuccess>
-				<!-- surefire uses a new jvm, MAVEN_OPTS are ignored, so you better set the memory options here -->
+					<!-- surefire uses a new jvm, MAVEN_OPTS are ignored, so you better set the memory options here -->
 					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
 				</configuration>
 			</plugin>
@@ -406,13 +400,13 @@
 				<!-- http://maven.apache.org/plugins/maven-javadoc-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.6.1</version>
+				<version>2.8.1</version>
 			</plugin>
 			<plugin>
 				<!-- http://maven.apache.org/plugins/maven-jxr-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
-				<version>2.1</version>
+				<version>2.3</version>
 			</plugin>
 			<plugin>
 				<!-- http://mojo.codehaus.org/taglist-maven-plugin/ -->
@@ -424,7 +418,7 @@
 				<!-- http://maven.apache.org/plugins/maven-pmd-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<version>2.4</version>
+				<version>2.7</version>
 				<configuration>
 					<linkXref>true</linkXref>
 					<targetJdk>${jdk.version}</targetJdk>
@@ -450,7 +444,7 @@
 				<!-- http://mojo.codehaus.org/cobertura-maven-plugin/ -->
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.4</version>
+				<version>2.5.1</version>
 			</plugin>
 			<plugin>
 				<!-- http://mojo.codehaus.org/l10n-maven-plugin/ -->
@@ -468,7 +462,7 @@
 				<!-- http://mojo.codehaus.org/findbugs-maven-plugin/ -->
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.3.1</version>
+				<version>2.4.0</version>
 				<configuration>
 					<findbugsXmlOutput>true</findbugsXmlOutput>
 					<xmlOutput>true</xmlOutput>
@@ -503,7 +497,7 @@
 		<dependency>
 			<groupId>org.hibernate.javax.persistence</groupId>
 			<artifactId>hibernate-jpa-2.0-api</artifactId>
-			<version>1.0.0.Final</version>
+			<version>1.0.1.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -537,14 +531,14 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>${hibernate-validator.version}</version>
+			<version>4.2.0.Final</version>
 		</dependency>
 		<dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator-annotation-processor</artifactId>
-			<version>${hibernate-validator.version}</version>           
-            <scope>compile</scope>
-        </dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator-annotation-processor</artifactId>
+			<version>4.2.0.Final</version>
+			<scope>provided</scope>
+		</dependency>
 		<!-- ~~~~~~ -->
 		<!-- LOGGER -->
 		<!-- ~~~~~~ -->
@@ -567,48 +561,38 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- <dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-</dependency>
-<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>  -->
 		<!-- ~~~~~ -->
 		<!-- UTILS -->
 		<!-- ~~~~~ -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>11.0.1</version>
-        </dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>11.0.1</version>
+		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>1.4</version>
+			<version>2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>2.5</version>
+			<version>2.6</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
-			<version>1.2.1</version>
+			<version>1.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.4</version>
+			<version>1.6</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-digester</groupId>
 			<artifactId>commons-digester</artifactId>
-			<version>2.0</version>
+			<version>2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>
@@ -618,12 +602,7 @@
 		<!-- ~~~~~~ -->
 		<!-- SPRING -->
 		<!-- ~~~~~~ -->
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-            <version>${spring-data-jpa.version}</version>
-        </dependency>
-        <dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-expression</artifactId>
 			<version>${spring.version}</version>
@@ -654,14 +633,19 @@
 			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>1.0.3.RELEASE</version>
+		</dependency>
+		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>1.6.8</version>
+			<version>1.6.12</version>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
-			<version>1.6.8</version>
+			<version>1.6.12</version>
 		</dependency>
 		<!-- ~~~~~~~~~~~~~~~ -->
 		<!-- SPRING SECURITY -->
@@ -691,9 +675,9 @@
 			<artifactId>spring-security-config</artifactId>
 			<version>${spring-security.version}</version>
 		</dependency>
-		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<!-- ~~~~~~~~~~ -->
 		<!-- SPRING MVC -->
-		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<!-- ~~~~~~~~~~ -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
@@ -720,12 +704,12 @@
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.5.2</version>
+			<version>1.9.4</version>
 		</dependency>
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<version>1.2.2</version>
+			<version>1.4.2</version>
 		</dependency>
 		<!-- ~~~ -->
 		<!-- WEB -->
@@ -767,13 +751,13 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
+			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>1.8.5</version>
+			<version>1.9.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -786,6 +770,12 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>2.19.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -841,7 +831,7 @@
 				<!-- http://maven.apache.org/plugins/maven-enforcer-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>1.0</version>
+				<version>1.0.1</version>
 				<executions>
 					<execution>
 						<id>enforce-versions</id>
@@ -865,7 +855,7 @@
 				<!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.0.2</version>
+				<version>2.3.2</version>
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
@@ -876,16 +866,13 @@
 				<!-- Substitute variables in resource files -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.4.1</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-				</configuration>
+				<version>2.5</version>
 			</plugin>
 			<plugin>
 				<!-- http://maven.apache.org/plugins/maven-antrun-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.6</version>
+				<version>1.7</version>
 				<executions>
 					<execution>
 						<id>Show help</id>
@@ -901,7 +888,7 @@
 								<echo>mvn -Pmetadata Create the xml representation of the current database</echo>
 								<echo>mvn -Pgen Generate the project from either the xml representation or the current database</echo>
 								<echo>mvn -PcleanGen clean Delete the generated code
-</echo>
+								</echo>
 								<echo></echo>
 								<echo>mvn test Compile and run unit tests</echo>
 								<echo>mvn site Produce reports about the project</echo>
@@ -926,7 +913,7 @@
 								</taskdef>
 								<instrument verbose="true">
 									<fileset dir="${project.build.outputDirectory}">
-										<include name="**/com.jaxio.demo/*.class" />
+										<include name="**/com.company.demo/*.class" />
 									</fileset>
 								</instrument>
 							</tasks>
@@ -942,12 +929,14 @@
 				<!-- http://wiki.eclipse.org/Jetty/Feature/Jetty_Maven_Plugin -->
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>${jetty.version}</version>
+				<version>7.5.1.v20110908</version>
 				<configuration>
-                    <webAppConfig>                    
-					   <contextPath>${application.contextpath}</contextPath>
+					<stopKey>foo</stopKey>
+					<stopPort>9999</stopPort>
+					<webAppConfig>
+						<contextPath>${application.contextpath}</contextPath>
 					</webAppConfig>
-                    <connectors>
+					<connectors>
 						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
 							<port>${application.port}</port>
 						</connector>
@@ -960,6 +949,54 @@
 						<logTimeZone>GMT</logTimeZone>
 					</requestLog>
 				</configuration>
+				<executions>
+					<execution>
+						<id>start-jetty</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<daemon>true</daemon>
+						</configuration>
+					</execution>
+					<execution>
+						<id>stop-jetty</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<!-- http://maven.apache.org/plugins/maven-failsafe-plugin/ -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.12</version>
+				<configuration>
+					<systemPropertyVariables>
+						<application.host>${application.host}</application.host>
+						<application.port>${application.port}</application.port>
+						<application.contextpath>${application.contextpath}</application.contextpath>
+						<selenium.webdriver>firefox</selenium.webdriver>
+						<selenium.follow.visually>false</selenium.follow.visually>
+					</systemPropertyVariables>
+				</configuration>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>verify</id>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<!-- http://maven.apache.org/plugins/maven-idea-plugin/ -->
@@ -977,8 +1014,9 @@
 				<!-- http://maven.apache.org/plugins/maven-eclipse-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.6</version>
+				<version>2.9</version>
 				<configuration>
+					<wtpversion>2.0</wtpversion>
 					<downloadSources>true</downloadSources>
 				</configuration>
 			</plugin>
@@ -986,26 +1024,26 @@
 				<!-- http://maven.apache.org/plugins/maven-war-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.1-beta-1</version>
+				<version>2.2</version>
 			</plugin>
 			<plugin>
 				<!-- http://maven.apache.org/plugins/maven-install-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-install-plugin</artifactId>
-				<version>2.3</version>
+				<version>2.3.1</version>
 			</plugin>
 			<plugin>
 				<!-- http://maven.apache.org/plugins/maven-clean-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.3</version>
+				<version>2.4.1</version>
 			</plugin>
 			<plugin>
 				<!-- http://maven.apache.org/plugins/maven-surefire-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.4.3</version>
-			<configuration>
+				<version>2.12</version>
+				<configuration>
 					<!-- surefire uses a new jvm, MAVEN_OPTS are ignored, so you better set the memory options here -->
 					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
 				</configuration>

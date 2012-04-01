@@ -14,7 +14,6 @@
 	<title><fmt:message key="book" />: <fmt:message key="crud.functionalities.show" /></title>
 </head>
 <body>
-
 	<a href="${pageContext.request.contextPath}/domain/book/search" class="ajaxy button button-search"><fmt:message key="book" /></a>
 	<span class="ui-state-highlight button button-show"><fmt:message key="crud.show.button" /></span>
 	<a href="${pageContext.request.contextPath}/domain/book/update/${book.id}" class="ajaxy button button-edit"><fmt:message key="crud.edit.button" /></a>

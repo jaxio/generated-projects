@@ -85,8 +85,7 @@
 	<entry key="login.login.title">Connectez-vous</entry>
 	<entry key="login.tip">Astuce</entry>
 	<entry key="login.tip.database"><![CDATA[
-		Vous pouvez vous identifier avec l'un des comptes présents dans la table ACCOUNT.<br/>
-		Si vous utilisez la base du tutorial identifiez-vous avec <strong>user/user</strong> ou <strong>admin/admin</strong>.
+		Vous pouvez vous identifier avec l'un des comptes présents dans la table ACCOUNT.
 	]]></entry>
 	<entry key="login.tip.virtual"><![CDATA[
 		Vous pouvez vous identifier avec <strong>user/user</strong> ou <strong>admin/admin</strong>.<br/>
