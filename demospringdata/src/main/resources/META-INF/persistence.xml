@@ -14,13 +14,13 @@
 		
 			If you want to exclude specific classes you will need to set them manually and specify <exclude-unlisted-classes />
 			Example : 
-				<class>com.jaxio.demo.domain.Account</class>
-				<class>com.jaxio.demo.domain.Address</class>
-				<class>com.jaxio.demo.domain.Book</class>
-				<class>com.jaxio.demo.domain.Document</class>
-				<class>com.jaxio.demo.domain.Legacy</class>
-				<class>com.jaxio.demo.domain.more.MoreTypesDemo</class>
-				<class>com.jaxio.demo.domain.Role</class>
+				<class>com.company.demo.domain.Account</class>
+				<class>com.company.demo.domain.Address</class>
+				<class>com.company.demo.domain.Book</class>
+				<class>com.company.demo.domain.Document</class>
+				<class>com.company.demo.domain.Legacy</class>
+				<class>com.company.demo.domain.more.MoreTypesDemo</class>
+				<class>com.company.demo.domain.Role</class>
 				<exclude-unlisted-classes />
  		]]></description>
 		<mapping-file>META-INF/orm.xml</mapping-file>

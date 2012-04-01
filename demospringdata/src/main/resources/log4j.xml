@@ -25,11 +25,11 @@
 		</layout>
 	</appender>
 
-	<logger name="com.jaxio.demo">
+	<logger name="com.company.demo">
 		<level value="${log4j.level}" />
 	</logger>
 
-	<logger name="com.jaxio.demo.dao">
+	<logger name="com.company.demo.dao">
 		<level value="warn" />
 	</logger>
 
