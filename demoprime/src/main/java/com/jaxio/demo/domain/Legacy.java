@@ -9,6 +9,7 @@ package com.jaxio.demo.domain;
 
 import com.google.common.base.Objects;
 
+import javax.xml.bind.annotation.XmlTransient;
 import com.jaxio.demo.domain.PersistableHashBuilder;
 
 import javax.persistence.Column;
@@ -19,7 +20,6 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlTransient;
 import org.apache.log4j.Logger;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.domain.Persistable;
@@ -49,7 +49,7 @@ public class Legacy implements Persistable<LegacyPk> {
     }
 
     // ---------------------------
-    // Identifiable implementation
+    // Persistable implementation
     // ---------------------------
 
     @Override
@@ -89,6 +89,7 @@ public class Legacy implements Persistable<LegacyPk> {
      */
     @Transient
     @XmlTransient
+    @Override
     public boolean isNew() {
         return getLegacyPk() == null || !getLegacyPk().isLegacyPkSet();
     }
@@ -208,7 +209,7 @@ public class Legacy implements Persistable<LegacyPk> {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add(Legacy_.extraInfo.getName(), getExtraInfo()) //
+                .add("extraInfo", getExtraInfo()) //
                 .toString();
     }
 }

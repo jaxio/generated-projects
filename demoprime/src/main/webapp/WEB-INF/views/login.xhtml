@@ -1,5 +1,5 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-            "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"	
@@ -7,18 +7,19 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components"	
-  	template="/WEB-INF/layouts/template1CH.xhtml">
-  	
+	template="/WEB-INF/layouts/template1CH.xhtml">
+	
 	<ui:define name="topmenu">
-  	</ui:define>
+	</ui:define>
 
 	<ui:define name="center">
 		<!-- our form is not a jsf form... -->
 		<script>$("form").attr('action','${request.contextPath}/app/logincheck');</script>
 
-		<p:panel header="Login" styleClass="loginBox">
-			<p:focus />
-			<p:outputPanel rendered="#{!(userContext.locale eq 'fr')}">	
+		<p:panel id="loginPanel" header="Login" styleClass="loginBox">
+			<p:focus context="loginPanel"/>
+			<p:messages id="messages"/>
+			<p:outputPanel rendered="#{!(userContext.locale eq 'fr')}">
 				<p>
 					If you used our database schema example or if Celerio could
 					not detect in your database schema the table used to store username/password pairs, you
@@ -39,7 +40,7 @@
 					<li>user/user:  accède uniquement à la page d'accueil</li>
 				</ul>
 			</p:outputPanel>
-			
+
 			<table>
 				<tbody>
 					<c:if test="${not empty param.login_error}">

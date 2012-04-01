@@ -38,6 +38,43 @@ jQuery(function() {
     	}
     });
     
+    /* keep focus inside askForDeleteDialog */
+    $(PrimeFaces.escapeClientId('form:askForDeleteDialogNo')).live('keydown', function(e) { 
+    	if ((!e.shiftKey) && ((e.which && e.which == 9) || (e.keyCode && e.keyCode == 9))) {
+    		if (e.preventDefault) {
+    			e.preventDefault();
+    		}
+    		jQuery(PrimeFaces.escapeClientId('form:askForDeleteDialogYes')).focus();
+    	}
+    });
+    $(PrimeFaces.escapeClientId('form:askForDeleteDialogYes')).live('keydown', function(e) { 
+    	if ((e.shiftKey) && ((e.which && e.which == 9) || (e.keyCode && e.keyCode == 9))) {
+    		if (e.preventDefault) {
+    			e.preventDefault();
+    		}
+    		jQuery(PrimeFaces.escapeClientId('form:askForDeleteDialogNo')).focus();
+    	}
+    });
+
+    /* keep focus inside askForSaveDialog */
+    $(PrimeFaces.escapeClientId('form:askForSaveDialogNo')).live('keydown', function(e) { 
+    	if ((!e.shiftKey) && ((e.which && e.which == 9) || (e.keyCode && e.keyCode == 9))) {
+    		if (e.preventDefault) {
+    			e.preventDefault();
+    		}
+    		jQuery(PrimeFaces.escapeClientId('form:askForSaveDialogYes')).focus();
+    	}
+    });
+    $(PrimeFaces.escapeClientId('form:askForSaveDialogYes')).live('keydown', function(e) { 
+    	if ((e.shiftKey) && ((e.which && e.which == 9) || (e.keyCode && e.keyCode == 9))) {
+    		if (e.preventDefault) {
+    			e.preventDefault();
+    		}
+    		jQuery(PrimeFaces.escapeClientId('form:askForSaveDialogNo')).focus();
+    	}
+    });  
+    
+    
 });
 
 APP = {};

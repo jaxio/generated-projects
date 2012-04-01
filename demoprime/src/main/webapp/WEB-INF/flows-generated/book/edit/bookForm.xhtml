@@ -8,53 +8,52 @@
 -->
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" 
-  xmlns:p="http://primefaces.org/ui"
-  xmlns:app="http://springfuse.jaxio.com/app"
-  xmlns:appcc="http://java.sun.com/jsf/composite/components">
-  <f:validateBean disabled="true">        
-    <p:fieldset legend="${msg.book}">
-      <h:panelGrid columns="2" styleClass="aria-role-presentation">
-    	<appcc:outputLabel for="title" value="${msg.book_title}"  required="true" />
-    	<p:inputText id="title" label="${msg.book_title}" value="#{book.title}" maxlength="80" rendered="#{not readonly}">
-    		<f:validateBean binding="#{lenientBeanValidator}"/>
-    	</p:inputText>
-		<h:outputText value="#{book.title}" rendered="#{readonly}" />
-
-		<appcc:outputLabel for="numberOfPages" value="${msg.book_numberOfPages}"  required="true"  />
-        <p:spinner id="numberOfPages" label="${msg.book_numberOfPages}" value="#{book.numberOfPages}" rendered="#{not readonly}">
-    		<f:validateBean binding="#{lenientBeanValidator}"/>        
-        </p:spinner>
-		<h:outputText value="#{book.numberOfPages}" rendered="#{readonly}" />
-
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:app="http://springfuse.jaxio.com/app"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components">
+	<f:validateBean disabled="true">
+		<p:fieldset legend="${msg.book}">
+			<h:panelGrid columns="2" styleClass="aria-role-presentation">
+				<appcc:outputLabel for="title" value="${msg.book_title}"  required="true" />
+				<p:inputText id="title" label="${msg.book_title}" value="#{book.title}" maxlength="80" rendered="#{not readonly}">
+					<f:validateBean binding="#{lenientBeanValidator}"/>
+				</p:inputText>
+				<h:outputText value="#{book.title}" rendered="#{readonly}" />
+				<appcc:outputLabel for="numberOfPages" value="${msg.book_numberOfPages}"  required="true"  />
+				<p:spinner id="numberOfPages" label="${msg.book_numberOfPages}" value="#{book.numberOfPages}" rendered="#{not readonly}">
+					<f:validateBean binding="#{lenientBeanValidator}"/>
+				</p:spinner>
+				<h:outputText value="#{book.numberOfPages}" rendered="#{readonly}" />
 
 
-		<!-- note: bug prevent us from using appcc:outputLabel -->
-		<label for="form:account_input">${msg.book_account}</label>
-		<h:panelGrid columns="2" styleClass="aria-role-presentation">
-			<p:autoComplete id="account" value="#{book.account}" label="${msg.book_account}" 
-				completeMethod="#{accountRepository.find}"
-		        var="item"
-		        itemValue="#{item}"
-		        itemLabel="#{accountConverter.print(item)}"	        
-		        converter="#{accountConverter}" 
-		        rendered="#{false}"
-		        size="50">
-				<p:ajax event="itemSelect" listener="#{messageUtil.info('status_selected_ok',msg.book_account)}" update="messages" />
-			</p:autoComplete>
-			<h:outputText value="#{accountConverter.print(book.account)}" rendered="#{readonly}" />
-			
-			<h:panelGroup>
-				<h:outputText value="(not editable directly)" rendered="#{empty book.account}"/>
-        		<app:iconView action="viewAccount" title="${msg.book_account}" rendered="#{not empty book.account}"/>
-			</h:panelGroup>
-		</h:panelGrid>
+
+				<!-- note: bug prevent us from using appcc:outputLabel -->
+				<label for="form:account_input">${msg.book_account}</label>
+				<h:panelGrid columns="2" styleClass="aria-role-presentation">
+					<p:autoComplete id="account" value="#{book.account}" label="${msg.book_account}" 
+						completeMethod="#{accountRepository.find}"
+						var="item"
+						itemValue="#{item}"
+						itemLabel="#{accountConverter.print(item)}"
+						converter="#{accountConverter}" 
+						rendered="#{false}"
+						size="50">
+						<p:ajax event="itemSelect" listener="#{messageUtil.info('status_selected_ok',msg.book_account)}" update="messages" />
+					</p:autoComplete>
+					<h:outputText value="#{accountConverter.print(book.account)}" rendered="#{readonly}" />
+
+					<h:panelGroup>
+						<h:outputText value="(not editable directly)" rendered="#{empty book.account}"/>
+						<app:iconView action="viewAccount" title="${msg.book_account}" rendered="#{not empty book.account}"/>
+					</h:panelGroup>
+				</h:panelGrid>
 
 
-   	  </h:panelGrid>
-      <app:saveButton title="${msg.book}"/>
- 	</p:fieldset>
-  </f:validateBean>      
+			</h:panelGrid>
+			<app:saveButton title="${msg.book}"/>
+		</p:fieldset>
+	</f:validateBean>
 
 
 

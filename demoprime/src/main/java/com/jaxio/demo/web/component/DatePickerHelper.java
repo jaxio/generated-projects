@@ -8,6 +8,11 @@
 package com.jaxio.demo.web.component;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.DAY_OF_WEEK;
+import static java.util.Calendar.LONG;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
 
 import java.util.Calendar;
 import java.util.List;
@@ -28,7 +33,7 @@ public class DatePickerHelper {
     public List<SelectItem> getYears(int min, int max) {
         List<SelectItem> result = newArrayList();
         for (int years = min; years <= max; years++) {
-            String year = "" + years;
+            String year = String.valueOf(years);
             result.add(new SelectItem(year, year));
         }
 
@@ -39,12 +44,11 @@ public class DatePickerHelper {
         List<SelectItem> result = newArrayList();
 
         Calendar c = Calendar.getInstance();
-        c.set(Calendar.DAY_OF_MONTH, 1); // prevent protential month shifting when reseting month below
+        c.set(DAY_OF_MONTH, 1); // prevent protential month shifting when reseting month below
 
         for (int months = 1; months <= 12; months++) {
-            c.set(Calendar.MONTH, months - 1);
-            String label = c.getDisplayName(Calendar.MONTH, Calendar.LONG, LocaleContextHolder.getLocale());
-
+            c.set(MONTH, months - 1);
+            String label = c.getDisplayName(MONTH, LONG, LocaleContextHolder.getLocale());
             String month = normalize(months);
             result.add(new SelectItem(month, label));
         }
@@ -58,21 +62,20 @@ public class DatePickerHelper {
         UIInput month = (UIInput) ccDatepicker.findComponent("month");
 
         Calendar c = Calendar.getInstance();
-        c.set(Calendar.DAY_OF_MONTH, 1); // prevent potential month shifting when reseting month below
-        c.set(Calendar.YEAR, Integer.parseInt((String) year.getLocalValue()));
-        c.set(Calendar.MONTH, Integer.parseInt((String) month.getLocalValue()) - 1);
+        c.set(DAY_OF_MONTH, 1); // prevent potential month shifting when reseting month below
+        c.set(YEAR, Integer.parseInt((String) year.getLocalValue()));
+        c.set(MONTH, Integer.parseInt((String) month.getLocalValue()) - 1);
 
         List<SelectItem> result = newArrayList();
 
-        int max = c.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int max = c.getActualMaximum(DAY_OF_MONTH);
         for (int days = 1; days <= max; days++) {
             String day = normalize(days);
-            c.set(Calendar.DAY_OF_MONTH, days);
+            c.set(DAY_OF_MONTH, days);
             StringBuilder sb = new StringBuilder();
             sb.append(day);
             if (appendDayOfWeek) {
-                sb.append(" ").append(
-                        c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, LocaleContextHolder.getLocale()));
+                sb.append(" ").append(c.getDisplayName(DAY_OF_WEEK, LONG, LocaleContextHolder.getLocale()));
             }
             result.add(new SelectItem(day, sb.toString()));
         }

@@ -9,6 +9,15 @@ package com.jaxio.demo.web.domain.more;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.jaxio.demo.domain.more.MoreTypesDemo_.*;
+import static com.jaxio.demo.repository.support.Ranges.RangeBigDecimal.newRangeBigDecimal;
+import static com.jaxio.demo.repository.support.Ranges.RangeBigInteger.newRangeBigInteger;
+import static com.jaxio.demo.repository.support.Ranges.RangeDate.newRangeDate;
+import static com.jaxio.demo.repository.support.Ranges.RangeDouble.newRangeDouble;
+import static com.jaxio.demo.repository.support.Ranges.RangeFloat.newRangeFloat;
+import static com.jaxio.demo.repository.support.Ranges.RangeInteger.newRangeInteger;
+import static com.jaxio.demo.repository.support.Ranges.RangeLocalDate.newRangeLocalDate;
+import static com.jaxio.demo.repository.support.Ranges.RangeLocalDateTime.newRangeLocalDateTime;
+import static com.jaxio.demo.repository.support.Ranges.RangeLong.newRangeLong;
 import java.io.Serializable;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,17 +50,16 @@ public class MoreTypesDemoSearchForm extends GenericSearchForm<MoreTypesDemo> im
     private static MoreTypesDemoRepository moreTypesDemoRepository;
 
     private MoreTypesDemo moreTypesDemo = new MoreTypesDemo();
-    private RangeInteger<MoreTypesDemo> numberIntRange = new RangeInteger<MoreTypesDemo>(numberInt);
-    private RangeLong<MoreTypesDemo> numberLongRange = new RangeLong<MoreTypesDemo>(numberLong);
-    private RangeDouble<MoreTypesDemo> numberDoubleRange = new RangeDouble<MoreTypesDemo>(numberDouble);
-    private RangeFloat<MoreTypesDemo> numberFloatRange = new RangeFloat<MoreTypesDemo>(numberFloat);
-    private RangeBigInteger<MoreTypesDemo> numberBigIntegerRange = new RangeBigInteger<MoreTypesDemo>(numberBigInteger);
-    private RangeBigDecimal<MoreTypesDemo> numberBigDecimalRange = new RangeBigDecimal<MoreTypesDemo>(numberBigDecimal);
-    private RangeDate<MoreTypesDemo> dateJavaTemporalDateRange = new RangeDate<MoreTypesDemo>(dateJavaTemporalDate);
-    private RangeDate<MoreTypesDemo> dateJavaTemporalTimestampRange = new RangeDate<MoreTypesDemo>(
-            dateJavaTemporalTimestamp);
-    private RangeLocalDate<MoreTypesDemo> dateJodaRange = new RangeLocalDate<MoreTypesDemo>(dateJoda);
-    private RangeLocalDateTime<MoreTypesDemo> dateTimeJodaRange = new RangeLocalDateTime<MoreTypesDemo>(dateTimeJoda);
+    private RangeInteger<MoreTypesDemo> numberIntRange = newRangeInteger(numberInt);
+    private RangeLong<MoreTypesDemo> numberLongRange = newRangeLong(numberLong);
+    private RangeDouble<MoreTypesDemo> numberDoubleRange = newRangeDouble(numberDouble);
+    private RangeFloat<MoreTypesDemo> numberFloatRange = newRangeFloat(numberFloat);
+    private RangeBigInteger<MoreTypesDemo> numberBigIntegerRange = newRangeBigInteger(numberBigInteger);
+    private RangeBigDecimal<MoreTypesDemo> numberBigDecimalRange = newRangeBigDecimal(numberBigDecimal);
+    private RangeDate<MoreTypesDemo> dateJavaTemporalDateRange = newRangeDate(dateJavaTemporalDate);
+    private RangeDate<MoreTypesDemo> dateJavaTemporalTimestampRange = newRangeDate(dateJavaTemporalTimestamp);
+    private RangeLocalDate<MoreTypesDemo> dateJodaRange = newRangeLocalDate(dateJoda);
+    private RangeLocalDateTime<MoreTypesDemo> dateTimeJodaRange = newRangeLocalDateTime(dateTimeJoda);
 
     @Autowired
     public MoreTypesDemoSearchForm(MoreTypesDemoRepository instance) {

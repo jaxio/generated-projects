@@ -9,6 +9,7 @@ package com.jaxio.demo.domain;
 
 import com.google.common.base.Objects;
 
+import javax.xml.bind.annotation.XmlTransient;
 import com.jaxio.demo.domain.PersistableHashBuilder;
 
 import static javax.persistence.CascadeType.PERSIST;
@@ -31,7 +32,6 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
@@ -87,7 +87,7 @@ public class Document implements Persistable<String> {
 
     // -- [id] ------------------------
 
-    @Column(name = "ID", nullable = false, unique = true, length = 32)
+    @Column(name = "ID", length = 32)
     @GeneratedValue(generator = "strategy-uuid")
     @GenericGenerator(name = "strategy-uuid", strategy = "uuid")
     @Id
@@ -161,14 +161,14 @@ public class Document implements Persistable<String> {
         this.documentBinary = documentBinary;
     }
 
-    // Handle file upload/download (primefaces support)
-    private transient StreamedContent sc;
+    // documentBinary primefaces upload/download support
+    private transient StreamedContent documentBinaryStreamedContent;
 
     /**
-     * Primefaces support for file upload
+     * Primefaces support for documentBinary file upload
      */
     public void handleFileUpload(FileUploadEvent fileUploadEvent) {
-        sc = null;
+        documentBinaryStreamedContent = null;
         UploadedFile uploadedFile = fileUploadEvent.getFile(); //application code
         setDocumentBinary(uploadedFile.getContents());
         setDocumentSize(documentBinary.length);
@@ -177,13 +177,13 @@ public class Document implements Persistable<String> {
     }
 
     /**
-     * Primefaces support for file download
+     * Primefaces support for documentBinary file download
      */
     @Transient
     @XmlTransient
     public StreamedContent getStreamedContentFile() {
-        if (sc == null) {
-            sc = new StreamedContent() {
+        if (documentBinaryStreamedContent == null) {
+            documentBinaryStreamedContent = new StreamedContent() {
                 InputStream is = null;
 
                 @Override
@@ -205,7 +205,7 @@ public class Document implements Persistable<String> {
                 }
             };
         }
-        return sc;
+        return documentBinaryStreamedContent;
     }
 
     /**
@@ -318,13 +318,13 @@ public class Document implements Persistable<String> {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add(Document_.id.getName(), getId()) //
-                .add(Document_.accountId.getName(), getAccountId()) //
-                .add(Document_.documentContentType.getName(), getDocumentContentType()) //
-                .add(Document_.documentSize.getName(), getDocumentSize()) //
-                .add(Document_.documentFileName.getName(), getDocumentFileName()) //
-                .add(Document_.documentBinary.getName(), getDocumentBinary()) //
-                .add(Document_.version.getName(), getVersion()) //
+                .add("id", getId()) //
+                .add("accountId", getAccountId()) //
+                .add("documentContentType", getDocumentContentType()) //
+                .add("documentSize", getDocumentSize()) //
+                .add("documentFileName", getDocumentFileName()) //
+                .add("documentBinary", getDocumentBinary()) //
+                .add("version", getVersion()) //
                 .toString();
     }
 }

@@ -12,7 +12,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 
 @StaticMetamodel(Legacy.class)
 public abstract class Legacy_ {
-    // Composite primary key    
+    // Composite primary key
     public static volatile SingularAttribute<Legacy, LegacyPk> legacyPk;
 
     // Raw attributes

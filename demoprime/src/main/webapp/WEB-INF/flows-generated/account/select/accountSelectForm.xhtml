@@ -7,92 +7,91 @@
  ! Template pack-jsf2-primefaces-sd:src/main/webapp/WEB-INF/flows/select/selectForm.e.vm.xhtml
 -->
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:c="http://java.sun.com/jsp/jstl/core"
-  xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" 
-  xmlns:p="http://primefaces.org/ui"
-  xmlns:app="http://springfuse.jaxio.com/app"
-  xmlns:appcc="http://java.sun.com/jsf/composite/components">
-  <app:search data="#{accounts}" title="${msg.account}">
-    <ui:define name="filters">
-      	<f:validateBean disabled="true">      
-        <h:panelGrid columns="2">
-		<h:outputLabel for="username" value="${msg.account_username}" />
-		<p:inputText id="username" value="#{accountSearchForm.account.username}" maxlength="80" />
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:app="http://springfuse.jaxio.com/app"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components">
+	<app:search data="#{accounts}" title="${msg.account}">
+		<ui:define name="filters">
+			<f:validateBean disabled="true">
+				<h:panelGrid columns="2">
 
-		<h:outputLabel for="password" value="${msg.account_password}" />
-		<p:inputText id="password" value="#{accountSearchForm.account.password}" maxlength="80" />
+					<h:outputLabel for="username" value="${msg.account_username}" />
+					<p:inputText id="username" value="#{accountSearchForm.account.username}" maxlength="255" />
 
-		<h:outputLabel for="email" value="${msg.account_email}" />
-		<p:inputText id="email" value="#{accountSearchForm.account.email}" maxlength="80" />
+					<h:outputLabel for="password" value="${msg.account_password}" />
+					<p:inputText id="password" value="#{accountSearchForm.account.password}" maxlength="255" />
 
-        <h:outputLabel for="isEnabled" value="${msg.account_isEnabled}" />
-        <h:selectOneMenu id="isEnabled"
-          value="#{accountSearchForm.account.isEnabled}">
-          <f:selectItem itemLabel="${msg.any_boolean}" itemValue="" />
-          <f:selectItem itemLabel="${msg.account_isEnabled_true}" itemValue="true" />
-          <f:selectItem itemLabel="${msg.account_isEnabled_false}" itemValue="false" />
-        </h:selectOneMenu>
-		<h:outputLabel for="civility" value="${msg.account_civility}" />
-		<h:selectOneMenu id="civility" value="#{accountSearchForm.account.civility}">
-          	<f:selectItem itemLabel="${msg.any_boolean}" itemValue="" />
-			<f:selectItems value="#{civilityItems.list}" />
-		</h:selectOneMenu>
+					<h:outputLabel for="email" value="${msg.account_email}" />
+					<p:inputText id="email" value="#{accountSearchForm.account.email}" maxlength="255" />
 
-		<h:outputLabel for="firstName" value="${msg.account_firstName}" />
-		<p:inputText id="firstName" value="#{accountSearchForm.account.firstName}" maxlength="80" />
+					<h:outputLabel for="isEnabled" value="${msg.account_isEnabled}" />
+					<h:selectOneMenu id="isEnabled" value="#{accountSearchForm.account.isEnabled}">
+						<f:selectItem itemLabel="${msg.any_boolean}" itemValue="" />
+						<f:selectItem itemLabel="${msg.account_isEnabled_true}" itemValue="true" />
+						<f:selectItem itemLabel="${msg.account_isEnabled_false}" itemValue="false" />
+					</h:selectOneMenu>
 
-		<h:outputLabel for="lastName" value="${msg.account_lastName}" />
-		<p:inputText id="lastName" value="#{accountSearchForm.account.lastName}" maxlength="80" />
+					<h:outputLabel for="civility" value="${msg.account_civility}" />
+					<h:selectOneMenu id="civility" value="#{accountSearchForm.account.civility}">
+						<f:selectItem itemLabel="${msg.any_boolean}" itemValue="" />
+						<f:selectItems value="#{civilityItems.list}" />
+					</h:selectOneMenu>
 
-        <h:outputLabel for="birthDate" value="${msg.account_birthDate}" />
-        <h:panelGrid columns="4" id="birthDate">
-			<h:outputLabel for="birthDateRangeFrom_input" value="${msg.date_range_from}" />
-			<p:calendar id="birthDateRangeFrom" value="#{accountSearchForm.birthDateRange.from}" pattern="yyyy-MM-dd HH:mm">
-	    		<f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
-	    	</p:calendar>
-	        <h:outputLabel for="birthDateRangeTo_input" value="${msg.date_range_to}" />        
-			<p:calendar id="birthDateRangeTo" value="#{accountSearchForm.birthDateRange.to}" pattern="yyyy-MM-dd HH:mm">
-	    		<f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
-	    	</p:calendar>
-        </h:panelGrid>
+					<h:outputLabel for="firstName" value="${msg.account_firstName}" />
+					<p:inputText id="firstName" value="#{accountSearchForm.account.firstName}" maxlength="255" />
 
-        <h:outputLabel for="homeAddress" value="${msg.account_homeAddress}" />
-        <h:selectOneMenu id="homeAddress"
-			value="#{accountSearchForm.account.homeAddress}"
-          	converter="#{addressConverter}">
-          	<f:selectItem itemValue="" itemLabel="-- Select One" />
-			<f:selectItems value="#{addressRepository.find()}" var="item" itemLabel="#{addressConverter.print(item)}" />
-        </h:selectOneMenu>
+					<h:outputLabel for="lastName" value="${msg.account_lastName}" />
+					<p:inputText id="lastName" value="#{accountSearchForm.account.lastName}" maxlength="255" />
 
-	</h:panelGrid>
-	</f:validateBean>	
-    </ui:define>
+					<h:outputLabel for="birthDate" value="${msg.account_birthDate}" />
+					<h:panelGrid columns="4" id="birthDate" styleClass="aria-role-presentation">
+						<label for="form:birthDateRangeFrom_input">${msg.date_range_from}</label>
+						<p:calendar id="birthDateRangeFrom" value="#{accountSearchForm.birthDateRange.from}" pattern="yyyy-MM-dd HH:mm">
+							<f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
+						</p:calendar>
+						<label for="form:birthDateRangeTo_input">${msg.date_range_to}</label>
+						<p:calendar id="birthDateRangeTo" value="#{accountSearchForm.birthDateRange.to}" pattern="yyyy-MM-dd HH:mm">
+							<f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
+						</p:calendar>
+					</h:panelGrid>
 
-    <ui:define name="result">
-      	<p:column id="account_username" headerText="${msg.account_username}" sortBy="#{item.username}" width="22%">
-      		<h:outputText value="#{item.username}" />
-		</p:column>
-      	<p:column id="account_email" headerText="${msg.account_email}" sortBy="#{item.email}" width="22%">
-      		<h:outputText value="#{item.email}" />
-		</p:column>
-      	<p:column id="account_isEnabled" headerText="${msg.account_isEnabled}" sortBy="#{item.isEnabled}" width="22%">
-      		<appcc:outputBoolean value="#{item.isEnabled}" />
-		</p:column>
-		<p:column id="account_homeAddress" headerText="${msg.account_homeAddress}" width="22%">
-      		<h:outputText value="#{addressConverter.print(item.homeAddress)}" />
-		</p:column>
-		<p:column id="open" headerText="${msg.actions}" width="10%">
-			<c:if test="#{not empty select and select}">
-				<app:iconSelect action="select" process="@this" title="${accountConverter.print(item)}">
-					<f:setPropertyActionListener value="#{item}" target="#{accounts.selectedRow}" />				
-				</app:iconSelect>
-			</c:if>
-			<c:if test="#{empty select or not select}">
-				<app:iconEdit action="select" process="@this" title="${accountConverter.print(item)}">
-					<f:setPropertyActionListener value="#{item}" target="#{accounts.selectedRow}" />		
-				</app:iconEdit>
-			</c:if>
-		</p:column>
-    </ui:define>
-  </app:search>
+
+					<h:outputLabel for="homeAddress" value="${msg.account_homeAddress}" />
+					<h:selectOneMenu id="homeAddress" value="#{accountSearchForm.account.homeAddress}" converter="#{addressConverter}">
+						<f:selectItem itemValue="" itemLabel="-- Select One" />
+						<f:selectItems value="#{addressRepository.find()}" var="item" itemLabel="#{addressConverter.print(item)}" />
+					</h:selectOneMenu>
+				</h:panelGrid>
+			</f:validateBean>
+		</ui:define>
+
+		<ui:define name="result">
+			<p:column id="account_username" headerText="${msg.account_username}" sortBy="#{item.username}" width="22%">
+				<h:outputText value="#{item.username}" />
+			</p:column>
+			<p:column id="account_email" headerText="${msg.account_email}" sortBy="#{item.email}" width="22%">
+				<h:outputText value="#{item.email}" />
+			</p:column>
+			<p:column id="account_isEnabled" headerText="${msg.account_isEnabled}" sortBy="#{item.isEnabled}" width="22%">
+				<appcc:outputBoolean value="#{item.isEnabled}" />
+			</p:column>
+			<p:column id="account_homeAddress" headerText="${msg.account_homeAddress}" width="22%">
+				<h:outputText value="#{addressConverter.print(item.homeAddress)}" />
+			</p:column>
+			<p:column id="open" headerText="${msg.actions}" width="10%">
+				<c:if test="#{not empty select and select}">
+					<app:iconSelect action="select" process="@this" title="${accountConverter.print(item)}">
+						<f:setPropertyActionListener value="#{item}" target="#{accounts.selectedRow}" />
+					</app:iconSelect>
+				</c:if>
+				<c:if test="#{empty select or not select}">
+					<app:iconEdit action="select" process="@this" title="${accountConverter.print(item)}">
+						<f:setPropertyActionListener value="#{item}" target="#{accounts.selectedRow}" />
+					</app:iconEdit>
+				</c:if>
+			</p:column>
+		</ui:define>
+	</app:search>
 </ui:composition>

@@ -9,6 +9,9 @@ package com.jaxio.demo.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
@@ -41,6 +44,8 @@ public class ResourcesUtil {
     private static ResourcesUtil instance;
     private static MessageSource messageSource;
 
+    private Map<Locale, ResourceBundle> cache = new HashMap<Locale, ResourceBundle>();
+
     @Autowired
     public ResourcesUtil(MessageSource ms) {
         messageSource = ms;
@@ -65,7 +70,15 @@ public class ResourcesUtil {
      * Return the underlying spring MessageSource as a ResourceBundle.
      */
     public ResourceBundle getAsResourceBundle() {
-        return new MessageSourceResourceBundle(messageSource, LocaleContextHolder.getLocale());
+        Locale locale = LocaleContextHolder.getLocale();
+        ResourceBundle rb = cache.get(locale);
+
+        if (rb == null) {
+            rb = new MessageSourceResourceBundle(messageSource, locale);
+            cache.put(locale, rb);
+        }
+
+        return rb;
     }
 
     /**

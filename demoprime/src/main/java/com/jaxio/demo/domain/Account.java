@@ -9,6 +9,8 @@ package com.jaxio.demo.domain;
 
 import com.google.common.base.Objects;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.EnumType.STRING;
@@ -32,7 +34,6 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlTransient;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Email;
@@ -120,7 +121,7 @@ public class Account implements Persistable<String> {
 
     // -- [id] ------------------------
 
-    @Column(name = "ID", nullable = false, unique = true, length = 32)
+    @Column(name = "ID", length = 32)
     @GeneratedValue(generator = "strategy-uuid")
     @GenericGenerator(name = "strategy-uuid", strategy = "uuid")
     @Id
@@ -485,17 +486,17 @@ public class Account implements Persistable<String> {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add(Account_.id.getName(), getId()) //
-                .add(Account_.username.getName(), getUsername()) //
-                .add(Account_.password.getName(), getPassword()) //
-                .add(Account_.email.getName(), getEmail()) //
-                .add(Account_.isEnabled.getName(), getIsEnabled()) //
-                .add(Account_.civility.getName(), getCivility()) //
-                .add(Account_.firstName.getName(), getFirstName()) //
-                .add(Account_.lastName.getName(), getLastName()) //
-                .add(Account_.birthDate.getName(), getBirthDate()) //
-                .add(Account_.addressId.getName(), getAddressId()) //
-                .add(Account_.version.getName(), getVersion()) //
+                .add("id", getId()) //
+                .add("username", getUsername()) //
+                .add("password", getPassword()) //
+                .add("email", getEmail()) //
+                .add("isEnabled", getIsEnabled()) //
+                .add("civility", getCivility()) //
+                .add("firstName", getFirstName()) //
+                .add("lastName", getLastName()) //
+                .add("birthDate", getBirthDate()) //
+                .add("addressId", getAddressId()) //
+                .add("version", getVersion()) //
                 .toString();
     }
 }

@@ -8,32 +8,30 @@
 -->
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" 
-  xmlns:p="http://primefaces.org/ui"
-  xmlns:app="http://springfuse.jaxio.com/app"
-  xmlns:appcc="http://java.sun.com/jsf/composite/components">
-  <f:validateBean disabled="true">        
-    <p:fieldset legend="${msg.address}">
-      <h:panelGrid columns="2" styleClass="aria-role-presentation">
-    	<appcc:outputLabel for="streetName" value="${msg.address_streetName}" />
-    	<p:inputText id="streetName" label="${msg.address_streetName}" value="#{address.streetName}" maxlength="80" rendered="#{not readonly}">
-    		<f:validateBean binding="#{lenientBeanValidator}"/>
-    	</p:inputText>
-		<h:outputText value="#{address.streetName}" rendered="#{readonly}" />
-
-    	<appcc:outputLabel for="city" value="${msg.address_city}"  required="true" />
-    	<p:inputText id="city" label="${msg.address_city}" value="#{address.city}" maxlength="80" rendered="#{not readonly}">
-    		<f:validateBean binding="#{lenientBeanValidator}"/>
-    	</p:inputText>
-		<h:outputText value="#{address.city}" rendered="#{readonly}" />
-
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:app="http://springfuse.jaxio.com/app"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components">
+	<f:validateBean disabled="true">
+		<p:fieldset legend="${msg.address}">
+			<h:panelGrid columns="2" styleClass="aria-role-presentation">
+				<appcc:outputLabel for="streetName" value="${msg.address_streetName}" />
+				<p:inputText id="streetName" label="${msg.address_streetName}" value="#{address.streetName}" maxlength="80" rendered="#{not readonly}">
+					<f:validateBean binding="#{lenientBeanValidator}"/>
+				</p:inputText>
+				<h:outputText value="#{address.streetName}" rendered="#{readonly}" />
+				<appcc:outputLabel for="city" value="${msg.address_city}"  required="true" />
+				<p:inputText id="city" label="${msg.address_city}" value="#{address.city}" maxlength="80" rendered="#{not readonly}">
+					<f:validateBean binding="#{lenientBeanValidator}"/>
+				</p:inputText>
+				<h:outputText value="#{address.city}" rendered="#{readonly}" />
 
 
 
-   	  </h:panelGrid>
-      <app:saveButton title="${msg.address}"/>
- 	</p:fieldset>
-  </f:validateBean>      
+			</h:panelGrid>
+			<app:saveButton title="${msg.address}"/>
+		</p:fieldset>
+	</f:validateBean>
 
 
 

@@ -8,34 +8,34 @@
 -->
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
-    
+
 	<persistence-context />
 
-	<!-- ====================== -->
-	<!-- Flow input parameters  -->
-	<!-- ====================== -->
-    <!-- * address: the entity to edit/create -->
+	<!-- ===================== -->
+	<!-- Flow input parameters -->
+	<!-- ===================== -->
+	<!-- * address: the entity to edit/create -->
 	<!-- * sub: when sub is true, we assume this flow is used as a subflow by a parent flow. -->
 	<!-- * readonly: open the passed address in read-only mode -->
-    <input name="address" required="true" value="flowScope.address"/>
+	<input name="address" required="true" value="flowScope.address"/>
 	<input name="sub" type="boolean" value="flowScope.sub"/>
 	<input name="readonly" type="boolean" />
 
 	<decision-state id="startChoice">
 		<if test="sub" then="addressSubEdit" else="addressEdit" />
 	</decision-state>
-	<!-- ====================== -->
+	<!-- ==== -->
 	<!-- EDIT -->
-	<!-- ====================== -->
+	<!-- ==== -->
 	<view-state id="addressEdit" model="address" parent="#addressEditCommon">
-        <on-render>
-            <evaluate expression="flowsMenuHandler.updateMenu(flowRequestContext,address.id,addressConverter.print(address))" /> 
-        </on-render>
-    
-        <!-- event handlers -->
-        <transition on="send">
-            <evaluate expression="messageUtil.info('status_submitted_ok')" />        
-        </transition>
+		<on-render>
+			<evaluate expression="flowsMenuHandler.updateMenu(flowRequestContext,address.id,addressConverter.print(address))" /> 
+		</on-render>
+
+		<!-- event handlers -->
+		<transition on="send">
+			<evaluate expression="messageUtil.info('status_submitted_ok')" />		
+		</transition>
 
 		<transition on="save">
 			<evaluate expression="addressRepository.save(flowScope.address)" />
@@ -43,42 +43,42 @@
 		</transition>
 
 		<transition on="saveAndClose">
-            <evaluate expression="addressRepository.save(flowScope.address)" />
-            <evaluate expression="primeFacesUtil.forceClose()"/>
-        </transition>
-        
+			<evaluate expression="addressRepository.save(flowScope.address)" />
+			<evaluate expression="primeFacesUtil.forceClose()"/>
+		</transition>
+
 		<transition on="close" validate="false" >
-            <evaluate expression="primeFacesUtil.showAskForSaveDialog((address != null and address.isNew()) or persistenceContext.delegate.isDirty())"/>
-        </transition>
+			<evaluate expression="primeFacesUtil.showAskForSaveDialog(persistenceContext, address)"/>
+		</transition>
 
 		<transition on="quit" validate="false">
 			<set name="conversationScope.endParam" value="'_cascadeQuit'" />
-            <!--  TODO -->
-            <evaluate expression="primeFacesUtil.showAskForSaveDialog((address != null and address.isNew()) or persistenceContext.delegate.isDirty())"/>            
+			<!--  TODO -->
+			<evaluate expression="primeFacesUtil.showAskForSaveDialog(persistenceContext, address)"/>
 		</transition>
 
-        <!-- transitions -->
-        <transition on="deleteAndClose" to="deleteAndClose" validate="false">
-            <evaluate expression="addressService.delete(flowScope.address)" />
-        </transition>        
+		<!-- transitions -->
+		<transition on="deleteAndClose" to="deleteAndClose" validate="false">
+			<evaluate expression="addressRepository.delete(flowScope.address.id)" />
+		</transition>
 	</view-state>
 
-	<!-- ====================== -->
+	<!-- ======== -->
 	<!-- SUB-EDIT -->
-	<!-- ====================== -->
+	<!-- ======== -->
 	<view-state id="addressSubEdit" model="address" parent="#addressEditCommon">
-        <!-- events handlers -->
+		<!-- events handlers -->
 		<transition on="ok">
-            <evaluate expression="primeFacesUtil.forceClose()"/>
-        </transition>
-        
-        <!-- transitions -->        
-        <transition on="cancel" to="cancelEdit" validate="false" />
+			<evaluate expression="primeFacesUtil.forceClose()"/>
+		</transition>
+
+		<!-- transitions -->
+		<transition on="cancel" to="cancelEdit" validate="false" />
 	</view-state>
 
-	<!-- ====================== -->
+	<!-- =========== -->
 	<!-- COMMON-EDIT -->
-	<!-- ====================== -->
+	<!-- =========== -->
 	<view-state id="addressEditCommon" model="address">
 	</view-state>
 
@@ -91,27 +91,27 @@
 	<end-state id="cancelEdit" />
 	<end-state id="deleteAndClose" />
 
-    <!-- see the SimpleExceptionHandler java code -->
-    <end-state id="error" />
+	<!-- see the SimpleExceptionHandler java code -->
+	<end-state id="error" />
 
-    <!-- ================== -->
-    <!-- GLOBAL TRANSITIONS -->
-    <!-- ================== -->
-    <global-transitions>    
-        <!-- transitions -->
-        <transition on="forceClose" to="endEdit" validate="false"/>
-        
-        <!-- testing errors -->
-        <transition on="ajaxDebugThrowException">
-            <evaluate expression="exceptionUtil.throwRuntimeException()" />
-        </transition>
-        <transition on="debugThrowException" to="startChoice">
-            <evaluate expression="exceptionUtil.throwRuntimeException()" />
-        </transition>
-    </global-transitions>
+	<!-- ================== -->
+	<!-- GLOBAL TRANSITIONS -->
+	<!-- ================== -->
+	<global-transitions>
+		<!-- transitions -->
+		<transition on="forceClose" to="endEdit" validate="false"/>
 
-    <!-- ========== -->
-    <!-- EXCEPTIONS -->
-    <!-- ========== -->
-    <exception-handler bean="simpleExceptionHandler"/>
+		<!-- testing errors -->
+		<transition on="ajaxDebugThrowException">
+			<evaluate expression="exceptionUtil.throwRuntimeException()" />
+		</transition>
+		<transition on="debugThrowException" to="startChoice">
+			<evaluate expression="exceptionUtil.throwRuntimeException()" />
+		</transition>
+	</global-transitions>
+
+	<!-- ========== -->
+	<!-- EXCEPTIONS -->
+	<!-- ========== -->
+	<exception-handler bean="simpleExceptionHandler"/>
 </flow>

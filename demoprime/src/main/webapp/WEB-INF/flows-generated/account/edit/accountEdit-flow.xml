@@ -8,38 +8,38 @@
 -->
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
-    
-	<persistence-context />
-    <!-- ====================== -->
-    <!-- Flow vars -->
-    <!-- ====================== -->
-    <var name="tabBean" class="com.jaxio.demo.web.util.TabBean"/>
 
-	<!-- ====================== -->
-	<!-- Flow input parameters  -->
-	<!-- ====================== -->
-    <!-- * account: the entity to edit/create -->
+	<persistence-context />
+	<!-- ========= -->
+	<!-- Flow vars -->
+	<!-- ========= -->
+	<var name="tabBean" class="com.jaxio.demo.web.util.TabBean"/>
+
+	<!-- ===================== -->
+	<!-- Flow input parameters -->
+	<!-- ===================== -->
+	<!-- * account: the entity to edit/create -->
 	<!-- * sub: when sub is true, we assume this flow is used as a subflow by a parent flow. -->
 	<!-- * readonly: open the passed account in read-only mode -->
-    <input name="account" required="true" value="flowScope.account"/>
+	<input name="account" required="true" value="flowScope.account"/>
 	<input name="sub" type="boolean" value="flowScope.sub"/>
 	<input name="readonly" type="boolean" />
 
 	<decision-state id="startChoice">
 		<if test="sub" then="accountSubEdit" else="accountEdit" />
 	</decision-state>
-	<!-- ====================== -->
+	<!-- ==== -->
 	<!-- EDIT -->
-	<!-- ====================== -->
+	<!-- ==== -->
 	<view-state id="accountEdit" model="account" parent="#accountEditCommon">
-        <on-render>
-            <evaluate expression="flowsMenuHandler.updateMenu(flowRequestContext,account.id,accountConverter.print(account))" /> 
-        </on-render>
-    
-        <!-- event handlers -->
-        <transition on="send">
-            <evaluate expression="messageUtil.info('status_submitted_ok')" />        
-        </transition>
+		<on-render>
+			<evaluate expression="flowsMenuHandler.updateMenu(flowRequestContext,account.id,accountConverter.print(account))" /> 
+		</on-render>
+
+		<!-- event handlers -->
+		<transition on="send">
+			<evaluate expression="messageUtil.info('status_submitted_ok')" />		
+		</transition>
 
 		<transition on="save">
 			<evaluate expression="accountRepository.save(flowScope.account)" />
@@ -47,42 +47,42 @@
 		</transition>
 
 		<transition on="saveAndClose">
-            <evaluate expression="accountRepository.save(flowScope.account)" />
-            <evaluate expression="primeFacesUtil.forceClose()"/>
-        </transition>
-        
+			<evaluate expression="accountRepository.save(flowScope.account)" />
+			<evaluate expression="primeFacesUtil.forceClose()"/>
+		</transition>
+
 		<transition on="close" validate="false" >
-            <evaluate expression="primeFacesUtil.showAskForSaveDialog((account != null and account.isNew()) or persistenceContext.delegate.isDirty())"/>
-        </transition>
+			<evaluate expression="primeFacesUtil.showAskForSaveDialog(persistenceContext, account)"/>
+		</transition>
 
 		<transition on="quit" validate="false">
 			<set name="conversationScope.endParam" value="'_cascadeQuit'" />
-            <!--  TODO -->
-            <evaluate expression="primeFacesUtil.showAskForSaveDialog((account != null and account.isNew()) or persistenceContext.delegate.isDirty())"/>            
+			<!--  TODO -->
+			<evaluate expression="primeFacesUtil.showAskForSaveDialog(persistenceContext, account)"/>
 		</transition>
 
-        <!-- transitions -->
-        <transition on="deleteAndClose" to="deleteAndClose" validate="false">
-            <evaluate expression="accountService.delete(flowScope.account)" />
-        </transition>        
+		<!-- transitions -->
+		<transition on="deleteAndClose" to="deleteAndClose" validate="false">
+			<evaluate expression="accountRepository.delete(flowScope.account.id)" />
+		</transition>
 	</view-state>
 
-	<!-- ====================== -->
+	<!-- ======== -->
 	<!-- SUB-EDIT -->
-	<!-- ====================== -->
+	<!-- ======== -->
 	<view-state id="accountSubEdit" model="account" parent="#accountEditCommon">
-        <!-- events handlers -->
+		<!-- events handlers -->
 		<transition on="ok">
-            <evaluate expression="primeFacesUtil.forceClose()"/>
-        </transition>
-        
-        <!-- transitions -->        
-        <transition on="cancel" to="cancelEdit" validate="false" />
+			<evaluate expression="primeFacesUtil.forceClose()"/>
+		</transition>
+
+		<!-- transitions -->
+		<transition on="cancel" to="cancelEdit" validate="false" />
 	</view-state>
 
-	<!-- ====================== -->
+	<!-- =========== -->
 	<!-- COMMON-EDIT -->
-	<!-- ====================== -->
+	<!-- =========== -->
 	<view-state id="accountEditCommon" model="account">
 		<on-entry>
 			<!-- Prefetch one to many lists and convert them to dataModel -->
@@ -94,69 +94,69 @@
 
 		<!-- TRANSITION: X TO ONE (homeAddress) -->
 		<transition on="selectHomeAddress" to="subflowSelectHomeAddress" validate="false" />
-        <transition on="editHomeAddress" to="subflowEditHomeAddress" validate="false">
-            <set name="requestScope.paramReadonly" value="false" type="boolean" />        
-        </transition>
+		<transition on="editHomeAddress" to="subflowEditHomeAddress" validate="false">
+			<set name="requestScope.paramReadonly" value="false" type="boolean" />
+		</transition>
 		<transition on="viewHomeAddress" to="subflowEditHomeAddress" validate="false">
-            <set name="requestScope.paramReadonly" value="true" type="boolean" />        
-        </transition>
+			<set name="requestScope.paramReadonly" value="true" type="boolean" />
+		</transition>
 
 		<!-- TRANSITION: ONE TO MANY (books) -->
 		<transition on="addBook" to="subflowAddBook" validate="false" />
 		<transition on="editBook" to="subflowEditBook" validate="false">
-            <set name="requestScope.paramReadonly" value="false" type="boolean" />        
-        </transition>
+			<set name="requestScope.paramReadonly" value="false" type="boolean" />
+		</transition>
 		<transition on="viewBook" to="subflowEditBook" validate="false">
-            <set name="requestScope.paramReadonly" value="true" type="boolean" />
-        </transition>
+			<set name="requestScope.paramReadonly" value="true" type="boolean" />
+		</transition>
 		<transition on="removeBook" validate="false">
 			<evaluate expression="account.removeBook(flowScope.books.selectedRow)" />
-            <evaluate expression="messageUtil.info('status_removed_ok',resourceBundle.account_books)" />            
+			<evaluate expression="messageUtil.info('status_removed_ok',resourceBundle.account_books)" />
 		</transition>
 
 		<!-- TRANSITION: ONE TO MANY (documents) -->
 		<transition on="addDocument" to="subflowAddDocument" validate="false" />
 		<transition on="editDocument" to="subflowEditDocument" validate="false">
-            <set name="requestScope.paramReadonly" value="false" type="boolean" />        
-        </transition>
+			<set name="requestScope.paramReadonly" value="false" type="boolean" />
+		</transition>
 		<transition on="viewDocument" to="subflowEditDocument" validate="false">
-            <set name="requestScope.paramReadonly" value="true" type="boolean" />
-        </transition>
+			<set name="requestScope.paramReadonly" value="true" type="boolean" />
+		</transition>
 		<transition on="removeDocument" validate="false">
 			<evaluate expression="account.removeDocument(flowScope.documents.selectedRow)" />
-            <evaluate expression="messageUtil.info('status_removed_ok',resourceBundle.account_documents)" />            
+			<evaluate expression="messageUtil.info('status_removed_ok',resourceBundle.account_documents)" />
 		</transition>
 
 		<!-- TRANSITION: MANY TO MANY (roles) -->
 		<transition on="searchRole" to="subflowSearchRole" validate="false" />
 		<transition on="addRole" to="subflowAddRole" validate="false" />
 		<transition on="viewRole" to="subflowEditRole" validate="false">
-            <set name="requestScope.paramReadonly" value="true" type="boolean" />        
-        </transition>
+			<set name="requestScope.paramReadonly" value="true" type="boolean" />
+		</transition>
 		<transition on="removeRole" validate="false">
 			<evaluate expression="account.removeRole(flowScope.roles.selectedRow)" />
-            <evaluate expression="messageUtil.info('status_removed_ok',resourceBundle.account_roles)" />            
+			<evaluate expression="messageUtil.info('status_removed_ok',resourceBundle.account_roles)" />
 		</transition>
 	</view-state>
 	<!-- ======== -->
 	<!-- X TO ONE -->
 	<!-- ======== -->
 	<!-- [SUBFLOW CALLS (X To one): homeAddress] -->
-    <subflow-state id="subflowSelectHomeAddress" subflow="address/select">
-        <input name="sub" value="true" />
-        <transition on="addressSelected" to="startChoice">
-            <evaluate expression="account.setHomeAddress(currentEvent.attributes.addressSelected)" />
-            <evaluate expression="messageUtil.info('status_selected_ok',resourceBundle.account_homeAddress)" />             
-        </transition>
-        <transition on="cancel" to="startChoice" />
-    </subflow-state>
+	<subflow-state id="subflowSelectHomeAddress" subflow="address/select">
+		<input name="sub" value="true" />
+		<transition on="addressSelected" to="startChoice">
+			<evaluate expression="account.setHomeAddress(currentEvent.attributes.addressSelected)" />
+			<evaluate expression="messageUtil.info('status_selected_ok',resourceBundle.account_homeAddress)" />
+		</transition>
+		<transition on="cancel" to="startChoice" />
+	</subflow-state>
 	<subflow-state id="subflowEditHomeAddress" subflow="address/edit">
 		<input name="sub" value="true" />
 		<input name="readonly" value="requestScope.paramReadonly" />
 		<input name="address" value="account.homeAddress" />
 		<transition on="endEdit" to="startChoice">
-            <evaluate expression="messageUtil.info('status_edited_ok',resourceBundle.account_homeAddress)" />        
-        </transition>
+			<evaluate expression="messageUtil.info('status_edited_ok',resourceBundle.account_homeAddress)" />
+		</transition>
 		<transition on="cancelEdit" to="startChoice" />
 	</subflow-state>
 
@@ -169,17 +169,17 @@
 		<input name="book" value="domainFactory.newBook" />
 		<transition on="endEdit" to="startChoice">
 			<evaluate expression="account.addBook(currentEvent.attributes.book)" />
-            <evaluate expression="messageUtil.info('status_added_new_ok',resourceBundle.account_books)" />            
+			<evaluate expression="messageUtil.info('status_added_new_ok',resourceBundle.account_books)" />
 		</transition>
 		<transition on="cancelEdit" to="startChoice" />
 	</subflow-state>
 	<subflow-state id="subflowEditBook" subflow="book/edit">
 		<input name="sub" value="true" />
-        <input name="readonly" value="requestScope.paramReadonly" />        
+		<input name="readonly" value="requestScope.paramReadonly" />
 		<input name="book" value="flowScope.books.selectedRow" />
 		<transition on="endEdit" to="startChoice">
-            <evaluate expression="messageUtil.info('status_edited_ok',resourceBundle.account_books)" />        
-        </transition>
+			<evaluate expression="messageUtil.info('status_edited_ok',resourceBundle.account_books)" />
+		</transition>
 		<transition on="cancelEdit" to="startChoice" />
 	</subflow-state>
 
@@ -189,17 +189,17 @@
 		<input name="document" value="domainFactory.newDocument" />
 		<transition on="endEdit" to="startChoice">
 			<evaluate expression="account.addDocument(currentEvent.attributes.document)" />
-            <evaluate expression="messageUtil.info('status_added_new_ok',resourceBundle.account_documents)" />            
+			<evaluate expression="messageUtil.info('status_added_new_ok',resourceBundle.account_documents)" />
 		</transition>
 		<transition on="cancelEdit" to="startChoice" />
 	</subflow-state>
 	<subflow-state id="subflowEditDocument" subflow="document/edit">
 		<input name="sub" value="true" />
-        <input name="readonly" value="requestScope.paramReadonly" />        
+		<input name="readonly" value="requestScope.paramReadonly" />
 		<input name="document" value="flowScope.documents.selectedRow" />
 		<transition on="endEdit" to="startChoice">
-            <evaluate expression="messageUtil.info('status_edited_ok',resourceBundle.account_documents)" />        
-        </transition>
+			<evaluate expression="messageUtil.info('status_edited_ok',resourceBundle.account_documents)" />
+		</transition>
 		<transition on="cancelEdit" to="startChoice" />
 	</subflow-state>
 
@@ -211,7 +211,7 @@
 		<input name="sub" value="true" />
 		<transition on="roleSelected" to="startChoice">
 			<evaluate expression="account.addRole(currentEvent.attributes.roleSelected)" />
-            <evaluate expression="messageUtil.info('status_added_existing_ok',resourceBundle.account_roles)" />            
+			<evaluate expression="messageUtil.info('status_added_existing_ok',resourceBundle.account_roles)" />
 		</transition>
 		<transition on="cancel" to="startChoice" />
 	</subflow-state>
@@ -220,20 +220,20 @@
 		<input name="role" value="domainFactory.newRole" />
 		<transition on="endEdit" to="startChoice">
 			<evaluate expression="account.addRole(currentEvent.attributes.role)" />
-            <evaluate expression="messageUtil.info('status_added_new_ok',resourceBundle.account_roles)" />        
+			<evaluate expression="messageUtil.info('status_added_new_ok',resourceBundle.account_roles)" />
 		</transition>
 		<transition on="cancelEdit" to="startChoice" />
 	</subflow-state>
 	<subflow-state id="subflowEditRole" subflow="role/edit">
 		<input name="sub" value="true" />
-        <input name="readonly" value="requestScope.paramReadonly" />        
+		<input name="readonly" value="requestScope.paramReadonly" />
 		<input name="role" value="flowScope.roles.selectedRow" />
 		<transition on="endEdit" to="startChoice">
-            <evaluate expression="messageUtil.info('status_edited_ok',resourceBundle.account_roles)" />        
-        </transition>
+			<evaluate expression="messageUtil.info('status_edited_ok',resourceBundle.account_roles)" />
+		</transition>
 		<transition on="cancelEdit" to="startChoice" />
 	</subflow-state>
-    
+
 
 	<!-- ========== -->
 	<!-- END STATES -->
@@ -244,27 +244,27 @@
 	<end-state id="cancelEdit" />
 	<end-state id="deleteAndClose" />
 
-    <!-- see the SimpleExceptionHandler java code -->
-    <end-state id="error" />
+	<!-- see the SimpleExceptionHandler java code -->
+	<end-state id="error" />
 
-    <!-- ================== -->
-    <!-- GLOBAL TRANSITIONS -->
-    <!-- ================== -->
-    <global-transitions>    
-        <!-- transitions -->
-        <transition on="forceClose" to="endEdit" validate="false"/>
-        
-        <!-- testing errors -->
-        <transition on="ajaxDebugThrowException">
-            <evaluate expression="exceptionUtil.throwRuntimeException()" />
-        </transition>
-        <transition on="debugThrowException" to="startChoice">
-            <evaluate expression="exceptionUtil.throwRuntimeException()" />
-        </transition>
-    </global-transitions>
+	<!-- ================== -->
+	<!-- GLOBAL TRANSITIONS -->
+	<!-- ================== -->
+	<global-transitions>
+		<!-- transitions -->
+		<transition on="forceClose" to="endEdit" validate="false"/>
 
-    <!-- ========== -->
-    <!-- EXCEPTIONS -->
-    <!-- ========== -->
-    <exception-handler bean="simpleExceptionHandler"/>
+		<!-- testing errors -->
+		<transition on="ajaxDebugThrowException">
+			<evaluate expression="exceptionUtil.throwRuntimeException()" />
+		</transition>
+		<transition on="debugThrowException" to="startChoice">
+			<evaluate expression="exceptionUtil.throwRuntimeException()" />
+		</transition>
+	</global-transitions>
+
+	<!-- ========== -->
+	<!-- EXCEPTIONS -->
+	<!-- ========== -->
+	<exception-handler bean="simpleExceptionHandler"/>
 </flow>

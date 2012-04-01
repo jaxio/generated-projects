@@ -19,7 +19,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import com.jaxio.demo.web.util.UserContextUtil;
 
 /**
- * Expose the 'userContext' bean to org.springframework.faces.mvc.JsfView
+ * Expose the 'userContext' bean to {@link org.springframework.faces.mvc.JsfView}
  * Note: it does not intercept webflow requests.
  */
 @Service
@@ -28,16 +28,19 @@ public class UserContextInterceptor implements HandlerInterceptor {
     @Autowired
     private UserContextUtil userContext;
 
+    @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws ServletException {
         request.setAttribute("userContext", userContext);
         return true;
     }
 
+    @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
             ModelAndView modelAndView) {
     }
 
+    @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
     }

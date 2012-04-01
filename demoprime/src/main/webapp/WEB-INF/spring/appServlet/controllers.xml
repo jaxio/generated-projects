@@ -22,11 +22,11 @@
 	<mvc:view-controller path="/accessdenied" />
 
 	<mvc:interceptors>
-        <mvc:interceptor>
-            <mvc:mapping path="/*" />
-            <!-- Note: the interceptor below does not intercept flow requests. -->
-            <bean id="userContextInterceptor" class="com.jaxio.demo.web.interceptor.UserContextInterceptor" />
-        </mvc:interceptor>    
+		<mvc:interceptor>
+			<mvc:mapping path="/*" />
+			<!-- Note: the interceptor below does not intercept flow requests. -->
+			<bean id="userContextInterceptor" class="com.jaxio.demo.web.interceptor.UserContextInterceptor" />
+		</mvc:interceptor>	
 		<mvc:interceptor>
 			<mvc:mapping path="/home" />
 			<bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />

@@ -17,7 +17,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
- * Shared base repository providing query by example and pattern.
+ * Shared base repository providing "query by example" and "query by pattern".
  */
 @NoRepositoryBean
 public interface CustomRepository<E, PK extends Serializable> extends PagingAndSortingRepository<E, PK>,
@@ -29,8 +29,7 @@ public interface CustomRepository<E, PK extends Serializable> extends PagingAndS
 
     List<E> find();
 
-    /**
-     * Lookup entities having at least one String attribute matching the passed pattern. Mostly used from autocomplete components.
-     */
     List<E> find(String pattern);
+
+    Page<E> find(SearchForm<E> searchForm);
 }

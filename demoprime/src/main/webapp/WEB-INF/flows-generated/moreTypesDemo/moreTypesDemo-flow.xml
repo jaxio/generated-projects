@@ -34,12 +34,12 @@
 			<set name="conversationScope.endParam" value="'_cascadeQuit'"></set>
 		</transition>
 	</subflow-state>
-    
+
 	<decision-state id="checkIfAlreadyOpenFlow">
 		<if test="flowsMenuHandler.isFlowAlreadyOpen(flowRequestContext,flowScope.moreTypesDemo)" then="endSwitchToAlreadyOpenFlow" else="edit" />
 	</decision-state>
 	
-    <!-- Edit subflow to edit any moreTypesDemo -->
+	<!-- Edit subflow to edit any moreTypesDemo -->
 	<subflow-state id="edit" subflow="moreTypesDemo/edit">
 		<input name="moreTypesDemo" value="moreTypesDemo" />
 		<transition on="endEdit" to="end" />
@@ -47,13 +47,13 @@
 		<transition on="deleteAndClose" to="end"/>
 	</subflow-state>
 
-    <!-- Create subflow to create a new moreTypesDemo -->
-    <subflow-state id="create" subflow="moreTypesDemo/edit">
-        <input name="moreTypesDemo" value="domainFactory.newMoreTypesDemo" />
-        <transition on="endEdit" to="end" />
-        <transition on="cancelEdit" to="end" />
-        <transition on="deleteAndClose" to="end"/>
-    </subflow-state>
+	<!-- Create subflow to create a new moreTypesDemo -->
+	<subflow-state id="create" subflow="moreTypesDemo/edit">
+		<input name="moreTypesDemo" value="domainFactory.newMoreTypesDemo" />
+		<transition on="endEdit" to="end" />
+		<transition on="cancelEdit" to="end" />
+		<transition on="deleteAndClose" to="end"/>
+	</subflow-state>
 
 
 	<end-state id="endNew" view="externalRedirect:servletRelative:/moreTypesDemo?create=true" />

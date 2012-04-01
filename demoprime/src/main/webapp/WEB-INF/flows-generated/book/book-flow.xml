@@ -34,12 +34,12 @@
 			<set name="conversationScope.endParam" value="'_cascadeQuit'"></set>
 		</transition>
 	</subflow-state>
-    
+
 	<decision-state id="checkIfAlreadyOpenFlow">
 		<if test="flowsMenuHandler.isFlowAlreadyOpen(flowRequestContext,flowScope.book)" then="endSwitchToAlreadyOpenFlow" else="edit" />
 	</decision-state>
 	
-    <!-- Edit subflow to edit any book -->
+	<!-- Edit subflow to edit any book -->
 	<subflow-state id="edit" subflow="book/edit">
 		<input name="book" value="book" />
 		<transition on="endEdit" to="end" />
@@ -47,13 +47,13 @@
 		<transition on="deleteAndClose" to="end"/>
 	</subflow-state>
 
-    <!-- Create subflow to create a new book -->
-    <subflow-state id="create" subflow="book/edit">
-        <input name="book" value="domainFactory.newBook" />
-        <transition on="endEdit" to="end" />
-        <transition on="cancelEdit" to="end" />
-        <transition on="deleteAndClose" to="end"/>
-    </subflow-state>
+	<!-- Create subflow to create a new book -->
+	<subflow-state id="create" subflow="book/edit">
+		<input name="book" value="domainFactory.newBook" />
+		<transition on="endEdit" to="end" />
+		<transition on="cancelEdit" to="end" />
+		<transition on="deleteAndClose" to="end"/>
+	</subflow-state>
 
 
 	<end-state id="endNew" view="externalRedirect:servletRelative:/book?create=true" />

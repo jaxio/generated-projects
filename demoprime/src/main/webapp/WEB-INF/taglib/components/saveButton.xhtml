@@ -17,9 +17,9 @@
 		value="#{msg.menu_send}"
 		rendered="#{not sub and not readonly}" />
 
-   	<p:commandButton id="ok" action="ok" process="@form" ajax="true" update="messages" 
-   		styleClass="default"
-   		icon="ui-icon-check"
-   		value="${msg.submit}"
-   		rendered="#{sub and not readonly}" />
+	<p:commandButton id="ok" action="ok" process="@form" ajax="true" update="messages"
+		styleClass="default"
+		icon="ui-icon-check"
+		value="${msg.submit}"
+		rendered="#{sub and not readonly}" />
 </ui:composition>

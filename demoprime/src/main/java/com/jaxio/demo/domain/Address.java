@@ -9,6 +9,7 @@ package com.jaxio.demo.domain;
 
 import com.google.common.base.Objects;
 
+import javax.xml.bind.annotation.XmlTransient;
 import com.jaxio.demo.domain.PersistableHashBuilder;
 
 import javax.persistence.Column;
@@ -19,7 +20,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlTransient;
 import org.apache.log4j.Logger;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.domain.Persistable;
@@ -61,7 +61,7 @@ public class Address implements Persistable<Integer> {
 
     // -- [id] ------------------------
 
-    @Column(name = "ID", nullable = false, unique = true, precision = 10)
+    @Column(name = "ID", precision = 10)
     @GeneratedValue
     @Id
     public Integer getId() {
@@ -133,10 +133,10 @@ public class Address implements Persistable<Integer> {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add(Address_.id.getName(), getId()) //
-                .add(Address_.streetName.getName(), getStreetName()) //
-                .add(Address_.city.getName(), getCity()) //
-                .add(Address_.version.getName(), getVersion()) //
+                .add("id", getId()) //
+                .add("streetName", getStreetName()) //
+                .add("city", getCity()) //
+                .add("version", getVersion()) //
                 .toString();
     }
 }

@@ -7,6 +7,7 @@
  */
 package com.jaxio.demo.web.component;
 
+import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.Iterator;
@@ -63,7 +64,7 @@ public class MessagesHelper {
         while (msgs.hasNext()) {
             res.add(new Message(null, msgs.next()));
         }
-        return res.toArray(new Message[res.size()]);
+        return toArray(res, Message.class);
     }
 
     public Message[] getNonGlobalMessages() {
@@ -78,7 +79,7 @@ public class MessagesHelper {
             }
         }
 
-        return res.toArray(new Message[res.size()]);
+        return toArray(res, Message.class);
     }
 
     public boolean hasGlobalMessages() {

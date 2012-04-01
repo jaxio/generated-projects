@@ -20,10 +20,10 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Store the 'active flows'. This class is used from the xml flows to add/update meta-information 
+ * Store the 'active flows'. This class is used from the xml flows to add/update meta-information
  * about the current flow (label, current url)
  * It is used from the view to obtain the 'active flows' as a primefaces Menu.
- * 
+ *
  * Note: No annotation is used for this bean as it is Session bean defined as a scoped-proxy. See springmvc-parent.xml conf file.
  */
 public class FlowsMenuHandler implements Serializable {

@@ -8,6 +8,7 @@
 package com.jaxio.demo.security;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,87 +38,52 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private AccountRepository accountRepository;
 
-    public UserDetailsServiceImpl() {
-    }
-
     @Autowired
     public UserDetailsServiceImpl(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
 
-    /**
-     * Retrieve an account depending on its login this method is not case sensitive.<br>
-     * use <code>obtainAccount</code> to match the login to either email, login or whatever is your login logic
-     *
-     * @param login the account login
-     * @return a Spring Security userdetails object that matches the login
-     * @see #obtainAccount(String)
-     * @throws UsernameNotFoundException when the user could not be found
-     * @throws DataAccessException when an error occured while retrieving the account
-     */
+    @Override
     @Transactional
-    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException, DataAccessException {
-        if (login == null || login.trim().isEmpty()) {
-            throw new UsernameNotFoundException("Empty login");
-        }
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
+        Account user = getUser(username);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Security verification for user '" + login + "'");
-        }
-
-        Account account = obtainAccount(login);
-
-        if (account == null) {
-            if (log.isInfoEnabled()) {
-                log.info("Account " + login + " could not be found");
-            }
-            throw new UsernameNotFoundException("account " + login + " could not be found");
-        }
-
-        Collection<GrantedAuthority> grantedAuthorities = obtainGrantedAuthorities(login);
-
-        if (grantedAuthorities == null) {
-            grantedAuthorities = toGrantedAuthorities(account.getRoleNames());
-        }
-
-        String password = obtainPassword(login);
-
-        if (password == null) {
-            password = account.getPassword();
-        }
-
-        boolean enabled = account.getIsEnabled();
-        boolean accountNonExpired = true;
+        String password = user.getPassword();
+        Collection<GrantedAuthority> grantedAuthorities = toGrantedAuthorities(user.getRoleNames());
+        boolean enabled = user.getIsEnabled();
+        boolean userNonExpired = true;
         boolean credentialsNonExpired = true;
-        boolean accountNonLocked = true;
+        boolean userNonLocked = true;
 
-        return new org.springframework.security.core.userdetails.User(login, password, enabled, accountNonExpired,
-                credentialsNonExpired, accountNonLocked, grantedAuthorities);
+        return new org.springframework.security.core.userdetails.User( //
+                username, password, //
+                enabled, userNonExpired, //
+                credentialsNonExpired, userNonLocked, //
+                grantedAuthorities);
     }
 
-    /**
-     * Return the account depending on the login provided by spring security.
-     * @return the account if found
-     */
-    protected Account obtainAccount(String login) {
-        return accountRepository.getByUsername(login);
+    private Account getUser(String username) {
+        if (log.isDebugEnabled()) {
+            log.debug("Security verification for user '" + username + "'");
+        }
+
+        if (isBlank(username)) {
+            throw new UsernameNotFoundException("Empty username");
+        }
+
+        Account user = accountRepository.getByUsername(username);
+
+        if (user == null) {
+            if (log.isInfoEnabled()) {
+                log.info("User " + username + " could not be found");
+            }
+            throw new UsernameNotFoundException("user " + username + " could not be found");
+        }
+
+        return user;
     }
 
-    /**
-     * Returns null. Subclass may override it to provide their own granted authorities.
-     */
-    protected Collection<GrantedAuthority> obtainGrantedAuthorities(String username) {
-        return null;
-    }
-
-    /**
-     * Returns null. Subclass may override it to provide their own password.
-     */
-    protected String obtainPassword(String username) {
-        return null;
-    }
-
-    public static Collection<GrantedAuthority> toGrantedAuthorities(List<String> roles) {
+    private Collection<GrantedAuthority> toGrantedAuthorities(List<String> roles) {
         List<GrantedAuthority> result = newArrayList();
 
         for (String role : roles) {

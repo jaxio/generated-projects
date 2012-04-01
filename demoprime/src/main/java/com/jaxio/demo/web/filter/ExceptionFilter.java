@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.springframework.webflow.execution.FlowExecutionException;
 
 /**
  * In case of exception, this filter redirects the user to an error page that displays a unique exception ID, also dumped in the log.
@@ -58,22 +59,29 @@ public final class ExceptionFilter implements Filter {
 
             HttpServletResponse response = (HttpServletResponse) resp;
 
-            if (!isAjax(request)) {
-                response.sendRedirect(request.getContextPath() + request.getServletPath() + "/error");
+            String redirectionUrl = null;
+
+            if (e.getCause() instanceof FlowExecutionException) {
+                redirectionUrl = request.getPathInfo() + "?execution=" + req.getParameter("execution");
             } else {
+                redirectionUrl = "/error";
+            }
+
+            if (isAjax(request)) {
                 // let's leverage jsf2 partial response
-                response.getWriter().print(xmlPartialRedirectToPage(request, "/error"));
+                response.getWriter().print(xmlPartialRedirectToPage(request, redirectionUrl));
                 response.flushBuffer();
+            } else {
+                response.sendRedirect(request.getContextPath() + request.getServletPath() + redirectionUrl);
             }
         }
     }
 
     private String xmlPartialRedirectToPage(HttpServletRequest request, String page) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<?xml version='1.0' encoding='UTF-8'?>");
-        sb.append("<partial-response><redirect url=\"").append(request.getContextPath()).append(
-                request.getServletPath()).append(page).append("\"/></partial-response>");
-        return sb.toString();
+        return "<?xml version='1.0' encoding='UTF-8'?>" //
+                + "<partial-response>" //
+                + "<redirect url=\"" + request.getContextPath() + request.getServletPath() + page + "\"/>" //
+                + "</partial-response>";
     }
 
     private boolean isAjax(HttpServletRequest request) {

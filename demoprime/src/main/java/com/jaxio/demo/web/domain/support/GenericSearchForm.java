@@ -24,11 +24,11 @@ public abstract class GenericSearchForm<E> extends LazyDataModel<E> {
     private boolean resetPaginator = true;
 
     /**
-     * Call it from your flow when a 'search' event is received, 
+     * Call it from your flow when a 'search' event is received,
      * store the result in your viewState and use it from your view.
-     * Important note: the returned instance as soon as it is serialized  lives its own life. 
-     * 
-     * @return the model expected by dataTable with lazy loading support.  
+     * Important note: the returned instance as soon as it is serialized lives its own life.
+     *
+     * @return the model expected by dataTable with lazy loading support.
      */
     public LazyDataModel<E> getLazyDataModel() {
         resetPaginator = true;

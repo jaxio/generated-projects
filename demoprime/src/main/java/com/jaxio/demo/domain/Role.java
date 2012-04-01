@@ -9,6 +9,8 @@ package com.jaxio.demo.domain;
 
 import com.google.common.base.Objects;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,7 +18,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlTransient;
 import org.apache.log4j.Logger;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.domain.Persistable;
@@ -56,7 +57,7 @@ public class Role implements Persistable<Integer> {
 
     // -- [id] ------------------------
 
-    @Column(name = "ID", nullable = false, unique = true, precision = 10)
+    @Column(name = "ID", precision = 10)
     @GeneratedValue
     @Id
     public Integer getId() {
@@ -105,8 +106,8 @@ public class Role implements Persistable<Integer> {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add(Role_.id.getName(), getId()) //
-                .add(Role_.roleName.getName(), getRoleName()) //
+                .add("id", getId()) //
+                .add("roleName", getRoleName()) //
                 .toString();
     }
 }

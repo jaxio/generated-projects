@@ -8,6 +8,11 @@
 package com.jaxio.demo.web.component;
 
 import static com.jaxio.demo.web.component.DatePickerHelper.normalize;
+import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.HOUR_OF_DAY;
+import static java.util.Calendar.MINUTE;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -28,8 +33,14 @@ import com.jaxio.demo.web.converter.LocalDateConverter;
 import com.jaxio.demo.web.converter.LocalDateTimeConverter;
 
 /**
- * Java side of the 'datePicker' composite component. Inspired from http://weblogs.java.net/blog/cayhorstmann/archive/2010/01/30/composite-input-components-jsf
- * Support java.util.Date, joda LocalDate and joda LocalDateTime. 
+ * Java side of the 'datePicker' composite component that supports
+ * <ul>
+ * <li>{@link Date}</li>
+ * <li>{@link LocalDate}</li>
+ * <li>{@link LocalDateTime}</li>
+ * </ul>
+ *
+ * @see http://weblogs.java.net/blog/cayhorstmann/archive/2010/01/30/composite-input-components-jsf
  */
 @FacesComponent("components.DatePicker")
 public class DatePicker extends UIInput implements NamingContainer {
@@ -48,60 +59,65 @@ public class DatePicker extends UIInput implements NamingContainer {
         UIInput min = findUIInput("minute");
 
         Converter converter = getConverter();
-
         if (converter instanceof LocalDateConverter) {
-            LocalDate localDate = (LocalDate) getValue();
-
-            if (localDate == null) {
-                localDate = LocalDate.fromCalendarFields(Calendar.getInstance(TimeZone.getTimeZone("GMT")));
-            }
-
-            year.setValue(normalize(localDate.getYear()));
-            month.setValue(normalize(localDate.getMonthOfYear()));
-            day.setValue(normalize(localDate.getDayOfMonth()));
+            encode(year, month, day, (LocalDate) getValue());
         } else if (converter instanceof LocalDateTimeConverter) {
-            LocalDateTime localDateTime = (LocalDateTime) getValue();
-
-            if (localDateTime == null) {
-                localDateTime = LocalDateTime.fromCalendarFields(Calendar.getInstance(TimeZone.getTimeZone("GMT")));
-            }
-
-            year.setValue(normalize(localDateTime.getYear()));
-            month.setValue(normalize(localDateTime.getMonthOfYear()));
-            day.setValue(normalize(localDateTime.getDayOfMonth()));
-            hour.setValue(normalize(localDateTime.getHourOfDay()));
-            min.setValue(normalize(localDateTime.getMinuteOfHour()));
+            encode(year, month, day, hour, min, (LocalDateTime) getValue());
         } else {
-
-            Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-
-            Date date = (Date) getValue();
-            if (date != null) {
-                c.setTime(date);
-            }
-
-            if (year != null) {
-                year.setValue(normalize(c.get(Calendar.YEAR)));
-            }
-
-            if (month != null) {
-                month.setValue(normalize(c.get(Calendar.MONTH) + 1));
-            }
-
-            if (day != null) {
-                day.setValue(normalize(c.get(Calendar.DAY_OF_MONTH)));
-            }
-
-            if (hour != null) {
-                hour.setValue(normalize(c.get(Calendar.HOUR_OF_DAY)));
-            }
-
-            if (min != null) {
-                min.setValue(normalize(c.get(Calendar.MINUTE)));
-            }
+            encode(year, month, day, hour, min);
         }
 
         super.encodeBegin(context);
+    }
+
+    private void encode(UIInput year, UIInput month, UIInput day, UIInput hour, UIInput min) {
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        Date date = (Date) getValue();
+        if (date != null) {
+            c.setTime(date);
+        }
+
+        if (year != null) {
+            year.setValue(normalize(c.get(YEAR)));
+        }
+
+        if (month != null) {
+            month.setValue(normalize(c.get(MONTH) + 1));
+        }
+
+        if (day != null) {
+            day.setValue(normalize(c.get(DAY_OF_MONTH)));
+        }
+
+        if (hour != null) {
+            hour.setValue(normalize(c.get(HOUR_OF_DAY)));
+        }
+
+        if (min != null) {
+            min.setValue(normalize(c.get(MINUTE)));
+        }
+    }
+
+    private void encode(UIInput year, UIInput month, UIInput day, UIInput hour, UIInput min, LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            localDateTime = LocalDateTime.fromCalendarFields(Calendar.getInstance(TimeZone.getTimeZone("GMT")));
+        }
+
+        year.setValue(normalize(localDateTime.getYear()));
+        month.setValue(normalize(localDateTime.getMonthOfYear()));
+        day.setValue(normalize(localDateTime.getDayOfMonth()));
+        hour.setValue(normalize(localDateTime.getHourOfDay()));
+        min.setValue(normalize(localDateTime.getMinuteOfHour()));
+    }
+
+    private void encode(UIInput year, UIInput month, UIInput day, LocalDate localDate) {
+        if (localDate == null) {
+            localDate = LocalDate.fromCalendarFields(Calendar.getInstance(TimeZone.getTimeZone("GMT")));
+        }
+
+        year.setValue(normalize(localDate.getYear()));
+        month.setValue(normalize(localDate.getMonthOfYear()));
+        day.setValue(normalize(localDate.getDayOfMonth()));
     }
 
     @Override
@@ -114,14 +130,13 @@ public class DatePicker extends UIInput implements NamingContainer {
      */
     @Override
     public Object getSubmittedValue() {
-        StringBuilder sb = new StringBuilder();
-
         UIInput year = findUIInput("year");
         UIInput month = findUIInput("month");
         UIInput day = findUIInput("day");
         UIInput hour = findUIInput("hour");
         UIInput minute = findUIInput("minute");
 
+        StringBuilder sb = new StringBuilder();
         if (year.isRendered() && month.isRendered() && day.isRendered()) {
             sb.append(year.getSubmittedValue());
             sb.append("-").append(month.getSubmittedValue());

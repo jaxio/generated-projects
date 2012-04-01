@@ -8,34 +8,34 @@
 -->
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
-    
+
 	<persistence-context />
 
-	<!-- ====================== -->
-	<!-- Flow input parameters  -->
-	<!-- ====================== -->
-    <!-- * legacy: the entity to edit/create -->
+	<!-- ===================== -->
+	<!-- Flow input parameters -->
+	<!-- ===================== -->
+	<!-- * legacy: the entity to edit/create -->
 	<!-- * sub: when sub is true, we assume this flow is used as a subflow by a parent flow. -->
 	<!-- * readonly: open the passed legacy in read-only mode -->
-    <input name="legacy" required="true" value="flowScope.legacy"/>
+	<input name="legacy" required="true" value="flowScope.legacy"/>
 	<input name="sub" type="boolean" value="flowScope.sub"/>
 	<input name="readonly" type="boolean" />
 
 	<decision-state id="startChoice">
 		<if test="sub" then="legacySubEdit" else="legacyEdit" />
 	</decision-state>
-	<!-- ====================== -->
+	<!-- ==== -->
 	<!-- EDIT -->
-	<!-- ====================== -->
+	<!-- ==== -->
 	<view-state id="legacyEdit" model="legacy" parent="#legacyEditCommon">
-        <on-render>
-            <evaluate expression="flowsMenuHandler.updateMenu(flowRequestContext,legacy.id,legacyConverter.print(legacy))" /> 
-        </on-render>
-    
-        <!-- event handlers -->
-        <transition on="send">
-            <evaluate expression="messageUtil.info('status_submitted_ok')" />        
-        </transition>
+		<on-render>
+			<evaluate expression="flowsMenuHandler.updateMenu(flowRequestContext,legacy.id,legacyConverter.print(legacy))" /> 
+		</on-render>
+
+		<!-- event handlers -->
+		<transition on="send">
+			<evaluate expression="messageUtil.info('status_submitted_ok')" />		
+		</transition>
 
 		<transition on="save">
 			<evaluate expression="legacyRepository.save(flowScope.legacy)" />
@@ -43,42 +43,42 @@
 		</transition>
 
 		<transition on="saveAndClose">
-            <evaluate expression="legacyRepository.save(flowScope.legacy)" />
-            <evaluate expression="primeFacesUtil.forceClose()"/>
-        </transition>
-        
+			<evaluate expression="legacyRepository.save(flowScope.legacy)" />
+			<evaluate expression="primeFacesUtil.forceClose()"/>
+		</transition>
+
 		<transition on="close" validate="false" >
-            <evaluate expression="primeFacesUtil.showAskForSaveDialog((legacy != null and legacy.isNew()) or persistenceContext.delegate.isDirty())"/>
-        </transition>
+			<evaluate expression="primeFacesUtil.showAskForSaveDialog(persistenceContext, legacy)"/>
+		</transition>
 
 		<transition on="quit" validate="false">
 			<set name="conversationScope.endParam" value="'_cascadeQuit'" />
-            <!--  TODO -->
-            <evaluate expression="primeFacesUtil.showAskForSaveDialog((legacy != null and legacy.isNew()) or persistenceContext.delegate.isDirty())"/>            
+			<!--  TODO -->
+			<evaluate expression="primeFacesUtil.showAskForSaveDialog(persistenceContext, legacy)"/>
 		</transition>
 
-        <!-- transitions -->
-        <transition on="deleteAndClose" to="deleteAndClose" validate="false">
-            <evaluate expression="legacyService.delete(flowScope.legacy)" />
-        </transition>        
+		<!-- transitions -->
+		<transition on="deleteAndClose" to="deleteAndClose" validate="false">
+			<evaluate expression="legacyRepository.delete(flowScope.legacy.id)" />
+		</transition>
 	</view-state>
 
-	<!-- ====================== -->
+	<!-- ======== -->
 	<!-- SUB-EDIT -->
-	<!-- ====================== -->
+	<!-- ======== -->
 	<view-state id="legacySubEdit" model="legacy" parent="#legacyEditCommon">
-        <!-- events handlers -->
+		<!-- events handlers -->
 		<transition on="ok">
-            <evaluate expression="primeFacesUtil.forceClose()"/>
-        </transition>
-        
-        <!-- transitions -->        
-        <transition on="cancel" to="cancelEdit" validate="false" />
+			<evaluate expression="primeFacesUtil.forceClose()"/>
+		</transition>
+
+		<!-- transitions -->
+		<transition on="cancel" to="cancelEdit" validate="false" />
 	</view-state>
 
-	<!-- ====================== -->
+	<!-- =========== -->
 	<!-- COMMON-EDIT -->
-	<!-- ====================== -->
+	<!-- =========== -->
 	<view-state id="legacyEditCommon" model="legacy">
 	</view-state>
 
@@ -91,27 +91,27 @@
 	<end-state id="cancelEdit" />
 	<end-state id="deleteAndClose" />
 
-    <!-- see the SimpleExceptionHandler java code -->
-    <end-state id="error" />
+	<!-- see the SimpleExceptionHandler java code -->
+	<end-state id="error" />
 
-    <!-- ================== -->
-    <!-- GLOBAL TRANSITIONS -->
-    <!-- ================== -->
-    <global-transitions>    
-        <!-- transitions -->
-        <transition on="forceClose" to="endEdit" validate="false"/>
-        
-        <!-- testing errors -->
-        <transition on="ajaxDebugThrowException">
-            <evaluate expression="exceptionUtil.throwRuntimeException()" />
-        </transition>
-        <transition on="debugThrowException" to="startChoice">
-            <evaluate expression="exceptionUtil.throwRuntimeException()" />
-        </transition>
-    </global-transitions>
+	<!-- ================== -->
+	<!-- GLOBAL TRANSITIONS -->
+	<!-- ================== -->
+	<global-transitions>
+		<!-- transitions -->
+		<transition on="forceClose" to="endEdit" validate="false"/>
 
-    <!-- ========== -->
-    <!-- EXCEPTIONS -->
-    <!-- ========== -->
-    <exception-handler bean="simpleExceptionHandler"/>
+		<!-- testing errors -->
+		<transition on="ajaxDebugThrowException">
+			<evaluate expression="exceptionUtil.throwRuntimeException()" />
+		</transition>
+		<transition on="debugThrowException" to="startChoice">
+			<evaluate expression="exceptionUtil.throwRuntimeException()" />
+		</transition>
+	</global-transitions>
+
+	<!-- ========== -->
+	<!-- EXCEPTIONS -->
+	<!-- ========== -->
+	<exception-handler bean="simpleExceptionHandler"/>
 </flow>

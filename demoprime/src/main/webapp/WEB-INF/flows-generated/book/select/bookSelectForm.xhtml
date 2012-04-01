@@ -7,56 +7,55 @@
  ! Template pack-jsf2-primefaces-sd:src/main/webapp/WEB-INF/flows/select/selectForm.e.vm.xhtml
 -->
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:c="http://java.sun.com/jsp/jstl/core"
-  xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" 
-  xmlns:p="http://primefaces.org/ui"
-  xmlns:app="http://springfuse.jaxio.com/app"
-  xmlns:appcc="http://java.sun.com/jsf/composite/components">
-  <app:search data="#{books}" title="${msg.book}">
-    <ui:define name="filters">
-      	<f:validateBean disabled="true">      
-        <h:panelGrid columns="2">
-        <h:outputLabel for="account" value="${msg.book_account}" />
-        <h:selectOneMenu id="account"
-			value="#{bookSearchForm.book.account}"
-          	converter="#{accountConverter}">
-          	<f:selectItem itemValue="" itemLabel="-- Select One" />
-			<f:selectItems value="#{accountRepository.find()}" var="item" itemLabel="#{accountConverter.print(item)}" />
-        </h:selectOneMenu>
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:app="http://springfuse.jaxio.com/app"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components">
+	<app:search data="#{books}" title="${msg.book}">
+		<ui:define name="filters">
+			<f:validateBean disabled="true">
+				<h:panelGrid columns="2">
 
-		<h:outputLabel for="title" value="${msg.book_title}" />
-		<p:inputText id="title" value="#{bookSearchForm.book.title}" maxlength="80" />
+					<h:outputLabel for="account" value="${msg.book_account}" />
+					<h:selectOneMenu id="account" value="#{bookSearchForm.book.account}" converter="#{accountConverter}">
+						<f:selectItem itemValue="" itemLabel="-- Select One" />
+						<f:selectItems value="#{accountRepository.find()}" var="item" itemLabel="#{accountConverter.print(item)}" />
+					</h:selectOneMenu>
 
-        <h:outputLabel for="numberOfPages" value="${msg.book_numberOfPages}" />
-        <h:panelGrid columns="4" id="numberOfPages">
-			<h:outputLabel for="numberOfPagesRangeFrom" value="${msg.range_from}" />
-	        <p:inputText id="numberOfPagesRangeFrom" value="#{bookSearchForm.numberOfPagesRange.from}" converter="javax.faces.Integer"/>
-	        <h:outputLabel for="numberOfPagesRangeTo" value="${msg.range_to}" />        
-	        <p:inputText id="numberOfPagesRangeTo" value="#{bookSearchForm.numberOfPagesRange.to}" converter="javax.faces.Integer"/>
-		</h:panelGrid>	    	
-	</h:panelGrid>
-	</f:validateBean>	
-    </ui:define>
+					<h:outputLabel for="title" value="${msg.book_title}" />
+					<p:inputText id="title" value="#{bookSearchForm.book.title}" maxlength="255" />
 
-    <ui:define name="result">
-      	<p:column id="book_title" headerText="${msg.book_title}" sortBy="#{item.title}" width="45%">
-      		<h:outputText value="#{item.title}" />
-		</p:column>
-      	<p:column id="book_numberOfPages" headerText="${msg.book_numberOfPages}" sortBy="#{item.numberOfPages}" width="45%">
-      		<h:outputText value="#{item.numberOfPages}" />
-		</p:column>
-		<p:column id="open" headerText="${msg.actions}" width="10%">
-			<c:if test="#{not empty select and select}">
-				<app:iconSelect action="select" process="@this" title="${bookConverter.print(item)}">
-					<f:setPropertyActionListener value="#{item}" target="#{books.selectedRow}" />				
-				</app:iconSelect>
-			</c:if>
-			<c:if test="#{empty select or not select}">
-				<app:iconEdit action="select" process="@this" title="${bookConverter.print(item)}">
-					<f:setPropertyActionListener value="#{item}" target="#{books.selectedRow}" />		
-				</app:iconEdit>
-			</c:if>
-		</p:column>
-    </ui:define>
-  </app:search>
+					<h:outputLabel for="numberOfPages" value="${msg.book_numberOfPages}" />
+					<h:panelGrid columns="4" id="numberOfPages" styleClass="aria-role-presentation">
+						<h:outputLabel for="numberOfPagesRangeFrom" value="${msg.range_from}" />
+						<p:inputText id="numberOfPagesRangeFrom" value="#{bookSearchForm.numberOfPagesRange.from}" converter="javax.faces.Integer"/>
+						<h:outputLabel for="numberOfPagesRangeTo" value="${msg.range_to}" />
+						<p:inputText id="numberOfPagesRangeTo" value="#{bookSearchForm.numberOfPagesRange.to}" converter="javax.faces.Integer"/>
+					</h:panelGrid>
+				</h:panelGrid>
+			</f:validateBean>
+		</ui:define>
+
+		<ui:define name="result">
+			<p:column id="book_title" headerText="${msg.book_title}" sortBy="#{item.title}" width="45%">
+				<h:outputText value="#{item.title}" />
+			</p:column>
+			<p:column id="book_numberOfPages" headerText="${msg.book_numberOfPages}" sortBy="#{item.numberOfPages}" width="45%">
+				<h:outputText value="#{item.numberOfPages}" />
+			</p:column>
+			<p:column id="open" headerText="${msg.actions}" width="10%">
+				<c:if test="#{not empty select and select}">
+					<app:iconSelect action="select" process="@this" title="${bookConverter.print(item)}">
+						<f:setPropertyActionListener value="#{item}" target="#{books.selectedRow}" />
+					</app:iconSelect>
+				</c:if>
+				<c:if test="#{empty select or not select}">
+					<app:iconEdit action="select" process="@this" title="${bookConverter.print(item)}">
+						<f:setPropertyActionListener value="#{item}" target="#{books.selectedRow}" />
+					</app:iconEdit>
+				</c:if>
+			</p:column>
+		</ui:define>
+	</app:search>
 </ui:composition>

@@ -34,12 +34,12 @@
 			<set name="conversationScope.endParam" value="'_cascadeQuit'"></set>
 		</transition>
 	</subflow-state>
-    
+
 	<decision-state id="checkIfAlreadyOpenFlow">
 		<if test="flowsMenuHandler.isFlowAlreadyOpen(flowRequestContext,flowScope.account)" then="endSwitchToAlreadyOpenFlow" else="edit" />
 	</decision-state>
 	
-    <!-- Edit subflow to edit any account -->
+	<!-- Edit subflow to edit any account -->
 	<subflow-state id="edit" subflow="account/edit">
 		<input name="account" value="account" />
 		<transition on="endEdit" to="end" />
@@ -47,13 +47,13 @@
 		<transition on="deleteAndClose" to="end"/>
 	</subflow-state>
 
-    <!-- Create subflow to create a new account -->
-    <subflow-state id="create" subflow="account/edit">
-        <input name="account" value="domainFactory.newAccount" />
-        <transition on="endEdit" to="end" />
-        <transition on="cancelEdit" to="end" />
-        <transition on="deleteAndClose" to="end"/>
-    </subflow-state>
+	<!-- Create subflow to create a new account -->
+	<subflow-state id="create" subflow="account/edit">
+		<input name="account" value="domainFactory.newAccount" />
+		<transition on="endEdit" to="end" />
+		<transition on="cancelEdit" to="end" />
+		<transition on="deleteAndClose" to="end"/>
+	</subflow-state>
 
 
 	<end-state id="endNew" view="externalRedirect:servletRelative:/account?create=true" />

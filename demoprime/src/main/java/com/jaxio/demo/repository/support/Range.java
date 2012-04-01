@@ -11,8 +11,6 @@ import java.io.Serializable;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.springframework.data.jpa.domain.Specification;
-
 /**
  * Range support for {@link Comparable} types.
  */
@@ -139,9 +137,5 @@ public class Range<E, D extends Comparable<? super D>> implements Serializable {
         }
 
         return true;
-    }
-
-    public Specification<E> toSpecification() {
-        return RangeSpecification.toSpecification(this);
     }
 }

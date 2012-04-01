@@ -8,49 +8,55 @@
 -->
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" 
-  xmlns:p="http://primefaces.org/ui"
-  xmlns:app="http://springfuse.jaxio.com/app"
-  xmlns:appcc="http://java.sun.com/jsf/composite/components">
-  <f:validateBean disabled="true">        
-    <p:fieldset legend="${msg.document}">
-      <h:panelGrid columns="2" styleClass="aria-role-presentation">
-		<appcc:outputLabel for="documentBinary" value="${msg.document_documentBinary}"  />
-		<p:outputPanel id="downloadid" layout="block">
- 			<p:fileUpload id="documentBinary" fileUploadListener="#{document.handleFileUpload}" auto="true" update="downloadid"
- 				allowTypes="/(\.|\/)(gif|jpe?g|png|txt|doc|ppt|pdf|key|xls|number|pages)$/"
- 				mode="advanced" sizeLimit="2000000" rendered="#{!readonly}" />
-  			<h:commandLink rendered="#{not empty document.documentFileName}" value="#{document.documentFileName}"><p:fileDownload value="#{document.streamedContentFile}"/></h:commandLink>				      		
-   		</p:outputPanel>
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:app="http://springfuse.jaxio.com/app"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components">
+	<f:validateBean disabled="true">
+		<p:fieldset legend="${msg.document}">
+			<h:panelGrid columns="2" styleClass="aria-role-presentation">
+				<appcc:outputLabel for="documentBinary" value="${msg.document_documentBinary}"  />
+				<p:outputPanel id="documentBinaryOP">
+					<p:fileUpload id="documentBinary"
+						fileUploadListener="#{document.handleFileUpload}"
+						mode="advanced"
+						update="documentBinaryOP"
+						sizeLimit="2000000"
+						allowTypes="/(\.|\/)(gif|jpe?g|png|txt|doc|ppt|pdf|key|xls|number|pages)$/"
+						rendered="#{!readonly}" />
+					<h:commandLink 
+						rendered="#{not empty document.documentFileName}" 
+						value="#{document.documentFileName}"><p:fileDownload value="#{document.streamedContentFile}"/></h:commandLink>						
+				</p:outputPanel>
 
 
 
-		<!-- note: bug prevent us from using appcc:outputLabel -->
-		<label for="form:account_input">${msg.document_account}</label>
-		<h:panelGrid columns="2" styleClass="aria-role-presentation">
-			<p:autoComplete id="account" value="#{document.account}" label="${msg.document_account}" 
-				completeMethod="#{accountRepository.find}"
-		        var="item"
-		        itemValue="#{item}"
-		        itemLabel="#{accountConverter.print(item)}"	        
-		        converter="#{accountConverter}" 
-		        rendered="#{false}"
-		        size="50">
-				<p:ajax event="itemSelect" listener="#{messageUtil.info('status_selected_ok',msg.document_account)}" update="messages" />
-			</p:autoComplete>
-			<h:outputText value="#{accountConverter.print(document.account)}" rendered="#{readonly}" />
-			
-			<h:panelGroup>
-				<h:outputText value="(not editable directly)" rendered="#{empty document.account}"/>
-        		<app:iconView action="viewAccount" title="${msg.document_account}" rendered="#{not empty document.account}"/>
-			</h:panelGroup>
-		</h:panelGrid>
+				<!-- note: bug prevent us from using appcc:outputLabel -->
+				<label for="form:account_input">${msg.document_account}</label>
+				<h:panelGrid columns="2" styleClass="aria-role-presentation">
+					<p:autoComplete id="account" value="#{document.account}" label="${msg.document_account}" 
+						completeMethod="#{accountRepository.find}"
+						var="item"
+						itemValue="#{item}"
+						itemLabel="#{accountConverter.print(item)}"
+						converter="#{accountConverter}" 
+						rendered="#{false}"
+						size="50">
+						<p:ajax event="itemSelect" listener="#{messageUtil.info('status_selected_ok',msg.document_account)}" update="messages" />
+					</p:autoComplete>
+					<h:outputText value="#{accountConverter.print(document.account)}" rendered="#{readonly}" />
+
+					<h:panelGroup>
+						<h:outputText value="(not editable directly)" rendered="#{empty document.account}"/>
+						<app:iconView action="viewAccount" title="${msg.document_account}" rendered="#{not empty document.account}"/>
+					</h:panelGroup>
+				</h:panelGrid>
 
 
-   	  </h:panelGrid>
-      <app:saveButton title="${msg.document}"/>
- 	</p:fieldset>
-  </f:validateBean>      
+			</h:panelGrid>
+			<app:saveButton title="${msg.document}"/>
+		</p:fieldset>
+	</f:validateBean>
 
 
 

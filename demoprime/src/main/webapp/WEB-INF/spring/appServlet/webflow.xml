@@ -21,8 +21,9 @@
 			<listener ref="JpaFlowExecutionListener" />
 			<listener ref="flowsMenuExecutionListener" />
 		</flow-execution-listeners>
-        <!-- Note: if you change ' max-executions' then please change also flowsMenuHandler.maxExecutions -->
-        <flow-execution-repository max-executions="5" max-execution-snapshots="3"/>        
+		<!-- Note1: if you change ' max-executions' then please change also flowsMenuHandler.maxExecutions -->
+		<!-- Note2: when max-execution-snapshots is "0" then snapshoting is disabled, this is better for performances -->
+		 <flow-execution-repository max-executions="5" max-execution-snapshots="0"/>
 	</flow-executor>
 
 	<!-- The registry of executable flow definitions -->
@@ -36,8 +37,8 @@
 	</flow-registry>
 
 	<!-- Configures the Spring Web Flow JSF integration -->
-	<faces:flow-builder-services id="flowBuilderServices" development="true" />    
-    
+	<faces:flow-builder-services id="flowBuilderServices" development="true" />	
+
 	<!-- A listener to create and release a FacesContext -->
 	<beans:bean id="facesContextListener" class="org.springframework.faces.webflow.FlowFacesContextLifecycleListener" />
 

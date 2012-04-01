@@ -9,6 +9,7 @@ package com.jaxio.demo.web.domain;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.jaxio.demo.domain.Book_.*;
+import static com.jaxio.demo.repository.support.Ranges.RangeInteger.newRangeInteger;
 import java.io.Serializable;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class BookSearchForm extends GenericSearchForm<Book> implements Serializa
     private static BookRepository bookRepository;
 
     private Book book = new Book();
-    private RangeInteger<Book> numberOfPagesRange = new RangeInteger<Book>(numberOfPages);
+    private RangeInteger<Book> numberOfPagesRange = newRangeInteger(numberOfPages);
 
     @Autowired
     public BookSearchForm(BookRepository instance) {

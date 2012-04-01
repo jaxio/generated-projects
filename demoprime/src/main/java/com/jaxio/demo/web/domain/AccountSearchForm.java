@@ -9,6 +9,7 @@ package com.jaxio.demo.web.domain;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.jaxio.demo.domain.Account_.*;
+import static com.jaxio.demo.repository.support.Ranges.RangeDate.newRangeDate;
 import java.io.Serializable;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class AccountSearchForm extends GenericSearchForm<Account> implements Ser
     private static AccountRepository accountRepository;
 
     private Account account = new Account();
-    private RangeDate<Account> birthDateRange = new RangeDate<Account>(birthDate);
+    private RangeDate<Account> birthDateRange = newRangeDate(birthDate);
 
     @Autowired
     public AccountSearchForm(AccountRepository instance) {

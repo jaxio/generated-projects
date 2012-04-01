@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
- * Lenient bean validator which disable validation in certain cases in order to let the user navigate to sub view without loosing the data entered in input field.  
+ * Lenient bean validator which disable validation in certain cases in order to let the user navigate to sub view without loosing the data entered in input field.
  */
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

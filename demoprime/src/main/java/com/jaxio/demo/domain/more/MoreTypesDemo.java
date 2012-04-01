@@ -9,6 +9,7 @@ package com.jaxio.demo.domain.more;
 
 import com.google.common.base.Objects;
 
+import javax.xml.bind.annotation.XmlTransient;
 import com.jaxio.demo.domain.PersistableHashBuilder;
 
 import static javax.persistence.TemporalType.DATE;
@@ -25,7 +26,6 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.Digits;
-import javax.xml.bind.annotation.XmlTransient;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
@@ -77,7 +77,7 @@ public class MoreTypesDemo implements Persistable<Integer> {
 
     // -- [id] ------------------------
 
-    @Column(name = "ID", nullable = false, unique = true, precision = 10)
+    @Column(name = "ID", precision = 10)
     @GeneratedValue
     @Id
     public Integer getId() {
@@ -239,18 +239,18 @@ public class MoreTypesDemo implements Persistable<Integer> {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add(MoreTypesDemo_.id.getName(), getId()) //
-                .add(MoreTypesDemo_.numberInt.getName(), getNumberInt()) //
-                .add(MoreTypesDemo_.numberLong.getName(), getNumberLong()) //
-                .add(MoreTypesDemo_.numberDouble.getName(), getNumberDouble()) //
-                .add(MoreTypesDemo_.numberFloat.getName(), getNumberFloat()) //
-                .add(MoreTypesDemo_.numberBigInteger.getName(), getNumberBigInteger()) //
-                .add(MoreTypesDemo_.numberBigDecimal.getName(), getNumberBigDecimal()) //
-                .add(MoreTypesDemo_.dateJavaTemporalDate.getName(), getDateJavaTemporalDate()) //
-                .add(MoreTypesDemo_.dateJavaTemporalTimestamp.getName(), getDateJavaTemporalTimestamp()) //
-                .add(MoreTypesDemo_.dateJoda.getName(), getDateJoda()) //
-                .add(MoreTypesDemo_.dateTimeJoda.getName(), getDateTimeJoda()) //
-                .add(MoreTypesDemo_.version.getName(), getVersion()) //
+                .add("id", getId()) //
+                .add("numberInt", getNumberInt()) //
+                .add("numberLong", getNumberLong()) //
+                .add("numberDouble", getNumberDouble()) //
+                .add("numberFloat", getNumberFloat()) //
+                .add("numberBigInteger", getNumberBigInteger()) //
+                .add("numberBigDecimal", getNumberBigDecimal()) //
+                .add("dateJavaTemporalDate", getDateJavaTemporalDate()) //
+                .add("dateJavaTemporalTimestamp", getDateJavaTemporalTimestamp()) //
+                .add("dateJoda", getDateJoda()) //
+                .add("dateTimeJoda", getDateTimeJoda()) //
+                .add("version", getVersion()) //
                 .toString();
     }
 }

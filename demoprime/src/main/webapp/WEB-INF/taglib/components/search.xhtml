@@ -1,19 +1,19 @@
 <ui:component xmlns="http://www.w3.org/1999/xhtml" 
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-  	xmlns:h="http://java.sun.com/jsf/html" 
-  	xmlns:f="http://java.sun.com/jsf/core" 
-  	xmlns:c="http://java.sun.com/jsp/jstl/core"
-  	xmlns:p="http://primefaces.org/ui"
-  	xmlns:app="http://springfuse.jaxio.com/app">
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:app="http://springfuse.jaxio.com/app">
 
 	<p:fieldset legend="#{msg.search_criteria}">
 		<ui:insert name="filters" />		
 		<p:commandButton id="search" action="search" process="@form"
-			oncomplete="APP.updateSearchResultsRegion(xhr,status,args)"	    			
+			oncomplete="APP.updateSearchResultsRegion(xhr,status,args)"
 			icon="iconSearch" styleClass="aria-search-button default"
 			update="searchResults"
 			value="#{msg.menu_search}" 
-			title="#{msg.menu_search} #{title}" />                        			
+			title="#{msg.menu_search} #{title}" />
 	</p:fieldset>
 
 	<!-- looks like safari/voiceover requires 'span' (not 'div') for live region-->
@@ -21,32 +21,32 @@
 	</span>
 
 	<span style="height: 16px; display: block;">
-	    <p:ajaxStatus>
-	        <f:facet name="start">
-	            <h:graphicImage name="icons/ajaxloading.gif" alt=""/>
-	        </f:facet>
-	        <f:facet name="error">
-	            <h:outputText value="Ouch, an ajax error (are your still logged in?)" />
-	        </f:facet>
-	        <f:facet name="success">
-	            <h:outputText value="" />
-	        </f:facet>
-	    </p:ajaxStatus>
+		<p:ajaxStatus>
+			<f:facet name="start">
+				<h:graphicImage name="icons/ajaxloading.gif" alt=""/>
+			</f:facet>
+			<f:facet name="error">
+				<h:outputText value="Ouch, an ajax error (are your still logged in?)" />
+			</f:facet>
+			<f:facet name="success">
+				<h:outputText value="" />
+			</f:facet>
+		</p:ajaxStatus>
 	</span>
 
 	<p:dataTable
-      id="searchResults"
-      value="#{data}"
-      var="item"
-      rows="10" 
-      paginator="true" 
-      paginatorAlwaysVisible="true"
-      paginatorPosition="bottom"
-      currentPageReportTemplate="{currentPage} / {totalPage}"       
-	  paginatorTemplate="{PreviousPageLink} {CurrentPageReport} {NextPageLink}"  
-      rowKey="#{item}"
-      height="500px">
+		id="searchResults"
+		value="#{data}"
+		var="item"
+		rows="10"
+		paginator="true"
+		paginatorAlwaysVisible="true"
+		paginatorPosition="bottom"
+		currentPageReportTemplate="{currentPage} / {totalPages}"
+		paginatorTemplate="{PreviousPageLink} {CurrentPageReport} {NextPageLink}"
+		rowKey="#{item}"
+		height="500px">
 
 		<ui:insert name="result" />
-    </p:dataTable>
+	</p:dataTable>
 </ui:component>
