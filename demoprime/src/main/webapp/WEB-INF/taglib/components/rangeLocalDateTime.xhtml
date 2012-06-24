@@ -1,0 +1,18 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components">
+	<h:outputLabel for="${id}" value="${label} :" />	
+	<h:panelGrid columns="4" id="${id}" styleClass="aria-role-presentation">
+		<label for="form:${id}RangeFrom_input">${msg.date_range_from}</label>
+		<p:calendar id="${id}RangeFrom" value="#{value.from}" pattern="yyyy-MM-dd HH:mm">
+			<f:converter converterId="localDateTimeConverter"/>
+		</p:calendar>
+		<label for="form:${id}RangeTo_input">${msg.date_range_to}</label>
+		<p:calendar id="${id}RangeTo" value="#{value.to}" pattern="yyyy-MM-dd HH:mm">
+			<f:converter converterId="localDateTimeConverter"/>
+		</p:calendar>
+	</h:panelGrid>
+</ui:composition>

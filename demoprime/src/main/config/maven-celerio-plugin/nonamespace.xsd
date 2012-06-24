@@ -1,0 +1,34 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="formatterEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="USE_FORMATTER_FILE"/>
+      <xs:enumeration value="USE_ECLIPSE_DEFAULT"/>
+      <xs:enumeration value="NONE"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element type="profiles" name="profiles"/>
+  <xs:complexType name="profile">
+    <xs:sequence>
+      <xs:element type="setting" name="setting" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="kind"/>
+    <xs:attribute type="xs:string" name="name"/>
+    <xs:attribute type="xs:string" name="version"/>
+  </xs:complexType>
+  <xs:complexType name="eclipseFormatter">
+    <xs:sequence/>
+    <xs:attribute type="formatterEnum" use="required" name="formatterChoice"/>
+    <xs:attribute type="xs:string" name="formatterFile"/>
+  </xs:complexType>
+  <xs:complexType name="setting">
+    <xs:sequence/>
+    <xs:attribute type="xs:string" use="required" name="id"/>
+    <xs:attribute type="xs:string" use="required" name="value"/>
+  </xs:complexType>
+  <xs:complexType name="profiles">
+    <xs:sequence>
+      <xs:element type="profile" name="profile" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="version"/>
+  </xs:complexType>
+</xs:schema>

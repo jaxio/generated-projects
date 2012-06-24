@@ -14,7 +14,7 @@
 	</composite:interface>
 
 	<composite:implementation>		
-		<h:outputLabel for="#{cc.attrs.for}" value="#{cc.attrs.value} #{cc.attrs.required? resourceBundle.label_required_suffix : ''}" styleClass="#{cc.attrs.required ? 'required' : ''}" />
+		<h:outputLabel for="#{cc.attrs.for}" value="#{cc.attrs.value} #{cc.attrs.required? resourceBundle.label_required_suffix : ''} :" styleClass="#{cc.attrs.required ? 'required' : ''}" />
 	</composite:implementation>
 </body>
 </html>

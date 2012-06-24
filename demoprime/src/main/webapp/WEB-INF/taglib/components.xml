@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<facelet-taglib xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facelettaglibrary_2_0.xsd"
-	version="2.0">
+<facelet-taglib xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facelettaglibrary_2_0.xsd" version="2.0">
 	<namespace>http://springfuse.jaxio.com/app</namespace>
 	<tag>
 		<tag-name>panelMenu</tag-name>
@@ -13,14 +10,6 @@
 		<source>components/panelTopMenu.xhtml</source>
 	</tag>
 	<tag>
-		<tag-name>emptyPanel</tag-name>
-		<source>components/emptyPanel.xhtml</source>
-	</tag>
-	<tag>
-		<tag-name>subSelect</tag-name>
-		<source>components/subSelect.xhtml</source>
-	</tag>
-	<tag>
 		<tag-name>search</tag-name>
 		<source>components/search.xhtml</source>
 	</tag>
@@ -28,6 +17,7 @@
 		<tag-name>saveButton</tag-name>
 		<source>components/saveButton.xhtml</source>
 	</tag>
+	<!-- Icons -->
 	<tag>
 		<tag-name>iconAdd</tag-name>
 		<source>components/iconAdd.xhtml</source>
@@ -51,5 +41,85 @@
 	<tag>
 		<tag-name>iconSelect</tag-name>
 		<source>components/iconSelect.xhtml</source>
+	</tag>
+
+	<!-- tag used in edit form -->
+	<tag>
+		<tag-name>input</tag-name>
+		<source>components/input.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>inputSpinner</tag-name>
+		<source>components/inputSpinner.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>inputBoolean</tag-name>
+		<source>components/inputBoolean.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>inputDate</tag-name>
+		<source>components/inputDate.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>inputDateTime</tag-name>
+		<source>components/inputDateTime.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>inputLocalDate</tag-name>
+		<source>components/inputLocalDate.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>inputLocalDateTime</tag-name>
+		<source>components/inputLocalDateTime.xhtml</source>
+	</tag>
+
+	<!-- tag used in search form -->
+	<tag>
+		<tag-name>sinput</tag-name>
+		<source>components/sinput.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>sinputBoolean</tag-name>
+		<source>components/sinputBoolean.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>rangeDate</tag-name>
+		<source>components/rangeDate.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>rangeDateTime</tag-name>
+		<source>components/rangeDateTime.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>rangeLocalDate</tag-name>
+		<source>components/rangeLocalDate.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>rangeLocalDateTime</tag-name>
+		<source>components/rangeLocalDateTime.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>rangeInt</tag-name>
+		<source>components/rangeInt.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>rangeLong</tag-name>
+		<source>components/rangeLong.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>rangeFloat</tag-name>
+		<source>components/rangeFloat.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>rangeDouble</tag-name>
+		<source>components/rangeDouble.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>rangeBigInt</tag-name>
+		<source>components/rangeBigInt.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>rangeBigDec</tag-name>
+		<source>components/rangeBigDec.xhtml</source>
 	</tag>
 </facelet-taglib>

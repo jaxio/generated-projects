@@ -4,10 +4,6 @@ body {
 }
 
 /* LABEL */
-form label {
-    margin-right: 10px;
-}
-
 form label.required {
 	font-weight: bold;
 }
@@ -16,27 +12,41 @@ form .required-pseudo-label {
 	font-weight: bold;    
 }
 
-/* fix redmond theme */
-form .ui-menuitem-link  {
-	color: black;
+/* usability: right align labels */
+.td-label {
+	text-align: right;
 }
+
+/* action column in datatable */
+
+.actions-column {
+	width: 110px !important;
+}
+
+/* redmond theme has non-perfectly white bg, we fix it here */
 .ui-widget-content {
 	background: white;
 }
 
-
-/* input when disabled=true */
-input.ui-state-disabled {
-	color: black !important;
-	opacity: 1 !important;
-	border-color: white !important;
-	box-shadow: none !important;
-}
-
-
 /* error messages */
 .ui-error-message {
 	display: inline-block;
+}
+
+/* aria live region for search results */
+#searchResultsRegion {
+	margin: 0px 0px 5px 5px;;
+	display: inline-block;
+}
+
+/* alternate dataTable row color */
+.ui-datatable-odd {
+    background: none repeat scroll 0 0 #F2F5F9;
+}
+
+/* change dataTable row color when mouse goes over it */
+.ui-datatable tr.ui-datatable-even:hover, .ui-datatable tr.ui-datatable-odd:hover {
+    background: #BDE5F8;
 }
 
 /* ICONS for p:commandButon. Note the usage of JSF2 resource facility :-) */
@@ -118,7 +128,6 @@ input.ui-state-disabled {
 	background: transparent url("#{resource['icons/us.gif']}") no-repeat center left;
 	padding : 5px 5px 5px 20px;
 }
-
 
 /* login page */
 .loginBox {

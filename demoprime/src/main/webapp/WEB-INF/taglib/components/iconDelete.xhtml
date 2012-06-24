@@ -3,8 +3,7 @@
 	xmlns:p="http://primefaces.org/ui">
 	<p:commandButton 
 		ajax="true"
-		update="${update}"
-		action="#{action.toString()}"
+		oncomplete="${oncomplete}"
 		process="@this"
 		disabled="#{readonly}"
 		rendered="#{empty rendered or rendered}"

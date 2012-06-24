@@ -15,34 +15,40 @@
 	</composite:interface>
 
 	<composite:implementation>
-		<div id="#{cc.clientId}" class="${messagesHelper.getStyleClass()} ui-corner-all">
-			<c:if test="${messagesHelper.hasGlobalMessages()}">
-				<c:forEach var="item" items="${messagesHelper.getGlobalMessages()}" varStatus="status">
-					<p>${item.facesMessage.summary}</p>
+	<div id="#{cc.clientId}"> 
+		<c:if test="${messagesHelper.hasGlobalMessages()}">
+			<c:forEach var="item" items="${messagesHelper.getGlobalMessages()}" varStatus="status">
+			<div class="ui-messages-${item.severity} ui-corner-all">
+				<span class="ui-messages-${item.severity}-icon"></span>
+				<span class="ui-messages-${item.severity}-summary">${item.facesMessage.summary}</span>
+			</div>
+			</c:forEach>
+		</c:if>
+		<c:if test="${messagesHelper.hasNonGlobalMessages()}">
+		<div class="ui-messages-${messagesHelper.maxSeverity} ui-corner-all">			
+			<span class="ui-messages-${messagesHelper.maxSeverity}-icon"></span>
+			<span class="ui-messages-${messagesHelper.maxSeverity}-summary">
+				<a id="errorPresent" href="javascript:void" onclick="APP.focusTo('errorMsgNo0'); return false;">
+					<h:outputFormat value="#{msg.error_present}" >
+			    		<f:param value="${messagesHelper.nonGlobalMessagesCount()}"/>
+					</h:outputFormat>
+				</a>
+			</span>				
+			<ol>
+				<c:forEach var="item" items="${messagesHelper.getNonGlobalMessages()}" varStatus="status">
+				<li><a id="errorMsgNo${status.index}" href="javascript:void" onclick="APP.focusTo('${item.sourceId}'); return false;">${item.facesMessage.summary}</a></li>
 				</c:forEach>
-			</c:if>
-			<c:if test="${messagesHelper.hasNonGlobalMessages()}">
-				<p>
-					<a id="errorPresent" href="javascript:void" onclick="APP.focusTo('errorMsgNo0'); return false;">
-						<h:outputFormat value="#{msg.error_present}" >
-				    		<f:param value="${messagesHelper.nonGlobalMessagesCount()}"/>
-						</h:outputFormat>
-					</a>
-				</p>
-				<ol>
-					<c:forEach var="item" items="${messagesHelper.getNonGlobalMessages()}" varStatus="status">
-					<li><a id="errorMsgNo${status.index}" href="javascript:void" onclick="APP.focusTo('${item.sourceId}'); return false;">${item.facesMessage.summary}</a></li>
-					</c:forEach>
-				</ol>
-				<script type="text/javascript">
-					$(function() {
-						setTimeout(function() {
-							APP.focusTo('errorPresent');
-						}, 400);
-					});
-				</script>
-			</c:if>
+			</ol>
+			<script type="text/javascript">
+				$(function() {
+					setTimeout(function() {
+						APP.focusTo('errorPresent');
+					}, 400);
+				});
+			</script>
 		</div>
+		</c:if>
+	</div>		
 	</composite:implementation>
 </body>
 </html>

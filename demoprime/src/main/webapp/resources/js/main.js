@@ -12,19 +12,17 @@ jQuery(function() {
     $(".aria-search-button").attr("aria-controls", "searchResultsRegion");
     $(".aria-save-button").attr("aria-controls", "messagesRegion");
     
-    // Propagate quit action, from previous flow to current flow
-    if (document.URL.indexOf('_cascadeQuit', 0) > 0) {
-		APP.menu.quit();
-	}
-
     /* temporary fix for keyboard menu navigation */
     $('.ui-menuitem-link').focus(function() {
     	jQuery(this).parent().toggleClass('ui-state-focus');
     	}).blur(function() {
     	jQuery(this).parent().removeClass('ui-state-focus');
     });
+    
+    /* usability: right align labels */
+    $("form label").parents("td").addClass("td-label");
 
-    /* default submit button when user press enter */
+    /* Set the default button when user press enter */
     $("form input, form select").live("keypress", function (e) {
     	if ($(this).parents("form").find("button[type=submit].default").length <= 0) {
     		return true;
@@ -99,7 +97,7 @@ APP.focusTo = function(jsfId) {
 //---------------------------------------
 /* todo: localization */
 APP.updateSearchResultsRegion = function(xhr, status, args) {
-  jQuery("#searchResultsRegion").text('' + args.totalRecords + ' results');
+  jQuery("#searchResultsRegion").text('' + args.totalRecords + ' résultats');
 };	
 
 //-------------------------------------
@@ -124,7 +122,4 @@ APP.menu.cancel = function() {
 };
 APP.menu.forceClose = function() {
   return APP.menu.call('form:forceClose');
-};
-APP.menu.quit = function() {
-  return APP.menu.call('form:quit');
 };

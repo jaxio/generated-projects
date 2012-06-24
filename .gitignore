@@ -1,0 +1,11 @@
+*.iml
+*.ipr
+*.iws
+*.DS_Store
+*.class
+target/
+*.log
+.celerio/
+.settings/
+.classpath
+.project
