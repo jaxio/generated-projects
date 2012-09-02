@@ -1,0 +1,12 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components">
+	<appcc:outputLabel for="${id}" value="${label}" required="${empty required ? false : required}" rendered="${empty rendered ? true : rendered}"/>
+	<p:inputText id="${id}" label="${label}" value="#{value}" size="${size lt 50 ? size : 50}" maxlength="${empty maxlength ? 99999 : maxlength}" rendered="${not readonly and empty rendered ? true : rendered}">
+		<f:validateBean binding="#{lenientBeanValidator}"/>
+	</p:inputText>
+	<h:outputText value="#{value}" rendered="${readonly and empty rendered ? true : rendered}" />
+</ui:composition>
