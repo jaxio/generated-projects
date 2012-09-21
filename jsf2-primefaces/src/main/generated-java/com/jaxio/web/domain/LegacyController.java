@@ -44,20 +44,23 @@ public class LegacyController {
         return legacyRepository.getNewWithDefaults();
     }
 
-    public void save(Legacy legacy) {
+    public boolean save(Legacy legacy) {
         legacyRepository.save(legacy);
         messageUtil.info("status_saved_ok", legacyConverter.print(legacy));
+        return true;
     }
 
-    public void saveAndClose(Legacy legacy) {
+    public boolean saveAndClose(Legacy legacy) {
         legacyRepository.save(legacy);
         messageUtil.infoDelayed("status_saved_ok", legacyConverter.print(legacy));
         forceClose();
+        return true;
     }
 
-    public void delete(Legacy legacy) {
+    public boolean delete(Legacy legacy) {
         String infoArg = legacyConverter.print(legacy);
         legacyRepository.delete(legacy);
         messageUtil.info("status_deleted_ok", infoArg);
+        return true;
     }
 }

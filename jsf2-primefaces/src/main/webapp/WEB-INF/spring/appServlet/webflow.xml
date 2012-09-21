@@ -9,13 +9,13 @@
 <beans:beans xmlns="http://www.springframework.org/schema/webflow-config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:faces="http://www.springframework.org/schema/faces"
 	xsi:schemaLocation="
-        http://www.springframework.org/schema/webflow-config 
-        http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd
+		http://www.springframework.org/schema/webflow-config 
+		http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd        
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
 		http://www.springframework.org/schema/faces http://www.springframework.org/schema/faces/spring-faces-2.2.xsd">
 
-    <beans:bean class="org.springframework.webflow.scope.ScopeRegistrar" />
+	<beans:bean class="org.springframework.webflow.scope.ScopeRegistrar" />
 
 	<!-- Executes flows: the central entry point into the Spring Web Flow system -->
 	<flow-executor id="flowExecutor">
@@ -26,8 +26,8 @@
 			<listener ref="jpaFlowExecutionListener" />
 			<listener ref="flowsMenuExecutionListener" />
 		</flow-execution-listeners>
-        <!-- Note: when max-execution-snapshots is "0" then snapshoting is disabled, this is better for performances -->
-        <flow-execution-repository max-executions="5" max-execution-snapshots="0"/>        
+		<!-- Note: when max-execution-snapshots is "0" then snapshoting is disabled, this is better for performances -->
+		<flow-execution-repository max-executions="5" max-execution-snapshots="0"/>
 	</flow-executor>
 
 	<!-- The registry of executable flow definitions -->
@@ -41,8 +41,8 @@
 	</flow-registry>
 
 	<!-- Configures the Spring Web Flow JSF integration -->
-	<faces:flow-builder-services id="flowBuilderServices" development="true" />    
-    
+	<faces:flow-builder-services id="flowBuilderServices" development="true" />	
+
 	<!-- A listener to create and release a FacesContext -->
 	<beans:bean id="facesContextListener" class="org.springframework.faces.webflow.FlowFacesContextLifecycleListener" />
 
@@ -63,10 +63,10 @@
 		<beans:description>Track the various user's flows so they can be reached from a Menu</beans:description>
 	</beans:bean>
 
-    <beans:bean name="flowsMenuHandler" class="com.jaxio.web.flow.FlowsMenuHandler" scope="session">
-        <beans:description>Handle the various flows tracked by the flowsMenuExecutionListener</beans:description>
-        <!-- Since this bean has a 'session' scope and is referenced from the 'singleton' flowsMenuExecutionListener bean, -->
-        <!-- it must be configure with the aop:scoped-proxy tag below. -->
-        <aop:scoped-proxy />
-    </beans:bean>
+	<beans:bean name="flowsMenuHandler" class="com.jaxio.web.flow.FlowsMenuHandler" scope="session">
+		<beans:description>Handle the various flows tracked by the flowsMenuExecutionListener</beans:description>
+		<!-- Since this bean has a 'session' scope and is referenced from the 'singleton' flowsMenuExecutionListener bean, -->
+		<!-- it must be configure with the aop:scoped-proxy tag below. -->
+		<aop:scoped-proxy />
+	</beans:bean>
 </beans:beans>

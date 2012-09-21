@@ -44,20 +44,23 @@ public class AddressController {
         return addressRepository.getNewWithDefaults();
     }
 
-    public void save(Address address) {
+    public boolean save(Address address) {
         addressRepository.save(address);
         messageUtil.info("status_saved_ok", addressConverter.print(address));
+        return true;
     }
 
-    public void saveAndClose(Address address) {
+    public boolean saveAndClose(Address address) {
         addressRepository.save(address);
         messageUtil.infoDelayed("status_saved_ok", addressConverter.print(address));
         forceClose();
+        return true;
     }
 
-    public void delete(Address address) {
+    public boolean delete(Address address) {
         String infoArg = addressConverter.print(address);
         addressRepository.delete(address);
         messageUtil.info("status_deleted_ok", infoArg);
+        return true;
     }
 }

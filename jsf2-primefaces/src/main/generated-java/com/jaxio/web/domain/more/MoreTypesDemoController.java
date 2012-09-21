@@ -44,20 +44,23 @@ public class MoreTypesDemoController {
         return moreTypesDemoRepository.getNewWithDefaults();
     }
 
-    public void save(MoreTypesDemo moreTypesDemo) {
+    public boolean save(MoreTypesDemo moreTypesDemo) {
         moreTypesDemoRepository.save(moreTypesDemo);
         messageUtil.info("status_saved_ok", moreTypesDemoConverter.print(moreTypesDemo));
+        return true;
     }
 
-    public void saveAndClose(MoreTypesDemo moreTypesDemo) {
+    public boolean saveAndClose(MoreTypesDemo moreTypesDemo) {
         moreTypesDemoRepository.save(moreTypesDemo);
         messageUtil.infoDelayed("status_saved_ok", moreTypesDemoConverter.print(moreTypesDemo));
         forceClose();
+        return true;
     }
 
-    public void delete(MoreTypesDemo moreTypesDemo) {
+    public boolean delete(MoreTypesDemo moreTypesDemo) {
         String infoArg = moreTypesDemoConverter.print(moreTypesDemo);
         moreTypesDemoRepository.delete(moreTypesDemo);
         messageUtil.info("status_deleted_ok", infoArg);
+        return true;
     }
 }

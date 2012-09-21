@@ -37,15 +37,12 @@ public class JpaUniqueSupport {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public boolean isUnique(Object value, String propertyName, Object propertyValue) {
-        if (value == null || propertyValue == null) {
+    public boolean isUnique(Identifiable<?> entity, String propertyName, Object propertyValue) {
+        if (entity == null || propertyValue == null) {
             return true;
         }
-        if (!(value instanceof Identifiable<?>)) {
-            throw new IllegalStateException("Object " + value.getClass().getSimpleName() + " does not implement Identifiable interface");
-        }
-        checkJpaEntityPresence(value);
-        return !existsInDatabase(getEntityName(value), (Identifiable<?>) value, propertyName, propertyValue);
+        checkJpaEntityPresence(entity);
+        return !existsInDatabase(getEntityName(entity), entity, propertyName, propertyValue);
     }
 
     private boolean existsInDatabase(String entityName, Identifiable<?> entity, String propertyName, Object propertyValue) {
@@ -74,14 +71,14 @@ public class JpaUniqueSupport {
                 .getSingleResult() > 0;
     }
 
-    private void checkJpaEntityPresence(Object value) {
+    private void checkJpaEntityPresence(Identifiable<?> value) {
         Entity entity = findAnnotation(value.getClass(), Entity.class);
         if (entity == null) {
             throw new IllegalStateException(value.getClass().getSimpleName() + " is not a JPA entity");
         }
     }
 
-    private String getEntityName(Object value) {
+    private String getEntityName(Identifiable<?> value) {
         Entity entity = findAnnotation(value.getClass(), Entity.class);
         if (isBlank(entity.name())) {
             return value.getClass().getSimpleName();

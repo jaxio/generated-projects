@@ -44,20 +44,23 @@ public class RoleController {
         return roleRepository.getNewWithDefaults();
     }
 
-    public void save(Role role) {
+    public boolean save(Role role) {
         roleRepository.save(role);
         messageUtil.info("status_saved_ok", roleConverter.print(role));
+        return true;
     }
 
-    public void saveAndClose(Role role) {
+    public boolean saveAndClose(Role role) {
         roleRepository.save(role);
         messageUtil.infoDelayed("status_saved_ok", roleConverter.print(role));
         forceClose();
+        return true;
     }
 
-    public void delete(Role role) {
+    public boolean delete(Role role) {
         String infoArg = roleConverter.print(role);
         roleRepository.delete(role);
         messageUtil.info("status_deleted_ok", infoArg);
+        return true;
     }
 }

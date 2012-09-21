@@ -7,6 +7,7 @@
  */
 package com.jaxio.web.component;
 
+import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 import javax.faces.application.FacesMessage;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.jaxio.domain.Identifiable;
 import com.jaxio.util.ResourcesUtil;
 
 @FacesValidator(value = "jpaUniqueValidator")
@@ -38,35 +40,38 @@ public class JpaUniqueValidator implements Validator {
         if (entity == null && isBlank(property)) {
             return;
         }
+
         if (entity == null) {
             throw new IllegalStateException("Missing 'entity' attribute");
         }
+
         if (property == null) {
             throw new IllegalStateException("Missing 'property' attribute");
         }
+
         if (!jpaUniqueSupport.isUnique(entity, property, value)) {
-            throw new ValidatorException(new FacesMessage(resourcesUtil.getProperty(entity.getClass().getSimpleName().toLowerCase() + "_" + property
-                    + "_already_exists")));
+            FacesMessage fm = new FacesMessage(resourcesUtil.getProperty(entity.getClass().getSimpleName().toLowerCase() + "_" + property + "_already_exists"));
+            fm.setSeverity(SEVERITY_ERROR);
+            throw new ValidatorException(fm);
         }
     }
 
-    private Object entity;
+    private Identifiable<?> entity;
     private String property;
 
-    public void setEntity(Object entity) {
+    public void setEntity(Identifiable<?> entity) {
         this.entity = entity;
     }
 
-    public Object getEntity() {
+    public Identifiable<?> getEntity() {
         return entity;
-    }
-
-    public String getProperty() {
-        return property;
     }
 
     public void setProperty(String property) {
         this.property = property;
     }
 
+    public String getProperty() {
+        return property;
+    }
 }

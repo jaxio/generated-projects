@@ -44,20 +44,23 @@ public class AccountController {
         return accountRepository.getNewWithDefaults();
     }
 
-    public void save(Account account) {
+    public boolean save(Account account) {
         accountRepository.save(account);
         messageUtil.info("status_saved_ok", accountConverter.print(account));
+        return true;
     }
 
-    public void saveAndClose(Account account) {
+    public boolean saveAndClose(Account account) {
         accountRepository.save(account);
         messageUtil.infoDelayed("status_saved_ok", accountConverter.print(account));
         forceClose();
+        return true;
     }
 
-    public void delete(Account account) {
+    public boolean delete(Account account) {
         String infoArg = accountConverter.print(account);
         accountRepository.delete(account);
         messageUtil.info("status_deleted_ok", infoArg);
+        return true;
     }
 }

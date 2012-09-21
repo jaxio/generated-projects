@@ -44,20 +44,23 @@ public class BookController {
         return bookRepository.getNewWithDefaults();
     }
 
-    public void save(Book book) {
+    public boolean save(Book book) {
         bookRepository.save(book);
         messageUtil.info("status_saved_ok", bookConverter.print(book));
+        return true;
     }
 
-    public void saveAndClose(Book book) {
+    public boolean saveAndClose(Book book) {
         bookRepository.save(book);
         messageUtil.infoDelayed("status_saved_ok", bookConverter.print(book));
         forceClose();
+        return true;
     }
 
-    public void delete(Book book) {
+    public boolean delete(Book book) {
         String infoArg = bookConverter.print(book);
         bookRepository.delete(book);
         messageUtil.info("status_deleted_ok", infoArg);
+        return true;
     }
 }

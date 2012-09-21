@@ -21,17 +21,17 @@
 	</decision-state>
 
 	<view-state id="roleSelect">
-        <on-entry>
-            <evaluate expression="messageUtil.displayDelayedMessages()" />
-            <evaluate expression="persistenceContext.clear()" />           
-        </on-entry>
+		<on-entry>
+			<evaluate expression="messageUtil.displayDelayedMessages()" />
+			<evaluate expression="persistenceContext.clear()" />
+		</on-entry>
 		<on-render>
 			<evaluate expression="flowsMenuHandler.updateMenu(flowRequestContext,'select')" />
 		</on-render>
-        <transition on="select" to="checkIfAlreadyOpenFlow" validate="false"/>
-        <transition on="delete" validate="false">
-            <evaluate expression="roleController.delete(roleLazyDataModel.selectedRow)"  />
-        </transition>
+		<transition on="select" to="checkIfAlreadyOpenFlow" validate="false"/>
+		<transition on="delete" validate="false">
+			<evaluate expression="roleController.delete(roleLazyDataModel.selectedRow)" />
+		</transition>
 		<transition on="sendNew" to="edit" validate="false" />
 	</view-state>
 
@@ -47,9 +47,13 @@
 
 	<subflow-state id="edit" subflow="role/edit">
 		<input name="role" value="roleLazyDataModel.selectedRow" />
-		<transition on="endEdit" to="roleSelect" />
+		<transition on="endEdit" to="quitChoice" />
 		<transition on="deleteAndClose" to="roleSelect" />
 	</subflow-state>
+
+	<decision-state id="quitChoice">
+		<if test="create" then="quit" else="roleSelect"/>
+	</decision-state>
 
 	<end-state id="endSwitchToAlreadyOpenFlow"
 		view="externalRedirect:contextRelative:#{flowsMenuHandler.endStateRedirectToAlreadyOpenFlow(flowRequestContext,roleLazyDataModel.selectedRow)}" />

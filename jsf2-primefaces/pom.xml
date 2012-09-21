@@ -47,7 +47,7 @@
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 		<!-- Version dependencies when used in multiple dependencies -->
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-		<maven-celerio-plugin.version>3.0.81</maven-celerio-plugin.version>
+		<maven-celerio-plugin.version>3.0.82</maven-celerio-plugin.version>
 		<maven-celerio-plugin.outputDir>${basedir}</maven-celerio-plugin.outputDir>
 		<hibernate.version>4.1.4.Final</hibernate.version>
 		<spring.version>3.1.2.RELEASE</spring.version>
@@ -827,26 +827,49 @@
 	<build>
 		<defaultGoal>jetty:run</defaultGoal>
 		<resources>
-			<!-- step 1: copy all properties, and replace all ${something} with their corresponding values defined in the properties -->
 			<resource>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>**/*.properties</include>
-					<include>log4j.xml</include>
-				</includes>
+				<directory>${maven-celerio-plugin.outputDir}/src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
-			<!-- step 2: copy ressources all non properties as-is -->
 			<resource>
 				<directory>src/main/resources</directory>
-				<excludes>
-					<exclude>**/*.properties</exclude>
-					<exclude>log4j.xml</exclude>
-				</excludes>
-				<filtering>false</filtering>
+				<filtering>true</filtering>
 			</resource>
 		</resources>
 		<plugins>
+			<plugin>
+				<!-- http://maven.apache.org/plugins/maven-resources-plugin/ -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<delimiters>
+						<delimiter>@*@</delimiter>
+					</delimiters>
+					<useDefaultDelimiters>false</useDefaultDelimiters>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- http://maven.apache.org/plugins/maven-enforcer-plugin/ -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>1.1.1</version>
+				<executions>
+					<execution>
+						<id>enforce-java</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireJavaVersion>
+									<version>[1.6.0-26,)</version>
+								</requireJavaVersion>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
@@ -890,22 +913,18 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<!-- http://maven.apache.org/plugins/maven-resources-plugin/ -->
-				<!-- Substitute variables in resource files -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.5</version>
-			</plugin>
-			<plugin>
 				<!-- http://wiki.eclipse.org/Jetty/Feature/Jetty_Maven_Plugin -->
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>7.6.4.v20120524</version>
+				<version>7.6.7.v20120910</version>
 				<configuration>
 					<stopKey>foo</stopKey>
 					<stopPort>9999</stopPort>
 					<webAppConfig>
 						<contextPath>${application.contextpath}</contextPath>
+						<baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
+							<resourcesAsCSV>src/main/webapp/,${maven-celerio-plugin.outputDir}/src/main/webapp/</resourcesAsCSV>
+						</baseResource>
 					</webAppConfig>
 					<connectors>
 						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">

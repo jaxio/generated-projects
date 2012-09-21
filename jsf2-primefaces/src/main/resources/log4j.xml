@@ -16,7 +16,7 @@
 	</appender>
 
 	<appender name="File" class="org.apache.log4j.RollingFileAppender">
-		<param name="File" value="${project.name}-${project.version}.log" />
+		<param name="File" value="@project.name@-@project.version@.log" />
 		<param name="MaxFileSize" value="5000KB" />
 		<param name="MaxBackupIndex" value="20" />
 

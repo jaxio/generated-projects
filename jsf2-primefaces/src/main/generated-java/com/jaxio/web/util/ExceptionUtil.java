@@ -10,7 +10,6 @@ import javax.inject.Singleton;
 @Named
 @Singleton
 public class ExceptionUtil {
-
     public void throwRuntimeException() {
         throw new RuntimeException("Just testing from ExceptionUtil ...");
     }

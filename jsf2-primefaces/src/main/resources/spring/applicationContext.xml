@@ -109,20 +109,20 @@
 				<value>classpath:localization/application</value>
 				<value>classpath:localization/messages</value>
 				<!-- generated domain resources -->
-				<value>classpath:localization/domain-generated/Account</value>
-				<value>classpath:localization/domain-generated/Address</value>
-				<value>classpath:localization/domain-generated/Book</value>
-				<value>classpath:localization/domain-generated/Document</value>
-				<value>classpath:localization/domain-generated/Legacy</value>
-				<value>classpath:localization/domain-generated/MoreTypesDemo</value>
-				<value>classpath:localization/domain-generated/Role</value>
+				<value>classpath:localization/domain/Account</value>
+				<value>classpath:localization/domain/Address</value>
+				<value>classpath:localization/domain/Book</value>
+				<value>classpath:localization/domain/Document</value>
+				<value>classpath:localization/domain/Legacy</value>
+				<value>classpath:localization/domain/MoreTypesDemo</value>
+				<value>classpath:localization/domain/Role</value>
 				<!-- default spring security messages -->
 				<value>classpath:org/springframework/security/messages</value>
-                <!-- our bean validation messages -->
+				<!-- our bean validation messages -->
 				<value>classpath:ValidationMessages</value>
-                <!-- default conversion messages -->                
-                <value>classpath:javax/faces/Messages</value>
-                <!-- default bean validation messages -->                
+				<!-- default conversion messages -->
+				<value>classpath:javax/faces/Messages</value>
+				<!-- default bean validation messages -->
 				<value>classpath:org/hibernate/validator/ValidationMessages</value>
 			</list>
 		</property>

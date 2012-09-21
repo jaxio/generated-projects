@@ -16,7 +16,6 @@ import javax.inject.Singleton;
 @Named("out")
 @Singleton
 public class FlowDebugUtil {
-
     public void print(String msg) {
         System.out.println("[flow debug] " + msg);
     }

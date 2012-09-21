@@ -27,13 +27,13 @@
 			searchParameters.setNamedQuery("myNamedQuery");
 			searchParameters.addParameter("paramName", paramValue);
 
-		* Use the xxxService that handles the Xxx entity that the named query should return.
+		* Use the xxxRepository that handles the Xxx entity that the named query should return.
 			 For example:
-				xxxService.find(searchParameters) or
-				xxxService.find(xxxModel, searchParameters)
+				xxxRepository.find(searchParameters) or
+				xxxRepository.find(xxxModel, searchParameters)
 
-				xxxService.findCount(searchParameters)
-				xxxService.findCount(xxxModel, searchParameters)
+				xxxRepository.findCount(searchParameters)
+				xxxRepository.findCount(xxxModel, searchParameters)
 
 		When you define your named query the following magic parameters
 		will be automatically replaced:
@@ -54,7 +54,7 @@
 
 		Dynamic Select count support:
 		=============================
-		Note that if you call xxxService.findCount(searchParameters) and that your
+		Note that if you call xxxRepository.findCount(searchParameters) and that your
 		named query starts with "from" instead of "select", the "select count(*) "
 		will be dynamically appended so it returns what you expect.
 	]]></description>

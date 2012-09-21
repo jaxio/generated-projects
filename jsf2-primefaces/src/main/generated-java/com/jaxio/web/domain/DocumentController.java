@@ -44,20 +44,23 @@ public class DocumentController {
         return documentRepository.getNewWithDefaults();
     }
 
-    public void save(Document document) {
+    public boolean save(Document document) {
         documentRepository.save(document);
         messageUtil.info("status_saved_ok", documentConverter.print(document));
+        return true;
     }
 
-    public void saveAndClose(Document document) {
+    public boolean saveAndClose(Document document) {
         documentRepository.save(document);
         messageUtil.infoDelayed("status_saved_ok", documentConverter.print(document));
         forceClose();
+        return true;
     }
 
-    public void delete(Document document) {
+    public boolean delete(Document document) {
         String infoArg = documentConverter.print(document);
         documentRepository.delete(document);
         messageUtil.info("status_deleted_ok", infoArg);
+        return true;
     }
 }
