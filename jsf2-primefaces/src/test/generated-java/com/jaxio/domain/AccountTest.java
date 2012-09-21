@@ -40,6 +40,7 @@ import javax.persistence.Version;
 import javax.validation.constraints.Size;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;

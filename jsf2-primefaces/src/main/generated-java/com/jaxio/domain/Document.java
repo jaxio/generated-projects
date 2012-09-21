@@ -7,11 +7,15 @@
  */
 package com.jaxio.domain;
 
+import static org.apache.commons.codec.binary.StringUtils.newStringUtf8;
+import java.io.ByteArrayInputStream;
+import javax.xml.bind.annotation.XmlTransient;
+import org.primefaces.model.DefaultStreamedContent;
+import com.jaxio.domain.PersistableHashBuilder;
+
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
-import static org.apache.commons.codec.binary.StringUtils.newStringUtf8;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -28,27 +32,24 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
-import com.google.common.base.Objects;
 import com.jaxio.domain.Account;
-import com.jaxio.domain.PersistableHashBuilder;
 
-;
+import com.google.common.base.Objects;
 
 @Entity
-@Cache(usage = NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @FilterDef(name = "myDocumentFilter", defaultCondition = "account_id = :currentAccountId ", parameters = @ParamDef(name = "currentAccountId", type = "org.hibernate.type.StringType"))
 @Filter(name = "myDocumentFilter")
 public class Document implements Identifiable<String>, Serializable {

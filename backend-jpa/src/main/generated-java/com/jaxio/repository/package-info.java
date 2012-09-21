@@ -6,7 +6,7 @@
  * Template pack-backend-jpa:src/main/java/project/repository/package-info.p.vm.java
  */
 /**
- * All repository services for your domain layer.
+ * All repository services to your domain objects.
  */
-package com.jaxio.repository;
+package com.jaxio.service;
 

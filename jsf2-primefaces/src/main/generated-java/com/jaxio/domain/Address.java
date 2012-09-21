@@ -7,7 +7,8 @@
  */
 package com.jaxio.domain;
 
-import static org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE;
+import com.jaxio.domain.PersistableHashBuilder;
+
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,14 +19,13 @@ import javax.persistence.Version;
 import javax.validation.constraints.Size;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
-import com.google.common.base.Objects;
-import com.jaxio.domain.PersistableHashBuilder;
 
-;
+import com.google.common.base.Objects;
 
 @Entity
-@Cache(usage = NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Address implements Identifiable<Integer>, Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger log = Logger.getLogger(Address.class);

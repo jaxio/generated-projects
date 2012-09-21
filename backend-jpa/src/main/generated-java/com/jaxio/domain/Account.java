@@ -7,6 +7,8 @@
  */
 package com.jaxio.domain;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.EnumType.STRING;
@@ -31,26 +33,25 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlTransient;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
-import com.google.common.base.Objects;
 import com.jaxio.domain.Address;
 import com.jaxio.domain.Book;
 import com.jaxio.domain.Civility;
 import com.jaxio.domain.Document;
 import com.jaxio.domain.Role;
 
-;
+import com.google.common.base.Objects;
 
 @Entity
-@Cache(usage = NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @FilterDef(name = "myAccountFilter", defaultCondition = "ID = :currentAccountId ", parameters = @ParamDef(name = "currentAccountId", type = "org.hibernate.type.StringType"))
 @Filter(name = "myAccountFilter")
 public class Account implements Identifiable<String>, Serializable {

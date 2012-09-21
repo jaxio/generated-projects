@@ -7,7 +7,9 @@
  */
 package com.jaxio.domain;
 
-import static org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE;
+import javax.xml.bind.annotation.XmlTransient;
+import com.jaxio.domain.PersistableHashBuilder;
+
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -15,17 +17,15 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlTransient;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
-import com.google.common.base.Objects;
-import com.jaxio.domain.PersistableHashBuilder;
 
-;
+import com.google.common.base.Objects;
 
 @Entity
-@Cache(usage = NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Legacy implements Identifiable<LegacyPk>, Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger log = Logger.getLogger(Legacy.class);

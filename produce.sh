@@ -1,6 +1,6 @@
 #!/bin/bash
 git checkout master
-for release in {79..79}
+for release in {78..83}
 do
   version=3.0.${release}
 

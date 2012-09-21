@@ -69,7 +69,7 @@ public class ByExampleUtil {
     }
 
     private <T> void byExample(ManagedType<T> mt, Path<T> mtPath, final T mtValue, SearchParameters sp, CriteriaBuilder builder, List<Predicate> predicates) {
-        for (SingularAttribute<? super T, ?> attr : mt.getSingularAttributes()) {
+        for (SingularAttribute<T, ?> attr : mt.getDeclaredSingularAttributes()) {
             if (attr.getPersistentAttributeType() == MANY_TO_ONE //
                     || attr.getPersistentAttributeType() == ONE_TO_ONE //
                     || attr.getPersistentAttributeType() == EMBEDDED) {
@@ -140,7 +140,7 @@ public class ByExampleUtil {
         predicates.add(builder.or(examples.toArray(new Predicate[predicates.size()])));
     }
 
-    private <T> Object getValue(T example, Attribute<? super T, ?> attr) {
+    private <T> Object getValue(T example, Attribute<T, ?> attr) {
         try {
             return ReflectionUtils.invokeMethod((Method) attr.getJavaMember(), example);
         } catch (Exception e) {
@@ -148,11 +148,11 @@ public class ByExampleUtil {
         }
     }
 
-    private <T, A> SingularAttribute<? super T, A> attribute(ManagedType<? super T> mt, Attribute<? super T, A> attr) {
-        return mt.getSingularAttribute(attr.getName(), attr.getJavaType());
+    private <E, A> SingularAttribute<E, A> attribute(ManagedType<E> mt, Attribute<E, A> attr) {
+        return mt.getDeclaredSingularAttribute(attr.getName(), attr.getJavaType());
     }
 
-    private <T> SingularAttribute<? super T, String> stringAttribute(ManagedType<? super T> mt, Attribute<? super T, ?> attr) {
-        return mt.getSingularAttribute(attr.getName(), String.class);
+    private <E> SingularAttribute<E, String> stringAttribute(ManagedType<E> mt, Attribute<E, ?> attr) {
+        return mt.getDeclaredSingularAttribute(attr.getName(), String.class);
     }
 }
