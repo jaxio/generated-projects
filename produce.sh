@@ -1,4 +1,5 @@
 #!/bin/bash
+git checkout master
 for release in {79..79}
 do
   version=3.0.${release}
@@ -22,4 +23,5 @@ do
 git add . --a 
 git commit -m "generated with Celerio v${version} - http://www.springfuse.com/" 
 git tag ${version}
+git checkout master
 done;
