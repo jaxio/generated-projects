@@ -1,0 +1,48 @@
+<ui:component xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:p="http://primefaces.org/ui">
+	<p:fieldset legend="#{msg.search_criteria}">
+		<ui:insert name="filters" />
+	</p:fieldset>
+	<p:commandButton id="search" action="search" process="@form"
+		oncomplete="APP.updateSearchResultsRegion(xhr,status,args)"
+		icon="iconSearch" styleClass="aria-search-button default"
+		update="searchResults"
+		value="#{msg.menu_search}"
+		title="#{msg.menu_search} #{title}" />
+	<br/>
+	<span style="height: 16px; display: block;">
+		<p:ajaxStatus>
+			<f:facet name="start">
+				<h:graphicImage name="icons/ajaxloading.gif" alt=""/>
+			</f:facet>
+			<f:facet name="error">
+				<h:outputText value="Ouch, an ajax error (are your still logged in?)" />
+			</f:facet>
+			<f:facet name="success">
+				<h:outputText value="" />
+			</f:facet>
+		</p:ajaxStatus>
+	</span>
+	<!-- looks like safari/voiceover requires 'span' (not 'div') for live region-->
+	<span id="searchResultsRegion" aria-label="Résultats" aria-live="assertive" aria-relevant="additions">
+	</span>
+	<p:dataTable
+		id="searchResults"
+		value="#{data}"
+		var="item"
+		rows="10"
+		lazy="true"
+		paginator="true"
+		paginatorAlwaysVisible="true"
+		paginatorPosition="bottom"
+		currentPageReportTemplate="{currentPage} / {totalPages}"
+		paginatorTemplate="{PreviousPageLink} {CurrentPageReport} {NextPageLink}"
+		rowKey="#{item}"
+		height="500px">
+		<ui:insert name="result" />
+	</p:dataTable>
+	<script>jQuery("#searchResultsRegion").text('' + #{data.rowCount} + ' résultats');</script>
+</ui:component>

@@ -1,0 +1,14 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components">
+	<h:outputLabel for="${id}" value="${label} :" />	
+	<h:panelGrid columns="4" id="${id}" styleClass="aria-role-presentation">
+		<h:outputLabel for="${id}RangeFrom" value="${msg.range_from}" />
+		<p:inputText id="${id}RangeFrom" value="#{value.from}" converter="javax.faces.Float"/>
+		<h:outputLabel for="${id}RangeTo" value="${msg.range_to}" />
+		<p:inputText id="${id}RangeTo" value="#{value.to}" converter="javax.faces.Float"/>
+	</h:panelGrid>
+</ui:composition>

@@ -1,0 +1,15 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components">
+	<appcc:outputLabel for="${id}" value="${label}" required="${empty required ? false : required}" />	
+	<p:calendar id="${id}" value="#{value}" pattern="yyyy-MM-dd" rendered="${not readonly}">
+		<f:converter converterId="localDateConverter"/>
+		<f:validateBean binding="#{lenientBeanValidator}"/>
+	</p:calendar>
+	<h:outputText value="#{value}" rendered="${readonly}">
+		<f:converter converterId="localDateConverter"/>
+	</h:outputText>
+</ui:composition>
