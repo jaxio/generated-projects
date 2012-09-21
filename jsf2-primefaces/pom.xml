@@ -47,16 +47,16 @@
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 		<!-- Version dependencies when used in multiple dependencies -->
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-		<maven-celerio-plugin.version>3.0.78</maven-celerio-plugin.version>
+		<maven-celerio-plugin.version>3.0.79</maven-celerio-plugin.version>
         <maven-celerio-plugin.outputDir>${basedir}</maven-celerio-plugin.outputDir>
 		<hibernate.version>4.1.4.Final</hibernate.version>
 		<spring.version>3.1.2.RELEASE</spring.version>
-		<spring-security.version>3.1.1.RELEASE</spring-security.version>
+		<spring-security.version>3.1.2.RELEASE</spring-security.version>
 		<spring-webflow.version>2.3.1.RELEASE</spring-webflow.version>
 		<!-- http://javaserverfaces.java.net/nonav/rlnotes/2.1.7/whatsnew.html -->
-		<jsf-api.version>2.1.7</jsf-api.version>
-		<primefaces.version>3.3.1</primefaces.version>
-		<primefaces-themes.version>1.0.6</primefaces-themes.version>
+		<jsf-api.version>2.1.10</jsf-api.version>
+		<primefaces.version>3.4-SNAPSHOT</primefaces.version>
+		<primefaces-themes.version>1.0.8</primefaces-themes.version>
 		<slf4j.version>1.5.10</slf4j.version>
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 		<!-- Variables substituted in resources file at build time -->
@@ -466,7 +466,7 @@
 		<dependency>
 			<groupId>org.jadira.usertype</groupId>
 			<artifactId>usertype.core</artifactId>
-			<version>3.0.0.CR1</version>
+			<version>3.0.0.CR3</version>
 		</dependency>
 		<!-- ~~~~~~~~~~~ -->
 		<!-- PERSISTENCE -->
@@ -623,11 +623,6 @@
 			<artifactId>commons-codec</artifactId>
 			<version>1.6</version>
 		</dependency>
-		<dependency>
-			<groupId>commons-digester</groupId>
-			<artifactId>commons-digester</artifactId>
-			<version>2.1</version>
-		</dependency>
 		<!-- ~~~~~~ -->
 		<!-- SPRING -->
 		<!-- ~~~~~~ -->
@@ -751,7 +746,7 @@
 		</dependency>
 		<dependency><!-- optional theme (see also web.xml to enable it) -->
 			<groupId>org.primefaces.themes</groupId>
-			<artifactId>redmond</artifactId>
+			<artifactId>bootstrap</artifactId>
 			<version>${primefaces-themes.version}</version>
 		</dependency>
 		<!-- ~~~ -->

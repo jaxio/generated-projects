@@ -18,7 +18,7 @@
 	<ui:define name="content">
 	<f:validateBean disabled="true">
 		<p:fieldset legend="${msg.address}">
-			<h:panelGrid columns="4" styleClass="aria-role-presentation">
+			<h:panelGrid columns="2" styleClass="aria-role-presentation">
 				<app:input id="streetName" value="#{address.streetName}" size="100" label="${msg.address_streetName}" />
 				<app:input id="city" value="#{address.city}" size="100" label="${msg.address_city}" required="true" />
 			</h:panelGrid>

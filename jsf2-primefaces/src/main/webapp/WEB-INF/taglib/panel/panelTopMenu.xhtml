@@ -16,7 +16,7 @@
 		<p:toolbar>
 			<p:toolbarGroup align="right">
 				<p:menuButton value="#{msg.menu_active_flows} (#{flowsMenuHandler.menuModelCount})" model="#{flowsMenuHandler.menuModel}" rendered="#{flowsMenuHandler.menuModelCount ne 0 and userContext.isLoggedIn()}" />
-				<p:menuButton value="Objects">
+				<p:menuButton value="Domain">
 					<p:menuitem value="${msg.account}" url="/app/account" />
 					<p:menuitem value="${msg.address}" url="/app/address" />
 					<p:menuitem value="${msg.legacy}" url="/app/legacy" />

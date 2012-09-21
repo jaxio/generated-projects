@@ -14,6 +14,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import com.jaxio.util.*;
+import static org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,7 +25,6 @@ import javax.persistence.Version;
 import javax.validation.constraints.Size;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**

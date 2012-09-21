@@ -7,8 +7,6 @@
  */
 package com.jaxio.domain;
 
-import com.jaxio.domain.PersistableHashBuilder;
-
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE;
@@ -25,17 +23,18 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.validator.constraints.NotEmpty;
-import com.jaxio.domain.Account;
-
 import com.google.common.base.Objects;
+import com.jaxio.domain.Account;
+import com.jaxio.domain.PersistableHashBuilder;
+
+;
 
 @Entity
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = NONSTRICT_READ_WRITE)
 @FilterDef(name = "myBookFilter", defaultCondition = "account_id = :currentAccountId ", parameters = @ParamDef(name = "currentAccountId", type = "org.hibernate.type.StringType"))
 @Filter(name = "myBookFilter")
 public class Book implements Identifiable<Integer>, Serializable {

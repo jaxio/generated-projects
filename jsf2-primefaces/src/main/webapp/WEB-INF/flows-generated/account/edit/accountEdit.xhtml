@@ -18,7 +18,7 @@
 	<ui:define name="content">
 	<f:validateBean disabled="true">
 		<p:fieldset legend="${msg.account}">
-			<h:panelGrid columns="4" styleClass="aria-role-presentation">
+			<h:panelGrid columns="2" styleClass="aria-role-presentation">
 				<app:input id="username" value="#{account.username}" size="100" label="${msg.account_username}" required="true" />
 				<app:inputPassword id="password" value="#{account.password}" size="100" label="${msg.account_password}" required="true" />
 				<app:input id="email" value="#{account.email}" size="100" label="${msg.account_email}" required="true" />
@@ -126,15 +126,15 @@
 </ui:define>
 <ui:define name="dialogs">
 	<p:confirmDialog widgetVar="askForRemoveBookDialog" header="${msg.menu_remove}?" message="${msg.dialog_remove_confirm}">
-		<p:commandButton id="askForRemoveBookDialogYes" action="removeBook" ajax="true" update=":form:tabs :form:messages" oncomplete="askForRemoveBookDialog.hide()" immediate="true" process="@this" value="${msg.yes}" title="${msg.dialog_delete_confirm} ${msg.yes}" icon="ui-icon-check" />
+		<p:commandButton id="askForRemoveBookDialogYes" action="removeBook" ajax="true" update=":form:tabs:booksList :form:messages" oncomplete="askForRemoveBookDialog.hide()" immediate="true" process="@this" value="${msg.yes}" title="${msg.dialog_delete_confirm} ${msg.yes}" icon="ui-icon-check" />
 		<p:commandButton id="askForRemoveBookDialogNo" value="${msg.no}" title="${msg.dialog_remove_confirm} ${msg.no}" onclick="askForRemoveBookDialog.hide(); return false;" icon="ui-icon-cancel"/>					 
 	</p:confirmDialog>
 	<p:confirmDialog widgetVar="askForRemoveDocumentDialog" header="${msg.menu_remove}?" message="${msg.dialog_remove_confirm}">
-		<p:commandButton id="askForRemoveDocumentDialogYes" action="removeDocument" ajax="true" update=":form:tabs :form:messages" oncomplete="askForRemoveDocumentDialog.hide()" immediate="true" process="@this" value="${msg.yes}" title="${msg.dialog_delete_confirm} ${msg.yes}" icon="ui-icon-check" />
+		<p:commandButton id="askForRemoveDocumentDialogYes" action="removeDocument" ajax="true" update=":form:tabs:documentsList :form:messages" oncomplete="askForRemoveDocumentDialog.hide()" immediate="true" process="@this" value="${msg.yes}" title="${msg.dialog_delete_confirm} ${msg.yes}" icon="ui-icon-check" />
 		<p:commandButton id="askForRemoveDocumentDialogNo" value="${msg.no}" title="${msg.dialog_remove_confirm} ${msg.no}" onclick="askForRemoveDocumentDialog.hide(); return false;" icon="ui-icon-cancel"/>					 
 	</p:confirmDialog>
 	<p:confirmDialog widgetVar="askForRemoveRoleDialog" header="${msg.menu_remove}?" message="${msg.dialog_remove_confirm}">
-		<p:commandButton id="askForRemoveRoleDialogYes" action="removeRole" ajax="true" update=":form:tabs :form:messages" oncomplete="askForRemoveRoleDialog.hide()" immediate="true" process="@this" value="${msg.yes}" title="${msg.dialog_delete_confirm} ${msg.yes}" icon="ui-icon-check" />
+		<p:commandButton id="askForRemoveRoleDialogYes" action="removeRole" ajax="true" update=":form:tabs:rolesList :form:messages" oncomplete="askForRemoveRoleDialog.hide()" immediate="true" process="@this" value="${msg.yes}" title="${msg.dialog_delete_confirm} ${msg.yes}" icon="ui-icon-check" />
 		<p:commandButton id="askForRemoveRoleDialogNo" value="${msg.no}" title="${msg.dialog_remove_confirm} ${msg.no}" onclick="askForRemoveRoleDialog.hide(); return false;" icon="ui-icon-cancel"/>					 
 	</p:confirmDialog>
 </ui:define>

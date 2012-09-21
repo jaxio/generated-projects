@@ -7,10 +7,9 @@
  */
 package com.jaxio.domain.more;
 
-import com.jaxio.domain.PersistableHashBuilder;
-
 import static javax.persistence.TemporalType.DATE;
 import static javax.persistence.TemporalType.TIMESTAMP;
+import static org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -26,17 +25,18 @@ import javax.persistence.Version;
 import javax.validation.constraints.Digits;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-import com.jaxio.domain.Identifiable;
-
 import com.google.common.base.Objects;
+import com.jaxio.domain.Identifiable;
+import com.jaxio.domain.PersistableHashBuilder;
+
+;
 
 @Entity
 @Table(name = "MORE_TYPES_DEMO")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = NONSTRICT_READ_WRITE)
 public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger log = Logger.getLogger(MoreTypesDemo.class);
