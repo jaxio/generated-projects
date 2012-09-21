@@ -7,7 +7,6 @@
  */
 package com.jaxio.domain;
 
-import java.lang.String;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 import com.jaxio.domain.Account;

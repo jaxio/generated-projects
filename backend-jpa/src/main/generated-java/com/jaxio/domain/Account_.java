@@ -7,7 +7,6 @@
  */
 package com.jaxio.domain;
 
-import java.lang.Integer;
 import java.util.Date;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;

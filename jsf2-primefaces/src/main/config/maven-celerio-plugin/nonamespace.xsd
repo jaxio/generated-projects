@@ -6,22 +6,6 @@
       <xs:enumeration value="NONE"/>
     </xs:restriction>
   </xs:simpleType>
-  <xs:complexType name="setting">
-    <xs:sequence/>
-    <xs:attribute type="xs:string" use="required" name="id"/>
-    <xs:attribute type="xs:string" use="required" name="value"/>
-  </xs:complexType>
-  <xs:complexType name="profiles">
-    <xs:sequence>
-      <xs:element type="profile" name="profile" minOccurs="0" maxOccurs="unbounded"/>
-    </xs:sequence>
-    <xs:attribute type="xs:string" name="version"/>
-  </xs:complexType>
-  <xs:complexType name="eclipseFormatter">
-    <xs:sequence/>
-    <xs:attribute type="formatterEnum" use="required" name="formatterChoice"/>
-    <xs:attribute type="xs:string" name="formatterFile"/>
-  </xs:complexType>
   <xs:complexType name="profile">
     <xs:sequence>
       <xs:element type="setting" name="setting" minOccurs="0" maxOccurs="unbounded"/>
@@ -30,5 +14,21 @@
     <xs:attribute type="xs:string" name="name"/>
     <xs:attribute type="xs:string" name="version"/>
   </xs:complexType>
+  <xs:complexType name="profiles">
+    <xs:sequence>
+      <xs:element type="profile" name="profile" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="version"/>
+  </xs:complexType>
   <xs:element type="profiles" name="profiles"/>
+  <xs:complexType name="setting">
+    <xs:sequence/>
+    <xs:attribute type="xs:string" use="required" name="id"/>
+    <xs:attribute type="xs:string" use="required" name="value"/>
+  </xs:complexType>
+  <xs:complexType name="eclipseFormatter">
+    <xs:sequence/>
+    <xs:attribute type="formatterEnum" use="required" name="formatterChoice"/>
+    <xs:attribute type="xs:string" name="formatterFile"/>
+  </xs:complexType>
 </xs:schema>

@@ -18,7 +18,7 @@
 	<ui:define name="content">
 	<f:validateBean disabled="true">
 		<p:fieldset legend="${msg.document}">
-			<h:panelGrid columns="4" styleClass="aria-role-presentation">
+			<h:panelGrid columns="2" styleClass="aria-role-presentation">
 				<appcc:outputLabel for="documentBinary" value="${msg.document_documentBinary}" />
 				<p:outputPanel id="documentBinaryOP">
 					<p:fileUpload id="documentBinary"
@@ -32,7 +32,7 @@
 						rendered="#{not empty document.documentFileName}"
 						value="#{document.documentFileName}"><p:fileDownload value="#{document.streamedContentFile}"/></h:commandLink>
 				</p:outputPanel>
-				<app:accountAutocomplete id="account" value="#{document.account}" required="true" label="${msg.document_account}">
+				<app:accountAutocomplete id="account" value="#{document.account}" readonly="true" required="true" label="${msg.document_account}">
 					<app:iconView action="viewAccount" title="${msg.document_account}" />
 				</app:accountAutocomplete>
 			</h:panelGrid>
