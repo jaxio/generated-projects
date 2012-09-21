@@ -57,7 +57,7 @@
     </table>
     <table name="ADDRESS" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_C607932F_4C04_4FF6_944B_8BE9A30030A1)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_FFF2E8F0_8FF6_49D7_819E_1C577C112C3A)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="STREET_NAME" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="2" size="100" type="VARCHAR"/>
         <column name="CITY" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="100" type="VARCHAR"/>
         <column name="VERSION" columnDef="0" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="4" size="10" type="INTEGER"/>
@@ -72,7 +72,7 @@
     </table>
     <table name="BOOK" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_2D1EFDBD_6BD5_452B_A962_D9DD1F8FB689)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_73F7FE5E_5672_47C7_9C28_0D3C9DE22011)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="ACCOUNT_ID" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="2" size="32" type="CHAR"/>
         <column name="TITLE" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="100" type="VARCHAR"/>
         <column name="NUMBER_OF_PAGES" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="4" size="10" type="INTEGER"/>
@@ -131,7 +131,7 @@
     </table>
     <table name="MORE_TYPES_DEMO" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_A1F7272C_4675_4259_BEDC_CBB590C8E02B)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_B875C180_7578_441D_82CD_BBB9E7427E9B)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="NUMBER_INT" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="2" size="10" type="INTEGER"/>
         <column name="NUMBER_LONG" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="3" size="19" type="BIGINT"/>
         <column name="NUMBER_DOUBLE" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="4" size="17" type="DOUBLE"/>
@@ -154,7 +154,7 @@
     </table>
     <table name="ROLE" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_20CB49B1_9FB0_4E72_B104_739158A0DEBB)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_9FB98E69_60C8_4C2E_8EA5_F2DE850BA4EA)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="ROLE_NAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="100" type="VARCHAR"/>
       </columns>
       <indexes>

@@ -122,7 +122,6 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
         if (sp.hasNamedQuery()) {
             return (List<E>) getNamedQueryUtil().findByNamedQuery(sp);
         }
-
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<E> criteriaQuery = builder.createQuery(type);
         Root<E> root = criteriaQuery.from(type);
@@ -167,7 +166,6 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
         if (sp.hasNamedQuery()) {
             return getNamedQueryUtil().numberByNamedQuery(sp).intValue();
         }
-
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
@@ -325,5 +323,12 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
                 typedQuery.setHint("org.hibernate.cacheRegion", cacheRegion);
             }
         }
+    }
+
+    // -----------------
+    // Hibernate Search
+    // -----------------
+    protected String[] getIndexedFields() {
+        return new String[0];
     }
 }

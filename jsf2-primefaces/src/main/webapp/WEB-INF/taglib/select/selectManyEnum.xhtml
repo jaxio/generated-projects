@@ -5,7 +5,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
 	<appcc:outputLabel for="${id}" value="${label}" />
-	<p:selectManyCheckbox id="${id}" value="#{value.selected}" converter="#{converter}" disabled="${empty disabled ? false : disabled}">  
+	<p:selectManyCheckbox id="${id}" value="#{value.selected}" converter="#{converter}" disabled="${empty disabled ? false : disabled}"
+		layout="${items.list.size() lt 4 ? 'lineDirection' : 'pageDirection'}">
 		<f:selectItems value="#{items.list}" />
 		<f:selectItem itemLabel="${msg.null_value}" itemValue="#{null}" />						
 		<ui:insert/>

@@ -93,6 +93,11 @@ public class NamedQueryUtil {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T byNamedQuery(SearchParameters searchParameters) {
+        return (T) objectByNamedQuery(searchParameters);
+    }
+
     public Number numberByNamedQuery(SearchParameters searchParameters) {
         return (Number) objectByNamedQuery(searchParameters);
     }

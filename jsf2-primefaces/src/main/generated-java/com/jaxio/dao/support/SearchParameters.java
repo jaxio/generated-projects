@@ -27,7 +27,7 @@ import com.jaxio.domain.Identifiable;
 /**
  * The SearchParameters is used to pass search parameters to the DAO layer. 
  * 
- * It keeps 'find' method signatures in the DAO/Service layer simple.
+ * Its usage keeps 'find' method signatures in the DAO/Service layer simple.
  * 
  * A SearchParameters helps you drive your search in the following areas:
  * <ul>

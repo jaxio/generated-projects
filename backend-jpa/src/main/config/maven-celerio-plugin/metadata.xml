@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata xmlns="http://www.jaxio.com/schema/celerio">
-  <jdbcConnectivity driver="org.h2.Driver" url="jdbc:h2:~/.h2/appli" user="appli" password="appli" tableNamePattern="%" oracleRetrieveRemarks="false" oracleRetrieveSynonyms="true">
+  <jdbcConnectivity driver="org.h2.Driver" url="jdbc:h2:~/.h2/appli;MVCC=TRUE" user="appli" password="appli" tableNamePattern="%" oracleRetrieveRemarks="false" oracleRetrieveSynonyms="true">
     <tableTypes>
       <tableType>TABLE</tableType>
     </tableTypes>
@@ -57,7 +57,7 @@
     </table>
     <table name="ADDRESS" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_58C4E216_4C1B_48D4_AA3D_238C1AEA68DD)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_27907BAC_F1AC_4842_9963_D05FCC0EF140)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="STREET_NAME" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="2" size="100" type="VARCHAR"/>
         <column name="CITY" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="100" type="VARCHAR"/>
         <column name="VERSION" columnDef="0" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="4" size="10" type="INTEGER"/>
@@ -72,7 +72,7 @@
     </table>
     <table name="BOOK" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_9063FC5B_0B80_44FE_B5D3_CCD9C95A0AAB)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_50797EE8_A1C4_4D6B_B268_E6A828FCC62B)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="ACCOUNT_ID" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="2" size="32" type="CHAR"/>
         <column name="TITLE" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="100" type="VARCHAR"/>
         <column name="NUMBER_OF_PAGES" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="4" size="10" type="INTEGER"/>
@@ -131,7 +131,7 @@
     </table>
     <table name="MORE_TYPES_DEMO" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_BB8250E6_2D18_43DF_9966_69A66EB85464)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_BCAE8EAE_E86E_4D0A_A9FB_1854515107C6)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="NUMBER_INT" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="2" size="10" type="INTEGER"/>
         <column name="NUMBER_LONG" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="3" size="19" type="BIGINT"/>
         <column name="NUMBER_DOUBLE" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="4" size="17" type="DOUBLE"/>
@@ -154,7 +154,7 @@
     </table>
     <table name="ROLE" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_BE4227B8_7DFE_4ADD_9ED1_7976F16D9022)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_6AC2CB05_1002_4C5F_9214_4D2ED8A79FFC)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="ROLE_NAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="100" type="VARCHAR"/>
       </columns>
       <indexes>

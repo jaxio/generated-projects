@@ -6,7 +6,7 @@
 		action="#{action.toString()}"
 		process="@this"
 		disabled="#{readonly}"
-		rendered="#{empty rendered or rendered}"
+		rendered="#{rendered}"
 		immediate="#{not empty immediate and immediate}"
 		icon="iconSelect"
 		title="${msg.icon_select} ${empty title? '' : title}">

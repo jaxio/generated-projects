@@ -11,7 +11,7 @@
 
 	<appender name="Console" class="org.apache.log4j.ConsoleAppender">
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="[${name}] - %d{ISO8601} - %X{login} - %m%n" />
+			<param name="ConversionPattern" value="[@project.name@] - %d{ISO8601} - %X{login} - %m%n" />
 		</layout>
 	</appender>
 
@@ -26,7 +26,7 @@
 	</appender>
 
 	<logger name="com.jaxio">
-		<level value="${log4j.level}" />
+		<level value="@log4j.level@" />
 	</logger>
 
 	<logger name="com.jaxio.dao">
