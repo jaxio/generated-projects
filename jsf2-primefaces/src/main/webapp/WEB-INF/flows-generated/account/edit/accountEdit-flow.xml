@@ -20,7 +20,7 @@
 	<!-- account: the entity to edit. If null, then we create it here -->
 	<input name="account" required="false" value="flowScope.account"/>	
 	<on-start>
-		<evaluate expression="account == null ? accountRepository.newWithDefaults : account" result="flowScope.account" />
+		<evaluate expression="accountController.newIfNull(account)" result="flowScope.account" />
 	</on-start>
 
 	<decision-state id="startChoice">
@@ -38,14 +38,11 @@
 		</transition>
 
 		<transition on="save">
-			<evaluate expression="accountRepository.save(account)" />
-			<evaluate expression="messageUtil.info('status_saved_ok')" />
+			<evaluate expression="accountController.save(account)" />
 		</transition>
 
 		<transition on="saveAndClose">
-			<evaluate expression="accountRepository.save(account)" />
-			<evaluate expression="primeFacesUtil.forceClose()"/>
-            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_saved_ok')" />            
+			<evaluate expression="accountController.saveAndClose(account)" />
 		</transition>
 
 		<transition on="close">
@@ -53,8 +50,7 @@
 		</transition>
 
 		<transition on="deleteAndClose" to="deleteAndClose">
-			<evaluate expression="accountRepository.delete(account)" />
-            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_deleted_ok')" />            
+			<evaluate expression="accountController.delete(account)" />
 		</transition>
 	</view-state>
 
@@ -207,11 +203,9 @@
 		<transition on="endEdit" to="startChoice">
 			<evaluate expression="messageUtil.info('status_edited_ok',resourceBundle.account_roles)" />
 		</transition>
-		<transition on="cancelEdit" to="startChoice" />
+		<transition on="@it" to="startChoice" />
 	</subflow-state>
 
-
-	<!-- END EDIT -->
 	<end-state id="endEdit">
 		<output name="account" value="account" />
 	</end-state>

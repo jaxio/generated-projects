@@ -5,9 +5,10 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
 	<appcc:outputLabel for="${id}" value="${label}" required="${empty required ? false : required}" />
-	<appcc:datePicker id="${id}" label="${label}" value="#{value}" rendered="${not readonly}" timeRendered="true">
+	<appcc:datePicker id="${id}" label="${label}" value="#{value}" timeRendered="true" rendered="${not readonly}" disabled="${empty disabled ? false : disabled}">
 		<f:converter converterId="localDateTimeConverter"/>
 		<f:validateBean binding="#{lenientBeanValidator}"/>
+		<ui:insert/>
 	</appcc:datePicker>
 	<h:outputText value="#{value}" rendered="${readonly}">
 		<f:converter converterId="localDateTimeConverter"/>

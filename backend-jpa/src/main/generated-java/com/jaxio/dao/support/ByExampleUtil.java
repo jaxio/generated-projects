@@ -14,7 +14,6 @@ import static javax.persistence.metamodel.Attribute.PersistentAttributeType.ONE_
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Named;
@@ -22,10 +21,13 @@ import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.ManagedType;
+import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.springframework.util.ReflectionUtils;
@@ -42,16 +44,17 @@ public class ByExampleUtil {
     @PersistenceContext
     private EntityManager em;
 
-    public <T> Predicate byExampleOnEntity(Path<T> entityPath, final T entityValue, SearchParameters sp, CriteriaBuilder builder) {
+    public <T> Predicate byExampleOnEntity(Root<T> rootPath, final T entityValue, SearchParameters sp, CriteriaBuilder builder) {
         if (entityValue == null) {
             return null;
         }
 
-        Class<T> type = entityPath.getModel().getBindableJavaType();
+        Class<T> type = rootPath.getModel().getBindableJavaType();
         ManagedType<T> mt = em.getMetamodel().entity(type);
 
         List<Predicate> predicates = newArrayList();
-        byExample(mt, entityPath, entityValue, sp, builder, predicates);
+        byExample(mt, rootPath, entityValue, sp, builder, predicates);
+        byExampleOnManyToMany(mt, rootPath, entityValue, sp, builder, predicates);
         return JpaUtil.andPredicate(predicates, builder);
     }
 
@@ -90,54 +93,21 @@ public class ByExampleUtil {
     }
 
     /**
-     * Helper method to a predicate out of the passed many-to-one or one-to-one association.
-     * <p>
-     * Note 1: If the fkpValue is present, there no need to add a predicate as it is already processed by byExample facility.
-     * <p>
-     * Note 2: By convention, if the passed fkeValue is not null and has no property set, we assume that you want a not null predicate on the fkePath.
-     * 
-     * @param fkpPath
-     *            the raw fk path.
-     * @param fkpValue
-     *            the raw fk column value (it is annotated with Column), not used for inverse one-to-one
-     * @param fkePath
-     *            the path of the property carrying the x-to-one association (it is annotated with ManyToOne or OneToOne)
-     * @param fkeValue
-     *            the association value
-     * @param builder
-     *            criteria builder
+     * Construct a join predicate on collection (eg many to many, List)
      */
-
-    public <FKP, FKE> void predicatesForToOneAssociation(Path<FKP> fkpPath, FKP fkpValue, Path<FKE> fkePath, FKE fkeValue, SearchParameters sp,
-            CriteriaBuilder builder, List<Predicate> predicates) {
-        if (fkeValue != null && fkpValue == null) {
-            predicates.add(builder.and(builder.isNotNull(fkpPath), byExampleOnEntity(fkePath, fkeValue, sp, builder)));
-        }
-    }
-
-    /**
-     * Helper method to create a predicate out of the passed one-to-many or many-to-many association.
-     * 
-     * @param joinPath
-     *            the join path of the property carrying the one-to-many or many-to-many association (it is annotated with OneToMany or ManyToMany)
-     * @param cValue
-     *            the association value
-     * @param builder
-     *            criteria builder
-     */
-    public <E> void predicatesForToManyAssociation(Path<E> joinPath, Collection<E> cValue, SearchParameters sp, CriteriaBuilder builder,
+    private <T> void byExampleOnManyToMany(ManagedType<T> mt, Root<T> mtPath, final T mtValue, SearchParameters sp, CriteriaBuilder builder,
             List<Predicate> predicates) {
-        if (cValue == null || cValue.isEmpty()) {
-            return;
+        for (PluralAttribute<T, ?, ?> pa : mt.getDeclaredPluralAttributes()) {
+            if (pa.getCollectionType() == PluralAttribute.CollectionType.LIST) {
+                List<?> value = (List<?>) getValue(mtValue, mt.getAttribute(pa.getName()));
+
+                if (value != null && !value.isEmpty()) {
+                    ListJoin<T, ?> join = mtPath.join(mt.getDeclaredList(pa.getName()));
+                    Predicate p = join.in(value);
+                    predicates.add(p);
+                }
+            }
         }
-
-        List<Predicate> examples = newArrayList();
-
-        for (E item : cValue) {
-            examples.add(byExampleOnEntity(joinPath, item, sp, builder));
-        }
-
-        predicates.add(builder.or(examples.toArray(new Predicate[predicates.size()])));
     }
 
     private <T> Object getValue(T example, Attribute<? super T, ?> attr) {

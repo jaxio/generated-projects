@@ -15,4 +15,7 @@
 	<!-- Attributes -->
 	<entry key="role_id">Id</entry>
 	<entry key="role_roleName">Role Name</entry>
+
+	<!-- Uniques -->
+	<entry key="role_roleName_already_exists">Role Name already exists</entry>
 </properties>

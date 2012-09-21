@@ -4,10 +4,11 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<h:outputLabel for="${id}" value="${label} :" />
+	<appcc:outputLabel for="${id}" value="${label}" />
 	<p:selectManyCheckbox id="${id}" value="#{value.selected}" converter="#{booleanConverter}">
 		<f:selectItem itemLabel="${msg.boolean_true}" itemValue="#{true}" />
 		<f:selectItem itemLabel="${msg.boolean_false}" itemValue="#{false}" />
 		<f:selectItem itemLabel="${msg.null_value}" itemValue="#{null}" />
+		<ui:insert/>
     </p:selectManyCheckbox>  
 </ui:composition>

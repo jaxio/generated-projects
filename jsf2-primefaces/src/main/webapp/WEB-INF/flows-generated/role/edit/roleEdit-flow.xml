@@ -18,7 +18,7 @@
 	<!-- role: the entity to edit. If null, then we create it here -->
 	<input name="role" required="false" value="flowScope.role"/>	
 	<on-start>
-		<evaluate expression="role == null ? roleRepository.newWithDefaults : role" result="flowScope.role" />
+		<evaluate expression="roleController.newIfNull(role)" result="flowScope.role" />
 	</on-start>
 
 	<decision-state id="startChoice">
@@ -36,14 +36,11 @@
 		</transition>
 
 		<transition on="save">
-			<evaluate expression="roleRepository.save(role)" />
-			<evaluate expression="messageUtil.info('status_saved_ok')" />
+			<evaluate expression="roleController.save(role)" />
 		</transition>
 
 		<transition on="saveAndClose">
-			<evaluate expression="roleRepository.save(role)" />
-			<evaluate expression="primeFacesUtil.forceClose()"/>
-            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_saved_ok')" />            
+			<evaluate expression="roleController.saveAndClose(role)" />
 		</transition>
 
 		<transition on="close">
@@ -51,8 +48,7 @@
 		</transition>
 
 		<transition on="deleteAndClose" to="deleteAndClose">
-			<evaluate expression="roleRepository.delete(role)" />
-            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_deleted_ok')" />            
+			<evaluate expression="roleController.delete(role)" />
 		</transition>
 	</view-state>
 
@@ -64,8 +60,6 @@
 		<transition on="cancel" to="cancelEdit" />
 	</view-state>
 
-
-	<!-- END EDIT -->
 	<end-state id="endEdit">
 		<output name="role" value="role" />
 	</end-state>

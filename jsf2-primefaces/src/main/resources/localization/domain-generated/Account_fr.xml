@@ -41,4 +41,10 @@
 
 	<!-- many-to-many -->
 	<entry key="account_roles">Roles</entry>
+
+
+	<!-- Uniques -->
+	<entry key="account_username_already_exists">Username existe déjà</entry>
+	<entry key="account_email_already_exists">Email existe déjà</entry>
+	
 </properties>

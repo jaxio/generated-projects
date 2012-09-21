@@ -19,16 +19,15 @@
 	<f:validateBean disabled="true">
 		<p:fieldset legend="${msg.account}">
 			<h:panelGrid columns="2" styleClass="aria-role-presentation">
-				<app:input id="username" value="#{account.username}" size="100" label="${msg.account_username}" required="true" />
+				<app:input id="username" value="#{account.username}" size="100" label="${msg.account_username}" required="true">
+					<f:validateBean binding="#{jpaUniqueValidator}" entity="${account}" property="username" />
+				</app:input>
 				<app:inputPassword id="password" value="#{account.password}" size="100" label="${msg.account_password}" required="true" />
-				<app:input id="email" value="#{account.email}" size="100" label="${msg.account_email}" required="true" />
+				<app:input id="email" value="#{account.email}" size="100" label="${msg.account_email}" required="true">
+					<f:validateBean binding="#{jpaUniqueValidator}" entity="${account}" property="email" />
+				</app:input>
 				<app:inputBoolean id="isEnabled" value="#{account.isEnabled}" label="${msg.account_isEnabled}" />
-				<appcc:outputLabel for="civility" value="${msg.account_civility}" />
-				<h:selectOneRadio id="civility" value="#{account.civility}" rendered="#{not readonly}" label="${msg.account_civility}">
-					<f:selectItems value="#{civilityItems.list}" />
-					<f:validateBean binding="#{lenientBeanValidator}"/>
-				</h:selectOneRadio>
-				<h:outputText value="#{account.civility.label}" rendered="#{readonly}" />
+				<app:selectOneRadio id="civility" value="#{account.civility}" values="#{civilityItems.list}" label="${msg.account_civility}" />
 				<app:input id="firstName" value="#{account.firstName}" size="100" label="${msg.account_firstName}" />
 				<app:input id="lastName" value="#{account.lastName}" size="100" label="${msg.account_lastName}" />
 				<app:inputDateTime id="birthDate" value="#{account.birthDate}" label="${msg.account_birthDate}" />

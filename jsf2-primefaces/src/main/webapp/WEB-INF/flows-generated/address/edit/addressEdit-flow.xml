@@ -18,7 +18,7 @@
 	<!-- address: the entity to edit. If null, then we create it here -->
 	<input name="address" required="false" value="flowScope.address"/>	
 	<on-start>
-		<evaluate expression="address == null ? addressRepository.newWithDefaults : address" result="flowScope.address" />
+		<evaluate expression="addressController.newIfNull(address)" result="flowScope.address" />
 	</on-start>
 
 	<decision-state id="startChoice">
@@ -36,14 +36,11 @@
 		</transition>
 
 		<transition on="save">
-			<evaluate expression="addressRepository.save(address)" />
-			<evaluate expression="messageUtil.info('status_saved_ok')" />
+			<evaluate expression="addressController.save(address)" />
 		</transition>
 
 		<transition on="saveAndClose">
-			<evaluate expression="addressRepository.save(address)" />
-			<evaluate expression="primeFacesUtil.forceClose()"/>
-            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_saved_ok')" />            
+			<evaluate expression="addressController.saveAndClose(address)" />
 		</transition>
 
 		<transition on="close">
@@ -51,8 +48,7 @@
 		</transition>
 
 		<transition on="deleteAndClose" to="deleteAndClose">
-			<evaluate expression="addressRepository.delete(address)" />
-            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_deleted_ok')" />            
+			<evaluate expression="addressController.delete(address)" />
 		</transition>
 	</view-state>
 
@@ -64,8 +60,6 @@
 		<transition on="cancel" to="cancelEdit" />
 	</view-state>
 
-
-	<!-- END EDIT -->
 	<end-state id="endEdit">
 		<output name="address" value="address" />
 	</end-state>

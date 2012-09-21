@@ -7,10 +7,15 @@
  */
 package com.jaxio.web.util;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static org.springframework.webflow.execution.RequestContextHolder.getRequestContext;
+
 import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 import static javax.faces.application.FacesMessage.SEVERITY_FATAL;
 import static javax.faces.application.FacesMessage.SEVERITY_INFO;
 import static javax.faces.application.FacesMessage.SEVERITY_WARN;
+
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -105,15 +110,41 @@ public class MessageUtil {
         }
     }
 
-    // -- raw
+    // -- delayed messages support
 
-    public void addFacesMessage(FacesMessage fm) {
+    /**
+     * It constructs a new info FacesMessage, store it flow's conversationScope but do not display it to the user. To trigger the message display, please invoke
+     * displayDelayedMessages from your flow. This trick allows you to support multiple redirection (flash scope is not enough)
+     */
+    public void infoDelayed(String summaryKey, Object... args) {
+        getDelayedMessages().add(newFacesMessageUsingKey(SEVERITY_INFO, summaryKey, args));
+    }
+
+    public void displayDelayedMessages() {
+        List<FacesMessage> messages = getDelayedMessages();
+        for (FacesMessage fm : messages) {
+            addFacesMessage(fm);
+        }
+        messages.clear();
+    }
+
+    // -- impl details
+
+    @SuppressWarnings("unchecked")
+    private List<FacesMessage> getDelayedMessages() {
+        List<FacesMessage> messages = (List<FacesMessage>) getRequestContext().getConversationScope().get("delayedMessages");
+        if (messages == null) {
+            messages = newArrayList();
+            getRequestContext().getConversationScope().put("delayedMessages", messages);
+        }
+        return messages;
+    }
+
+    private void addFacesMessage(FacesMessage fm) {
         if (fm != null) {
             FacesContext.getCurrentInstance().addMessage(null, fm);
         }
     }
-
-    // -- impl details
 
     private boolean isCausedBy(Throwable e, Class<?> cause) {
         Throwable current = e;

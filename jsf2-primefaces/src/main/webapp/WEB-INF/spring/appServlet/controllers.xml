@@ -22,11 +22,11 @@
 
 	<mvc:interceptors>
         <mvc:interceptor>
-            <mvc:mapping path="/*" />
+            <mvc:mapping path="/**" />
             <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
         </mvc:interceptor>
         <mvc:interceptor>
-            <mvc:mapping path="/*" />
+            <mvc:mapping path="/**" />
             <bean class="com.jaxio.web.interceptor.ExposeBeanToViewInterceptor" />            
         </mvc:interceptor>
 	</mvc:interceptors>

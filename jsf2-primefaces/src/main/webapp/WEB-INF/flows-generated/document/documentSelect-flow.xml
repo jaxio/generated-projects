@@ -21,13 +21,16 @@
 	</decision-state>
 
 	<view-state id="documentSelect">
+        <on-entry>
+            <evaluate expression="messageUtil.displayDelayedMessages()" />
+            <evaluate expression="persistenceContext.clear()" />           
+        </on-entry>
 		<on-render>
 			<evaluate expression="flowsMenuHandler.updateMenu(flowRequestContext,'select')" />
 		</on-render>
         <transition on="select" to="checkIfAlreadyOpenFlow" validate="false"/>
         <transition on="delete" validate="false">
-            <evaluate expression="documentRepository.delete(documentLazyDataModel.selectedRow)"  />
-            <evaluate expression="messageUtil.info('status_deleted_ok')" />
+            <evaluate expression="documentController.delete(documentLazyDataModel.selectedRow)"  />
         </transition>
 		<transition on="sendNew" to="edit" validate="false" />
 	</view-state>
@@ -44,9 +47,8 @@
 
 	<subflow-state id="edit" subflow="document/edit">
 		<input name="document" value="documentLazyDataModel.selectedRow" />
-		<transition on="endEdit" to="quit" />
-		<transition on="cancelEdit" to="quit" />
-		<transition on="deleteAndClose" to="quit"/>
+		<transition on="endEdit" to="documentSelect" />
+		<transition on="deleteAndClose" to="documentSelect" />
 	</subflow-state>
 
 	<end-state id="endSwitchToAlreadyOpenFlow"

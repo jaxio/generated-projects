@@ -17,7 +17,7 @@ import org.primefaces.context.RequestContext;
 import com.jaxio.domain.Identifiable;
 
 /**
- * Use this bean from your flow to execute JavaScript on client side.
+ * Use this bean to execute JavaScript on client side.
  */
 @Named
 @Singleton
@@ -25,7 +25,7 @@ public class PrimeFacesUtil {
     /**
      * Controls the 'ask for save' primefaces dialog on the client side from the server side if the entity manager is dirty or the entity is new
      */
-    public void showAskForSaveDialog(EntityManager entityManager, Identifiable<?> entity) {
+    static public void showAskForSaveDialog(EntityManager entityManager, Identifiable<?> entity) {
         RequestContext rc = RequestContext.getCurrentInstance();
         if ((entity != null && !entity.isIdSet()) || ((Session) entityManager.getDelegate()).isDirty()) {
             rc.execute("askForSaveDialog.show(); APP.focusAskForSaveDialog()");
@@ -41,7 +41,7 @@ public class PrimeFacesUtil {
      * To simulate an 'event' with a 'to', the trick is to tell the client to request silently (from the user point of view)
      * the transition you are interested in.
      */
-    public void forceClose() {
+    static public void forceClose() {
         RequestContext.getCurrentInstance().execute("APP.menu.forceClose()");
     }
 }

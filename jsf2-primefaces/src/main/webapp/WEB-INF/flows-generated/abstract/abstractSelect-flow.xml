@@ -17,7 +17,7 @@
 
 	<end-state id="quit" view="/WEB-INF/views/home.xhtml">
         <on-entry>
-            <evaluate expression="messageUtil.addFacesMessage(conversationScope.quitMessage)" />            
+            <evaluate expression="messageUtil.displayDelayedMessages()" />            
         </on-entry>
     </end-state>
 	<end-state id="cancel" />

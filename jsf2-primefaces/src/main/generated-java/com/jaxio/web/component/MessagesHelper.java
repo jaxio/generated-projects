@@ -13,12 +13,14 @@ import static com.google.common.collect.Lists.newArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
 import javax.faces.context.FacesContext;
 
+import com.jaxio.util.ResourcesUtil;
 import com.jaxio.web.util.MessageUtil;
 
 /**
@@ -27,6 +29,9 @@ import com.jaxio.web.util.MessageUtil;
 @Named
 @Singleton
 public class MessagesHelper {
+
+    @Inject
+    ResourcesUtil resourcesUtil;
 
     public String getMaxSeverity() {
         Severity maxSeverity = null;
@@ -87,6 +92,18 @@ public class MessagesHelper {
             }
         }
         return false;
+    }
+
+    public String getNonGlobalMessagesIntro() {
+        int count = nonGlobalMessagesCount();
+
+        if (count == 1) {
+            return resourcesUtil.getProperty("one_error_present");
+        } else if (count > 1) {
+            return resourcesUtil.getProperty("several_errors_present", new Object[] { count });
+        }
+
+        throw new IllegalStateException("method should be called when at least one message is present");
     }
 
     public int nonGlobalMessagesCount() {

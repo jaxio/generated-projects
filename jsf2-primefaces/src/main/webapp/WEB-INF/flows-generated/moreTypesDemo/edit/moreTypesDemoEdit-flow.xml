@@ -18,7 +18,7 @@
 	<!-- moreTypesDemo: the entity to edit. If null, then we create it here -->
 	<input name="moreTypesDemo" required="false" value="flowScope.moreTypesDemo"/>	
 	<on-start>
-		<evaluate expression="moreTypesDemo == null ? moreTypesDemoRepository.newWithDefaults : moreTypesDemo" result="flowScope.moreTypesDemo" />
+		<evaluate expression="moreTypesDemoController.newIfNull(moreTypesDemo)" result="flowScope.moreTypesDemo" />
 	</on-start>
 
 	<decision-state id="startChoice">
@@ -36,14 +36,11 @@
 		</transition>
 
 		<transition on="save">
-			<evaluate expression="moreTypesDemoRepository.save(moreTypesDemo)" />
-			<evaluate expression="messageUtil.info('status_saved_ok')" />
+			<evaluate expression="moreTypesDemoController.save(moreTypesDemo)" />
 		</transition>
 
 		<transition on="saveAndClose">
-			<evaluate expression="moreTypesDemoRepository.save(moreTypesDemo)" />
-			<evaluate expression="primeFacesUtil.forceClose()"/>
-            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_saved_ok')" />            
+			<evaluate expression="moreTypesDemoController.saveAndClose(moreTypesDemo)" />
 		</transition>
 
 		<transition on="close">
@@ -51,8 +48,7 @@
 		</transition>
 
 		<transition on="deleteAndClose" to="deleteAndClose">
-			<evaluate expression="moreTypesDemoRepository.delete(moreTypesDemo)" />
-            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_deleted_ok')" />            
+			<evaluate expression="moreTypesDemoController.delete(moreTypesDemo)" />
 		</transition>
 	</view-state>
 
@@ -64,8 +60,6 @@
 		<transition on="cancel" to="cancelEdit" />
 	</view-state>
 
-
-	<!-- END EDIT -->
 	<end-state id="endEdit">
 		<output name="moreTypesDemo" value="moreTypesDemo" />
 	</end-state>

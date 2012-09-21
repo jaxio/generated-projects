@@ -18,7 +18,7 @@
 	<!-- legacy: the entity to edit. If null, then we create it here -->
 	<input name="legacy" required="false" value="flowScope.legacy"/>	
 	<on-start>
-		<evaluate expression="legacy == null ? legacyRepository.newWithDefaults : legacy" result="flowScope.legacy" />
+		<evaluate expression="legacyController.newIfNull(legacy)" result="flowScope.legacy" />
 	</on-start>
 
 	<decision-state id="startChoice">
@@ -36,14 +36,11 @@
 		</transition>
 
 		<transition on="save">
-			<evaluate expression="legacyRepository.save(legacy)" />
-			<evaluate expression="messageUtil.info('status_saved_ok')" />
+			<evaluate expression="legacyController.save(legacy)" />
 		</transition>
 
 		<transition on="saveAndClose">
-			<evaluate expression="legacyRepository.save(legacy)" />
-			<evaluate expression="primeFacesUtil.forceClose()"/>
-            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_saved_ok')" />            
+			<evaluate expression="legacyController.saveAndClose(legacy)" />
 		</transition>
 
 		<transition on="close">
@@ -51,8 +48,7 @@
 		</transition>
 
 		<transition on="deleteAndClose" to="deleteAndClose">
-			<evaluate expression="legacyRepository.delete(legacy)" />
-            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_deleted_ok')" />            
+			<evaluate expression="legacyController.delete(legacy)" />
 		</transition>
 	</view-state>
 
@@ -64,8 +60,6 @@
 		<transition on="cancel" to="cancelEdit" />
 	</view-state>
 
-
-	<!-- END EDIT -->
 	<end-state id="endEdit">
 		<output name="legacy" value="legacy" />
 	</end-state>

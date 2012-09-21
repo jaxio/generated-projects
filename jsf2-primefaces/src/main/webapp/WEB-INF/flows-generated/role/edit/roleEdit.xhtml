@@ -19,7 +19,9 @@
 	<f:validateBean disabled="true">
 		<p:fieldset legend="${msg.role}">
 			<h:panelGrid columns="2" styleClass="aria-role-presentation">
-				<app:input id="roleName" value="#{role.roleName}" size="100" label="${msg.role_roleName}" required="true" />
+				<app:input id="roleName" value="#{role.roleName}" size="100" label="${msg.role_roleName}" required="true">
+					<f:validateBean binding="#{jpaUniqueValidator}" entity="${role}" property="roleName" />
+				</app:input>
 			</h:panelGrid>
 		</p:fieldset>
 		<app:saveButton title="${msg.role}"/>

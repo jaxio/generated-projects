@@ -18,7 +18,7 @@
 	<!-- document: the entity to edit. If null, then we create it here -->
 	<input name="document" required="false" value="flowScope.document"/>	
 	<on-start>
-		<evaluate expression="document == null ? documentRepository.newWithDefaults : document" result="flowScope.document" />
+		<evaluate expression="documentController.newIfNull(document)" result="flowScope.document" />
 	</on-start>
 
 	<decision-state id="startChoice">
@@ -36,14 +36,11 @@
 		</transition>
 
 		<transition on="save">
-			<evaluate expression="documentRepository.save(document)" />
-			<evaluate expression="messageUtil.info('status_saved_ok')" />
+			<evaluate expression="documentController.save(document)" />
 		</transition>
 
 		<transition on="saveAndClose">
-			<evaluate expression="documentRepository.save(document)" />
-			<evaluate expression="primeFacesUtil.forceClose()"/>
-            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_saved_ok')" />            
+			<evaluate expression="documentController.saveAndClose(document)" />
 		</transition>
 
 		<transition on="close">
@@ -51,8 +48,7 @@
 		</transition>
 
 		<transition on="deleteAndClose" to="deleteAndClose">
-			<evaluate expression="documentRepository.delete(document)" />
-            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_deleted_ok')" />            
+			<evaluate expression="documentController.delete(document)" />
 		</transition>
 	</view-state>
 
@@ -96,8 +92,6 @@
 		<transition on="cancelEdit" to="startChoice" />
 	</subflow-state>
 
-
-	<!-- END EDIT -->
 	<end-state id="endEdit">
 		<output name="document" value="document" />
 	</end-state>

@@ -5,8 +5,9 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
 	<appcc:outputLabel for="${id}" value="${label}" required="${empty required ? false : required}" />
-	<p:inputTextarea id="${id}" value="#{value}" cols="37" rows="3" rendered="${not readonly}">
+	<p:inputTextarea id="${id}" value="#{value}" cols="37" rows="3" rendered="${not readonly}" disabled="${empty disabled ? false : disabled}">
 		<f:validateBean binding="#{lenientBeanValidator}"/>
+		<ui:insert/>
 	</p:inputTextarea>
 	<h:outputText value="#{value}" rendered="${readonly}" />
 </ui:composition>

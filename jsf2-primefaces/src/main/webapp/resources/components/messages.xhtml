@@ -28,9 +28,7 @@
 					<span class="ui-messages-${messagesHelper.maxSeverity}-icon"></span>
 					<span class="ui-messages-${messagesHelper.maxSeverity}-summary">
 						<a id="errorPresent" href="javascript:void" onclick="APP.focusTo('errorMsgNo0'); return false;">
-							<h:outputFormat value="#{msg.error_present}" >
-								<f:param value="${messagesHelper.nonGlobalMessagesCount()}"/>
-							</h:outputFormat>
+							<h:outputText value="${messagesHelper.nonGlobalMessagesIntro}" />
 						</a>
 					</span>
 					<ol>

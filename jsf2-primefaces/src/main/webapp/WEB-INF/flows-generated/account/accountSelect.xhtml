@@ -30,7 +30,8 @@
 					<app:input id="lastName" value="#{accountSearchForm.account.lastName}" label="${msg.account_lastName}"/>
 					<app:rangeDateTime id="birthDate" value="#{accountSearchForm.birthDateRange}" label="${msg.account_birthDate}" />
 					<app:input id="description" value="#{accountSearchForm.account.description}" label="${msg.account_description}"/>
-					<app:addressMultiAutoComplete id="homeAddressSelector" value="#{accountSearchForm.homeAddressSelector}" label="${msg.account_homeAddress}" />
+					<app:addressMultiAutoComplete id="homeAddressSelector" value="#{accountSearchForm.homeAddressSelector.selected}" label="${msg.account_homeAddress}" />
+					<app:roleMultiAutoComplete id="rolesSelector" value="#{accountSearchForm.account.roles}" label="${msg.account_roles}" />
 				</h:panelGrid>
 			</f:validateBean>
 		</ui:define>

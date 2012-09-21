@@ -21,7 +21,7 @@
 		<ui:define name="filters">
 			<f:validateBean disabled="true">
 				<h:panelGrid columns="4">
-					<app:accountMultiAutoComplete id="accountSelector" value="#{documentSearchForm.accountSelector}" label="${msg.document_account}" />
+					<app:accountMultiAutoComplete id="accountSelector" value="#{documentSearchForm.accountSelector.selected}" label="${msg.document_account}" />
 				</h:panelGrid>
 			</f:validateBean>
 		</ui:define>

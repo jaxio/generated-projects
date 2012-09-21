@@ -18,7 +18,7 @@
 	<!-- book: the entity to edit. If null, then we create it here -->
 	<input name="book" required="false" value="flowScope.book"/>	
 	<on-start>
-		<evaluate expression="book == null ? bookRepository.newWithDefaults : book" result="flowScope.book" />
+		<evaluate expression="bookController.newIfNull(book)" result="flowScope.book" />
 	</on-start>
 
 	<decision-state id="startChoice">
@@ -36,14 +36,11 @@
 		</transition>
 
 		<transition on="save">
-			<evaluate expression="bookRepository.save(book)" />
-			<evaluate expression="messageUtil.info('status_saved_ok')" />
+			<evaluate expression="bookController.save(book)" />
 		</transition>
 
 		<transition on="saveAndClose">
-			<evaluate expression="bookRepository.save(book)" />
-			<evaluate expression="primeFacesUtil.forceClose()"/>
-            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_saved_ok')" />            
+			<evaluate expression="bookController.saveAndClose(book)" />
 		</transition>
 
 		<transition on="close">
@@ -51,8 +48,7 @@
 		</transition>
 
 		<transition on="deleteAndClose" to="deleteAndClose">
-			<evaluate expression="bookRepository.delete(book)" />
-            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_deleted_ok')" />            
+			<evaluate expression="bookController.delete(book)" />
 		</transition>
 	</view-state>
 
@@ -96,8 +92,6 @@
 		<transition on="cancelEdit" to="startChoice" />
 	</subflow-state>
 
-
-	<!-- END EDIT -->
 	<end-state id="endEdit">
 		<output name="book" value="book" />
 	</end-state>

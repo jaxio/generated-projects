@@ -47,8 +47,8 @@
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 		<!-- Version dependencies when used in multiple dependencies -->
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-		<maven-celerio-plugin.version>3.0.80</maven-celerio-plugin.version>
-        <maven-celerio-plugin.outputDir>${basedir}</maven-celerio-plugin.outputDir>        
+		<maven-celerio-plugin.version>3.0.81</maven-celerio-plugin.version>
+		<maven-celerio-plugin.outputDir>${basedir}</maven-celerio-plugin.outputDir>
 		<hibernate.version>4.1.4.Final</hibernate.version>
 		<spring.version>3.1.2.RELEASE</spring.version>
 		<spring-security.version>3.1.1.RELEASE</spring-security.version>
@@ -442,11 +442,11 @@
 			<artifactId>joda-time</artifactId>
 			<version>2.1</version>
 		</dependency>
-        <dependency>
-            <groupId>org.jadira.usertype</groupId>
-            <artifactId>usertype.core</artifactId>
-            <version>3.0.0.CR1</version>
-        </dependency>
+		<dependency>
+			<groupId>org.jadira.usertype</groupId>
+			<artifactId>usertype.core</artifactId>
+			<version>3.0.0.CR1</version>
+		</dependency>
 		<!-- ~~~~~~~~~~~ -->
 		<!-- PERSISTENCE -->
 		<!-- ~~~~~~~~~~~ -->
@@ -470,12 +470,12 @@
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>${hibernate.version}</version>
 		</dependency>
-        <dependency>
-             <groupId>cglib</groupId>
-             <artifactId>cglib</artifactId>
-             <version>2.2.2</version>
-             <scope>runtime</scope>
-        </dependency>        
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>2.2.2</version>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
@@ -535,11 +535,11 @@
 		<!-- ~~~~~ -->
 		<!-- UTILS -->
 		<!-- ~~~~~ -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>12.0</version>
-        </dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>12.0</version>
+		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -568,11 +568,11 @@
 		<!-- ~~~~~~ -->
 		<!-- SPRING -->
 		<!-- ~~~~~~ -->
-        <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <version>1</version>
-        </dependency>
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-expression</artifactId>

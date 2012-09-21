@@ -7,5 +7,6 @@
 	<appcc:outputLabel for="${id}" value="${label}" required="${empty required ? false : required}" />
 	<h:selectBooleanCheckbox id="${id}" label="${label}" value="#{value}" disabled="${readonly}">
 		<f:validateBean binding="#{lenientBeanValidator}"/>
+		<ui:insert/>
 	</h:selectBooleanCheckbox>
 </ui:composition>

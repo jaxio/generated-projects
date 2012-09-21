@@ -5,11 +5,12 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
 	<appcc:outputLabel for="${id}" value="${label}" required="${empty required ? false : required}" />	
-	<appcc:datePicker id="${id}" label="${label}" value="#{value}" rendered="${not readonly}">
+	<appcc:datePicker id="${id}" label="${label}" value="#{value}" rendered="${not readonly}" disabled="${empty disabled ? false : disabled}">
 		<f:convertDateTime pattern="yyyy-MM-dd" />
 		<f:validateBean binding="#{lenientBeanValidator}"/>
+		<ui:insert/>
 	</appcc:datePicker>
-	<p:calendar id="${id}" value="#{value}" pattern="yyyy-MM-dd" rendered="${not readonly}">
+	<p:calendar id="${id}" value="#{value}" pattern="yyyy-MM-dd" rendered="${not readonly}" disabled="${empty disabled ? false : disabled}">
 		<f:convertDateTime pattern="yyyy-MM-dd" />
         <f:validateBean binding="#{lenientBeanValidator}"/>
 	</p:calendar>

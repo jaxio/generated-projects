@@ -10,7 +10,6 @@
         <tag-name>accountMultiAutoComplete</tag-name>
         <source>autocomplete/accountMultiAutoComplete.xhtml</source>
     </tag>
-    
 	<tag>
 		<tag-name>addressAutoComplete</tag-name>
 		<source>autocomplete/addressAutoComplete.xhtml</source>
@@ -19,7 +18,6 @@
         <tag-name>addressMultiAutoComplete</tag-name>
         <source>autocomplete/addressMultiAutoComplete.xhtml</source>
     </tag>
-    
 	<tag>
 		<tag-name>bookAutoComplete</tag-name>
 		<source>autocomplete/bookAutoComplete.xhtml</source>
@@ -28,7 +26,6 @@
         <tag-name>bookMultiAutoComplete</tag-name>
         <source>autocomplete/bookMultiAutoComplete.xhtml</source>
     </tag>
-    
 	<tag>
 		<tag-name>documentAutoComplete</tag-name>
 		<source>autocomplete/documentAutoComplete.xhtml</source>
@@ -37,7 +34,6 @@
         <tag-name>documentMultiAutoComplete</tag-name>
         <source>autocomplete/documentMultiAutoComplete.xhtml</source>
     </tag>
-    
 	<tag>
 		<tag-name>legacyAutoComplete</tag-name>
 		<source>autocomplete/legacyAutoComplete.xhtml</source>
@@ -46,7 +42,6 @@
         <tag-name>legacyMultiAutoComplete</tag-name>
         <source>autocomplete/legacyMultiAutoComplete.xhtml</source>
     </tag>
-    
 	<tag>
 		<tag-name>moreTypesDemoAutoComplete</tag-name>
 		<source>autocomplete/moreTypesDemoAutoComplete.xhtml</source>
@@ -55,7 +50,6 @@
         <tag-name>moreTypesDemoMultiAutoComplete</tag-name>
         <source>autocomplete/moreTypesDemoMultiAutoComplete.xhtml</source>
     </tag>
-    
 	<tag>
 		<tag-name>roleAutoComplete</tag-name>
 		<source>autocomplete/roleAutoComplete.xhtml</source>
@@ -64,7 +58,6 @@
         <tag-name>roleMultiAutoComplete</tag-name>
         <source>autocomplete/roleMultiAutoComplete.xhtml</source>
     </tag>
-    
 	<!-- Panels -->
 	<tag>
 		<tag-name>panelMenu</tag-name>
@@ -134,14 +127,6 @@
 		<tag-name>inputBoolean</tag-name>
 		<source>input/inputBoolean.xhtml</source>
 	</tag>
-    <tag>
-        <tag-name>selectManyBoolean</tag-name>
-        <source>input/selectManyBoolean.xhtml</source>
-    </tag>
-    <tag>
-        <tag-name>selectManyEnum</tag-name>
-        <source>input/selectManyEnum.xhtml</source>
-    </tag>
 	<tag>
 		<tag-name>inputDate</tag-name>
 		<source>input/inputDate.xhtml</source>
@@ -174,6 +159,23 @@
 		<tag-name>inputLocalDateTimeAria</tag-name>
 		<source>input/inputLocalDateTimeAria.xhtml</source>
 	</tag>
+	<!-- Select -->
+    <tag>
+        <tag-name>selectManyBoolean</tag-name>
+        <source>select/selectManyBoolean.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>selectManyEnum</tag-name>
+        <source>select/selectManyEnum.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>selectOneRadio</tag-name>
+        <source>select/selectOneRadio.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>selectOneMenu</tag-name>
+        <source>select/selectOneMenu.xhtml</source>
+    </tag>
 	<!-- Ranges -->
 	<tag>
 		<tag-name>rangeDate</tag-name>

@@ -21,7 +21,7 @@
 		<ui:define name="filters">
 			<f:validateBean disabled="true">
 				<h:panelGrid columns="4">
-					<app:accountMultiAutoComplete id="accountSelector" value="#{bookSearchForm.accountSelector}" label="${msg.book_account}" />
+					<app:accountMultiAutoComplete id="accountSelector" value="#{bookSearchForm.accountSelector.selected}" label="${msg.book_account}" />
 					<app:input id="title" value="#{bookSearchForm.book.title}" label="${msg.book_title}"/>
 					<app:rangeInt id="numberOfPages" value="#{bookSearchForm.numberOfPagesRange}" label="${msg.book_numberOfPages}"/>
 				</h:panelGrid>

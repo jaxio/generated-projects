@@ -47,8 +47,8 @@
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 		<!-- Version dependencies when used in multiple dependencies -->
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-		<maven-celerio-plugin.version>3.0.80</maven-celerio-plugin.version>
-        <maven-celerio-plugin.outputDir>${basedir}</maven-celerio-plugin.outputDir>
+		<maven-celerio-plugin.version>3.0.81</maven-celerio-plugin.version>
+		<maven-celerio-plugin.outputDir>${basedir}</maven-celerio-plugin.outputDir>
 		<hibernate.version>4.1.4.Final</hibernate.version>
 		<spring.version>3.1.2.RELEASE</spring.version>
 		<spring-security.version>3.1.2.RELEASE</spring-security.version>
