@@ -22,6 +22,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.jaxio.domain.Identifiable;
+
 /**
  * The SearchParameters is used to pass search parameters to the DAO layer. 
  * 
@@ -65,6 +67,12 @@ public class SearchParameters implements Serializable {
 
     // ranges
     private List<Range<?, ?>> ranges = newArrayList();
+
+    // property selectors
+    private List<PropertySelector<?, ?>> propertySelectors = newArrayList();
+
+    // entity selectors
+    private List<EntitySelector<?, ? extends Identifiable<?>, ?>> entitySelectors = newArrayList();
 
     // pattern to match against all strings.
     private String searchPattern;
@@ -254,6 +262,38 @@ public class SearchParameters implements Serializable {
 
     public void clearRanges() {
         ranges.clear();
+    }
+
+    // -----------------------------------
+    // Search by property selector support
+    // -----------------------------------
+
+    public List<PropertySelector<?, ?>> getPropertySelectors() {
+        return propertySelectors;
+    }
+
+    public void addPropertySelector(PropertySelector<?, ?> propertySelector) {
+        propertySelectors.add(propertySelector);
+    }
+
+    public void clearPropertySelectors() {
+        propertySelectors.clear();
+    }
+
+    // -----------------------------------
+    // Search by entity selector support
+    // -----------------------------------
+
+    public List<EntitySelector<?, ? extends Identifiable<?>, ?>> getEntitySelectors() {
+        return entitySelectors;
+    }
+
+    public void addEntitySelector(EntitySelector<?, ? extends Identifiable<?>, ?> entitySelector) {
+        entitySelectors.add(entitySelector);
+    }
+
+    public void clearEntitySelectors() {
+        entitySelectors.clear();
     }
 
     // -----------------------------------

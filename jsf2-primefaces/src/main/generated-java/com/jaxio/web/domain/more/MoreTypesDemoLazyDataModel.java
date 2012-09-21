@@ -38,6 +38,8 @@ public class MoreTypesDemoLazyDataModel extends GenericLazyDataModel<MoreTypesDe
     @Override
     public List<MoreTypesDemo> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters) {
         SearchParameters sp = moreTypesDemoSearchForm.getSearchParameters();
+
+        // ranges
         sp.clearRanges();
         sp.addRange(moreTypesDemoSearchForm.getNumberIntRange());
         sp.addRange(moreTypesDemoSearchForm.getNumberLongRange());
@@ -49,9 +51,11 @@ public class MoreTypesDemoLazyDataModel extends GenericLazyDataModel<MoreTypesDe
         sp.addRange(moreTypesDemoSearchForm.getDateJavaTemporalTimestampRange());
         sp.addRange(moreTypesDemoSearchForm.getDateJodaRange());
         sp.addRange(moreTypesDemoSearchForm.getDateTimeJodaRange());
+
         MoreTypesDemo moreTypesDemo = moreTypesDemoSearchForm.getMoreTypesDemo();
         setRowCount(moreTypesDemoRepository.findCount(moreTypesDemo, sp)); // total count so the paginator may display the total number of pages
         populateSearchParameters(sp, first, pageSize, sortField, sortOrder, filters); // load one page of data
+
         return moreTypesDemoRepository.find(moreTypesDemo, sp);
     }
 }

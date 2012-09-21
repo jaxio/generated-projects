@@ -21,9 +21,9 @@
 			<h:panelGrid columns="2" styleClass="aria-role-presentation">
 				<app:input id="title" value="#{book.title}" size="100" label="${msg.book_title}" required="true" />
 				<app:input id="numberOfPages" value="#{book.numberOfPages}" label="${msg.book_numberOfPages}" required="true" />
-				<app:accountAutocomplete id="account" value="#{book.account}" readonly="true" required="false" label="${msg.book_account}">
+				<app:accountAutoComplete id="account" value="#{book.account}" readonly="true" required="false" label="${msg.book_account}">
 					<app:iconView action="viewAccount" title="${msg.book_account}" />
-				</app:accountAutocomplete>
+				</app:accountAutoComplete>
 			</h:panelGrid>
 		</p:fieldset>
 		<app:saveButton title="${msg.book}"/>

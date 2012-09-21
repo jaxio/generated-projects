@@ -1,0 +1,24 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:app="http://springfuse.jaxio.com/app"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components">
+	<appcc:outputLabel for="#{id}Label" value="#{label}" />
+	<h:panelGrid id="#{id}Label" columns="2" styleClass="aria-role-presentation">
+		<p:autoComplete id="#{id}" value="#{value.selected}" label="#{label}"
+			completeMethod="#{bookRepository.find}"
+			var="item"
+			itemValue="#{item}"
+			itemLabel="#{bookConverter.print(item)}"
+			converter="#{bookConverter}"
+			dropdown="true"
+			multiple="true"
+			size="50">
+		</p:autoComplete>
+		<h:panelGroup>
+			<ui:insert/>
+		</h:panelGroup>
+	</h:panelGrid>
+</ui:composition>

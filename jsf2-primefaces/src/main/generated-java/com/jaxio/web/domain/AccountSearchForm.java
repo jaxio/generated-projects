@@ -7,14 +7,22 @@
  */
 package com.jaxio.web.domain;
 
+import static com.jaxio.dao.support.EntitySelectors.AddressSelector.newAddressSelector;
+import static com.jaxio.dao.support.PropertySelectors.BooleanSelector.newBooleanSelector;
+import static com.jaxio.dao.support.PropertySelectors.CivilitySelector.newCivilitySelector;
+import static com.jaxio.dao.support.Ranges.RangeDate.newRangeDate;
+import static com.jaxio.domain.Account_.addressId;
+import static com.jaxio.domain.Account_.birthDate;
+import static com.jaxio.domain.Account_.civility;
+import static com.jaxio.domain.Account_.isEnabled;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
+import com.jaxio.dao.support.EntitySelectors.AddressSelector;
+import com.jaxio.dao.support.PropertySelectors.BooleanSelector;
+import com.jaxio.dao.support.PropertySelectors.CivilitySelector;
+import com.jaxio.dao.support.Ranges.RangeDate;
 import com.jaxio.domain.Account;
 import com.jaxio.web.domain.support.SearchFormBase;
-import static com.jaxio.dao.support.Ranges.RangeDate.newRangeDate;
-import static com.jaxio.domain.Account_.*;
-import com.jaxio.dao.support.Ranges.RangeDate;
 
 /**
  * Simple parameters holder for account search.
@@ -26,14 +34,30 @@ public class AccountSearchForm extends SearchFormBase {
 
     private Account account = new Account();
     private RangeDate<Account> birthDateRange = newRangeDate(birthDate);
+    private BooleanSelector<Account> isEnabledSelector = newBooleanSelector(isEnabled);
+    private CivilitySelector<Account> civilitySelector = newCivilitySelector(civility);
+    private AddressSelector<Account> homeAddressSelector = newAddressSelector(addressId);
 
     public Account getAccount() {
         return account;
     }
 
     // Ranges, used from the view.
-
     public RangeDate<Account> getBirthDateRange() {
         return birthDateRange;
+    }
+
+    // Selectors for property
+    public BooleanSelector<Account> getIsEnabledSelector() {
+        return isEnabledSelector;
+    }
+
+    public CivilitySelector<Account> getCivilitySelector() {
+        return civilitySelector;
+    }
+
+    // Selectors for x-to-one associations
+    public AddressSelector<Account> getHomeAddressSelector() {
+        return homeAddressSelector;
     }
 }

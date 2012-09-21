@@ -47,7 +47,7 @@
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 		<!-- Version dependencies when used in multiple dependencies -->
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-		<maven-celerio-plugin.version>3.0.79</maven-celerio-plugin.version>
+		<maven-celerio-plugin.version>3.0.80</maven-celerio-plugin.version>
         <maven-celerio-plugin.outputDir>${basedir}</maven-celerio-plugin.outputDir>
 		<hibernate.version>4.1.4.Final</hibernate.version>
 		<spring.version>3.1.2.RELEASE</spring.version>
@@ -55,7 +55,7 @@
 		<spring-webflow.version>2.3.1.RELEASE</spring-webflow.version>
 		<!-- http://javaserverfaces.java.net/nonav/rlnotes/2.1.7/whatsnew.html -->
 		<jsf-api.version>2.1.10</jsf-api.version>
-		<primefaces.version>3.4-SNAPSHOT</primefaces.version>
+		<primefaces.version>3.4</primefaces.version>
 		<primefaces-themes.version>1.0.8</primefaces-themes.version>
 		<slf4j.version>1.5.10</slf4j.version>
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->

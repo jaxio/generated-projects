@@ -38,9 +38,11 @@ public class AddressLazyDataModel extends GenericLazyDataModel<Address> {
     @Override
     public List<Address> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters) {
         SearchParameters sp = addressSearchForm.getSearchParameters();
+
         Address address = addressSearchForm.getAddress();
         setRowCount(addressRepository.findCount(address, sp)); // total count so the paginator may display the total number of pages
         populateSearchParameters(sp, first, pageSize, sortField, sortOrder, filters); // load one page of data
+
         return addressRepository.find(address, sp);
     }
 }

@@ -43,6 +43,7 @@
 		<transition on="saveAndClose">
 			<evaluate expression="roleRepository.save(role)" />
 			<evaluate expression="primeFacesUtil.forceClose()"/>
+            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_saved_ok')" />            
 		</transition>
 
 		<transition on="close">
@@ -51,6 +52,7 @@
 
 		<transition on="deleteAndClose" to="deleteAndClose">
 			<evaluate expression="roleRepository.delete(role)" />
+            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_deleted_ok')" />            
 		</transition>
 	</view-state>
 

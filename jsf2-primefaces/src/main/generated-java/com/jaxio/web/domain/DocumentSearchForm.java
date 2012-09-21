@@ -7,9 +7,11 @@
  */
 package com.jaxio.web.domain;
 
+import static com.jaxio.dao.support.EntitySelectors.AccountSelector.newAccountSelector;
+import static com.jaxio.domain.Document_.accountId;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
+import com.jaxio.dao.support.EntitySelectors.AccountSelector;
 import com.jaxio.domain.Document;
 import com.jaxio.web.domain.support.SearchFormBase;
 
@@ -22,8 +24,14 @@ public class DocumentSearchForm extends SearchFormBase {
     private static final long serialVersionUID = 1L;
 
     private Document document = new Document();
+    private AccountSelector<Document> accountSelector = newAccountSelector(accountId);
 
     public Document getDocument() {
         return document;
+    }
+
+    // Selectors for x-to-one associations
+    public AccountSelector<Document> getAccountSelector() {
+        return accountSelector;
     }
 }

@@ -38,9 +38,11 @@ public class RoleLazyDataModel extends GenericLazyDataModel<Role> {
     @Override
     public List<Role> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters) {
         SearchParameters sp = roleSearchForm.getSearchParameters();
+
         Role role = roleSearchForm.getRole();
         setRowCount(roleRepository.findCount(role, sp)); // total count so the paginator may display the total number of pages
         populateSearchParameters(sp, first, pageSize, sortField, sortOrder, filters); // load one page of data
+
         return roleRepository.find(role, sp);
     }
 }

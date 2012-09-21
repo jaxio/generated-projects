@@ -24,17 +24,13 @@
 					<app:input id="username" value="#{accountSearchForm.account.username}" label="${msg.account_username}"/>
 					<app:input id="password" value="#{accountSearchForm.account.password}" label="${msg.account_password}"/>
 					<app:input id="email" value="#{accountSearchForm.account.email}" label="${msg.account_email}"/>
-					<app:inputMaybeBoolean id="isEnabled" value="#{accountSearchForm.account.isEnabled}" label="${msg.account_isEnabled}" />
-					<h:outputLabel for="civility" value="${msg.account_civility} :" />
-					<h:selectOneRadio id="civility" value="#{accountSearchForm.account.civility}">
-						<f:selectItem itemLabel="${msg.boolean_any}" itemValue="" />
-						<f:selectItems value="#{civilityItems.list}" />
-					</h:selectOneRadio>
+					<app:selectManyBoolean id="isEnabled" value="#{accountSearchForm.isEnabledSelector}" label="${msg.account_isEnabled}" />
+					<app:selectManyEnum id="civility" value="#{accountSearchForm.civilitySelector}" label="${msg.account_civility}" items="#{civilityItems}" converter="#{civilityConverter}" />
 					<app:input id="firstName" value="#{accountSearchForm.account.firstName}" label="${msg.account_firstName}"/>
 					<app:input id="lastName" value="#{accountSearchForm.account.lastName}" label="${msg.account_lastName}"/>
 					<app:rangeDateTime id="birthDate" value="#{accountSearchForm.birthDateRange}" label="${msg.account_birthDate}" />
 					<app:input id="description" value="#{accountSearchForm.account.description}" label="${msg.account_description}"/>
-					<app:addressAutocomplete id="homeAddress" value="#{accountSearchForm.account.homeAddress}" label="${msg.account_homeAddress}" />
+					<app:addressMultiAutoComplete id="homeAddressSelector" value="#{accountSearchForm.homeAddressSelector}" label="${msg.account_homeAddress}" />
 				</h:panelGrid>
 			</f:validateBean>
 		</ui:define>
@@ -62,10 +58,19 @@
 					<app:iconEdit action="select" process="@this" title="${accountConverter.print(item)}">
 						<f:setPropertyActionListener value="#{item}" target="#{accountLazyDataModel.selectedRow}" />
 					</app:iconEdit>
+					<app:iconDelete oncomplete="askForDeleteItemDialog.show(); APP.focusTo('form:askForDeleteItemDialogNo');" title="${accountConverter.print(item)}">
+                        <f:setPropertyActionListener value="#{item}" target="#{accountLazyDataModel.selectedRow}" />					
+					</app:iconDelete>					
 				</c:if>
 			</p:column>
 		</ui:define>
 	</app:search>
+</ui:define>
+<ui:define name="dialogs">
+    <p:confirmDialog widgetVar="askForDeleteItemDialog" header="${msg.menu_delete}?" message="${msg.dialog_delete_confirm}">
+        <p:commandButton id="askForDeleteItemDialogYes" action="delete" ajax="true" update=":form:searchResults :form:messages" oncomplete="askForDeleteItemDialog.hide(); APP.updateSearchResultsRegion(xhr,status,args)" immediate="true" process="@this" value="${msg.yes}" title="${msg.dialog_delete_confirm} ${msg.yes}" icon="ui-icon-check" />
+        <p:commandButton id="askForDeleteItemDialogNo" value="${msg.no}" title="${msg.dialog_delete_confirm} ${msg.no}" onclick="askForDeleteItemDialog.hide(); return false;" icon="ui-icon-cancel"/>
+    </p:confirmDialog>
 </ui:define>
 </app:panelMenu>
 </ui:composition>

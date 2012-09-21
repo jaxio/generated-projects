@@ -33,11 +33,11 @@
 				<app:input id="lastName" value="#{account.lastName}" size="100" label="${msg.account_lastName}" />
 				<app:inputDateTime id="birthDate" value="#{account.birthDate}" label="${msg.account_birthDate}" />
 				<app:inputTextArea id="description" value="#{account.description}" label="${msg.account_description}" />
-				<app:addressAutocomplete id="homeAddress" value="#{account.homeAddress}" required="false" label="${msg.account_homeAddress}">
+				<app:addressAutoComplete id="homeAddress" value="#{account.homeAddress}" required="false" label="${msg.account_homeAddress}">
 					<app:iconSearch action="selectHomeAddress" title="${msg.account_homeAddress} " />
 					<app:iconEdit action="editHomeAddress" title="${msg.account_homeAddress}" />
 					<app:iconView action="viewHomeAddress" title="${msg.account_homeAddress}" />
-				</app:addressAutocomplete>
+				</app:addressAutoComplete>
 			</h:panelGrid>
 		</p:fieldset>
 		<app:saveButton title="${msg.account}"/>

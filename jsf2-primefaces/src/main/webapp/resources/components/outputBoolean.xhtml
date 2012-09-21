@@ -13,7 +13,7 @@
 
 	<composite:implementation>
 		<h:graphicImage name="icons/tick.png" width="16" height="16" alt="true" rendered="#{cc.attrs.value}" />
-		<h:graphicImage name="icons/cross.png" width="16" height="16" alt="false" rendered="#{not cc.attrs.value}" />
+		<h:graphicImage name="icons/cross.png" width="16" height="16" alt="false" rendered="#{not empty cc.attrs.value and not cc.attrs.value}" />
 	</composite:implementation>
 </body>
 </html>

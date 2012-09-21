@@ -19,8 +19,9 @@
 		</f:facet>
 	</h:head>
 	<h:body>
+		<img src="${request.contextPath}/resources/icons/environment/${systemProperties['env_name'] eq null ? 'developpement' : systemProperties['env_name']}.gif" style="position: absolute; top:0px; left:0px; z-index:100"/>
 		<h:form id="form" enctype="multipart/form-data">
-			<!-- regular layout (does not work with chromeshades :-( ) -->
+			<!-- regular layout (does not work with chromeshades) -->
 			<p:layout fullPage="true" >
 				<p:layoutUnit id="top" position="north" resizable="false" size="115">
 					<div role="banner">
@@ -68,8 +69,9 @@
 				<p:commandButton id="askForSaveDialogNo" action="forceClose" ajax="false"
 					value="${msg.no}"
 					title="${msg.dialog_ask_for_save} ${msg.no}"
-					icon="ui-icon-cancel" immediate="true" process="@none"  />
+					icon="ui-icon-cancel" immediate="true" process="@none" />
 			</p:confirmDialog>
+			
 			<ui:insert name="dialogs"/>
 		</h:form>
 		<script type="text/javascript">

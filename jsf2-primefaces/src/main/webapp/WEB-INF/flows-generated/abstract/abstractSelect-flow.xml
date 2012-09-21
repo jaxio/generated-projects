@@ -15,7 +15,11 @@
 	<!-- when create is true, we go directly to edit state -->
 	<input name="create" type="boolean" value="flowScope.create" />
 
-	<end-state id="quit" view="externalRedirect:contextRelative:#{flowsMenuHandler.endStateRedirect(flowRequestContext)}" />
+	<end-state id="quit" view="/WEB-INF/views/home.xhtml">
+        <on-entry>
+            <evaluate expression="messageUtil.addFacesMessage(conversationScope.quitMessage)" />            
+        </on-entry>
+    </end-state>
 	<end-state id="cancel" />
 
 	<global-transitions>

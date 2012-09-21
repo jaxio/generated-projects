@@ -7,11 +7,6 @@
  */
 package com.jaxio.web.domain.more;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import com.jaxio.domain.more.MoreTypesDemo;
-import com.jaxio.web.domain.support.SearchFormBase;
 import static com.jaxio.dao.support.Ranges.RangeBigDecimal.newRangeBigDecimal;
 import static com.jaxio.dao.support.Ranges.RangeBigInteger.newRangeBigInteger;
 import static com.jaxio.dao.support.Ranges.RangeDate.newRangeDate;
@@ -21,7 +16,18 @@ import static com.jaxio.dao.support.Ranges.RangeInteger.newRangeInteger;
 import static com.jaxio.dao.support.Ranges.RangeLocalDate.newRangeLocalDate;
 import static com.jaxio.dao.support.Ranges.RangeLocalDateTime.newRangeLocalDateTime;
 import static com.jaxio.dao.support.Ranges.RangeLong.newRangeLong;
-import static com.jaxio.domain.more.MoreTypesDemo_.*;
+import static com.jaxio.domain.more.MoreTypesDemo_.dateJavaTemporalDate;
+import static com.jaxio.domain.more.MoreTypesDemo_.dateJavaTemporalTimestamp;
+import static com.jaxio.domain.more.MoreTypesDemo_.dateJoda;
+import static com.jaxio.domain.more.MoreTypesDemo_.dateTimeJoda;
+import static com.jaxio.domain.more.MoreTypesDemo_.numberBigDecimal;
+import static com.jaxio.domain.more.MoreTypesDemo_.numberBigInteger;
+import static com.jaxio.domain.more.MoreTypesDemo_.numberDouble;
+import static com.jaxio.domain.more.MoreTypesDemo_.numberFloat;
+import static com.jaxio.domain.more.MoreTypesDemo_.numberInt;
+import static com.jaxio.domain.more.MoreTypesDemo_.numberLong;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import com.jaxio.dao.support.Ranges.RangeBigDecimal;
 import com.jaxio.dao.support.Ranges.RangeBigInteger;
 import com.jaxio.dao.support.Ranges.RangeDate;
@@ -31,6 +37,8 @@ import com.jaxio.dao.support.Ranges.RangeInteger;
 import com.jaxio.dao.support.Ranges.RangeLocalDate;
 import com.jaxio.dao.support.Ranges.RangeLocalDateTime;
 import com.jaxio.dao.support.Ranges.RangeLong;
+import com.jaxio.domain.more.MoreTypesDemo;
+import com.jaxio.web.domain.support.SearchFormBase;
 
 /**
  * Simple parameters holder for moreTypesDemo search.
@@ -57,7 +65,6 @@ public class MoreTypesDemoSearchForm extends SearchFormBase {
     }
 
     // Ranges, used from the view.
-
     public RangeInteger<MoreTypesDemo> getNumberIntRange() {
         return numberIntRange;
     }

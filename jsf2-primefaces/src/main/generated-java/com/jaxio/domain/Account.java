@@ -27,6 +27,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -47,9 +48,8 @@ import com.jaxio.domain.Civility;
 import com.jaxio.domain.Document;
 import com.jaxio.domain.Role;
 
-;
-
 @Entity
+@Table(name = "ACCOUNT")
 @Cache(usage = NONSTRICT_READ_WRITE)
 @FilterDef(name = "myAccountFilter", defaultCondition = "ID = :currentAccountId ", parameters = @ParamDef(name = "currentAccountId", type = "org.hibernate.type.StringType"))
 @Filter(name = "myAccountFilter")

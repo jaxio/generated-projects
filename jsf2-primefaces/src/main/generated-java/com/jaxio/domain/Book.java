@@ -17,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -31,9 +32,8 @@ import com.google.common.base.Objects;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.PersistableHashBuilder;
 
-;
-
 @Entity
+@Table(name = "BOOK")
 @Cache(usage = NONSTRICT_READ_WRITE)
 @FilterDef(name = "myBookFilter", defaultCondition = "account_id = :currentAccountId ", parameters = @ParamDef(name = "currentAccountId", type = "org.hibernate.type.StringType"))
 @Filter(name = "myBookFilter")

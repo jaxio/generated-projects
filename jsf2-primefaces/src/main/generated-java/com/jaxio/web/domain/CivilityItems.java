@@ -18,14 +18,14 @@ import javax.faces.model.SelectItem;
 import com.jaxio.domain.Civility;
 
 /**
- * Helper to support the h:selectOneRadio and h:selectOneMenu for account.civility
+ * Helper to support the h:selectOneRadio and h:selectOneMenu for Civility.
  */
 @Named
 @Singleton
 public class CivilityItems {
 
     /**
-     * Returns a list of SelectItem/Civility ready to use in a h:selectOneRadio and h:selectOneMenu tags
+     * Returns a list of SelectItem/Civility ready to use in a h:selectOneRadio, h:selectOneMenu or p:selectManyCheckbox tags
      */
     public List<SelectItem> getList() {
         List<SelectItem> result = newArrayList();

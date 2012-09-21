@@ -38,9 +38,15 @@ public class DocumentLazyDataModel extends GenericLazyDataModel<Document> {
     @Override
     public List<Document> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters) {
         SearchParameters sp = documentSearchForm.getSearchParameters();
+
+        // entity selectors
+        sp.clearEntitySelectors();
+        sp.addEntitySelector(documentSearchForm.getAccountSelector());
+
         Document document = documentSearchForm.getDocument();
         setRowCount(documentRepository.findCount(document, sp)); // total count so the paginator may display the total number of pages
         populateSearchParameters(sp, first, pageSize, sortField, sortOrder, filters); // load one page of data
+
         return documentRepository.find(document, sp);
     }
 }

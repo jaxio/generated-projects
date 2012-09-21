@@ -8,7 +8,6 @@
 package com.jaxio.web.converter;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
 import javax.inject.Inject;
 
 import javax.faces.component.UIComponent;
@@ -25,14 +24,15 @@ import com.jaxio.repository.support.Repository;
  * Base JSF converter for JPA entities.
  */
 public class GenericJsfConverter<E extends Identifiable<PK>, PK extends Serializable> implements Converter {
-    private Class<?> pkType = (Class<?>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
+    private Class<PK> pkType;
 
     @Inject
     protected ConversionService conversionService;
     protected Repository<E, PK> entityService;
 
-    protected GenericJsfConverter(Repository<E, PK> entityService) {
+    protected GenericJsfConverter(Repository<E, PK> entityService, Class<PK> pkType) {
         this.entityService = entityService;
+        this.pkType = pkType;
     }
 
     @SuppressWarnings("unchecked")

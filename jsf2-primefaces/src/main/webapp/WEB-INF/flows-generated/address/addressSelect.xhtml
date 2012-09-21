@@ -44,10 +44,19 @@
 					<app:iconEdit action="select" process="@this" title="${addressConverter.print(item)}">
 						<f:setPropertyActionListener value="#{item}" target="#{addressLazyDataModel.selectedRow}" />
 					</app:iconEdit>
+					<app:iconDelete oncomplete="askForDeleteItemDialog.show(); APP.focusTo('form:askForDeleteItemDialogNo');" title="${addressConverter.print(item)}">
+                        <f:setPropertyActionListener value="#{item}" target="#{addressLazyDataModel.selectedRow}" />					
+					</app:iconDelete>					
 				</c:if>
 			</p:column>
 		</ui:define>
 	</app:search>
+</ui:define>
+<ui:define name="dialogs">
+    <p:confirmDialog widgetVar="askForDeleteItemDialog" header="${msg.menu_delete}?" message="${msg.dialog_delete_confirm}">
+        <p:commandButton id="askForDeleteItemDialogYes" action="delete" ajax="true" update=":form:searchResults :form:messages" oncomplete="askForDeleteItemDialog.hide(); APP.updateSearchResultsRegion(xhr,status,args)" immediate="true" process="@this" value="${msg.yes}" title="${msg.dialog_delete_confirm} ${msg.yes}" icon="ui-icon-check" />
+        <p:commandButton id="askForDeleteItemDialogNo" value="${msg.no}" title="${msg.dialog_delete_confirm} ${msg.no}" onclick="askForDeleteItemDialog.hide(); return false;" icon="ui-icon-cancel"/>
+    </p:confirmDialog>
 </ui:define>
 </app:panelMenu>
 </ui:composition>

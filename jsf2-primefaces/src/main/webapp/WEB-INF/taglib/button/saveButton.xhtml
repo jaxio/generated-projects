@@ -1,8 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
-	<!-- Display commandButton for 'send', 'save' or 'ok' action depending on the context -->
-	<p:commandButton id="save" action="save" ajax="true" update="messages delete" process="@form"
+	<!-- Display commandButton for 'send', 'save or saveAndClose' or 'ok' action depending on the context -->
+	<p:commandButton id="saveAndClose" action="saveAndClose" ajax="true" update="messages delete" process="@form"
 		styleClass="aria-save-button default" style="margin-bottom: 14px"
 		icon="ui-icon-disk"
 		value="#{msg.menu_save}"

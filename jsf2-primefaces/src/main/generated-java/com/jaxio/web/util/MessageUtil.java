@@ -25,7 +25,7 @@ import org.springframework.dao.OptimisticLockingFailureException;
 import com.jaxio.util.ResourcesUtil;
 
 /**
- * Convenient bean to create JSF info/warn/error messsages from your flow.
+ * Convenient bean to create JSF info/warn/error messages from your flow.
  */
 @Named
 @Singleton
@@ -48,28 +48,51 @@ public class MessageUtil {
         throw new IllegalStateException("Unexpected message severity: " + severity.toString());
     }
 
+    // -- info
+
     public void info(String summaryKey, Object... args) {
-        addFacesMessage(SEVERITY_INFO, summaryKey, args);
+        addFacesMessageUsingKey(SEVERITY_INFO, summaryKey, args);
     }
 
     public void infoText(String summaryText) {
-        addFacesTextMessage(SEVERITY_INFO, summaryText);
+        addFacesMessageUsingText(SEVERITY_INFO, summaryText);
     }
 
+    /**
+     * Use case for this method: Upon saveAndClose action, construct a FacesMessage, store it flow's conversationScope, when the 
+     * flows reach end-state add the message to facesContext using the addFacesesMessage method. This way we do not loose the
+     * message upon redirections. Note: flash scope is not enough.
+     */
+    public FacesMessage newInfo(String summaryKey, Object... args) {
+        return newFacesMessageUsingKey(SEVERITY_INFO, summaryKey, args);
+    }
+
+    // -- warning
+
     public void warning(String summaryKey, Object... args) {
-        addFacesMessage(SEVERITY_WARN, summaryKey, args);
+        addFacesMessageUsingKey(SEVERITY_WARN, summaryKey, args);
     }
 
     public void warningText(String summaryText) {
-        addFacesTextMessage(SEVERITY_WARN, summaryText);
+        addFacesMessageUsingText(SEVERITY_WARN, summaryText);
     }
 
+    public FacesMessage newWarning(String summaryKey, Object... args) {
+        return newFacesMessageUsingKey(SEVERITY_WARN, summaryKey, args);
+    }
+
+    // -- error
+
     public void error(String summaryKey, Object... args) {
-        addFacesMessage(SEVERITY_ERROR, summaryKey, args);
+        addFacesMessageUsingKey(SEVERITY_ERROR, summaryKey, args);
     }
 
     public void errorText(String summaryText) {
-        addFacesTextMessage(SEVERITY_ERROR, summaryText);
+        addFacesMessageUsingText(SEVERITY_ERROR, summaryText);
+    }
+
+    public FacesMessage newError(String summaryKey, Object... args) {
+        return newFacesMessageUsingKey(SEVERITY_ERROR, summaryKey, args);
     }
 
     public void error(Exception e) {
@@ -81,6 +104,16 @@ public class MessageUtil {
             error("status_exception_ko", getMessage(e));
         }
     }
+
+    // -- raw
+
+    public void addFacesMessage(FacesMessage fm) {
+        if (fm != null) {
+            FacesContext.getCurrentInstance().addMessage(null, fm);
+        }
+    }
+
+    // -- impl details
 
     private boolean isCausedBy(Throwable e, Class<?> cause) {
         Throwable current = e;
@@ -105,15 +138,21 @@ public class MessageUtil {
         return message;
     }
 
-    private void addFacesMessage(Severity severity, String summaryKey, Object[] args) {
-        FacesMessage fm = new FacesMessage(resourcesUtil.getProperty(summaryKey, args));
-        fm.setSeverity(severity);
-        FacesContext.getCurrentInstance().addMessage(null, fm);
+    private void addFacesMessageUsingKey(Severity severity, String summaryKey, Object[] args) {
+        addFacesMessage(newFacesMessageUsingKey(severity, summaryKey, args));
     }
 
-    private void addFacesTextMessage(Severity severity, String text) {
+    private void addFacesMessageUsingText(Severity severity, String text) {
+        addFacesMessage(newFacesMessageUsingText(severity, text));
+    }
+
+    private FacesMessage newFacesMessageUsingKey(Severity severity, String summaryKey, Object[] args) {
+        return newFacesMessageUsingText(severity, resourcesUtil.getProperty(summaryKey, args));
+    }
+
+    private FacesMessage newFacesMessageUsingText(Severity severity, String text) {
         FacesMessage fm = new FacesMessage(text);
         fm.setSeverity(severity);
-        FacesContext.getCurrentInstance().addMessage(null, fm);
+        return fm;
     }
 }

@@ -35,8 +35,13 @@ public class LenientBeanValidator extends BeanValidator {
 
     private boolean doValidation(FacesContext context) {
         Map<String, String[]> requestParameterValuesMap = context.getExternalContext().getRequestParameterValuesMap();
-        // save button present in main form
+        // save button present in main form (see saveButton.xml)
         if (requestParameterValuesMap.containsKey("form:save")) {
+            return true;
+        }
+
+        // saveAndClose button present in main form (see saveButton.xml)
+        if (requestParameterValuesMap.containsKey("form:saveAndClose")) {
             return true;
         }
 
@@ -45,7 +50,7 @@ public class LenientBeanValidator extends BeanValidator {
             return true;
         }
 
-        // ok button present in sub-edit.
+        // ok button present in sub-edit (see saveButton.xml)
         if (requestParameterValuesMap.containsKey("form:ok")) {
             return true;
         }

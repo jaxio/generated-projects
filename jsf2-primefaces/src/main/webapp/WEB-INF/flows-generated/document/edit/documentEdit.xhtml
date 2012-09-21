@@ -32,9 +32,9 @@
 						rendered="#{not empty document.documentFileName}"
 						value="#{document.documentFileName}"><p:fileDownload value="#{document.streamedContentFile}"/></h:commandLink>
 				</p:outputPanel>
-				<app:accountAutocomplete id="account" value="#{document.account}" readonly="true" required="true" label="${msg.document_account}">
+				<app:accountAutoComplete id="account" value="#{document.account}" readonly="true" required="true" label="${msg.document_account}">
 					<app:iconView action="viewAccount" title="${msg.document_account}" />
-				</app:accountAutocomplete>
+				</app:accountAutoComplete>
 			</h:panelGrid>
 		</p:fieldset>
 		<app:saveButton title="${msg.document}"/>

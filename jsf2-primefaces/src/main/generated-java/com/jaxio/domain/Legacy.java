@@ -12,7 +12,9 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
@@ -22,9 +24,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.google.common.base.Objects;
 import com.jaxio.domain.PersistableHashBuilder;
 
-;
-
 @Entity
+@Table(name = "LEGACY", uniqueConstraints = { @UniqueConstraint(columnNames = { "NAME", "CODE", "DEPT" }) })
 @Cache(usage = NONSTRICT_READ_WRITE)
 public class Legacy implements Identifiable<LegacyPk>, Serializable {
     private static final long serialVersionUID = 1L;

@@ -32,8 +32,6 @@ import com.google.common.base.Objects;
 import com.jaxio.domain.Identifiable;
 import com.jaxio.domain.PersistableHashBuilder;
 
-;
-
 @Entity
 @Table(name = "MORE_TYPES_DEMO")
 @Cache(usage = NONSTRICT_READ_WRITE)

@@ -38,9 +38,11 @@ public class LegacyLazyDataModel extends GenericLazyDataModel<Legacy> {
     @Override
     public List<Legacy> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters) {
         SearchParameters sp = legacySearchForm.getSearchParameters();
+
         Legacy legacy = legacySearchForm.getLegacy();
         setRowCount(legacyRepository.findCount(legacy, sp)); // total count so the paginator may display the total number of pages
         populateSearchParameters(sp, first, pageSize, sortField, sortOrder, filters); // load one page of data
+
         return legacyRepository.find(legacy, sp);
     }
 }

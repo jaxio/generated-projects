@@ -7,14 +7,16 @@
  */
 package com.jaxio.web.domain;
 
+import static com.jaxio.dao.support.EntitySelectors.AccountSelector.newAccountSelector;
+import static com.jaxio.dao.support.Ranges.RangeInteger.newRangeInteger;
+import static com.jaxio.domain.Book_.accountId;
+import static com.jaxio.domain.Book_.numberOfPages;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
+import com.jaxio.dao.support.EntitySelectors.AccountSelector;
+import com.jaxio.dao.support.Ranges.RangeInteger;
 import com.jaxio.domain.Book;
 import com.jaxio.web.domain.support.SearchFormBase;
-import static com.jaxio.dao.support.Ranges.RangeInteger.newRangeInteger;
-import static com.jaxio.domain.Book_.*;
-import com.jaxio.dao.support.Ranges.RangeInteger;
 
 /**
  * Simple parameters holder for book search.
@@ -26,14 +28,19 @@ public class BookSearchForm extends SearchFormBase {
 
     private Book book = new Book();
     private RangeInteger<Book> numberOfPagesRange = newRangeInteger(numberOfPages);
+    private AccountSelector<Book> accountSelector = newAccountSelector(accountId);
 
     public Book getBook() {
         return book;
     }
 
     // Ranges, used from the view.
-
     public RangeInteger<Book> getNumberOfPagesRange() {
         return numberOfPagesRange;
+    }
+
+    // Selectors for x-to-one associations
+    public AccountSelector<Book> getAccountSelector() {
+        return accountSelector;
     }
 }

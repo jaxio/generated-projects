@@ -9,7 +9,6 @@ package com.jaxio.web.domain;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 import com.jaxio.domain.Address;
 import com.jaxio.web.domain.support.SearchFormBase;
 

@@ -38,11 +38,24 @@ public class AccountLazyDataModel extends GenericLazyDataModel<Account> {
     @Override
     public List<Account> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters) {
         SearchParameters sp = accountSearchForm.getSearchParameters();
+
+        // ranges
         sp.clearRanges();
         sp.addRange(accountSearchForm.getBirthDateRange());
+
+        // property selectors
+        sp.clearPropertySelectors();
+        sp.addPropertySelector(accountSearchForm.getIsEnabledSelector());
+        sp.addPropertySelector(accountSearchForm.getCivilitySelector());
+
+        // entity selectors
+        sp.clearEntitySelectors();
+        sp.addEntitySelector(accountSearchForm.getHomeAddressSelector());
+
         Account account = accountSearchForm.getAccount();
         setRowCount(accountRepository.findCount(account, sp)); // total count so the paginator may display the total number of pages
         populateSearchParameters(sp, first, pageSize, sortField, sortOrder, filters); // load one page of data
+
         return accountRepository.find(account, sp);
     }
 }

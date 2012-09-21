@@ -45,6 +45,7 @@
 		<transition on="saveAndClose">
 			<evaluate expression="accountRepository.save(account)" />
 			<evaluate expression="primeFacesUtil.forceClose()"/>
+            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_saved_ok')" />            
 		</transition>
 
 		<transition on="close">
@@ -53,6 +54,7 @@
 
 		<transition on="deleteAndClose" to="deleteAndClose">
 			<evaluate expression="accountRepository.delete(account)" />
+            <set name="conversationScope.quitMessage" value="messageUtil.newInfo('status_deleted_ok')" />            
 		</transition>
 	</view-state>
 

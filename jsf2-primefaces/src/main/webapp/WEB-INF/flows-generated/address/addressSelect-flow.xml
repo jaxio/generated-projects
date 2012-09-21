@@ -24,7 +24,11 @@
 		<on-render>
 			<evaluate expression="flowsMenuHandler.updateMenu(flowRequestContext,'select')" />
 		</on-render>
-		<transition on="select" to="checkIfAlreadyOpenFlow" validate="false"/>
+        <transition on="select" to="checkIfAlreadyOpenFlow" validate="false"/>
+        <transition on="delete" validate="false">
+            <evaluate expression="addressRepository.delete(addressLazyDataModel.selectedRow)"  />
+            <evaluate expression="messageUtil.info('status_deleted_ok')" />
+        </transition>
 		<transition on="sendNew" to="edit" validate="false" />
 	</view-state>
 
