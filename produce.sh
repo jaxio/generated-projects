@@ -4,7 +4,7 @@ do
   version=3.0.${release}
 
   echo producing backend ${version}  
-  rm -rf appli 
+  rm -rf backend-jpa
   mvn com.jaxio.celerio:maven-bootstrap-plugin:${version}:bootstrap -Dmaven-bootstrap-plugin.interactive=false -Dmaven-bootstrap-plugin.defaultBootstrapPackName=pack-backend-jpa
   mv appli backend-jpa
   cd backend-jpa
@@ -12,7 +12,7 @@ do
   cd ..
 
   echo producing jsf2 ${version}  
-  rm -rf appli
+  rm -rf jsf2-primefaces
   mvn com.jaxio.celerio:maven-bootstrap-plugin:${version}:bootstrap -Dmaven-bootstrap-plugin.interactive=false -Dmaven-bootstrap-plugin.defaultBootstrapPackName=pack-jsf2-primefaces
   mv appli jsf2-primefaces
   cd jsf2-primefaces
