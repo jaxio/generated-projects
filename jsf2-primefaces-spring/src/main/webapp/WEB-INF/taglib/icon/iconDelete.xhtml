@@ -1,0 +1,18 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:p="http://primefaces.org/ui">
+	<p:commandLink
+		ajax="true"
+		action="#{actionBean[action]}"
+		onstart="${onstart}"
+		process="@this"
+		disabled="#{readonly}"
+		rendered="#{empty rendered or rendered}"
+		immediate="true"
+		update="${update}"
+		styleClass="ui-button"
+		title="${msg.icon_delete} ${empty title? '' : title}">
+		<ui:insert/>
+		<div class="ui-button ui-icon iconDelete"/>
+	</p:commandLink>
+</ui:composition>

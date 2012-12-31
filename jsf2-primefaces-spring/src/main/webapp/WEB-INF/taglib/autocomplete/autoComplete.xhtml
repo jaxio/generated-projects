@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:app="http://springfuse.jaxio.com/app">
+	<app:outputLabel for="#{id}_input" value="#{label}" required="#{empty required ? false : required}" />
+	<h:panelGrid id="#{id}Grid" columns="2" styleClass="aria-role-presentation">
+		<p:autoComplete id="#{id}" value="#{value}" label="#{label}"
+			completeMethod="#{controller.complete}"
+			var="item"
+			itemValue="#{item}"
+			itemLabel="#{printer.print(item)}"
+			converter="#{converter}"
+			minQueryLength="#{empty minQueryLength ? 2 : minQueryLength}"
+			queryDelay="#{empty forceSelection ? 100 : forceSelection}"
+			forceSelection="#{forceSelection}"
+			size="#{empty size ? 50 : size}"
+			dropdown="true"			
+			rendered="#{not readonly and not hasinverse and not (not empty value and empty value.id)}">
+			<f:validateBean binding="#{lenientBeanValidator}"/>
+			<p:ajax event="itemSelect" update="#{id}Grid"/>
+		</p:autoComplete>
+		<h:outputText value="#{empty value ? '(not linked yet)' : printer.print(value)}" rendered="#{readonly or hasinverse or (not empty value and empty value.id)}"/>
+		<h:panelGroup>
+			<ui:insert/>
+		</h:panelGroup>
+	</h:panelGrid>
+</ui:composition>
