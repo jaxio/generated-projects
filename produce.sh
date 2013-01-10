@@ -11,6 +11,7 @@ do
   cd jpa2-backend
   mvn -Pdb,metadata,gen,jj generate-sources
   cd ..
+  cp README.backend jpa2-backend/README
 
   echo producing jsf2 ${version}  
   rm -rf jsf2-primefaces-spring
