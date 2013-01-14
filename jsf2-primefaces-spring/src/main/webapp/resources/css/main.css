@@ -13,8 +13,13 @@ form .required-pseudo-label {
 }
 
 /* usability: right align labels */
-.td-label {
+.ui-fieldset-content td label {
+	display: block;
 	text-align: right;
+}
+
+.ui-fieldset-content td td label {
+	text-align: left;
 }
 
 /* usability */
@@ -44,9 +49,10 @@ form .required-pseudo-label {
 	background: none repeat scroll 0 0 #F2F5F9;
 }
 
-/* change dataTable row color when mouse goes over it */
+/* change dataTable row color when mouse goes over it and keep the selected line text black */
 .ui-datatable tr.ui-datatable-even:hover, .ui-datatable tr.ui-datatable-odd:hover {
 	background: #BDE5F8;
+	color: black !important;
 }
 
 /* ICONS for p:commandButon. Note the usage of JSF2 resource facility :-) */
@@ -72,6 +78,7 @@ form .required-pseudo-label {
 /* p:fieldSet */
 .ui-fieldset {
 	text-align: left;
+ 	margin-top:0.2em;
  	margin-bottom:1.2em;
 }
 

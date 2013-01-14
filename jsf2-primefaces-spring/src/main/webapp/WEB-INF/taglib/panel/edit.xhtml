@@ -31,6 +31,7 @@
 		</p:toolbarGroup>
 	</ui:define>
 	<ui:define name="content">
+		<p:breadCrumb model="#{conversationManager.breadCrumbMenuModel}" rendered="#{conversationManager.renderBreadCrumb}" />	
 		<p:fieldset id="fieldset">
 			<f:validateBean disabled="true">
 				<h:panelGrid columns="2" styleClass="aria-role-presentation">

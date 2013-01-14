@@ -87,6 +87,10 @@ public class Conversation implements Serializable {
         return (T) contextes.peek();
     }
 
+    protected Stack<ConversationContext<?>> getConversationContextes() {
+        return contextes;
+    }
+
     protected ConversationContext<?> popContext() {
         // Note: popContext is protected, only conversationManager should call it, so it can notify the listeners. 
         if (contextes.size() > 1) {

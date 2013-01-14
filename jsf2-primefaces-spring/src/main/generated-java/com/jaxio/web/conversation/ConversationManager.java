@@ -10,7 +10,9 @@ package com.jaxio.web.conversation;
 import static com.google.common.collect.Maps.newHashMap;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
@@ -157,6 +159,40 @@ public class ConversationManager implements ApplicationContextAware {
                 htmlMenuItem.setDisabled(true);
             }
             model.addMenuItem(htmlMenuItem);
+        }
+        return model;
+    }
+
+    public boolean getRenderBreadCrumb() {
+        return getCurrentConversation().getConversationContextes().size() > 1;
+    }
+
+    public MenuModel getBreadCrumbMenuModel() {
+        MenuModel model = new DefaultMenuModel();
+        Conversation currentConversation = getCurrentConversation();
+        Stack<ConversationContext<?>> ctxStack = currentConversation.getConversationContextes();
+        int beforeLastIndex = ctxStack.size() - 2;
+        Iterator<ConversationContext<?>> iterator = ctxStack.iterator();
+
+        // first item is rendered as ui-icon-home => we don't want it so we disable it.
+        MenuItem menuItem = new MenuItem();
+        menuItem.setRendered(false);
+        model.addMenuItem(menuItem);
+
+        int i = 0;
+        while (iterator.hasNext()) {
+            ConversationContext<?> ctx = iterator.next();
+            menuItem = new MenuItem();
+            menuItem.setValue(ctx.getLabel());
+            if (i == beforeLastIndex && beforeLastIndex > 0) {
+                // calls back button action
+                menuItem.setOnclick("APP.menu.back()");
+            } else {
+                menuItem.setDisabled(true);
+            }
+
+            model.addMenuItem(menuItem);
+            i++;
         }
         return model;
     }

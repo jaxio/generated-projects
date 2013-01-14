@@ -46,7 +46,7 @@ public class PersistenceContextConversationListener implements ConversationListe
 
     @Override
     public void conversationPausing(Conversation conversation) {
-        boolean unbinded = unbind(conversation.getEntityManager());
+        unbind(conversation.getEntityManager());
     }
 
     @Override

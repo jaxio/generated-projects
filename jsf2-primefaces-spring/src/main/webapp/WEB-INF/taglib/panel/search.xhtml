@@ -48,6 +48,7 @@
 		</p:toolbarGroup>
 	</ui:define>
 	<ui:define name="content">
+		<p:breadCrumb model="#{conversationManager.breadCrumbMenuModel}" rendered="#{conversationManager.renderBreadCrumb}" />	
 		<p:fieldset id="filtersFieldset" legend="#{msg.search_criteria}">
 			<f:validateBean disabled="true">
 				<h:panelGrid columns="4">

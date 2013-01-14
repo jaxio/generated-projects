@@ -16,9 +16,6 @@ jQuery(function() {
 	$('.ui-menuitem-link').focus(function() { jQuery(this).parent().toggleClass('ui-state-focus');})
 						  .blur(function() { jQuery(this).parent().removeClass('ui-state-focus');});
 
-	/* usability: right align labels */
-	$("form label").parents("td").addClass("td-label");
-
 	/* Set the default button when user press enter */
 	$("form input, form select").live("keypress", function (e) {
 		if ($(this).parents("form").find("button[type=submit].default").length <= 0) {
@@ -118,4 +115,7 @@ APP.menu.newLocation = function() {
 };
 APP.menu.cancel = function() {
 	return APP.menu.call('form:cancel');
+};
+APP.menu.back = function() {
+	return APP.menu.call('form:back');
 };
