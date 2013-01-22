@@ -14,7 +14,7 @@ import com.jaxio.domain.Legacy;
 import com.jaxio.web.domain.support.GenericSearchForm;
 
 /**
- * Bean used to back the search page.
+ * View Helper to find/select {@link Legacy}.
  * It exposes a {@link Legacy} instance so it can be used in search by Example query.
  */
 @Named

@@ -66,8 +66,6 @@ public class AccountLazyDataModel extends GenericLazyDataModel<Account, String, 
 
     @Override
     protected ConversationContext<Account> getSelectedContext(Account selected) {
-        AccountContext accountContext = new AccountContext(selected);
-        accountContext.setViewUri(AccountContext.editUri);
-        return accountContext;
+        return AccountController.newEditContext(selected);
     }
 }

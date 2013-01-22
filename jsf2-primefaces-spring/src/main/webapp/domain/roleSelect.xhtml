@@ -15,7 +15,7 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search data="#{roleLazyDataModel}" searchForm="#{roleSearchForm}" controller="#{roleController}" title="${msg.role}">
+	<app:search data="#{roleLazyDataModel}" searchForm="#{roleSearchForm}" title="${msg.role}">
 		<ui:define name="filters">
 			<app:input id="roleName" value="#{roleSearchForm.role.roleName}" label="${msg.role_roleName}"/>
 			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->

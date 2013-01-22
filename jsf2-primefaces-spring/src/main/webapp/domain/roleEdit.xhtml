@@ -15,9 +15,12 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-<app:edit bean="#{role}" title="${msg.role}" controller="#{roleController}">
+<f:metadata>
+	<f:event type="preRenderView" listener="#{roleEditForm.init(role)}" />
+</f:metadata>
+<app:edit bean="#{roleEditForm}" title="${msg.role}">
 	<ui:define name="form">
-		<app:input id="roleName" value="#{role.roleName}" size="100" label="${msg.role_roleName}" required="true">
+		<app:input id="roleName" value="#{roleEditForm.role.roleName}" size="100" label="${msg.role_roleName}" required="true">
 			<f:validateBean binding="#{jpaUniqueValidator}" entity="${role}" property="roleName" />
 		</app:input>
 		<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->

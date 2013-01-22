@@ -14,7 +14,7 @@ import com.jaxio.dao.support.GenericDao;
 import com.jaxio.domain.Book;
 
 /**
- * JPA 2 Data Access Object for {@link com.jaxio.domain.Book}.
+ * JPA 2 Data Access Object for {@link Book}.
  * Note: do not use @Transactional in the DAO layer.
  */
 @Named
@@ -23,5 +23,4 @@ public class BookDao extends GenericDao<Book, Integer> {
     public BookDao() {
         super(Book.class);
     }
-
 }

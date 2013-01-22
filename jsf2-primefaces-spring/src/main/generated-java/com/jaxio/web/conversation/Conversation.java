@@ -125,10 +125,6 @@ public class Conversation implements Serializable {
         return contextes.peek().getViewUri();
     }
 
-    public boolean isPersistenceContext() {
-        return contextes.peek().isPersistencContext();
-    }
-
     public void addBean(String name, Object bean) {
         contextes.peek().addBean(name, bean);
     }

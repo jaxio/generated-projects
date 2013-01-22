@@ -7,7 +7,7 @@
 	template="/WEB-INF/layouts/main.xhtml">
 	<ui:define name="toolbarChildren">
 		<p:toolbarGroup rendered="#{sub or readonly}">
-			<p:commandButton id="back" action="#{controller.back()}" process="@none" ajax="false" immediate="true"
+			<p:commandButton id="back" action="#{searchForm.back()}" process="@none" ajax="false" immediate="true"
 				value="#{msg.back}" icon="ui-icon-arrowreturnthick-1-w"/>
 		</p:toolbarGroup>	
 		<p:toolbarGroup align="left" rendered="#{not sub and not readonly}">
@@ -16,7 +16,7 @@
 				value="#{msg.menu_close}"
 				title="#{msg.menu_close} #{title}"
 				rendered="#{not empty bean}" />
-			<p:commandButton id="quit" action="#{controller.quit()}" ajax="false" process="@form"
+			<p:commandButton id="quit" action="#{searchForm.quit()}" ajax="false" process="@form"
 				icon="ui-icon-closethick"
 				value="#{msg.menu_quit}"
 				title="#{msg.menu_quit} #{title}"

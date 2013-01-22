@@ -9,14 +9,9 @@ package com.jaxio.web.conversation;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.NotImplementedException;
-
-import com.jaxio.domain.Identifiable;
 import com.jaxio.util.ResourcesUtil;
-import com.jaxio.web.domain.support.SelectableListDataModel;
 
 /**
  * Context holding variables and 'conversation' scoped beans so they can be accessed from the view.
@@ -44,7 +39,7 @@ public class ConversationContext<T> implements Serializable {
      * Whether this context relies on the conversation's entity manager or not.
      * If true, then the entity manager of the conversation is used.
      */
-    public boolean isPersistencContext() {
+    public boolean isPersistenceContext() {
         return persistenceContext;
     }
 
@@ -108,8 +103,11 @@ public class ConversationContext<T> implements Serializable {
         return getVar("readonly") != null ? (Boolean) getVar("readonly") : false;
     }
 
-    public T getEntity() {
-        throw new NotImplementedException("sub class should implement it as needed");
+    /**
+     * Helper to set an entity parameter in this context so it can be used in the view when calling the editForm init method.
+     */
+    public void setEntityParam(String paramName, T entity) {
+        setVar(paramName, entity);
     }
 
     /**
@@ -121,15 +119,6 @@ public class ConversationContext<T> implements Serializable {
 
     public ConversationCallBack<T> getCallBack() {
         return callBack;
-    }
-
-    public <E extends Identifiable<?>> void setDataModel(String name, List<E> list) {
-        setVar(name, new SelectableListDataModel<E>(list));
-    }
-
-    @SuppressWarnings("unchecked")
-    public <E extends Identifiable<?>> SelectableListDataModel<E> getDataModel(String name, Class<E> type) {
-        return getVar(name, SelectableListDataModel.class);
     }
 
     public String getMenuUrl() {
@@ -167,7 +156,7 @@ public class ConversationContext<T> implements Serializable {
         return beans.get(name);
     }
 
-    protected void setVar(String name, Object var) {
+    public void setVar(String name, Object var) {
         vars.put(name, var);
     }
 

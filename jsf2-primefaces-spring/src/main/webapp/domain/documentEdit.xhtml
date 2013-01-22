@@ -15,7 +15,10 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-<app:edit bean="#{document}" title="${msg.document}" controller="#{documentController}">
+<f:metadata>
+	<f:event type="preRenderView" listener="#{documentEditForm.init(document)}" />
+</f:metadata>
+<app:edit bean="#{documentEditForm}" title="${msg.document}">
 	<ui:define name="form">
 		<app:outputLabel for="documentBinary" value="${msg.document_documentBinary}" />
 		<p:outputPanel id="documentBinaryOP">
@@ -27,14 +30,14 @@
 				allowTypes="/(\.|\/)(gif|jpe?g|png|txt|doc|ppt|pdf|key|xls|number|pages)$/"
 				rendered="#{!readonly}" />
 			<h:commandLink
-				rendered="#{not empty document.documentFileName}"
-				value="#{document.documentFileName}"><p:fileDownload value="#{documentController.getStreamedContent(document)}"/></h:commandLink>
+				rendered="#{not empty documentEditForm.document.documentFileName}"
+				value="#{documentEditForm.document.documentFileName}"><p:fileDownload value="#{documentController.getStreamedContent(document)}"/></h:commandLink>
 		</p:outputPanel>
 
-		<app:autoComplete id="account" value="#{document.account}" required="true" 
+		<app:autoComplete id="account" value="#{documentEditForm.document.account}" required="true" 
 			label="${msg.document_account}" hasinverse="true"
 			controller="#{accountController}" printer="#{accountPrinter}" converter="#{accountJsfConverter}">
-			<app:iconView actionBean="#{documentController}" action="viewAccount" title="${msg.document_account}" rendered="${not empty document.account}" />
+			<app:iconView actionBean="#{documentEditForm}" action="viewAccount" title="${msg.document_account}" rendered="${not empty documentEditForm.document.account}" />
 		</app:autoComplete>
 		<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 	</ui:define>

@@ -19,7 +19,7 @@ import com.jaxio.domain.Document;
 import com.jaxio.web.domain.support.GenericSearchForm;
 
 /**
- * Bean used to back the search page.
+ * View Helper to find/select {@link Document}.
  * It exposes a {@link Document} instance so it can be used in search by Example query.
  */
 @Named

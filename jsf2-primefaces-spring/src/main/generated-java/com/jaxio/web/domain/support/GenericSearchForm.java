@@ -8,11 +8,22 @@
 package com.jaxio.web.domain.support;
 
 import java.io.Serializable;
+import javax.inject.Inject;
 import com.jaxio.dao.support.SearchParameters;
+import com.jaxio.web.conversation.ConversationManager;
 
+/**
+ * Base Search Form for JPA entities.
+ */
 public abstract class GenericSearchForm<E, F extends GenericSearchForm<E, F>> implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @Inject
+    private ConversationManager conversationManager;
+
+    /**
+     * Return the entity example used in this search form.
+     */
     abstract protected E getEntity();
 
     abstract public SearchParameters toSearchParameters();
@@ -25,5 +36,21 @@ public abstract class GenericSearchForm<E, F extends GenericSearchForm<E, F>> im
 
     public void reset() {
         resetWithOther(newInstance());
+    }
+
+    // ------------------------------------
+    // Actions
+    // ------------------------------------
+
+    public String back() {
+        return conversationManager.getCurrentConversation().getCurrentContext().getCallBack().back();
+    }
+
+    /**
+     * Quit, used from search page. It ends the conversation. It is expected to be non-ajax.
+     */
+    public String quit() {
+        conversationManager.endCurrentConversation();
+        return "/home.faces?faces-redirect=true"; // clean url
     }
 }

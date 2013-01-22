@@ -15,7 +15,7 @@ import com.jaxio.domain.Legacy;
 import com.jaxio.domain.LegacyPk;
 
 /**
- * JPA 2 Data Access Object for {@link com.jaxio.domain.Legacy}.
+ * JPA 2 Data Access Object for {@link Legacy}.
  * Note: do not use @Transactional in the DAO layer.
  */
 @Named
@@ -24,5 +24,4 @@ public class LegacyDao extends GenericDao<Legacy, LegacyPk> {
     public LegacyDao() {
         super(Legacy.class);
     }
-
 }

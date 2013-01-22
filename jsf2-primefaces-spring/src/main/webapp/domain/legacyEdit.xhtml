@@ -15,12 +15,15 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-<app:edit bean="#{legacy}" title="${msg.legacy}" controller="#{legacyController}">
+<f:metadata>
+	<f:event type="preRenderView" listener="#{legacyEditForm.init(legacy)}" />
+</f:metadata>
+<app:edit bean="#{legacyEditForm}" title="${msg.legacy}">
 	<ui:define name="form">
-		<app:input id="name" value="#{legacy.name}" size="16" label="${msg.legacy_name}" required="true" />
-		<app:input id="code" value="#{legacy.code}" size="8" label="${msg.legacy_code}" required="true" />
-		<app:input id="dept" value="#{legacy.dept}" label="${msg.legacy_dept}" required="true" />
-		<app:input id="extraInfo" value="#{legacy.extraInfo}" size="100" label="${msg.legacy_extraInfo}" required="true" />
+		<app:input id="name" value="#{legacyEditForm.legacy.name}" size="16" label="${msg.legacy_name}" required="true" />
+		<app:input id="code" value="#{legacyEditForm.legacy.code}" size="8" label="${msg.legacy_code}" required="true" />
+		<app:input id="dept" value="#{legacyEditForm.legacy.dept}" label="${msg.legacy_dept}" required="true" />
+		<app:input id="extraInfo" value="#{legacyEditForm.legacy.extraInfo}" size="100" label="${msg.legacy_extraInfo}" required="true" />
 		<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 	</ui:define>
 </app:edit>

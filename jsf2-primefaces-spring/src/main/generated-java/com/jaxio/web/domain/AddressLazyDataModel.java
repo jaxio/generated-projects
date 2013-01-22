@@ -52,8 +52,6 @@ public class AddressLazyDataModel extends GenericLazyDataModel<Address, Integer,
 
     @Override
     protected ConversationContext<Address> getSelectedContext(Address selected) {
-        AddressContext addressContext = new AddressContext(selected);
-        addressContext.setViewUri(AddressContext.editUri);
-        return addressContext;
+        return AddressController.newEditContext(selected);
     }
 }

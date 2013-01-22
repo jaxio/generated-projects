@@ -52,8 +52,6 @@ public class BookLazyDataModel extends GenericLazyDataModel<Book, Integer, BookS
 
     @Override
     protected ConversationContext<Book> getSelectedContext(Book selected) {
-        BookContext bookContext = new BookContext(selected);
-        bookContext.setViewUri(BookContext.editUri);
-        return bookContext;
+        return BookController.newEditContext(selected);
     }
 }

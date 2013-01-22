@@ -42,7 +42,7 @@ import com.jaxio.domain.more.MoreTypesDemo;
 import com.jaxio.web.domain.support.GenericSearchForm;
 
 /**
- * Bean used to back the search page.
+ * View Helper to find/select {@link MoreTypesDemo}.
  * It exposes a {@link MoreTypesDemo} instance so it can be used in search by Example query.
  */
 @Named

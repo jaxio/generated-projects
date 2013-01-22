@@ -27,7 +27,7 @@ import com.jaxio.domain.Civility;
 import com.jaxio.web.domain.support.GenericSearchForm;
 
 /**
- * Bean used to back the search page.
+ * View Helper to find/select {@link Account}.
  * It exposes a {@link Account} instance so it can be used in search by Example query.
  */
 @Named

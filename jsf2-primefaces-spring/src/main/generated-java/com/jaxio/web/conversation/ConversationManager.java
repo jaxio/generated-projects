@@ -35,12 +35,20 @@ import org.springframework.context.ApplicationContextAware;
 public class ConversationManager implements ApplicationContextAware {
     private static final String CONVERSATION_MAP = "conversationMap";
     private static ConversationManager instance;
-
-    private Map<String, ConversationFactory> conversationFactories = newHashMap();
     private ApplicationContext applicationContext;
+    private Collection<ConversationFactory> conversationFactories;
     private Collection<ConversationListener> conversationListeners;
+    private Map<String, ConversationFactory> conversationFactoryByUri = newHashMap();
     private ThreadLocal<Conversation> currentConversation = new ThreadLocal<Conversation>();
     private int maxConversations = 5;
+
+    /**
+     * This method should be used only in the following cases: 1) from code having no spring awareness, like filters. 2) from code that are session scoped in
+     * order to avoid serialization of the service. In other cases, please have the conversationManager injected normally.
+     */
+    static public ConversationManager getInstance() {
+        return instance;
+    }
 
     public ConversationManager() {
         if (instance == null) {
@@ -50,14 +58,6 @@ public class ConversationManager implements ApplicationContextAware {
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-    }
-
-    /**
-     * This method should be used only in the following cases: 1) from code having no spring awareness, like filters. 2) from code that are session scoped in
-     * order to avoid serialization of the service. In other cases, please have the conversationManager injected normally.
-     */
-    static public ConversationManager getInstance() {
-        return instance;
     }
 
     /**
@@ -225,14 +225,21 @@ public class ConversationManager implements ApplicationContextAware {
         return FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
     }
 
+    private Collection<ConversationFactory> getConversationFactories() {
+        if (conversationFactories == null) {
+            conversationFactories = applicationContext.getBeansOfType(ConversationFactory.class).values();
+        }
+        return conversationFactories;
+    }
+
     private ConversationFactory getConversationFactory(HttpServletRequest request) {
         String uri = request.getServletPath();
-        ConversationFactory result = conversationFactories.get(uri);
+        ConversationFactory result = conversationFactoryByUri.get(uri);
 
         if (result == null) {
-            for (ConversationFactory cf : applicationContext.getBeansOfType(ConversationFactory.class).values()) {
+            for (ConversationFactory cf : getConversationFactories()) {
                 if (cf.canCreateConversation(request)) {
-                    conversationFactories.put(uri, cf);
+                    conversationFactoryByUri.put(uri, cf);
                     result = cf;
                 }
             }
@@ -243,7 +250,7 @@ public class ConversationManager implements ApplicationContextAware {
 
     // --------------------------------------------
     // Support for conversation listeners
-    // --------------------------------------------
+    // --------------------------------------------    
 
     private Collection<ConversationListener> getConversationListeners() {
         if (conversationListeners == null) {

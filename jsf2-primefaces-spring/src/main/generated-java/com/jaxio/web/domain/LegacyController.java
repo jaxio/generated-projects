@@ -7,46 +7,49 @@
  */
 package com.jaxio.web.domain;
 
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
+import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Legacy;
-import com.jaxio.domain.LegacyPk;
 import com.jaxio.repository.LegacyRepository;
 import com.jaxio.web.conversation.Conversation;
+import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationFactory;
-import com.jaxio.web.domain.support.GenericController;
 
 /**
- * Stateless controller for {@link Legacy}.
+ * Stateless controller for Legacy conversation start. Provides also auto-complete support. 
  */
 @Named
 @Singleton
-public class LegacyController extends GenericController<Legacy, LegacyPk> implements ConversationFactory {
+public class LegacyController implements ConversationFactory {
+    public final static String editUri = "/domain/legacyEdit.faces";
+    public final static String selectUri = "/domain/legacySelect.faces";
+    private LegacyRepository legacyRepository;
 
     @Inject
-    public LegacyController(LegacyRepository legacyRepository) {
-        super(legacyRepository);
+    public void setLegacyRepository(LegacyRepository legacyRepository) {
+        this.legacyRepository = legacyRepository;
     }
 
-    // --------------------------------------------
-    // ConversationFactory impl
-    // --------------------------------------------
+    // --------------------------------
+    // ConversationFactoryImpl
+    // --------------------------------
 
     @Override
     public boolean canCreateConversation(HttpServletRequest request) {
-        return LegacyContext.selectUri.equals(request.getServletPath());
+        return selectUri.equals(request.getServletPath());
     }
 
     @Override
     public Conversation createConversation(HttpServletRequest request) {
         String uri = request.getServletPath();
-        if (LegacyContext.selectUri.equals(uri)) {
+        if (selectUri.equals(uri)) {
             Conversation conversation = Conversation.newInstance(request);
-            LegacyContext ctx = new LegacyContext();
+            ConversationContext<Legacy> ctx = newSearchContext();
             ctx.setLabelWithKey("legacy");
-            ctx.setViewUri(LegacyContext.selectUri);
             conversation.push(ctx);
             return conversation;
         }
@@ -54,7 +57,38 @@ public class LegacyController extends GenericController<Legacy, LegacyPk> implem
         throw new IllegalStateException("Unexpected conversation creation demand");
     }
 
-    protected final LegacyContext legacyContext() {
-        return conversation().getCurrentContext();
+    // --------------------------------
+    // Autocomplete support
+    // --------------------------------
+
+    /**
+     * This method is used from primefaces autocomplete components.
+     */
+    public List<Legacy> complete(String value) {
+        SearchParameters sp = new SearchParameters().anywhere().searchPattern(value);
+        return legacyRepository.find(sp);
+    }
+
+    // --------------------------------
+    // Helper 
+    // --------------------------------    
+
+    /**
+     * Helper to construct a new ConversationContext for edition.
+     */
+    public static ConversationContext<Legacy> newEditContext(Legacy initParam) {
+        ConversationContext<Legacy> ctx = new ConversationContext<Legacy>();
+        ctx.setEntityParam("legacy", initParam);
+        ctx.setViewUri(editUri);
+        return ctx;
+    }
+
+    /**
+     * Helper to construct a new ConversationContext for search/selection.
+     */
+    public static ConversationContext<Legacy> newSearchContext() {
+        ConversationContext<Legacy> ctx = new ConversationContext<Legacy>();
+        ctx.setViewUri(selectUri);
+        return ctx;
     }
 }

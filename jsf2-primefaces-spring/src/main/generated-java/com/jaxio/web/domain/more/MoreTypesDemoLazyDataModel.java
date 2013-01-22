@@ -52,8 +52,6 @@ public class MoreTypesDemoLazyDataModel extends GenericLazyDataModel<MoreTypesDe
 
     @Override
     protected ConversationContext<MoreTypesDemo> getSelectedContext(MoreTypesDemo selected) {
-        MoreTypesDemoContext moreTypesDemoContext = new MoreTypesDemoContext(selected);
-        moreTypesDemoContext.setViewUri(MoreTypesDemoContext.editUri);
-        return moreTypesDemoContext;
+        return MoreTypesDemoController.newEditContext(selected);
     }
 }

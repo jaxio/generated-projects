@@ -7,45 +7,49 @@
  */
 package com.jaxio.web.domain;
 
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
+import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Address;
 import com.jaxio.repository.AddressRepository;
 import com.jaxio.web.conversation.Conversation;
+import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationFactory;
-import com.jaxio.web.domain.support.GenericController;
 
 /**
- * Stateless controller for {@link Address}.
+ * Stateless controller for Address conversation start. Provides also auto-complete support. 
  */
 @Named
 @Singleton
-public class AddressController extends GenericController<Address, Integer> implements ConversationFactory {
+public class AddressController implements ConversationFactory {
+    public final static String editUri = "/domain/addressEdit.faces";
+    public final static String selectUri = "/domain/addressSelect.faces";
+    private AddressRepository addressRepository;
 
     @Inject
-    public AddressController(AddressRepository addressRepository) {
-        super(addressRepository);
+    public void setAddressRepository(AddressRepository addressRepository) {
+        this.addressRepository = addressRepository;
     }
 
-    // --------------------------------------------
-    // ConversationFactory impl
-    // --------------------------------------------
+    // --------------------------------
+    // ConversationFactoryImpl
+    // --------------------------------
 
     @Override
     public boolean canCreateConversation(HttpServletRequest request) {
-        return AddressContext.selectUri.equals(request.getServletPath());
+        return selectUri.equals(request.getServletPath());
     }
 
     @Override
     public Conversation createConversation(HttpServletRequest request) {
         String uri = request.getServletPath();
-        if (AddressContext.selectUri.equals(uri)) {
+        if (selectUri.equals(uri)) {
             Conversation conversation = Conversation.newInstance(request);
-            AddressContext ctx = new AddressContext();
+            ConversationContext<Address> ctx = newSearchContext();
             ctx.setLabelWithKey("address");
-            ctx.setViewUri(AddressContext.selectUri);
             conversation.push(ctx);
             return conversation;
         }
@@ -53,7 +57,38 @@ public class AddressController extends GenericController<Address, Integer> imple
         throw new IllegalStateException("Unexpected conversation creation demand");
     }
 
-    protected final AddressContext addressContext() {
-        return conversation().getCurrentContext();
+    // --------------------------------
+    // Autocomplete support
+    // --------------------------------
+
+    /**
+     * This method is used from primefaces autocomplete components.
+     */
+    public List<Address> complete(String value) {
+        SearchParameters sp = new SearchParameters().anywhere().searchPattern(value);
+        return addressRepository.find(sp);
+    }
+
+    // --------------------------------
+    // Helper 
+    // --------------------------------    
+
+    /**
+     * Helper to construct a new ConversationContext for edition.
+     */
+    public static ConversationContext<Address> newEditContext(Address initParam) {
+        ConversationContext<Address> ctx = new ConversationContext<Address>();
+        ctx.setEntityParam("address", initParam);
+        ctx.setViewUri(editUri);
+        return ctx;
+    }
+
+    /**
+     * Helper to construct a new ConversationContext for search/selection.
+     */
+    public static ConversationContext<Address> newSearchContext() {
+        ConversationContext<Address> ctx = new ConversationContext<Address>();
+        ctx.setViewUri(selectUri);
+        return ctx;
     }
 }

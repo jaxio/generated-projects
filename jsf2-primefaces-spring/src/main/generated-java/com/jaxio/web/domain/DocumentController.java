@@ -8,48 +8,51 @@
 package com.jaxio.web.domain;
 
 import java.io.ByteArrayInputStream;
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Document;
 import com.jaxio.repository.DocumentRepository;
 import com.jaxio.web.conversation.Conversation;
+import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationFactory;
-import com.jaxio.web.domain.AccountContext;
-import com.jaxio.web.domain.support.GenericController;
 
 /**
- * Stateless controller for {@link Document}.
+ * Stateless controller for Document conversation start. Provides also auto-complete support. 
  */
 @Named
 @Singleton
-public class DocumentController extends GenericController<Document, String> implements ConversationFactory {
+public class DocumentController implements ConversationFactory {
+    public final static String editUri = "/domain/documentEdit.faces";
+    public final static String selectUri = "/domain/documentSelect.faces";
+    private DocumentRepository documentRepository;
 
     @Inject
-    public DocumentController(DocumentRepository documentRepository) {
-        super(documentRepository);
+    public void setDocumentRepository(DocumentRepository documentRepository) {
+        this.documentRepository = documentRepository;
     }
 
-    // --------------------------------------------
-    // ConversationFactory impl
-    // --------------------------------------------
+    // --------------------------------
+    // ConversationFactoryImpl
+    // --------------------------------
 
     @Override
     public boolean canCreateConversation(HttpServletRequest request) {
-        return DocumentContext.selectUri.equals(request.getServletPath());
+        return selectUri.equals(request.getServletPath());
     }
 
     @Override
     public Conversation createConversation(HttpServletRequest request) {
         String uri = request.getServletPath();
-        if (DocumentContext.selectUri.equals(uri)) {
+        if (selectUri.equals(uri)) {
             Conversation conversation = Conversation.newInstance(request);
-            DocumentContext ctx = new DocumentContext();
+            ConversationContext<Document> ctx = newSearchContext();
             ctx.setLabelWithKey("document");
-            ctx.setViewUri(DocumentContext.selectUri);
             conversation.push(ctx);
             return conversation;
         }
@@ -57,17 +60,21 @@ public class DocumentController extends GenericController<Document, String> impl
         throw new IllegalStateException("Unexpected conversation creation demand");
     }
 
-    // --------------------------------------------
-    // account association
-    // --------------------------------------------
+    // --------------------------------
+    // Autocomplete support
+    // --------------------------------
 
-    public String viewAccount() {
-        AccountContext ctx = new AccountContext(documentContext().getDocument().getAccount());
-        ctx.setLabelWithKey("document_account");
-        ctx.setViewUri(AccountContext.editUri);
-        conversation().pushSubReadOnly(ctx);
-        return ctx.view();
+    /**
+     * This method is used from primefaces autocomplete components.
+     */
+    public List<Document> complete(String value) {
+        SearchParameters sp = new SearchParameters().anywhere().searchPattern(value);
+        return documentRepository.find(sp);
     }
+
+    // --------------------------------
+    // Upload/Download support 
+    // --------------------------------    
 
     public DocumentUploadHandler getUploadHandler(Document document) {
         return new DocumentUploadHandler(document);
@@ -81,7 +88,26 @@ public class DocumentController extends GenericController<Document, String> impl
                 .getDocumentFileName());
     }
 
-    protected final DocumentContext documentContext() {
-        return conversation().getCurrentContext();
+    // --------------------------------
+    // Helper 
+    // --------------------------------    
+
+    /**
+     * Helper to construct a new ConversationContext for edition.
+     */
+    public static ConversationContext<Document> newEditContext(Document initParam) {
+        ConversationContext<Document> ctx = new ConversationContext<Document>();
+        ctx.setEntityParam("document", initParam);
+        ctx.setViewUri(editUri);
+        return ctx;
+    }
+
+    /**
+     * Helper to construct a new ConversationContext for search/selection.
+     */
+    public static ConversationContext<Document> newSearchContext() {
+        ConversationContext<Document> ctx = new ConversationContext<Document>();
+        ctx.setViewUri(selectUri);
+        return ctx;
     }
 }

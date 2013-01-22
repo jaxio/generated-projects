@@ -15,7 +15,7 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search data="#{accountLazyDataModel}" searchForm="#{accountSearchForm}" controller="#{accountController}" title="${msg.account}">
+	<app:search data="#{accountLazyDataModel}" searchForm="#{accountSearchForm}" title="${msg.account}">
 		<ui:define name="filters">
 			<app:input id="username" value="#{accountSearchForm.account.username}" label="${msg.account_username}"/>
 			<app:input id="password" value="#{accountSearchForm.account.password}" label="${msg.account_password}"/>

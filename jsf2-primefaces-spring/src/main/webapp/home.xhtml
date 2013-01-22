@@ -50,8 +50,8 @@
 			</script>
 		</p:panel>
 
-		<p:panel header="Start a new flow" rendered="#{!userContext.isFrench()}">
-		<p>Here is the list of top level generated flows:</p>
+		<p:panel header="Start a new conversation" rendered="#{!userContext.isFrench()}">
+		<p>Here is the list of generated conversations:</p>
 		<ul>
 			<li>
 				<h:outputLink value="domain/accountSelect.faces?_ncid_=true">
@@ -91,8 +91,8 @@
 			</ul>
 		</p:panel>
 
-		<p:panel header="Démarrer un nouveau flow" rendered="#{userContext.isFrench()}">
-			<p>Voici la liste des flows de haut niveau générés:</p>
+		<p:panel header="Démarrer une nouvelle conversation" rendered="#{userContext.isFrench()}">
+			<p>Voici la liste des conversations générées:</p>
 			<ul>
 				<li>
 				<h:outputLink value="domain/accountSelect.faces?_ncid_=true">

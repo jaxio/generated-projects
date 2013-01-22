@@ -40,11 +40,6 @@
 	<!-- transaction -->
 	<tx:annotation-driven />
 
-	<!-- scheduling and async -->
-	<task:scheduler id="myScheduler" pool-size="10" />
-	<task:executor id="myExecutor" pool-size="5" />
-	<task:annotation-driven scheduler="myScheduler" executor="myExecutor" />
-
 	<!-- datasource -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" 
 		destroy-method="close" 
@@ -67,10 +62,6 @@
 			need to use JDBC, please look at hibernate SQL-QUERIES, they would most probably be a more elegant way to solve your problem.
 		</description>
 	</bean>
-
-	<!-- jmx -->
-	<context:mbean-server />
-	<context:mbean-export registration="ignoreExisting" default-domain="appli" />
 
 	<!-- jpa -->
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor">

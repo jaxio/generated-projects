@@ -7,6 +7,7 @@
  */
 package com.jaxio.web.domain;
 
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -15,38 +16,40 @@ import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Role;
 import com.jaxio.repository.RoleRepository;
 import com.jaxio.web.conversation.Conversation;
+import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationFactory;
-import com.jaxio.web.domain.support.GenericController;
 
 /**
- * Stateless controller for {@link Role}.
+ * Stateless controller for Role conversation start. Provides also auto-complete support. 
  */
 @Named
 @Singleton
-public class RoleController extends GenericController<Role, Integer> implements ConversationFactory {
+public class RoleController implements ConversationFactory {
+    public final static String editUri = "/domain/roleEdit.faces";
+    public final static String selectUri = "/domain/roleSelect.faces";
+    private RoleRepository roleRepository;
 
     @Inject
-    public RoleController(RoleRepository roleRepository) {
-        super(roleRepository);
+    public void setRoleRepository(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
     }
 
-    // --------------------------------------------
-    // ConversationFactory impl
-    // --------------------------------------------
+    // --------------------------------
+    // ConversationFactoryImpl
+    // --------------------------------
 
     @Override
     public boolean canCreateConversation(HttpServletRequest request) {
-        return RoleContext.selectUri.equals(request.getServletPath());
+        return selectUri.equals(request.getServletPath());
     }
 
     @Override
     public Conversation createConversation(HttpServletRequest request) {
         String uri = request.getServletPath();
-        if (RoleContext.selectUri.equals(uri)) {
+        if (selectUri.equals(uri)) {
             Conversation conversation = Conversation.newInstance(request);
-            RoleContext ctx = new RoleContext();
+            ConversationContext<Role> ctx = newSearchContext();
             ctx.setLabelWithKey("role");
-            ctx.setViewUri(RoleContext.selectUri);
             conversation.push(ctx);
             return conversation;
         }
@@ -54,15 +57,40 @@ public class RoleController extends GenericController<Role, Integer> implements 
         throw new IllegalStateException("Unexpected conversation creation demand");
     }
 
-    @Override
-    public SearchParameters searchParametersForComplete(String value) {
-        SearchParameters sp = super.searchParametersForComplete(value);
+    // --------------------------------
+    // Autocomplete support
+    // --------------------------------
+
+    /**
+     * This method is used from primefaces autocomplete components.
+     */
+    public List<Role> complete(String value) {
+        SearchParameters sp = new SearchParameters().anywhere().searchPattern(value);
         // order by business key
         sp.orderBy("roleName");
-        return sp;
+        return roleRepository.find(sp);
     }
 
-    protected final RoleContext roleContext() {
-        return conversation().getCurrentContext();
+    // --------------------------------
+    // Helper 
+    // --------------------------------    
+
+    /**
+     * Helper to construct a new ConversationContext for edition.
+     */
+    public static ConversationContext<Role> newEditContext(Role initParam) {
+        ConversationContext<Role> ctx = new ConversationContext<Role>();
+        ctx.setEntityParam("role", initParam);
+        ctx.setViewUri(editUri);
+        return ctx;
+    }
+
+    /**
+     * Helper to construct a new ConversationContext for search/selection.
+     */
+    public static ConversationContext<Role> newSearchContext() {
+        ConversationContext<Role> ctx = new ConversationContext<Role>();
+        ctx.setViewUri(selectUri);
+        return ctx;
     }
 }

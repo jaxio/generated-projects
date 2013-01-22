@@ -28,7 +28,7 @@ public class PersistenceContextConversationListener implements ConversationListe
 
     @Override
     public void conversationCreated(Conversation conversation) {
-        if (conversation.isPersistenceContext()) {
+        if (conversation.getCurrentContext().isPersistenceContext()) {
             EntityManager em = entityManagerFactory.createEntityManager();
             conversation.setEntityManager(em);
             if (log.isDebugEnabled()) {
@@ -39,7 +39,15 @@ public class PersistenceContextConversationListener implements ConversationListe
 
     @Override
     public void conversationResuming(Conversation conversation) {
-        if (conversation.isPersistenceContext()) {
+        if (conversation.getCurrentContext().isPersistenceContext()) {
+            if (conversation.getEntityManager() == null) {
+                EntityManager em = entityManagerFactory.createEntityManager();
+                conversation.setEntityManager(em);
+                if (log.isDebugEnabled()) {
+                    log.debug("conversation " + conversation.getId() + ": entity manager created");
+                }
+            }
+
             bind(conversation.getEntityManager());
         }
     }
@@ -51,7 +59,7 @@ public class PersistenceContextConversationListener implements ConversationListe
 
     @Override
     public void conversationContextPopped(Conversation conversation, ConversationContext<?> contextRemoved) {
-        if (!contextRemoved.isPersistencContext() && conversation.getCurrentContext().isPersistencContext()) {
+        if (!contextRemoved.isPersistenceContext() && conversation.getCurrentContext().isPersistenceContext()) {
             // tricky case: we  bind the entity manager as the callback method (which is executed just after the context is popped) 
             // could rely on it.
             bind(conversation.getEntityManager());
@@ -60,14 +68,17 @@ public class PersistenceContextConversationListener implements ConversationListe
 
     @Override
     public void conversationEnding(Conversation conversation) {
-        boolean unbinded = unbind(conversation.getEntityManager());
-        conversation.getEntityManager().close();
+        EntityManager em = conversation.getEntityManager();
+        if (em != null) {
+            boolean unbinded = unbind(em);
+            em.close();
 
-        if (log.isDebugEnabled()) {
-            if (unbinded) {
-                log.debug("conversation " + conversation.getId() + ": entity manager unbinded and closed");
-            } else {
-                log.debug("conversation " + conversation.getId() + ": entity manager closed");
+            if (log.isDebugEnabled()) {
+                if (unbinded) {
+                    log.debug("conversation " + conversation.getId() + ": entity manager unbinded and closed");
+                } else {
+                    log.debug("conversation " + conversation.getId() + ": entity manager closed");
+                }
             }
         }
     }

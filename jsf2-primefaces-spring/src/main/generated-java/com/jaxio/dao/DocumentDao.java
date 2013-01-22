@@ -14,7 +14,7 @@ import com.jaxio.dao.support.GenericDao;
 import com.jaxio.domain.Document;
 
 /**
- * JPA 2 Data Access Object for {@link com.jaxio.domain.Document}.
+ * JPA 2 Data Access Object for {@link Document}.
  * Note: do not use @Transactional in the DAO layer.
  */
 @Named
@@ -23,5 +23,4 @@ public class DocumentDao extends GenericDao<Document, String> {
     public DocumentDao() {
         super(Document.class);
     }
-
 }

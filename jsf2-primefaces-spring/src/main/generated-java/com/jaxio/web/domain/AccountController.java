@@ -7,54 +7,49 @@
  */
 package com.jaxio.web.domain;
 
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
-import org.omnifaces.util.Faces;
-import org.primefaces.event.SelectEvent;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Account;
-import com.jaxio.domain.Address;
-import com.jaxio.domain.Book;
-import com.jaxio.domain.Document;
-import com.jaxio.domain.Role;
 import com.jaxio.repository.AccountRepository;
 import com.jaxio.web.conversation.Conversation;
-import com.jaxio.web.conversation.ConversationCallBack;
+import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationFactory;
-import com.jaxio.web.domain.AddressContext;
-import com.jaxio.web.domain.support.GenericController;
 
 /**
- * Stateless controller for {@link Account}.
+ * Stateless controller for Account conversation start. Provides also auto-complete support. 
  */
 @Named
 @Singleton
-public class AccountController extends GenericController<Account, String> implements ConversationFactory {
+public class AccountController implements ConversationFactory {
+    public final static String editUri = "/domain/accountEdit.faces";
+    public final static String selectUri = "/domain/accountSelect.faces";
+    private AccountRepository accountRepository;
 
     @Inject
-    public AccountController(AccountRepository accountRepository) {
-        super(accountRepository);
+    public void setAccountRepository(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
     }
 
-    // --------------------------------------------
-    // ConversationFactory impl
-    // --------------------------------------------
+    // --------------------------------
+    // ConversationFactoryImpl
+    // --------------------------------
 
     @Override
     public boolean canCreateConversation(HttpServletRequest request) {
-        return AccountContext.selectUri.equals(request.getServletPath());
+        return selectUri.equals(request.getServletPath());
     }
 
     @Override
     public Conversation createConversation(HttpServletRequest request) {
         String uri = request.getServletPath();
-        if (AccountContext.selectUri.equals(uri)) {
+        if (selectUri.equals(uri)) {
             Conversation conversation = Conversation.newInstance(request);
-            AccountContext ctx = new AccountContext();
+            ConversationContext<Account> ctx = newSearchContext();
             ctx.setLabelWithKey("account");
-            ctx.setViewUri(AccountContext.selectUri);
             conversation.push(ctx);
             return conversation;
         }
@@ -62,287 +57,40 @@ public class AccountController extends GenericController<Account, String> implem
         throw new IllegalStateException("Unexpected conversation creation demand");
     }
 
-    // --------------------------------------------
-    // homeAddress association
-    // --------------------------------------------
-
-    public String viewHomeAddress() {
-        AddressContext ctx = new AddressContext(accountContext().getAccount().getHomeAddress());
-        ctx.setLabelWithKey("account_homeAddress");
-        ctx.setViewUri(AddressContext.editUri);
-        conversation().pushSubReadOnly(ctx);
-        return ctx.view();
-    }
-
-    public String selectHomeAddress() {
-        AddressContext ctx = new AddressContext();
-        ctx.setLabelWithKey("account_homeAddress");
-        ctx.setViewUri(AddressContext.selectUri);
-        ctx.setCallBack(selectHomeAddressCallBack);
-        conversation().pushSub(ctx);
-        return ctx.view();
-    }
-
-    private ConversationCallBack<Address> selectHomeAddressCallBack = new ConversationCallBack<Address>() {
-        private static final long serialVersionUID = 1L;
-
-        // will be invoked from the AccountLazyDataModel
-        @Override
-        protected void onSelected(Address address) {
-            accountContext().getAccount().setHomeAddress(address);
-            messageUtil.infoEntity("status_selected_ok", address);
-        }
-    };
-
-    public String addHomeAddress() {
-        AddressContext ctx = new AddressContext(new Address());
-        ctx.setLabelWithKey("account_homeAddress");
-        ctx.setViewUri(AddressContext.editUri);
-        ctx.setCallBack(addHomeAddressCallBack);
-        conversation().pushSub(ctx);
-        return ctx.view();
-    }
-
-    private ConversationCallBack<Address> addHomeAddressCallBack = new ConversationCallBack<Address>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onOk(Address address) {
-            accountContext().getAccount().setHomeAddress(address);
-            messageUtil.infoEntity("status_created_ok", address);
-        }
-    };
-
-    public String editHomeAddress() {
-        AddressContext ctx = new AddressContext(accountContext().getAccount().getHomeAddress());
-        ctx.setLabelWithKey("account_homeAddress");
-        ctx.setViewUri(AddressContext.editUri);
-        conversation().pushSub(ctx);
-        return ctx.view();
-    }
-
-    // --------------------------------------------
-    // book association
-    // --------------------------------------------
+    // --------------------------------
+    // Autocomplete support
+    // --------------------------------
 
     /**
-     * Action with implicit navigation to edit the selected book.
+     * This method is used from primefaces autocomplete components.
      */
-    public String editBook() {
-        BookContext ctx = new BookContext(accountContext().getSelectedBook());
-        ctx.setLabelWithKey("account_books");
-        ctx.setViewUri(BookContext.editUri);
-        ctx.setCallBack(editBookCallBack);
-        conversation().pushSub(ctx);
-        return ctx.view();
-    }
-
-    private ConversationCallBack<Book> editBookCallBack = new ConversationCallBack<Book>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onOk(Book book) {
-            messageUtil.infoEntity("status_edited_ok", book);
-        }
-    };
-
-    public String viewBook() {
-        BookContext ctx = new BookContext(accountContext().getSelectedBook());
-        ctx.setLabelWithKey("account_books");
-        ctx.setViewUri(BookContext.editUri);
-        conversation().pushSubReadOnly(ctx);
-        return ctx.view();
-    }
-
-    /**
-     * This listener force the navigation to the edit or view page of the target @{link ${relation.toEntity.type}}.
-     */
-    public void onBookRowSelect(SelectEvent event) {
-        Faces.navigate(context().isReadOnly() ? viewBook() : editBook());
-    }
-
-    public void removeBook() {
-        AccountContext ctx = accountContext();
-        ctx.getAccount().removeBook(ctx.getSelectedBook());
-        messageUtil.infoEntity("status_removed_ok", ctx.getSelectedBook());
-    }
-
-    public String addBook() {
-        BookContext ctx = new BookContext(new Book());
-        ctx.setLabelWithKey("account_books");
-        ctx.setViewUri(BookContext.editUri);
-        ctx.setCallBack(addBookCallBack);
-        conversation().pushSub(ctx);
-        return ctx.view();
-    }
-
-    private ConversationCallBack<Book> addBookCallBack = new ConversationCallBack<Book>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onOk(Book book) {
-            accountContext().getAccount().addBook(book);
-            messageUtil.infoEntity("status_added_new_ok", book);
-        }
-    };
-
-    // --------------------------------------------
-    // document association
-    // --------------------------------------------
-
-    /**
-     * Action with implicit navigation to edit the selected document.
-     */
-    public String editDocument() {
-        DocumentContext ctx = new DocumentContext(accountContext().getSelectedDocument());
-        ctx.setLabelWithKey("account_documents");
-        ctx.setViewUri(DocumentContext.editUri);
-        ctx.setCallBack(editDocumentCallBack);
-        conversation().pushSub(ctx);
-        return ctx.view();
-    }
-
-    private ConversationCallBack<Document> editDocumentCallBack = new ConversationCallBack<Document>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onOk(Document document) {
-            messageUtil.infoEntity("status_edited_ok", document);
-        }
-    };
-
-    public String viewDocument() {
-        DocumentContext ctx = new DocumentContext(accountContext().getSelectedDocument());
-        ctx.setLabelWithKey("account_documents");
-        ctx.setViewUri(DocumentContext.editUri);
-        conversation().pushSubReadOnly(ctx);
-        return ctx.view();
-    }
-
-    /**
-     * This listener force the navigation to the edit or view page of the target @{link ${relation.toEntity.type}}.
-     */
-    public void onDocumentRowSelect(SelectEvent event) {
-        Faces.navigate(context().isReadOnly() ? viewDocument() : editDocument());
-    }
-
-    public void removeDocument() {
-        AccountContext ctx = accountContext();
-        ctx.getAccount().removeDocument(ctx.getSelectedDocument());
-        messageUtil.infoEntity("status_removed_ok", ctx.getSelectedDocument());
-    }
-
-    public String addDocument() {
-        DocumentContext ctx = new DocumentContext(new Document());
-        ctx.setLabelWithKey("account_documents");
-        ctx.setViewUri(DocumentContext.editUri);
-        ctx.setCallBack(addDocumentCallBack);
-        conversation().pushSub(ctx);
-        return ctx.view();
-    }
-
-    private ConversationCallBack<Document> addDocumentCallBack = new ConversationCallBack<Document>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onOk(Document document) {
-            accountContext().getAccount().addDocument(document);
-            messageUtil.infoEntity("status_added_new_ok", document);
-        }
-    };
-
-    // --------------------------------------------
-    // role association
-    // --------------------------------------------
-    public String selectRole() {
-        RoleContext ctx = new RoleContext();
-        ctx.setLabelWithKey("account_roles");
-        ctx.setViewUri(RoleContext.selectUri);
-        ctx.setCallBack(selectRoleCallBack);
-        conversation().pushSub(ctx);
-        return ctx.view();
-    }
-
-    private ConversationCallBack<Role> selectRoleCallBack = new ConversationCallBack<Role>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onSelected(Role role) {
-            accountContext().getAccount().addRole(role);
-            messageUtil.infoEntity("status_added_existing_ok", role);
-        }
-    };
-
-    /**
-     * Action with implicit navigation to edit the selected role.
-     */
-    public String editRole() {
-        RoleContext ctx = new RoleContext(accountContext().getSelectedRole());
-        ctx.setLabelWithKey("account_roles");
-        ctx.setViewUri(RoleContext.editUri);
-        ctx.setCallBack(editRoleCallBack);
-        conversation().pushSub(ctx);
-        return ctx.view();
-    }
-
-    private ConversationCallBack<Role> editRoleCallBack = new ConversationCallBack<Role>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onOk(Role role) {
-            messageUtil.infoEntity("status_edited_ok", role);
-        }
-    };
-
-    public String viewRole() {
-        RoleContext ctx = new RoleContext(accountContext().getSelectedRole());
-        ctx.setLabelWithKey("account_roles");
-        ctx.setViewUri(RoleContext.editUri);
-        conversation().pushSubReadOnly(ctx);
-        return ctx.view();
-    }
-
-    /**
-     * This listener force the navigation to the edit or view page of the target @{link ${relation.toEntity.type}}.
-     */
-    public void onRoleRowSelect(SelectEvent event) {
-        Faces.navigate(context().isReadOnly() ? viewRole() : editRole());
-    }
-
-    public void removeRole() {
-        AccountContext ctx = accountContext();
-        ctx.getAccount().removeRole(ctx.getSelectedRole());
-        messageUtil.infoEntity("status_removed_ok", ctx.getSelectedRole());
-    }
-
-    public String addRole() {
-        RoleContext ctx = new RoleContext(new Role());
-        ctx.setLabelWithKey("account_roles");
-        ctx.setViewUri(RoleContext.editUri);
-        ctx.setCallBack(addRoleCallBack);
-        conversation().pushSub(ctx);
-        return ctx.view();
-    }
-
-    private ConversationCallBack<Role> addRoleCallBack = new ConversationCallBack<Role>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onOk(Role role) {
-            accountContext().getAccount().addRole(role);
-            messageUtil.infoEntity("status_added_new_ok", role);
-        }
-    };
-
-    @Override
-    public SearchParameters searchParametersForComplete(String value) {
-        SearchParameters sp = super.searchParametersForComplete(value);
+    public List<Account> complete(String value) {
+        SearchParameters sp = new SearchParameters().anywhere().searchPattern(value);
         // order by business key
         sp.orderBy("username");
-        return sp;
+        return accountRepository.find(sp);
     }
 
-    protected final AccountContext accountContext() {
-        return conversation().getCurrentContext();
+    // --------------------------------
+    // Helper 
+    // --------------------------------    
+
+    /**
+     * Helper to construct a new ConversationContext for edition.
+     */
+    public static ConversationContext<Account> newEditContext(Account initParam) {
+        ConversationContext<Account> ctx = new ConversationContext<Account>();
+        ctx.setEntityParam("account", initParam);
+        ctx.setViewUri(editUri);
+        return ctx;
+    }
+
+    /**
+     * Helper to construct a new ConversationContext for search/selection.
+     */
+    public static ConversationContext<Account> newSearchContext() {
+        ConversationContext<Account> ctx = new ConversationContext<Account>();
+        ctx.setViewUri(selectUri);
+        return ctx;
     }
 }

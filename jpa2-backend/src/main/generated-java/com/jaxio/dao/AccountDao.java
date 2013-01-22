@@ -14,7 +14,7 @@ import com.jaxio.dao.support.GenericDao;
 import com.jaxio.domain.Account;
 
 /**
- * JPA 2 Data Access Object for {@link com.jaxio.domain.Account}.
+ * JPA 2 Data Access Object for {@link Account}.
  * Note: do not use @Transactional in the DAO layer.
  */
 @Named
@@ -23,5 +23,4 @@ public class AccountDao extends GenericDao<Account, String> {
     public AccountDao() {
         super(Account.class);
     }
-
 }

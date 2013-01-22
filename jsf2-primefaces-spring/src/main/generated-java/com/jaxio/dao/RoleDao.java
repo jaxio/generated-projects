@@ -14,7 +14,7 @@ import com.jaxio.dao.support.GenericDao;
 import com.jaxio.domain.Role;
 
 /**
- * JPA 2 Data Access Object for {@link com.jaxio.domain.Role}.
+ * JPA 2 Data Access Object for {@link Role}.
  * Note: do not use @Transactional in the DAO layer.
  */
 @Named
@@ -23,5 +23,4 @@ public class RoleDao extends GenericDao<Role, Integer> {
     public RoleDao() {
         super(Role.class);
     }
-
 }

@@ -10,11 +10,11 @@ package com.jaxio.web.conversation;
 import java.io.Serializable;
 
 /**
- * CallBacks should be invoked by a controller at the end of a @{link ConversationContext} life.
+ * CallBacks should be invoked at the end of a @{link ConversationContext} life.
  * A CallBack allows the creator of the conversation context to know which action led to the context termination and to retrieve 
  * any relevant output.
  * For example, a conversation context can be created to let a user select an entity among a list of entities. When the user selects 
- * an entity, the controller invokes the selected(T entity) method which let the creator of the context do something with the selected entity (e.g add it or set it somewhere...).
+ * an entity, the action invokes the selected(T entity) method which let the creator of the context do something with the selected entity (e.g add it or set it somewhere...).
  */
 public class ConversationCallBack<T> implements Serializable {
     private static final long serialVersionUID = 1L;

@@ -15,7 +15,7 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search data="#{legacyLazyDataModel}" searchForm="#{legacySearchForm}" controller="#{legacyController}" title="${msg.legacy}">
+	<app:search data="#{legacyLazyDataModel}" searchForm="#{legacySearchForm}" title="${msg.legacy}">
 		<ui:define name="filters">
 			<app:input id="name" value="#{legacySearchForm.legacy.name}" label="${msg.legacy_name}"/>
 			<app:input id="code" value="#{legacySearchForm.legacy.code}" label="${msg.legacy_code}"/>

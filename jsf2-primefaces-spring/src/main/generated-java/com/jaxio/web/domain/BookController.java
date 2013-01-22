@@ -7,46 +7,49 @@
  */
 package com.jaxio.web.domain;
 
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
+import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Book;
 import com.jaxio.repository.BookRepository;
 import com.jaxio.web.conversation.Conversation;
+import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationFactory;
-import com.jaxio.web.domain.AccountContext;
-import com.jaxio.web.domain.support.GenericController;
 
 /**
- * Stateless controller for {@link Book}.
+ * Stateless controller for Book conversation start. Provides also auto-complete support. 
  */
 @Named
 @Singleton
-public class BookController extends GenericController<Book, Integer> implements ConversationFactory {
+public class BookController implements ConversationFactory {
+    public final static String editUri = "/domain/bookEdit.faces";
+    public final static String selectUri = "/domain/bookSelect.faces";
+    private BookRepository bookRepository;
 
     @Inject
-    public BookController(BookRepository bookRepository) {
-        super(bookRepository);
+    public void setBookRepository(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
     }
 
-    // --------------------------------------------
-    // ConversationFactory impl
-    // --------------------------------------------
+    // --------------------------------
+    // ConversationFactoryImpl
+    // --------------------------------
 
     @Override
     public boolean canCreateConversation(HttpServletRequest request) {
-        return BookContext.selectUri.equals(request.getServletPath());
+        return selectUri.equals(request.getServletPath());
     }
 
     @Override
     public Conversation createConversation(HttpServletRequest request) {
         String uri = request.getServletPath();
-        if (BookContext.selectUri.equals(uri)) {
+        if (selectUri.equals(uri)) {
             Conversation conversation = Conversation.newInstance(request);
-            BookContext ctx = new BookContext();
+            ConversationContext<Book> ctx = newSearchContext();
             ctx.setLabelWithKey("book");
-            ctx.setViewUri(BookContext.selectUri);
             conversation.push(ctx);
             return conversation;
         }
@@ -54,19 +57,38 @@ public class BookController extends GenericController<Book, Integer> implements 
         throw new IllegalStateException("Unexpected conversation creation demand");
     }
 
-    // --------------------------------------------
-    // account association
-    // --------------------------------------------
+    // --------------------------------
+    // Autocomplete support
+    // --------------------------------
 
-    public String viewAccount() {
-        AccountContext ctx = new AccountContext(bookContext().getBook().getAccount());
-        ctx.setLabelWithKey("book_account");
-        ctx.setViewUri(AccountContext.editUri);
-        conversation().pushSubReadOnly(ctx);
-        return ctx.view();
+    /**
+     * This method is used from primefaces autocomplete components.
+     */
+    public List<Book> complete(String value) {
+        SearchParameters sp = new SearchParameters().anywhere().searchPattern(value);
+        return bookRepository.find(sp);
     }
 
-    protected final BookContext bookContext() {
-        return conversation().getCurrentContext();
+    // --------------------------------
+    // Helper 
+    // --------------------------------    
+
+    /**
+     * Helper to construct a new ConversationContext for edition.
+     */
+    public static ConversationContext<Book> newEditContext(Book initParam) {
+        ConversationContext<Book> ctx = new ConversationContext<Book>();
+        ctx.setEntityParam("book", initParam);
+        ctx.setViewUri(editUri);
+        return ctx;
+    }
+
+    /**
+     * Helper to construct a new ConversationContext for search/selection.
+     */
+    public static ConversationContext<Book> newSearchContext() {
+        ConversationContext<Book> ctx = new ConversationContext<Book>();
+        ctx.setViewUri(selectUri);
+        return ctx;
     }
 }

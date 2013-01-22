@@ -14,7 +14,7 @@ import com.jaxio.dao.support.GenericDao;
 import com.jaxio.domain.more.MoreTypesDemo;
 
 /**
- * JPA 2 Data Access Object for {@link com.jaxio.domain.more.MoreTypesDemo}.
+ * JPA 2 Data Access Object for {@link MoreTypesDemo}.
  * Note: do not use @Transactional in the DAO layer.
  */
 @Named
@@ -23,5 +23,4 @@ public class MoreTypesDemoDao extends GenericDao<MoreTypesDemo, Integer> {
     public MoreTypesDemoDao() {
         super(MoreTypesDemo.class);
     }
-
 }

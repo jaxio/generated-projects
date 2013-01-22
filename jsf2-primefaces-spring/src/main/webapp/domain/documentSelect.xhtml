@@ -15,7 +15,7 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search data="#{documentLazyDataModel}" searchForm="#{documentSearchForm}" controller="#{documentController}" title="${msg.document}">
+	<app:search data="#{documentLazyDataModel}" searchForm="#{documentSearchForm}" title="${msg.document}">
 		<ui:define name="filters">
 			<app:multiAutoComplete id="accountSelector" value="#{documentSearchForm.accountSelector.selected}" label="${msg.document_account}" 
 				controller="#{accountController}" converter="#{accountJsfConverter}" printer="#{accountPrinter}"/>

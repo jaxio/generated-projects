@@ -52,8 +52,6 @@ public class DocumentLazyDataModel extends GenericLazyDataModel<Document, String
 
     @Override
     protected ConversationContext<Document> getSelectedContext(Document selected) {
-        DocumentContext documentContext = new DocumentContext(selected);
-        documentContext.setViewUri(DocumentContext.editUri);
-        return documentContext;
+        return DocumentController.newEditContext(selected);
     }
 }

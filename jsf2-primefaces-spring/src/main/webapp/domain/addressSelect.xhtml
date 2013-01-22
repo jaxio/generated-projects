@@ -15,7 +15,7 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search data="#{addressLazyDataModel}" searchForm="#{addressSearchForm}" controller="#{addressController}" title="${msg.address}">
+	<app:search data="#{addressLazyDataModel}" searchForm="#{addressSearchForm}" title="${msg.address}">
 		<ui:define name="filters">
 			<app:input id="streetName" value="#{addressSearchForm.address.streetName}" label="${msg.address_streetName}"/>
 			<app:input id="city" value="#{addressSearchForm.address.city}" label="${msg.address_city}"/>

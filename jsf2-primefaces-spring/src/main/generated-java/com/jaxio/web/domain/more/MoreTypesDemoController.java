@@ -7,45 +7,49 @@
  */
 package com.jaxio.web.domain.more;
 
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
+import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.more.MoreTypesDemo;
 import com.jaxio.repository.more.MoreTypesDemoRepository;
 import com.jaxio.web.conversation.Conversation;
+import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationFactory;
-import com.jaxio.web.domain.support.GenericController;
 
 /**
- * Stateless controller for {@link MoreTypesDemo}.
+ * Stateless controller for MoreTypesDemo conversation start. Provides also auto-complete support. 
  */
 @Named
 @Singleton
-public class MoreTypesDemoController extends GenericController<MoreTypesDemo, Integer> implements ConversationFactory {
+public class MoreTypesDemoController implements ConversationFactory {
+    public final static String editUri = "/domain/more/moreTypesDemoEdit.faces";
+    public final static String selectUri = "/domain/more/moreTypesDemoSelect.faces";
+    private MoreTypesDemoRepository moreTypesDemoRepository;
 
     @Inject
-    public MoreTypesDemoController(MoreTypesDemoRepository moreTypesDemoRepository) {
-        super(moreTypesDemoRepository);
+    public void setMoreTypesDemoRepository(MoreTypesDemoRepository moreTypesDemoRepository) {
+        this.moreTypesDemoRepository = moreTypesDemoRepository;
     }
 
-    // --------------------------------------------
-    // ConversationFactory impl
-    // --------------------------------------------
+    // --------------------------------
+    // ConversationFactoryImpl
+    // --------------------------------
 
     @Override
     public boolean canCreateConversation(HttpServletRequest request) {
-        return MoreTypesDemoContext.selectUri.equals(request.getServletPath());
+        return selectUri.equals(request.getServletPath());
     }
 
     @Override
     public Conversation createConversation(HttpServletRequest request) {
         String uri = request.getServletPath();
-        if (MoreTypesDemoContext.selectUri.equals(uri)) {
+        if (selectUri.equals(uri)) {
             Conversation conversation = Conversation.newInstance(request);
-            MoreTypesDemoContext ctx = new MoreTypesDemoContext();
+            ConversationContext<MoreTypesDemo> ctx = newSearchContext();
             ctx.setLabelWithKey("moreTypesDemo");
-            ctx.setViewUri(MoreTypesDemoContext.selectUri);
             conversation.push(ctx);
             return conversation;
         }
@@ -53,7 +57,38 @@ public class MoreTypesDemoController extends GenericController<MoreTypesDemo, In
         throw new IllegalStateException("Unexpected conversation creation demand");
     }
 
-    protected final MoreTypesDemoContext moreTypesDemoContext() {
-        return conversation().getCurrentContext();
+    // --------------------------------
+    // Autocomplete support
+    // --------------------------------
+
+    /**
+     * This method is used from primefaces autocomplete components.
+     */
+    public List<MoreTypesDemo> complete(String value) {
+        SearchParameters sp = new SearchParameters().anywhere().searchPattern(value);
+        return moreTypesDemoRepository.find(sp);
+    }
+
+    // --------------------------------
+    // Helper 
+    // --------------------------------    
+
+    /**
+     * Helper to construct a new ConversationContext for edition.
+     */
+    public static ConversationContext<MoreTypesDemo> newEditContext(MoreTypesDemo initParam) {
+        ConversationContext<MoreTypesDemo> ctx = new ConversationContext<MoreTypesDemo>();
+        ctx.setEntityParam("moreTypesDemo", initParam);
+        ctx.setViewUri(editUri);
+        return ctx;
+    }
+
+    /**
+     * Helper to construct a new ConversationContext for search/selection.
+     */
+    public static ConversationContext<MoreTypesDemo> newSearchContext() {
+        ConversationContext<MoreTypesDemo> ctx = new ConversationContext<MoreTypesDemo>();
+        ctx.setViewUri(selectUri);
+        return ctx;
     }
 }

@@ -66,8 +66,6 @@ public class RoleLazyDataModel extends GenericLazyDataModel<Role, Integer, RoleS
 
     @Override
     protected ConversationContext<Role> getSelectedContext(Role selected) {
-        RoleContext roleContext = new RoleContext(selected);
-        roleContext.setViewUri(RoleContext.editUri);
-        return roleContext;
+        return RoleController.newEditContext(selected);
     }
 }

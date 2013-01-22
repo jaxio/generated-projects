@@ -14,7 +14,7 @@ import com.jaxio.dao.support.GenericDao;
 import com.jaxio.domain.Address;
 
 /**
- * JPA 2 Data Access Object for {@link com.jaxio.domain.Address}.
+ * JPA 2 Data Access Object for {@link Address}.
  * Note: do not use @Transactional in the DAO layer.
  */
 @Named
@@ -23,5 +23,4 @@ public class AddressDao extends GenericDao<Address, Integer> {
     public AddressDao() {
         super(Address.class);
     }
-
 }

@@ -15,7 +15,7 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search data="#{moreTypesDemoLazyDataModel}" searchForm="#{moreTypesDemoSearchForm}" controller="#{moreTypesDemoController}" title="${msg.moreTypesDemo}">
+	<app:search data="#{moreTypesDemoLazyDataModel}" searchForm="#{moreTypesDemoSearchForm}" title="${msg.moreTypesDemo}">
 		<ui:define name="filters">
 			<app:rangeInt id="numberInt" value="#{moreTypesDemoSearchForm.numberIntRange}" label="${msg.moreTypesDemo_numberInt}"/>
 			<app:rangeLong id="numberLong" value="#{moreTypesDemoSearchForm.numberLongRange}" label="${msg.moreTypesDemo_numberLong}"/>

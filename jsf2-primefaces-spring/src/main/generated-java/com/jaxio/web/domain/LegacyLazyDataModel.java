@@ -53,8 +53,6 @@ public class LegacyLazyDataModel extends GenericLazyDataModel<Legacy, LegacyPk, 
 
     @Override
     protected ConversationContext<Legacy> getSelectedContext(Legacy selected) {
-        LegacyContext legacyContext = new LegacyContext(selected);
-        legacyContext.setViewUri(LegacyContext.editUri);
-        return legacyContext;
+        return LegacyController.newEditContext(selected);
     }
 }
