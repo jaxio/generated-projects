@@ -7,6 +7,7 @@
  */
 package com.jaxio.web.domain;
 
+import java.util.Arrays;
 import javax.faces.convert.Converter;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,6 +36,8 @@ public class AddressLazyDataModel extends GenericLazyDataModel<Address, Integer,
     @Inject
     transient private AddressSearchForm addressSearchForm;
 
+    private Address[] selectedRows;
+
     @Override
     protected Repository<Address, Integer> getRepository() {
         return addressRepository;
@@ -53,5 +56,24 @@ public class AddressLazyDataModel extends GenericLazyDataModel<Address, Integer,
     @Override
     protected ConversationContext<Address> getSelectedContext(Address selected) {
         return AddressController.newEditContext(selected);
+    }
+
+    // -----------------------------------
+    // Multi selection support
+    // -----------------------------------
+
+    public void setSelectedRows(Address[] selectedRows) {
+        this.selectedRows = selectedRows;
+    }
+
+    public Address[] getSelectedRows() {
+        return selectedRows;
+    }
+
+    public String multiSelect() {
+        return conversationManager.getCurrentConversation() //
+                .<ConversationContext<Address>> getCurrentContext() //
+                .getCallBack() //
+                .selected(Arrays.asList(selectedRows));
     }
 }

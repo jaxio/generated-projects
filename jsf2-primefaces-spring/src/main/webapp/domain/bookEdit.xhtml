@@ -15,9 +15,6 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-<f:metadata>
-	<f:event type="preRenderView" listener="#{bookEditForm.init(book)}" />
-</f:metadata>
 <app:edit bean="#{bookEditForm}" title="${msg.book}">
 	<ui:define name="form">
 		<app:input id="title" value="#{bookEditForm.book.title}" size="100" label="${msg.book_title}" required="true" />

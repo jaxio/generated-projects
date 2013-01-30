@@ -23,13 +23,16 @@ public class RoleEditForm extends GenericEditForm<Role, Integer> {
     private Role role;
 
     @Inject
-    public RoleEditForm(RoleRepository roleRepository) {
-        super(roleRepository);
+    public void setRoleRepository(RoleRepository roleRepository) {
+        setRepository(roleRepository);
     }
 
-    @Override
-    protected void onInit(Role param) {
-        this.role = param;
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public Role getRole() {
+        return role;
     }
 
     @Override
@@ -37,7 +40,4 @@ public class RoleEditForm extends GenericEditForm<Role, Integer> {
         return role;
     }
 
-    public Role getRole() {
-        return role;
-    }
 }

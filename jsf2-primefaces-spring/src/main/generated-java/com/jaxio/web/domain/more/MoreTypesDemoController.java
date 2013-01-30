@@ -76,9 +76,11 @@ public class MoreTypesDemoController implements ConversationFactory {
     /**
      * Helper to construct a new ConversationContext for edition.
      */
-    public static ConversationContext<MoreTypesDemo> newEditContext(MoreTypesDemo initParam) {
+    public static ConversationContext<MoreTypesDemo> newEditContext(MoreTypesDemo moreTypesDemo) {
         ConversationContext<MoreTypesDemo> ctx = new ConversationContext<MoreTypesDemo>();
-        ctx.setEntityParam("moreTypesDemo", initParam);
+        MoreTypesDemoEditForm moreTypesDemoEditForm = new MoreTypesDemoEditForm();
+        moreTypesDemoEditForm.setMoreTypesDemo(moreTypesDemo);
+        ctx.addBean("moreTypesDemoEditForm", moreTypesDemoEditForm); // will be autowired by our ConversationScope...
         ctx.setViewUri(editUri);
         return ctx;
     }

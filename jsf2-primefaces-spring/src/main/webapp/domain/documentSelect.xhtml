@@ -22,7 +22,12 @@
 			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 		</ui:define>
 		<ui:define name="result">
-        	<p:ajax event="rowSelect" listener="#{documentLazyDataModel.onRowSelect}" />		
+			<c:if test="#{not multiCheckboxSelection}">
+        		<p:ajax event="rowSelect" listener="#{documentLazyDataModel.onRowSelect}" />
+        	</c:if>
+			<c:if test="#{multiCheckboxSelection}">
+				<p:column selectionMode="multiple" style="width:18px"/>			
+        	</c:if>
 			<p:column id="document_account" headerText="${msg.document_account}" sortBy="#{item.account.username}">
 				<h:outputText value="#{accountPrinter.print(item.account)}" />
 			</p:column>
@@ -33,7 +38,7 @@
 				<h:commandLink rendered="#{not empty item.documentFileName}" value="#{item.documentFileName}"><p:fileDownload value="#{documentController.getStreamedContent(item)}"/></h:commandLink>
 			</p:column>
 			<p:column id="open" headerText="${msg.actions}" styleClass="actions-column" resizable="false">
-				<app:iconSelect actionBean="#{documentLazyDataModel}" action="select" process="@this" rendered="#{sub}" title="${documentPrinter.print(item)}" />
+				<app:iconSelect actionBean="#{documentLazyDataModel}" action="select" process="@this" rendered="#{sub and not multiCheckboxSelection}" title="${documentPrinter.print(item)}" />
 				<app:iconEdit actionBean="#{documentLazyDataModel}" action="edit" process="@this" rendered="#{not sub}" title="${documentPrinter.print(item)}" />
 				<app:iconView actionBean="#{documentLazyDataModel}" action="view" process="@this" title="${documentPrinter.print(item)}" />
 				<p:commandLink update=":form:askForDeleteItemDialogContent" 

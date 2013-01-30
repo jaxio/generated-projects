@@ -7,6 +7,7 @@
  */
 package com.jaxio.web.domain;
 
+import java.util.Arrays;
 import java.util.Map;
 import javax.faces.convert.Converter;
 import javax.inject.Inject;
@@ -39,6 +40,8 @@ public class RoleLazyDataModel extends GenericLazyDataModel<Role, Integer, RoleS
     @Inject
     transient private RoleSearchForm roleSearchForm;
 
+    private Role[] selectedRows;
+
     @Override
     protected Repository<Role, Integer> getRepository() {
         return roleRepository;
@@ -67,5 +70,24 @@ public class RoleLazyDataModel extends GenericLazyDataModel<Role, Integer, RoleS
     @Override
     protected ConversationContext<Role> getSelectedContext(Role selected) {
         return RoleController.newEditContext(selected);
+    }
+
+    // -----------------------------------
+    // Multi selection support
+    // -----------------------------------
+
+    public void setSelectedRows(Role[] selectedRows) {
+        this.selectedRows = selectedRows;
+    }
+
+    public Role[] getSelectedRows() {
+        return selectedRows;
+    }
+
+    public String multiSelect() {
+        return conversationManager.getCurrentConversation() //
+                .<ConversationContext<Role>> getCurrentContext() //
+                .getCallBack() //
+                .selected(Arrays.asList(selectedRows));
     }
 }

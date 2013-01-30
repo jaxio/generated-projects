@@ -78,9 +78,11 @@ public class RoleController implements ConversationFactory {
     /**
      * Helper to construct a new ConversationContext for edition.
      */
-    public static ConversationContext<Role> newEditContext(Role initParam) {
+    public static ConversationContext<Role> newEditContext(Role role) {
         ConversationContext<Role> ctx = new ConversationContext<Role>();
-        ctx.setEntityParam("role", initParam);
+        RoleEditForm roleEditForm = new RoleEditForm();
+        roleEditForm.setRole(role);
+        ctx.addBean("roleEditForm", roleEditForm); // will be autowired by our ConversationScope...
         ctx.setViewUri(editUri);
         return ctx;
     }

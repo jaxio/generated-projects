@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.jaxio.context.LogContext;
+import com.jaxio.context.UserContext;
+
 /**
  * Filter responsible for creating/resuming {@link Conversation}.
  * By convention, the conversation id is carried by the _cid_ parameter.
@@ -27,6 +30,11 @@ public class ConversationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        // set up log context for this thread so these information can be used by log4j
+        String username = UserContext.getUsername();
+        LogContext.setLogin(username != null ? username : "no username");
+        LogContext.setSessionId(request.getSession().getId());
 
         String cid = request.getParameter("_cid_");
 

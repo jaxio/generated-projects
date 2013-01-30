@@ -7,6 +7,7 @@
  */
 package com.jaxio.web.domain;
 
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.omnifaces.util.Faces;
@@ -38,24 +39,20 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     private SelectableListDataModel<Role> roles;
 
     @Inject
-    public AccountEditForm(AccountRepository accountRepository) {
-        super(accountRepository);
+    public void setAccountRepository(AccountRepository accountRepository) {
+        setRepository(accountRepository);
     }
 
-    @Override
-    protected void onInit(Account param) {
-        this.account = param;
-        books = new SelectableListDataModel<Book>(account.getBooks());
-        documents = new SelectableListDataModel<Document>(account.getDocuments());
-        roles = new SelectableListDataModel<Role>(account.getRoles());
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    public Account getAccount() {
+        return account;
     }
 
     @Override
     public Account getEntity() {
-        return account;
-    }
-
-    public Account getAccount() {
         return account;
     }
 
@@ -64,14 +61,23 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     }
 
     public SelectableListDataModel<Book> getBooks() {
+        if (books == null) {
+            books = new SelectableListDataModel<Book>(account.getBooks());
+        }
         return books;
     }
 
     public SelectableListDataModel<Document> getDocuments() {
+        if (documents == null) {
+            documents = new SelectableListDataModel<Document>(account.getDocuments());
+        }
         return documents;
     }
 
     public SelectableListDataModel<Role> getRoles() {
+        if (roles == null) {
+            roles = new SelectableListDataModel<Role>(account.getRoles());
+        }
         return roles;
     }
 
@@ -94,7 +100,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         return ctx.view();
     }
 
-    private ConversationCallBack<Address> selectHomeAddressCallBack = new ConversationCallBack<Address>() {
+    protected ConversationCallBack<Address> selectHomeAddressCallBack = new ConversationCallBack<Address>() {
         private static final long serialVersionUID = 1L;
 
         // will be invoked from the AccountLazyDataModel
@@ -113,7 +119,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         return ctx.view();
     }
 
-    private ConversationCallBack<Address> addHomeAddressCallBack = new ConversationCallBack<Address>() {
+    protected ConversationCallBack<Address> addHomeAddressCallBack = new ConversationCallBack<Address>() {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -145,7 +151,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         return ctx.view();
     }
 
-    private ConversationCallBack<Book> editBookCallBack = new ConversationCallBack<Book>() {
+    protected ConversationCallBack<Book> editBookCallBack = new ConversationCallBack<Book>() {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -174,14 +180,16 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     }
 
     public String addBook() {
-        ConversationContext<Book> ctx = BookController.newEditContext(new Book());
+        Book book = new Book();
+        book.setAccount(account); // for display
+        ConversationContext<Book> ctx = BookController.newEditContext(book);
         ctx.setLabelWithKey("account_books");
         ctx.setCallBack(addBookCallBack);
         conversation().pushSub(ctx);
         return ctx.view();
     }
 
-    private ConversationCallBack<Book> addBookCallBack = new ConversationCallBack<Book>() {
+    protected ConversationCallBack<Book> addBookCallBack = new ConversationCallBack<Book>() {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -206,7 +214,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         return ctx.view();
     }
 
-    private ConversationCallBack<Document> editDocumentCallBack = new ConversationCallBack<Document>() {
+    protected ConversationCallBack<Document> editDocumentCallBack = new ConversationCallBack<Document>() {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -235,14 +243,16 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     }
 
     public String addDocument() {
-        ConversationContext<Document> ctx = DocumentController.newEditContext(new Document());
+        Document document = new Document();
+        document.setAccount(account); // for display
+        ConversationContext<Document> ctx = DocumentController.newEditContext(document);
         ctx.setLabelWithKey("account_documents");
         ctx.setCallBack(addDocumentCallBack);
         conversation().pushSub(ctx);
         return ctx.view();
     }
 
-    private ConversationCallBack<Document> addDocumentCallBack = new ConversationCallBack<Document>() {
+    protected ConversationCallBack<Document> addDocumentCallBack = new ConversationCallBack<Document>() {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -259,17 +269,22 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ConversationContext<Role> ctx = RoleController.newSearchContext();
         ctx.setLabelWithKey("account_roles");
         ctx.setCallBack(selectRoleCallBack);
+        ctx.setVar("multiCheckboxSelection", true);
         conversation().pushSub(ctx);
         return ctx.view();
     }
 
-    private ConversationCallBack<Role> selectRoleCallBack = new ConversationCallBack<Role>() {
+    protected ConversationCallBack<Role> selectRoleCallBack = new ConversationCallBack<Role>() {
         private static final long serialVersionUID = 1L;
 
         @Override
-        protected void onSelected(Role role) {
-            account.addRole(role);
-            messageUtil.infoEntity("status_added_existing_ok", role);
+        protected void onSelected(List<Role> roles) {
+            for (Role role : roles) {
+                if (!account.getRoles().contains(role)) {
+                    account.getRoles().add(role);
+                    messageUtil.infoEntity("status_added_existing_ok", role);
+                }
+            }
         }
     };
 
@@ -284,7 +299,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         return ctx.view();
     }
 
-    private ConversationCallBack<Role> editRoleCallBack = new ConversationCallBack<Role>() {
+    protected ConversationCallBack<Role> editRoleCallBack = new ConversationCallBack<Role>() {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -320,7 +335,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         return ctx.view();
     }
 
-    private ConversationCallBack<Role> addRoleCallBack = new ConversationCallBack<Role>() {
+    protected ConversationCallBack<Role> addRoleCallBack = new ConversationCallBack<Role>() {
         private static final long serialVersionUID = 1L;
 
         @Override

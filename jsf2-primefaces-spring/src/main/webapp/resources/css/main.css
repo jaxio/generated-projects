@@ -55,6 +55,10 @@ form .required-pseudo-label {
 	color: black !important;
 }
 
+.ui-datatable .ui-datatable-footer {
+	text-align: left !important;
+}
+
 /* ICONS for p:commandButon. Note the usage of JSF2 resource facility :-) */
 .iconView { 
 	background-image: url("#{resource['icons/eye.png']}") !important;

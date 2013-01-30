@@ -8,6 +8,7 @@
 package com.jaxio.web.conversation;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * CallBacks should be invoked at the end of a @{link ConversationContext} life.
@@ -25,7 +26,7 @@ public class ConversationCallBack<T> implements Serializable {
     final public String ok(T entity) {
         popCurrentContext();
         onOk(entity);
-        return currentContext().view();
+        return nextView();
     }
 
     /**
@@ -39,7 +40,7 @@ public class ConversationCallBack<T> implements Serializable {
     final public String selected(T entity) {
         popCurrentContext();
         onSelected(entity);
-        return currentContext().view();
+        return nextView();
     }
 
     /**
@@ -48,10 +49,22 @@ public class ConversationCallBack<T> implements Serializable {
     protected void onSelected(T entity) {
     }
 
+    final public String selected(List<T> entities) {
+        popCurrentContext();
+        onSelected(entities);
+        return nextView();
+    }
+
+    /**
+     * The given entity has been selected.
+     */
+    protected void onSelected(List<T> entity) {
+    }
+
     final public String saved(T entity) {
         popCurrentContext();
         onSaved(entity);
-        return currentContext().view();
+        return nextView();
     }
 
     /**
@@ -63,7 +76,7 @@ public class ConversationCallBack<T> implements Serializable {
     final public String notSaved(T entity) {
         popCurrentContext();
         onNotSaved(entity);
-        return currentContext().view();
+        return nextView();
     }
 
     /**
@@ -75,7 +88,7 @@ public class ConversationCallBack<T> implements Serializable {
     final public String deleted(T entity) {
         popCurrentContext();
         onDeleted(entity);
-        return currentContext().view();
+        return nextView();
     }
 
     /**
@@ -87,7 +100,7 @@ public class ConversationCallBack<T> implements Serializable {
     final public String back() {
         popCurrentContext();
         onBack();
-        return currentContext().view();
+        return nextView();
     }
 
     /**
@@ -102,7 +115,7 @@ public class ConversationCallBack<T> implements Serializable {
         ConversationManager.getInstance().popCurrentContext();
     }
 
-    private final ConversationContext<?> currentContext() {
-        return ConversationManager.getInstance().getCurrentConversation().getCurrentContext();
+    private final String nextView() {
+        return ConversationManager.getInstance().getCurrentConversation().nextView();
     }
 }

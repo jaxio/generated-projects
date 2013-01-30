@@ -39,13 +39,13 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
     private static final long serialVersionUID = 1L;
 
     @Inject
-    transient private ResourcesUtil resourcesUtil;
+    private ResourcesUtil resourcesUtil;
     @Inject
-    transient private ConversationManager conversationManager;
+    protected ConversationManager conversationManager;
     @Inject
-    transient private MessageUtil messageUtil;
+    private MessageUtil messageUtil;
     @Inject
-    transient private TypeAwarePrinter printer;
+    private TypeAwarePrinter printer;
 
     private E selectedRow;
     private boolean bypassFirstOffset = true;
@@ -156,7 +156,7 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
         return ctx.view();
     }
 
-    private ConversationCallBack<E> editCallBack = new ConversationCallBack<E>() {
+    protected ConversationCallBack<E> editCallBack = new ConversationCallBack<E>() {
         private static final long serialVersionUID = 1L;
 
         @Override

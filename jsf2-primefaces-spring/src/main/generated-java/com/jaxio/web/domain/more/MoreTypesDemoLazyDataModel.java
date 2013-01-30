@@ -7,6 +7,7 @@
  */
 package com.jaxio.web.domain.more;
 
+import java.util.Arrays;
 import javax.faces.convert.Converter;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,6 +36,8 @@ public class MoreTypesDemoLazyDataModel extends GenericLazyDataModel<MoreTypesDe
     @Inject
     transient private MoreTypesDemoSearchForm moreTypesDemoSearchForm;
 
+    private MoreTypesDemo[] selectedRows;
+
     @Override
     protected Repository<MoreTypesDemo, Integer> getRepository() {
         return moreTypesDemoRepository;
@@ -53,5 +56,24 @@ public class MoreTypesDemoLazyDataModel extends GenericLazyDataModel<MoreTypesDe
     @Override
     protected ConversationContext<MoreTypesDemo> getSelectedContext(MoreTypesDemo selected) {
         return MoreTypesDemoController.newEditContext(selected);
+    }
+
+    // -----------------------------------
+    // Multi selection support
+    // -----------------------------------
+
+    public void setSelectedRows(MoreTypesDemo[] selectedRows) {
+        this.selectedRows = selectedRows;
+    }
+
+    public MoreTypesDemo[] getSelectedRows() {
+        return selectedRows;
+    }
+
+    public String multiSelect() {
+        return conversationManager.getCurrentConversation() //
+                .<ConversationContext<MoreTypesDemo>> getCurrentContext() //
+                .getCallBack() //
+                .selected(Arrays.asList(selectedRows));
     }
 }

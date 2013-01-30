@@ -22,7 +22,12 @@
 			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 		</ui:define>
 		<ui:define name="result">
-        	<p:ajax event="rowSelect" listener="#{addressLazyDataModel.onRowSelect}" />		
+			<c:if test="#{not multiCheckboxSelection}">
+        		<p:ajax event="rowSelect" listener="#{addressLazyDataModel.onRowSelect}" />
+        	</c:if>
+			<c:if test="#{multiCheckboxSelection}">
+				<p:column selectionMode="multiple" style="width:18px"/>			
+        	</c:if>
 			<p:column id="address_streetName" headerText="${msg.address_streetName}" sortBy="#{item.streetName}">
 				<h:outputText value="#{item.streetName}" />
 			</p:column>
@@ -30,7 +35,7 @@
 				<h:outputText value="#{item.city}" />
 			</p:column>
 			<p:column id="open" headerText="${msg.actions}" styleClass="actions-column" resizable="false">
-				<app:iconSelect actionBean="#{addressLazyDataModel}" action="select" process="@this" rendered="#{sub}" title="${addressPrinter.print(item)}" />
+				<app:iconSelect actionBean="#{addressLazyDataModel}" action="select" process="@this" rendered="#{sub and not multiCheckboxSelection}" title="${addressPrinter.print(item)}" />
 				<app:iconEdit actionBean="#{addressLazyDataModel}" action="edit" process="@this" rendered="#{not sub}" title="${addressPrinter.print(item)}" />
 				<app:iconView actionBean="#{addressLazyDataModel}" action="view" process="@this" title="${addressPrinter.print(item)}" />
 				<p:commandLink update=":form:askForDeleteItemDialogContent" 

@@ -76,9 +76,11 @@ public class AddressController implements ConversationFactory {
     /**
      * Helper to construct a new ConversationContext for edition.
      */
-    public static ConversationContext<Address> newEditContext(Address initParam) {
+    public static ConversationContext<Address> newEditContext(Address address) {
         ConversationContext<Address> ctx = new ConversationContext<Address>();
-        ctx.setEntityParam("address", initParam);
+        AddressEditForm addressEditForm = new AddressEditForm();
+        addressEditForm.setAddress(address);
+        ctx.addBean("addressEditForm", addressEditForm); // will be autowired by our ConversationScope...
         ctx.setViewUri(editUri);
         return ctx;
     }

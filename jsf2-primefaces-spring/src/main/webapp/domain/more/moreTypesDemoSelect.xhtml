@@ -30,7 +30,12 @@
 			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 		</ui:define>
 		<ui:define name="result">
-        	<p:ajax event="rowSelect" listener="#{moreTypesDemoLazyDataModel.onRowSelect}" />		
+			<c:if test="#{not multiCheckboxSelection}">
+        		<p:ajax event="rowSelect" listener="#{moreTypesDemoLazyDataModel.onRowSelect}" />
+        	</c:if>
+			<c:if test="#{multiCheckboxSelection}">
+				<p:column selectionMode="multiple" style="width:18px"/>			
+        	</c:if>
 			<p:column id="moreTypesDemo_numberInt" headerText="${msg.moreTypesDemo_numberInt}" sortBy="#{item.numberInt}">
 				<h:outputText value="#{item.numberInt}" />
 			</p:column>
@@ -50,7 +55,7 @@
 				<h:outputText value="#{item.numberBigDecimal}" />
 			</p:column>
 			<p:column id="open" headerText="${msg.actions}" styleClass="actions-column" resizable="false">
-				<app:iconSelect actionBean="#{moreTypesDemoLazyDataModel}" action="select" process="@this" rendered="#{sub}" title="${moreTypesDemoPrinter.print(item)}" />
+				<app:iconSelect actionBean="#{moreTypesDemoLazyDataModel}" action="select" process="@this" rendered="#{sub and not multiCheckboxSelection}" title="${moreTypesDemoPrinter.print(item)}" />
 				<app:iconEdit actionBean="#{moreTypesDemoLazyDataModel}" action="edit" process="@this" rendered="#{not sub}" title="${moreTypesDemoPrinter.print(item)}" />
 				<app:iconView actionBean="#{moreTypesDemoLazyDataModel}" action="view" process="@this" title="${moreTypesDemoPrinter.print(item)}" />
 				<p:commandLink update=":form:askForDeleteItemDialogContent" 

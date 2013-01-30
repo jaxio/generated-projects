@@ -21,12 +21,17 @@
 			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 		</ui:define>
 		<ui:define name="result">
-        	<p:ajax event="rowSelect" listener="#{roleLazyDataModel.onRowSelect}" />		
+			<c:if test="#{not multiCheckboxSelection}">
+        		<p:ajax event="rowSelect" listener="#{roleLazyDataModel.onRowSelect}" />
+        	</c:if>
+			<c:if test="#{multiCheckboxSelection}">
+				<p:column selectionMode="multiple" style="width:18px"/>			
+        	</c:if>
 			<p:column id="role_roleName" headerText="${msg.role_roleName}" sortBy="#{item.roleName}">
 				<h:outputText value="#{item.roleName}" />
 			</p:column>
 			<p:column id="open" headerText="${msg.actions}" styleClass="actions-column" resizable="false">
-				<app:iconSelect actionBean="#{roleLazyDataModel}" action="select" process="@this" rendered="#{sub}" title="${rolePrinter.print(item)}" />
+				<app:iconSelect actionBean="#{roleLazyDataModel}" action="select" process="@this" rendered="#{sub and not multiCheckboxSelection}" title="${rolePrinter.print(item)}" />
 				<app:iconEdit actionBean="#{roleLazyDataModel}" action="edit" process="@this" rendered="#{not sub}" title="${rolePrinter.print(item)}" />
 				<app:iconView actionBean="#{roleLazyDataModel}" action="view" process="@this" title="${rolePrinter.print(item)}" />
 				<p:commandLink update=":form:askForDeleteItemDialogContent" 

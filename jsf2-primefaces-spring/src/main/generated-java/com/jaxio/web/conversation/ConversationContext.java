@@ -27,7 +27,7 @@ public class ConversationContext<T> implements Serializable {
 
     private String conversationId;
     private ConversationCallBack<T> callBack = new ConversationCallBack<T>();
-    private String label;
+    private String label = "(todo label)"; // Up to the developer to call setLabel or setLabelWithKey
     private String viewUri;
     private boolean persistenceContext = true;
 
@@ -43,7 +43,7 @@ public class ConversationContext<T> implements Serializable {
         return persistenceContext;
     }
 
-    public void setConversationId(String conversationId) {
+    protected void setConversationId(String conversationId) {
         this.conversationId = conversationId;
     }
 
@@ -82,7 +82,7 @@ public class ConversationContext<T> implements Serializable {
     }
 
     /**
-     * Sets the 'sub' variable.
+     * Sets the 'sub' variable. 'sub' is used in the xhtml view to render certain menus/buttons.
      */
     public void setSub(boolean sub) {
         setVar("sub", sub);
@@ -136,7 +136,7 @@ public class ConversationContext<T> implements Serializable {
 
     private void checkViewUriAndConversationId() {
         if (viewUri == null) {
-            throw new IllegalStateException("Developer! viewUri is null, it must be setbefore calling view() or getMenuUrl() methods");
+            throw new IllegalStateException("Developer! viewUri is null, it must be set before calling view() or getMenuUrl() methods");
         }
 
         if (conversationId == null) {
@@ -148,7 +148,11 @@ public class ConversationContext<T> implements Serializable {
     // Support for conversation scope
     // ----------------------------------
 
-    void addBean(String name, Object bean) {
+    /**
+     * Add a conversation scoped bean spring bean to this context. A bean is added either 'automatically' or manually.
+     * In the latter case, it is autowired afteward (see ConversationScope).
+     */
+    public void addBean(String name, Object bean) {
         beans.put(name, bean);
     }
 

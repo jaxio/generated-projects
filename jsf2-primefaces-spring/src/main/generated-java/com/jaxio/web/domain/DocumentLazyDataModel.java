@@ -7,6 +7,7 @@
  */
 package com.jaxio.web.domain;
 
+import java.util.Arrays;
 import javax.faces.convert.Converter;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,6 +36,8 @@ public class DocumentLazyDataModel extends GenericLazyDataModel<Document, String
     @Inject
     transient private DocumentSearchForm documentSearchForm;
 
+    private Document[] selectedRows;
+
     @Override
     protected Repository<Document, String> getRepository() {
         return documentRepository;
@@ -53,5 +56,24 @@ public class DocumentLazyDataModel extends GenericLazyDataModel<Document, String
     @Override
     protected ConversationContext<Document> getSelectedContext(Document selected) {
         return DocumentController.newEditContext(selected);
+    }
+
+    // -----------------------------------
+    // Multi selection support
+    // -----------------------------------
+
+    public void setSelectedRows(Document[] selectedRows) {
+        this.selectedRows = selectedRows;
+    }
+
+    public Document[] getSelectedRows() {
+        return selectedRows;
+    }
+
+    public String multiSelect() {
+        return conversationManager.getCurrentConversation() //
+                .<ConversationContext<Document>> getCurrentContext() //
+                .getCallBack() //
+                .selected(Arrays.asList(selectedRows));
     }
 }

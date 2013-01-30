@@ -24,7 +24,12 @@
 			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 		</ui:define>
 		<ui:define name="result">
-        	<p:ajax event="rowSelect" listener="#{bookLazyDataModel.onRowSelect}" />		
+			<c:if test="#{not multiCheckboxSelection}">
+        		<p:ajax event="rowSelect" listener="#{bookLazyDataModel.onRowSelect}" />
+        	</c:if>
+			<c:if test="#{multiCheckboxSelection}">
+				<p:column selectionMode="multiple" style="width:18px"/>			
+        	</c:if>
 			<p:column id="book_account" headerText="${msg.book_account}" sortBy="#{item.account.username}">
 				<h:outputText value="#{accountPrinter.print(item.account)}" />
 			</p:column>
@@ -35,7 +40,7 @@
 				<h:outputText value="#{item.numberOfPages}" />
 			</p:column>
 			<p:column id="open" headerText="${msg.actions}" styleClass="actions-column" resizable="false">
-				<app:iconSelect actionBean="#{bookLazyDataModel}" action="select" process="@this" rendered="#{sub}" title="${bookPrinter.print(item)}" />
+				<app:iconSelect actionBean="#{bookLazyDataModel}" action="select" process="@this" rendered="#{sub and not multiCheckboxSelection}" title="${bookPrinter.print(item)}" />
 				<app:iconEdit actionBean="#{bookLazyDataModel}" action="edit" process="@this" rendered="#{not sub}" title="${bookPrinter.print(item)}" />
 				<app:iconView actionBean="#{bookLazyDataModel}" action="view" process="@this" title="${bookPrinter.print(item)}" />
 				<p:commandLink update=":form:askForDeleteItemDialogContent" 

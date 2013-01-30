@@ -24,13 +24,16 @@ public class LegacyEditForm extends GenericEditForm<Legacy, LegacyPk> {
     private Legacy legacy;
 
     @Inject
-    public LegacyEditForm(LegacyRepository legacyRepository) {
-        super(legacyRepository);
+    public void setLegacyRepository(LegacyRepository legacyRepository) {
+        setRepository(legacyRepository);
     }
 
-    @Override
-    protected void onInit(Legacy param) {
-        this.legacy = param;
+    public void setLegacy(Legacy legacy) {
+        this.legacy = legacy;
+    }
+
+    public Legacy getLegacy() {
+        return legacy;
     }
 
     @Override
@@ -38,7 +41,4 @@ public class LegacyEditForm extends GenericEditForm<Legacy, LegacyPk> {
         return legacy;
     }
 
-    public Legacy getLegacy() {
-        return legacy;
-    }
 }

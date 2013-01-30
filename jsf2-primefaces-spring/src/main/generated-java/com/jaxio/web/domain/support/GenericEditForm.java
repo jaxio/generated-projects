@@ -25,9 +25,6 @@ import com.jaxio.web.util.PrimeFacesUtil;
  * Base Edit Form for JPA entities.
  */
 public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Serializable> {
-
-    private boolean initDone;
-
     @Inject
     protected JpaUniqueUtil jpaUniqueUtil;
 
@@ -39,24 +36,9 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
 
     protected Repository<E, PK> repository;
 
-    public GenericEditForm(Repository<E, PK> repository) {
+    protected void setRepository(Repository<E, PK> repository) {
         this.repository = repository;
     }
-
-    /**
-     * Init is invoked from the view using f:event type="preRenderView".
-     */
-    public void init(E entity) {
-        if (!initDone) {
-            onInit(entity);
-            initDone = true;
-        }
-    }
-
-    /**
-     * Internal init, called only once.
-     */
-    abstract protected void onInit(E entity);
 
     /**
      * Return the entity that this edit form backs.

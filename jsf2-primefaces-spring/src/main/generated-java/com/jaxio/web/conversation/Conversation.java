@@ -25,6 +25,7 @@ public class Conversation implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Stack<ConversationContext<?>> contextes = new Stack<ConversationContext<?>>();
+    private ConversationContext<?> nextContext;
     private String id;
     private EntityManager em;
 
@@ -63,7 +64,20 @@ public class Conversation implements Serializable {
 
     public void push(ConversationContext<?> newContext) {
         newContext.setConversationId(getId());
-        contextes.push(newContext);
+        if (contextes.size() == 0) {
+            contextes.push(newContext);
+        } else {
+            // we delay the context push because apparently some EL is invoked after bean action is performed
+            // which it leads in some cases to re-creation of 'conversation scoped' bean.
+            nextContext = newContext; // will be pushed at next request during resuming...
+        }
+    }
+
+    protected void pushNextContext() {
+        if (nextContext != null) {
+            contextes.push(nextContext);
+            nextContext = null;
+        }
     }
 
     public void pushSub(ConversationContext<?> newContext) {
@@ -98,6 +112,13 @@ public class Conversation implements Serializable {
         } else {
             throw new IllegalStateException("Attention, trying to pop the initial context. Sign of unbalanced push/pop");
         }
+    }
+
+    /**
+     * Returns the view url for the next page.
+     */
+    public String nextView() {
+        return nextContext != null ? nextContext.view() : contextes.peek().view();
     }
 
     // ------------------------------------------

@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jstl/core"	
 	template="/WEB-INF/layouts/main.xhtml">
 	<ui:define name="toolbarChildren">
 		<p:toolbarGroup rendered="#{sub or readonly}">
@@ -95,13 +96,27 @@
 		<!-- safari/voiceover requires 'span' (not 'div') for live region-->
 		<span id="searchResultsRegion" aria-label="${msg.search_results}" aria-live="assertive" aria-relevant="additions">
 		</span>
-		<p:dataTable id="searchResults" 
-			value="#{data}" var="item" lazy="true"
-			paginator="true" paginatorAlwaysVisible="true"
-			rowsPerPageTemplate="10,25,50,100" rows="10"
-			selectionMode="single" selection="#{data.selectedRow}">
-			<ui:insert name="result" />
-		</p:dataTable>
+		<c:if test="#{not multiCheckboxSelection}">
+			<p:dataTable id="searchResults"
+				value="#{data}" var="item" lazy="true"
+				paginator="true" paginatorAlwaysVisible="true"
+				rowsPerPageTemplate="10,25,50,100" rows="10"
+				selectionMode="single" selection="#{data.selectedRow}">
+				<ui:insert name="result" />
+			</p:dataTable>
+		</c:if>
+		<c:if test="#{multiCheckboxSelection}">
+			<p:dataTable id="searchResults"
+				value="#{data}" var="item" lazy="true"
+				paginator="true" paginatorAlwaysVisible="true"
+				rowsPerPageTemplate="10,25,50,100" rows="10"
+				selection="#{data.selectedRows}">
+				<ui:insert name="result" />
+				<f:facet name="footer">
+					<app:iconSelect actionBean="#{data}" action="multiSelect" rendered="true" process="@this" />
+				</f:facet>
+			</p:dataTable>
+		</c:if>
 		<script type="text/javascript">APP.updateSearchResultsRegion('#{resourcesUtil.getPluralableProperty("search_results_status", data.rowCount)}');</script>
 	</ui:define>
 	<ui:define name="dialogs">

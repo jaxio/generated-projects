@@ -7,6 +7,7 @@
  */
 package com.jaxio.web.domain;
 
+import java.util.Arrays;
 import java.util.Map;
 import javax.faces.convert.Converter;
 import javax.inject.Inject;
@@ -39,6 +40,8 @@ public class AccountLazyDataModel extends GenericLazyDataModel<Account, String, 
     @Inject
     transient private AccountSearchForm accountSearchForm;
 
+    private Account[] selectedRows;
+
     @Override
     protected Repository<Account, String> getRepository() {
         return accountRepository;
@@ -67,5 +70,24 @@ public class AccountLazyDataModel extends GenericLazyDataModel<Account, String, 
     @Override
     protected ConversationContext<Account> getSelectedContext(Account selected) {
         return AccountController.newEditContext(selected);
+    }
+
+    // -----------------------------------
+    // Multi selection support
+    // -----------------------------------
+
+    public void setSelectedRows(Account[] selectedRows) {
+        this.selectedRows = selectedRows;
+    }
+
+    public Account[] getSelectedRows() {
+        return selectedRows;
+    }
+
+    public String multiSelect() {
+        return conversationManager.getCurrentConversation() //
+                .<ConversationContext<Account>> getCurrentContext() //
+                .getCallBack() //
+                .selected(Arrays.asList(selectedRows));
     }
 }

@@ -76,9 +76,11 @@ public class BookController implements ConversationFactory {
     /**
      * Helper to construct a new ConversationContext for edition.
      */
-    public static ConversationContext<Book> newEditContext(Book initParam) {
+    public static ConversationContext<Book> newEditContext(Book book) {
         ConversationContext<Book> ctx = new ConversationContext<Book>();
-        ctx.setEntityParam("book", initParam);
+        BookEditForm bookEditForm = new BookEditForm();
+        bookEditForm.setBook(book);
+        ctx.addBean("bookEditForm", bookEditForm); // will be autowired by our ConversationScope...
         ctx.setViewUri(editUri);
         return ctx;
     }

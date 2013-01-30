@@ -101,6 +101,8 @@ public class ConversationManager implements ApplicationContextAware {
         Conversation conversation = conversationMap(request.getSession()).get(id);
 
         if (conversation != null) {
+            conversation.pushNextContext();
+
             if (!request.getRequestURI().contains(conversation.getViewUri())) {
                 throw new UnexpectedConversationException("Uri not in sync with conversation", request.getRequestURI(), conversation.getMenuUrl());
             }

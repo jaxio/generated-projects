@@ -26,21 +26,20 @@ public class BookEditForm extends GenericEditForm<Book, Integer> {
     private Book book;
 
     @Inject
-    public BookEditForm(BookRepository bookRepository) {
-        super(bookRepository);
+    public void setBookRepository(BookRepository bookRepository) {
+        setRepository(bookRepository);
     }
 
-    @Override
-    protected void onInit(Book param) {
-        this.book = param;
+    public void setBook(Book book) {
+        this.book = book;
+    }
+
+    public Book getBook() {
+        return book;
     }
 
     @Override
     public Book getEntity() {
-        return book;
-    }
-
-    public Book getBook() {
         return book;
     }
 

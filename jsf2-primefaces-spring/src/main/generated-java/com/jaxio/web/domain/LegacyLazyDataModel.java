@@ -7,6 +7,7 @@
  */
 package com.jaxio.web.domain;
 
+import java.util.Arrays;
 import javax.faces.convert.Converter;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,6 +37,8 @@ public class LegacyLazyDataModel extends GenericLazyDataModel<Legacy, LegacyPk, 
     @Inject
     transient private LegacySearchForm legacySearchForm;
 
+    private Legacy[] selectedRows;
+
     @Override
     protected Repository<Legacy, LegacyPk> getRepository() {
         return legacyRepository;
@@ -54,5 +57,24 @@ public class LegacyLazyDataModel extends GenericLazyDataModel<Legacy, LegacyPk, 
     @Override
     protected ConversationContext<Legacy> getSelectedContext(Legacy selected) {
         return LegacyController.newEditContext(selected);
+    }
+
+    // -----------------------------------
+    // Multi selection support
+    // -----------------------------------
+
+    public void setSelectedRows(Legacy[] selectedRows) {
+        this.selectedRows = selectedRows;
+    }
+
+    public Legacy[] getSelectedRows() {
+        return selectedRows;
+    }
+
+    public String multiSelect() {
+        return conversationManager.getCurrentConversation() //
+                .<ConversationContext<Legacy>> getCurrentContext() //
+                .getCallBack() //
+                .selected(Arrays.asList(selectedRows));
     }
 }

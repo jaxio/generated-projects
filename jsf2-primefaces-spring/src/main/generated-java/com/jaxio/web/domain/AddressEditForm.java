@@ -23,13 +23,16 @@ public class AddressEditForm extends GenericEditForm<Address, Integer> {
     private Address address;
 
     @Inject
-    public AddressEditForm(AddressRepository addressRepository) {
-        super(addressRepository);
+    public void setAddressRepository(AddressRepository addressRepository) {
+        setRepository(addressRepository);
     }
 
-    @Override
-    protected void onInit(Address param) {
-        this.address = param;
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public Address getAddress() {
+        return address;
     }
 
     @Override
@@ -37,7 +40,4 @@ public class AddressEditForm extends GenericEditForm<Address, Integer> {
         return address;
     }
 
-    public Address getAddress() {
-        return address;
-    }
 }

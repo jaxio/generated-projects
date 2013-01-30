@@ -15,15 +15,12 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-<f:metadata>
-	<f:event type="preRenderView" listener="#{documentEditForm.init(document)}" />
-</f:metadata>
 <app:edit bean="#{documentEditForm}" title="${msg.document}">
 	<ui:define name="form">
 		<app:outputLabel for="documentBinary" value="${msg.document_documentBinary}" />
 		<p:outputPanel id="documentBinaryOP">
 			<p:fileUpload id="documentBinary"
-				fileUploadListener="#{documentController.getUploadHandler(document).handleFileUpload}"
+				fileUploadListener="#{documentController.getUploadHandler(documentEditForm.document).handleFileUpload}"
 				auto="true"
 				update="documentBinaryOP"
 				sizeLimit="2000000"
@@ -31,7 +28,7 @@
 				rendered="#{!readonly}" />
 			<h:commandLink
 				rendered="#{not empty documentEditForm.document.documentFileName}"
-				value="#{documentEditForm.document.documentFileName}"><p:fileDownload value="#{documentController.getStreamedContent(document)}"/></h:commandLink>
+				value="#{documentEditForm.document.documentFileName}"><p:fileDownload value="#{documentController.getStreamedContent(documentEditForm.document)}"/></h:commandLink>
 		</p:outputPanel>
 
 		<app:autoComplete id="account" value="#{documentEditForm.document.account}" required="true" 

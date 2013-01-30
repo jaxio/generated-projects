@@ -8,7 +8,10 @@
 package com.jaxio.web.conversation;
 
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.Scope;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * Beans in the conversation scope reside in a {@link Conversation conversation}'s {@link ConversationContext}.
@@ -19,9 +22,13 @@ import org.springframework.beans.factory.config.Scope;
  * the same name (they just have to reside in 2 difference ConversationContext).
  * This prevents bean name clash in complex navigation scenario within the same conversation.
  */
-public class ConversationScope implements Scope {
-
+public class ConversationScope implements Scope, ApplicationContextAware {
+    private AutowireCapableBeanFactory autowireCapableBeanFactory;
     protected ConversationManager cm;
+
+    public void setApplicationContext(ApplicationContext appCtx) {
+        autowireCapableBeanFactory = appCtx.getAutowireCapableBeanFactory();
+    }
 
     public void setConversationManager(ConversationManager cm) {
         this.cm = cm;
@@ -39,11 +46,17 @@ public class ConversationScope implements Scope {
         if (bean == null) {
             bean = objectFactory.getObject();
             cm.getCurrentConversation().addBean(name, bean);
+            cm.getCurrentConversation().setVar("__" + name + "__wired", Boolean.TRUE);
+        } else {
+            // let's check if the bean has been wired.
+            Boolean wired = cm.getCurrentConversation().getVar("__" + name + "__wired", Boolean.class);
+            if (wired == null) {
+                // bean was created manually. The creator expects us to wire it: 
+                autowireCapableBeanFactory.autowireBean(bean);
+                cm.getCurrentConversation().setVar("__" + name + "__wired", Boolean.TRUE);
+            }
+            // TODO: we could detect if bean was serialized in order to re-wire it... 
         }
-
-        // TODO: here we could re-wire dependencies using http://jira.springframework.org/browse/SWF-1224
-        // in case we want to serialize context... 
-
         return bean;
     }
 

@@ -15,9 +15,6 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-<f:metadata>
-	<f:event type="preRenderView" listener="#{legacyEditForm.init(legacy)}" />
-</f:metadata>
 <app:edit bean="#{legacyEditForm}" title="${msg.legacy}">
 	<ui:define name="form">
 		<app:input id="name" value="#{legacyEditForm.legacy.name}" size="16" label="${msg.legacy_name}" required="true" />

@@ -78,9 +78,11 @@ public class AccountController implements ConversationFactory {
     /**
      * Helper to construct a new ConversationContext for edition.
      */
-    public static ConversationContext<Account> newEditContext(Account initParam) {
+    public static ConversationContext<Account> newEditContext(Account account) {
         ConversationContext<Account> ctx = new ConversationContext<Account>();
-        ctx.setEntityParam("account", initParam);
+        AccountEditForm accountEditForm = new AccountEditForm();
+        accountEditForm.setAccount(account);
+        ctx.addBean("accountEditForm", accountEditForm); // will be autowired by our ConversationScope...
         ctx.setViewUri(editUri);
         return ctx;
     }

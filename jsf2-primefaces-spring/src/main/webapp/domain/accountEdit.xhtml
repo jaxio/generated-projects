@@ -15,17 +15,14 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-<f:metadata>
-	<f:event type="preRenderView" listener="#{accountEditForm.init(account)}" />
-</f:metadata>
 <app:edit bean="#{accountEditForm}" title="${msg.account}">
 	<ui:define name="form">
 		<app:input id="username" value="#{accountEditForm.account.username}" size="100" label="${msg.account_username}" required="true">
-			<f:validateBean binding="#{jpaUniqueValidator}" entity="${account}" property="username" />
+			<f:validateBean binding="#{jpaUniqueValidator}" entity="${accountEditForm.account}" property="username" />
 		</app:input>
 		<app:inputPassword id="password" value="#{accountEditForm.account.password}" size="100" label="${msg.account_password}" required="true" />
 		<app:input id="email" value="#{accountEditForm.account.email}" size="100" label="${msg.account_email}" required="true">
-			<f:validateBean binding="#{jpaUniqueValidator}" entity="${account}" property="email" />
+			<f:validateBean binding="#{jpaUniqueValidator}" entity="${accountEditForm.account}" property="email" />
 		</app:input>
 		<app:inputBoolean id="isEnabled" value="#{accountEditForm.account.isEnabled}" label="${msg.account_isEnabled}" />
 		<app:selectOneRadio id="civility" value="#{accountEditForm.account.civility}" values="#{civilityItems.list}" label="${msg.account_civility}" />

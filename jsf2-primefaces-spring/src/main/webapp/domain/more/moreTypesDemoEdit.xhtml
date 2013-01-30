@@ -15,9 +15,6 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-<f:metadata>
-	<f:event type="preRenderView" listener="#{moreTypesDemoEditForm.init(moreTypesDemo)}" />
-</f:metadata>
 <app:edit bean="#{moreTypesDemoEditForm}" title="${msg.moreTypesDemo}">
 	<ui:define name="form">
 		<app:input id="numberInt" value="#{moreTypesDemoEditForm.moreTypesDemo.numberInt}" label="${msg.moreTypesDemo_numberInt}" />

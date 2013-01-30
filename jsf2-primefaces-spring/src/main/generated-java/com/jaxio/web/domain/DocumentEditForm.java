@@ -26,21 +26,20 @@ public class DocumentEditForm extends GenericEditForm<Document, String> {
     private Document document;
 
     @Inject
-    public DocumentEditForm(DocumentRepository documentRepository) {
-        super(documentRepository);
+    public void setDocumentRepository(DocumentRepository documentRepository) {
+        setRepository(documentRepository);
     }
 
-    @Override
-    protected void onInit(Document param) {
-        this.document = param;
+    public void setDocument(Document document) {
+        this.document = document;
+    }
+
+    public Document getDocument() {
+        return document;
     }
 
     @Override
     public Document getEntity() {
-        return document;
-    }
-
-    public Document getDocument() {
         return document;
     }
 

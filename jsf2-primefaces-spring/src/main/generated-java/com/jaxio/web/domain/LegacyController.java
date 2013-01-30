@@ -76,9 +76,11 @@ public class LegacyController implements ConversationFactory {
     /**
      * Helper to construct a new ConversationContext for edition.
      */
-    public static ConversationContext<Legacy> newEditContext(Legacy initParam) {
+    public static ConversationContext<Legacy> newEditContext(Legacy legacy) {
         ConversationContext<Legacy> ctx = new ConversationContext<Legacy>();
-        ctx.setEntityParam("legacy", initParam);
+        LegacyEditForm legacyEditForm = new LegacyEditForm();
+        legacyEditForm.setLegacy(legacy);
+        ctx.addBean("legacyEditForm", legacyEditForm); // will be autowired by our ConversationScope...
         ctx.setViewUri(editUri);
         return ctx;
     }

@@ -95,9 +95,11 @@ public class DocumentController implements ConversationFactory {
     /**
      * Helper to construct a new ConversationContext for edition.
      */
-    public static ConversationContext<Document> newEditContext(Document initParam) {
+    public static ConversationContext<Document> newEditContext(Document document) {
         ConversationContext<Document> ctx = new ConversationContext<Document>();
-        ctx.setEntityParam("document", initParam);
+        DocumentEditForm documentEditForm = new DocumentEditForm();
+        documentEditForm.setDocument(document);
+        ctx.addBean("documentEditForm", documentEditForm); // will be autowired by our ConversationScope...
         ctx.setViewUri(editUri);
         return ctx;
     }

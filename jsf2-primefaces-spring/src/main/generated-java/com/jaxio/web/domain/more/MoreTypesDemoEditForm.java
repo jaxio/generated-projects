@@ -23,13 +23,16 @@ public class MoreTypesDemoEditForm extends GenericEditForm<MoreTypesDemo, Intege
     private MoreTypesDemo moreTypesDemo;
 
     @Inject
-    public MoreTypesDemoEditForm(MoreTypesDemoRepository moreTypesDemoRepository) {
-        super(moreTypesDemoRepository);
+    public void setMoreTypesDemoRepository(MoreTypesDemoRepository moreTypesDemoRepository) {
+        setRepository(moreTypesDemoRepository);
     }
 
-    @Override
-    protected void onInit(MoreTypesDemo param) {
-        this.moreTypesDemo = param;
+    public void setMoreTypesDemo(MoreTypesDemo moreTypesDemo) {
+        this.moreTypesDemo = moreTypesDemo;
+    }
+
+    public MoreTypesDemo getMoreTypesDemo() {
+        return moreTypesDemo;
     }
 
     @Override
@@ -37,7 +40,4 @@ public class MoreTypesDemoEditForm extends GenericEditForm<MoreTypesDemo, Intege
         return moreTypesDemo;
     }
 
-    public MoreTypesDemo getMoreTypesDemo() {
-        return moreTypesDemo;
-    }
 }

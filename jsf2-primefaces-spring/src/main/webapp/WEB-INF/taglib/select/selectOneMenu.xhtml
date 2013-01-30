@@ -5,11 +5,11 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:app="http://springfuse.jaxio.com/app">
 	<app:outputLabel for="${id}" value="${label}" required="${empty required ? false : required}" rendered="${empty rendered ? true : rendered}" />
-	<h:selectOneRadio id="${id}" value="${value}" label="${label}" rendered="#{not readonly}" disabled="${empty disabled ? false : disabled}"
+	<h:selectOneMenu id="${id}" value="${value}" label="${label}" rendered="#{not readonly}" disabled="${empty disabled ? false : disabled}"
 		layout="${items.list.size() lt 4 ? 'lineDirection' : 'pageDirection'}">
 		<f:selectItems value="${values}" />
 		<f:validateBean binding="#{lenientBeanValidator}" />
 		<ui:insert/>
-	</h:selectOneRadio>
+	</h:selectOneMenu>
 	<h:outputText value="#{value}" rendered="${readonly}" />
 </ui:composition>

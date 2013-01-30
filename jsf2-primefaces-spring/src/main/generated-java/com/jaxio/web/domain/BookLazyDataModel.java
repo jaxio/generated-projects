@@ -7,6 +7,7 @@
  */
 package com.jaxio.web.domain;
 
+import java.util.Arrays;
 import javax.faces.convert.Converter;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,6 +36,8 @@ public class BookLazyDataModel extends GenericLazyDataModel<Book, Integer, BookS
     @Inject
     transient private BookSearchForm bookSearchForm;
 
+    private Book[] selectedRows;
+
     @Override
     protected Repository<Book, Integer> getRepository() {
         return bookRepository;
@@ -53,5 +56,24 @@ public class BookLazyDataModel extends GenericLazyDataModel<Book, Integer, BookS
     @Override
     protected ConversationContext<Book> getSelectedContext(Book selected) {
         return BookController.newEditContext(selected);
+    }
+
+    // -----------------------------------
+    // Multi selection support
+    // -----------------------------------
+
+    public void setSelectedRows(Book[] selectedRows) {
+        this.selectedRows = selectedRows;
+    }
+
+    public Book[] getSelectedRows() {
+        return selectedRows;
+    }
+
+    public String multiSelect() {
+        return conversationManager.getCurrentConversation() //
+                .<ConversationContext<Book>> getCurrentContext() //
+                .getCallBack() //
+                .selected(Arrays.asList(selectedRows));
     }
 }
