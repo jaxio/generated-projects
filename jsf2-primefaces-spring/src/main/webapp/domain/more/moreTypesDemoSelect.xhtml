@@ -27,7 +27,6 @@
 			<app:rangeDateTime id="dateJavaTemporalTimestamp" value="#{moreTypesDemoSearchForm.dateJavaTemporalTimestampRange}" label="${msg.moreTypesDemo_dateJavaTemporalTimestamp}" />
 			<app:rangeLocalDate id="dateJoda" value="#{moreTypesDemoSearchForm.dateJodaRange}" label="${msg.moreTypesDemo_dateJoda}" />
 			<app:rangeLocalDateTime id="dateTimeJoda" value="#{moreTypesDemoSearchForm.dateTimeJodaRange}" label="${msg.moreTypesDemo_dateTimeJoda}" />
-			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">

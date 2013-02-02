@@ -21,7 +21,6 @@
 		<app:input id="code" value="#{legacyEditForm.legacy.code}" size="8" label="${msg.legacy_code}" required="true" />
 		<app:input id="dept" value="#{legacyEditForm.legacy.dept}" label="${msg.legacy_dept}" required="true" />
 		<app:input id="extraInfo" value="#{legacyEditForm.legacy.extraInfo}" size="100" label="${msg.legacy_extraInfo}" required="true" />
-		<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 	</ui:define>
 </app:edit>
 </ui:composition>

@@ -45,7 +45,6 @@
 			lastModificationAuthor="#{accountEditForm.account.lastModificationAuthor}"
 			lastModificationDate="#{accountEditForm.account.lastModificationDate}"
 		/>
-		<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 	</ui:define>
 	<ui:define name="tabs">
 		<p:tabView id="tabs" activeIndex="#{accountEditForm.tabBean.activeIndex}">
@@ -160,7 +159,7 @@
 	</ui:define>
 	<ui:define name="custom-dialogs">
 		<p:confirmDialog widgetVar="askForRemoveBookDialog" header="${msg.menu_remove}?" message="${msg.dialog_remove_confirm}">
-	        <h:panelGrid id="askForRemoveBookDialogContent" columns="2" cellpadding="4" style="margin:0 auto;">  
+	        <h:panelGrid id="askForRemoveBookDialogContent" columns="1" cellpadding="4" style="margin:0 auto;">  
 	            <app:print value="#{accountEditForm.books.selectedRow}" />  
 	        </h:panelGrid>
 			<p:commandButton id="askForRemoveBookDialogYes" action="#{accountEditForm.removeBook()}" 
@@ -170,7 +169,7 @@
 				onclick="askForRemoveBookDialog.hide(); return false;" icon="ui-icon-cancel"/>
 		</p:confirmDialog>
 		<p:confirmDialog widgetVar="askForRemoveDocumentDialog" header="${msg.menu_remove}?" message="${msg.dialog_remove_confirm}">
-	        <h:panelGrid id="askForRemoveDocumentDialogContent" columns="2" cellpadding="4" style="margin:0 auto;">  
+	        <h:panelGrid id="askForRemoveDocumentDialogContent" columns="1" cellpadding="4" style="margin:0 auto;">  
 	            <app:print value="#{accountEditForm.documents.selectedRow}" />  
 	        </h:panelGrid>
 			<p:commandButton id="askForRemoveDocumentDialogYes" action="#{accountEditForm.removeDocument()}" 
@@ -180,7 +179,7 @@
 				onclick="askForRemoveDocumentDialog.hide(); return false;" icon="ui-icon-cancel"/>
 		</p:confirmDialog>
 		<p:confirmDialog widgetVar="askForRemoveRoleDialog" header="${msg.menu_remove}?" message="${msg.dialog_remove_confirm}">
-	        <h:panelGrid id="askForRemoveRoleDialogContent" columns="2" cellpadding="4" style="margin:0 auto;">  
+	        <h:panelGrid id="askForRemoveRoleDialogContent" columns="1" cellpadding="4" style="margin:0 auto;">  
 	            <app:print value="#{accountEditForm.roles.selectedRow}" />  
 	        </h:panelGrid>
 			<p:commandButton id="askForRemoveRoleDialogYes" action="#{accountEditForm.removeRole()}" 

@@ -19,7 +19,6 @@
 		<ui:define name="filters">
 			<app:multiAutoComplete id="accountSelector" value="#{documentSearchForm.accountSelector.selected}" label="${msg.document_account}" 
 				controller="#{accountController}" converter="#{accountJsfConverter}" printer="#{accountPrinter}"/>
-			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">

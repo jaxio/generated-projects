@@ -21,7 +21,6 @@
 			<app:input id="code" value="#{legacySearchForm.legacy.code}" label="${msg.legacy_code}"/>
 			<app:input id="dept" value="#{legacySearchForm.legacy.dept}" label="${msg.legacy_dept}"/>
 			<app:input id="extraInfo" value="#{legacySearchForm.legacy.extraInfo}" label="${msg.legacy_extraInfo}"/>
-			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">

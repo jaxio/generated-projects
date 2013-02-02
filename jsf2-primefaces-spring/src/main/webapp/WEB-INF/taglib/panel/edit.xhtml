@@ -26,6 +26,7 @@
 	<ui:define name="content">
 		<p:breadCrumb model="#{conversationManager.breadCrumbMenuModel}" rendered="#{conversationManager.renderBreadCrumb}" />	
 		<p:fieldset id="fieldset">
+			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/>			
 			<f:validateBean disabled="true">
 				<h:panelGrid columns="2" styleClass="aria-role-presentation">
 					<ui:insert name="form" />
@@ -38,7 +39,7 @@
 	<ui:define name="dialogs">
 		<ui:insert name="custom-dialogs" />
 		<p:confirmDialog widgetVar="askForDeleteDialog" header="${msg.menu_delete}?" message="${msg.dialog_delete_confirm}">
-	        <h:panelGrid id="askForDeleteDialogContent" columns="2" cellpadding="4" style="margin:0 auto;">  
+	        <h:panelGrid id="askForDeleteDialogContent" columns="1" cellpadding="4" style="margin:0 auto;">  
 	            <h:outputText value="${typeAwarePrinter.print(bean.entity)}" style="font-weight:bold" />  
 	        </h:panelGrid>
 			<p:commandButton id="askForDeleteDialogYes" action="#{bean.deleteAndClose()}" ajax="false" immediate="true" process="@none" value="${msg.yes}" title="${msg.dialog_delete_confirm} ${msg.yes}" icon="ui-icon-check" />

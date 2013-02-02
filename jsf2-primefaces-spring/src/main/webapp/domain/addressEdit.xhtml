@@ -19,7 +19,6 @@
 	<ui:define name="form">
 		<app:input id="streetName" value="#{addressEditForm.address.streetName}" size="100" label="${msg.address_streetName}" />
 		<app:input id="city" value="#{addressEditForm.address.city}" size="100" label="${msg.address_city}" required="true" />
-		<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 	</ui:define>
 </app:edit>
 </ui:composition>

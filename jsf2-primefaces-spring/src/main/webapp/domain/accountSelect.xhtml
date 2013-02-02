@@ -30,7 +30,6 @@
 				controller="#{addressController}" converter="#{addressJsfConverter}" printer="#{addressPrinter}"/>
 			<app:multiAutoComplete id="rolesSelector" value="#{accountSearchForm.account.roles}" label="${msg.account_roles}" 
 				controller="#{roleController}" converter="#{roleJsfConverter}" printer="#{rolePrinter}" />
-			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">

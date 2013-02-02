@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -54,7 +55,13 @@ public class PersistenceContextConversationListener implements ConversationListe
 
     @Override
     public void conversationPausing(Conversation conversation) {
-        unbind(conversation.getEntityManager());
+        EntityManager em = conversation.getEntityManager();
+        if (em != null) {
+            unbind(conversation.getEntityManager());
+            // _HACK_ as we depend on Hibernate
+            Session session = em.unwrap(Session.class);
+            session.disconnect(); // will be reconnected automatically as needed.
+        }
     }
 
     @Override

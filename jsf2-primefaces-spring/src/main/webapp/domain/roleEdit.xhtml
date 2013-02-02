@@ -20,7 +20,6 @@
 		<app:input id="roleName" value="#{roleEditForm.role.roleName}" size="100" label="${msg.role_roleName}" required="true">
 			<f:validateBean binding="#{jpaUniqueValidator}" entity="${roleEditForm.role}" property="roleName" />
 		</app:input>
-		<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 	</ui:define>
 </app:edit>
 </ui:composition>

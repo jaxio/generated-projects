@@ -55,8 +55,14 @@ form .required-pseudo-label {
 	color: black !important;
 }
 
+/* put multiCheckbox selection on the left */
 .ui-datatable .ui-datatable-footer {
 	text-align: left !important;
+}
+
+/* fix p:selectOneMenu */
+.ui-selectonemenu label.ui-selectonemenu-label{
+	text-align:left !important;
 }
 
 /* ICONS for p:commandButon. Note the usage of JSF2 resource facility :-) */

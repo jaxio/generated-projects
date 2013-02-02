@@ -28,12 +28,12 @@
 	</listener>
 	
 	<!-- filters -->
-	<filter>
-		<filter-name>gzipFilter</filter-name>
-		<filter-class>net.sf.ehcache.constructs.web.filter.GzipFilter</filter-class>
-	</filter>
+    <filter>
+       <filter-name>gzipResponseFilter</filter-name>
+       <filter-class>org.omnifaces.filter.GzipResponseFilter</filter-class>
+     </filter>
 	<filter-mapping>
-		<filter-name>gzipFilter</filter-name>
+		<filter-name>gzipResponseFilter</filter-name>
 		<servlet-name>facesServlet</servlet-name>
 	</filter-mapping>
 	<filter>
@@ -119,7 +119,6 @@
 		<servlet-name>facesServlet</servlet-name>
 		<url-pattern>*.faces</url-pattern>
 	</servlet-mapping>
-	<!-- Spring Security Facelets tag library declaration -->
 	<context-param>
 		<param-name>javax.faces.FACELETS_LIBRARIES</param-name>
 		<param-value>/WEB-INF/taglib/components.xml</param-value>
@@ -128,6 +127,10 @@
 		<param-name>com.sun.faces.expressionFactory</param-name>
 		<param-value>org.jboss.el.ExpressionFactoryImpl</param-value>
 	</context-param>
+    <context-param>
+        <param-name>org.apache.myfaces.EXPRESSION_FACTORY</param-name>
+        <param-value>org.jboss.el.ExpressionFactoryImpl</param-value>
+    </context-param>
 	<!-- Mime types -->
 	<mime-mapping>
 		<extension>css</extension>
@@ -186,7 +189,7 @@
         <location>/error/data-error.faces</location>
     </error-page>
 
-    <error-page>
+    <error-page><!-- comment it if you use myfaces, otherwise omnifaces will complain severely -->
         <exception-type>com.sun.faces.context.FacesFileNotFoundException</exception-type>
         <location>/error/not-found.faces</location>
     </error-page>

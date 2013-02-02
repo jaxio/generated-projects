@@ -18,7 +18,6 @@
 	<app:search data="#{roleLazyDataModel}" searchForm="#{roleSearchForm}" title="${msg.role}">
 		<ui:define name="filters">
 			<app:input id="roleName" value="#{roleSearchForm.role.roleName}" label="${msg.role_roleName}"/>
-			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">

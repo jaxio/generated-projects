@@ -21,7 +21,6 @@
 				controller="#{accountController}" converter="#{accountJsfConverter}" printer="#{accountPrinter}"/>
 			<app:input id="title" value="#{bookSearchForm.book.title}" label="${msg.book_title}"/>
 			<app:rangeInt id="numberOfPages" value="#{bookSearchForm.numberOfPagesRange}" label="${msg.book_numberOfPages}"/>
-			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">

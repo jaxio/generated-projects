@@ -25,7 +25,6 @@
 			controller="#{accountController}" printer="#{accountPrinter}" converter="#{accountJsfConverter}">
 			<app:iconView actionBean="#{bookEditForm}" action="viewAccount" title="${msg.book_account}" rendered="${not empty bookEditForm.book.account}" />
 		</app:autoComplete>
-		<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 	</ui:define>
 </app:edit>
 </ui:composition>

@@ -6,8 +6,11 @@
  ! Follow us on twitter: @springfuse
  ! Template pack-jsf2-spring:src/main/webapp/WEB-INF/faces-config.p.vm.xml
 -->
-<faces-config xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd" version="2.0">
-	<application>
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_1.xsd"
+    version="2.1">
+    <application>
 		<resource-handler>com.jaxio.web.util.PrimeResourceHandlerWithCache</resource-handler>
 		<locale-config>
 			<default-locale>fr</default-locale>
@@ -15,7 +18,7 @@
 			<supported-locale>fr</supported-locale>
 		</locale-config>
 		<el-resolver>com.jaxio.web.conversation.ConversationAwareElResolver</el-resolver>
-				<message-bundle>com.jaxio.web.util.MessageBundle</message-bundle>
+        <message-bundle>com.jaxio.web.util.MessageBundle</message-bundle>
 		<resource-bundle>
 			<base-name>com.jaxio.web.util.MessageBundle</base-name>
 			<var>msg</var>

@@ -19,7 +19,6 @@
 		<ui:define name="filters">
 			<app:input id="streetName" value="#{addressSearchForm.address.streetName}" label="${msg.address_streetName}"/>
 			<app:input id="city" value="#{addressSearchForm.address.city}" label="${msg.address_city}"/>
-			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">

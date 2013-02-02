@@ -36,7 +36,6 @@
 			controller="#{accountController}" printer="#{accountPrinter}" converter="#{accountJsfConverter}">
 			<app:iconView actionBean="#{documentEditForm}" action="viewAccount" title="${msg.document_account}" rendered="${not empty documentEditForm.document.account}" />
 		</app:autoComplete>
-		<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/><!--  move elsewhere? -->
 	</ui:define>
 </app:edit>
 </ui:composition>

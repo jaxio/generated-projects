@@ -84,6 +84,9 @@ public class SearchParameters implements Serializable {
     private Boolean cacheable = true;
     private String cacheRegion;
 
+    // extra parameters
+    private Map<String, Object> extraParameters = newHashMap();
+
     // -----------------------------------
     // SearchMode
     // -----------------------------------
@@ -563,6 +566,21 @@ public class SearchParameters implements Serializable {
 
     public String getCacheRegion() {
         return cacheRegion;
+    }
+
+    // -----------------------------------
+    // Extra parameters
+    // -----------------------------------
+
+    /**
+     * Set additionnal parameters.
+     */
+    public void setExtraParameters(Map<String, Object> extraParameters) {
+        this.extraParameters = extraParameters;
+    }
+
+    public Map<String, Object> getExtraParameters() {
+        return extraParameters;
     }
 
     @Override
