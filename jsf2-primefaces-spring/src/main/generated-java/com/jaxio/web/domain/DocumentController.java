@@ -53,7 +53,7 @@ public class DocumentController implements ConversationFactory {
             Conversation conversation = Conversation.newInstance(request);
             ConversationContext<Document> ctx = newSearchContext();
             ctx.setLabelWithKey("document");
-            conversation.push(ctx);
+            conversation.setNextContext(ctx);
             return conversation;
         }
 

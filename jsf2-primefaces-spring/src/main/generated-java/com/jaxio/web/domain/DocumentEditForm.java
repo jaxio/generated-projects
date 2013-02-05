@@ -50,7 +50,7 @@ public class DocumentEditForm extends GenericEditForm<Document, String> {
     public String viewAccount() {
         ConversationContext<Account> ctx = AccountController.newEditContext(document.getAccount());
         ctx.setLabelWithKey("document_account");
-        conversation().pushSubReadOnly(ctx);
+        conversation().setNextContextSubReadOnly(ctx);
         return ctx.view();
     }
 }

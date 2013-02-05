@@ -8,7 +8,9 @@
 package com.jaxio.web.conversation;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.jaxio.util.ResourcesUtil;
@@ -121,13 +123,16 @@ public class ConversationContext<T> implements Serializable {
         return callBack;
     }
 
-    public String getMenuUrl() {
+    /**
+     * Returns the URL associated to this context. It is used for direct access, from the conversation menu or the filter.
+     */
+    public String getUrl() {
         checkViewUriAndConversationId();
         return viewUri + "?_cid_=" + conversationId;
     }
 
     /**
-     * Return the view to display for this context. The view is simply the viewUri + additionnal parameters.
+     * Return the view to display for this context. It is used by actions when returning a view.
      */
     public String view() {
         checkViewUriAndConversationId();
@@ -136,11 +141,11 @@ public class ConversationContext<T> implements Serializable {
 
     private void checkViewUriAndConversationId() {
         if (viewUri == null) {
-            throw new IllegalStateException("Developer! viewUri is null, it must be set before calling view() or getMenuUrl() methods");
+            throw new IllegalStateException("Developer! viewUri is null, it must be set before calling view() or getUrl() methods");
         }
 
         if (conversationId == null) {
-            throw new IllegalStateException("Developer! conversationId is null, it must be set before calling view() or getMenuUrl() methods");
+            throw new IllegalStateException("Developer! conversationId is null, it must be set before calling view() or getUrl() methods");
         }
     }
 
@@ -171,5 +176,17 @@ public class ConversationContext<T> implements Serializable {
     @SuppressWarnings("unchecked")
     protected <E> E getVar(String name, Class<E> type) {
         return (E) vars.get(name);
+    }
+
+    // ------------------------------------------
+    // For debug/training purposes: see 
+    // ------------------------------------------
+
+    public List<Map.Entry<String, Object>> getBeanEntries() {
+        return new ArrayList<Map.Entry<String, Object>>(beans.entrySet());
+    }
+
+    public List<Map.Entry<String, Object>> getVarEntries() {
+        return new ArrayList<Map.Entry<String, Object>>(vars.entrySet());
     }
 }

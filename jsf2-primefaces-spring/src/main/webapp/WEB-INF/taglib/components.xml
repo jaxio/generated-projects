@@ -142,6 +142,10 @@
 		<source>output/audit.xhtml</source>
 	</tag>
     <tag>
+        <tag-name>conversationDebug</tag-name>
+        <source>output/conversationDebug.xhtml</source>
+    </tag>
+    <tag>
         <tag-name>outputLabel</tag-name>
         <source>output/outputLabel.xhtml</source>
     </tag>

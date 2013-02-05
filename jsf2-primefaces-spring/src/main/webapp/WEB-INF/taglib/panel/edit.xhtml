@@ -11,7 +11,8 @@
 				value="#{msg.back}" icon="ui-icon-arrowreturnthick-1-w"/>
 		</p:toolbarGroup>
 		<p:toolbarGroup rendered="#{not sub and not readonly}">
-			<p:commandButton id="close" action="#{bean.close()}" ajax="true" immediate="true" process="@this"
+			<p:commandButton id="close" oncomplete="askForSaveDialog.show(); APP.focusAskForSaveDialog();" 
+				ajax="true" immediate="true" process="@this"
 				icon="ui-icon-close"
 				value="#{msg.menu_close}"
 				title="#{msg.menu_close} #{title}"/>

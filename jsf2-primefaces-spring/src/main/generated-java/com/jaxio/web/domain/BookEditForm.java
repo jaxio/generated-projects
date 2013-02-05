@@ -50,7 +50,7 @@ public class BookEditForm extends GenericEditForm<Book, Integer> {
     public String viewAccount() {
         ConversationContext<Account> ctx = AccountController.newEditContext(book.getAccount());
         ctx.setLabelWithKey("book_account");
-        conversation().pushSubReadOnly(ctx);
+        conversation().setNextContextSubReadOnly(ctx);
         return ctx.view();
     }
 }

@@ -72,7 +72,7 @@ public class ConversationFilter extends OncePerRequestFilter {
                 // CREATE a new conversation
                 try {
                     Conversation conversation = cm.createConversation(request);
-                    response.sendRedirect(request.getContextPath() + conversation.getMenuUrl());
+                    response.sendRedirect(request.getContextPath() + conversation.nextUrl());
                 } catch (UnexpectedConversationException uue) {
                     log.error(uue.getMessage());
                     response.sendRedirect(request.getContextPath() + uue.getRedirectUrl());

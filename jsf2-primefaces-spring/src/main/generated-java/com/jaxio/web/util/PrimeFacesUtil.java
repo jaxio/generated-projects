@@ -7,28 +7,12 @@
  */
 package com.jaxio.web.util;
 
-import javax.persistence.EntityManager;
-
-import org.hibernate.Session;
 import org.primefaces.context.RequestContext;
-
-import com.jaxio.domain.Identifiable;
 
 /**
  * Use this bean to execute JavaScript on client side.
  */
 public class PrimeFacesUtil {
-    /**
-     * Controls the 'ask for save' primefaces dialog on the client side from the server side if the entity manager is dirty or the entity is new
-     */
-    static public boolean showAskForSaveDialog(EntityManager entityManager, Identifiable<?> entity) {
-        RequestContext rc = RequestContext.getCurrentInstance();
-        if ((entity != null && !entity.isIdSet()) || ((Session) entityManager.getDelegate()).isDirty()) {
-            rc.execute("askForSaveDialog.show(); APP.focusAskForSaveDialog()");
-            return true;
-        }
-        return false;
-    }
 
     /**
      * Tells the client to update the search results region with the passed text.

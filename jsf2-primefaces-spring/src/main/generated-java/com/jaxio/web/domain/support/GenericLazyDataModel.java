@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.faces.convert.Converter;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.omnifaces.util.Faces;
 import org.primefaces.event.SelectEvent;
@@ -152,7 +153,7 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
         ConversationContext<E> ctx = getSelectedContext(selectedRow);
         ctx.setLabel("Edit " + printer.print(selectedRow));
         ctx.setCallBack(editCallBack);
-        conversationManager.getCurrentConversation().push(ctx);
+        conversationManager.getCurrentConversation().setNextContext(ctx);
         return ctx.view();
     }
 
@@ -161,9 +162,9 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
 
         @Override
         protected void onNotSaved(E selection) {
-            if (selection.isIdSet()) {
-                // we refresh, otherwise we could have potential pending modifications... 
-                getRepository().refresh(selection);
+            EntityManager em = conversationManager.getCurrentConversation().getEntityManager();
+            if (em != null) {
+                em.clear();
             }
         }
     };
@@ -174,7 +175,7 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
     public String view() {
         ConversationContext<E> ctx = getSelectedContext(getRowData());
         ctx.setLabel("View " + printer.print(getRowData()));
-        conversationManager.getCurrentConversation().pushSubReadOnly(ctx);
+        conversationManager.getCurrentConversation().setNextContextSubReadOnly(ctx);
         return ctx.view();
     }
 
@@ -197,10 +198,13 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
      * When in sub mode, the select action is invoked otherwise the edit action is invoked.
      */
     public void onRowSelect(SelectEvent event) {
-        if (conversationManager.getCurrentConversation().<ConversationContext<E>> getCurrentContext().isSub()) {
-            Faces.navigate(select(getSelectedRow()));
-        } else {
-            Faces.navigate(edit(getSelectedRow()));
+        E selected = getSelectedRow();
+        if (selected != null) {
+            if (conversationManager.getCurrentConversation().<ConversationContext<E>> getCurrentContext().isSub()) {
+                Faces.navigate(select(selected));
+            } else {
+                Faces.navigate(edit(selected));
+            }
         }
     }
 
@@ -208,10 +212,13 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
      * Ajax action listener to delete the selected entity.
      */
     public void delete() {
-        String infoArg = printer.print(getSelectedRow());
-        getRepository().delete(getSelectedRow());
-        messageUtil.info("status_deleted_ok", infoArg);
-        resetSelectedRow();
+        E selected = getSelectedRow();
+        if (selected != null) {
+            String infoArg = printer.print(selected);
+            getRepository().delete(selected);
+            messageUtil.info("status_deleted_ok", infoArg);
+            resetSelectedRow();
+        }
     }
 
     @Override

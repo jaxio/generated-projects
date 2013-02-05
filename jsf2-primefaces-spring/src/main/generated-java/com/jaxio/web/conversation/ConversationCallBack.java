@@ -15,7 +15,8 @@ import java.util.List;
  * A CallBack allows the creator of the conversation context to know which action led to the context termination and to retrieve 
  * any relevant output.
  * For example, a conversation context can be created to let a user select an entity among a list of entities. When the user selects 
- * an entity, the action invokes the selected(T entity) method which let the creator of the context do something with the selected entity (e.g add it or set it somewhere...).
+ * an entity, the action invokes the selected(T entity) method which let the creator of the context do something with the selected 
+ * entity (e.g add it or set it somewhere...).
  */
 public class ConversationCallBack<T> implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -24,7 +25,7 @@ public class ConversationCallBack<T> implements Serializable {
     }
 
     final public String ok(T entity) {
-        popCurrentContext();
+        popCurrentContextOnNextPause();
         onOk(entity);
         return nextView();
     }
@@ -38,7 +39,7 @@ public class ConversationCallBack<T> implements Serializable {
     }
 
     final public String selected(T entity) {
-        popCurrentContext();
+        popCurrentContextOnNextPause();
         onSelected(entity);
         return nextView();
     }
@@ -50,7 +51,7 @@ public class ConversationCallBack<T> implements Serializable {
     }
 
     final public String selected(List<T> entities) {
-        popCurrentContext();
+        popCurrentContextOnNextPause();
         onSelected(entities);
         return nextView();
     }
@@ -62,7 +63,7 @@ public class ConversationCallBack<T> implements Serializable {
     }
 
     final public String saved(T entity) {
-        popCurrentContext();
+        popCurrentContextOnNextPause();
         onSaved(entity);
         return nextView();
     }
@@ -74,7 +75,7 @@ public class ConversationCallBack<T> implements Serializable {
     }
 
     final public String notSaved(T entity) {
-        popCurrentContext();
+        popCurrentContextOnNextPause();
         onNotSaved(entity);
         return nextView();
     }
@@ -86,7 +87,7 @@ public class ConversationCallBack<T> implements Serializable {
     }
 
     final public String deleted(T entity) {
-        popCurrentContext();
+        popCurrentContextOnNextPause();
         onDeleted(entity);
         return nextView();
     }
@@ -98,7 +99,7 @@ public class ConversationCallBack<T> implements Serializable {
     }
 
     final public String back() {
-        popCurrentContext();
+        popCurrentContextOnNextPause();
         onBack();
         return nextView();
     }
@@ -111,8 +112,8 @@ public class ConversationCallBack<T> implements Serializable {
 
     // Context utils
 
-    private final void popCurrentContext() {
-        ConversationManager.getInstance().popCurrentContext();
+    private final void popCurrentContextOnNextPause() {
+        ConversationManager.getInstance().getCurrentConversation().setPopCurrentContextOnNextPause(true);
     }
 
     private final String nextView() {

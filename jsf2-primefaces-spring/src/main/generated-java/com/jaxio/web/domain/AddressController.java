@@ -50,7 +50,7 @@ public class AddressController implements ConversationFactory {
             Conversation conversation = Conversation.newInstance(request);
             ConversationContext<Address> ctx = newSearchContext();
             ctx.setLabelWithKey("address");
-            conversation.push(ctx);
+            conversation.setNextContext(ctx);
             return conversation;
         }
 

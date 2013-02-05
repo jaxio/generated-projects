@@ -22,14 +22,14 @@
 		</f:facet>
 	</h:head>
 	<h:body>
-		<img src="${request.contextPath}/resources/icons/environment/${systemProperties['env_name'] eq null ? 'development' : systemProperties['env_name']}.gif" class="versionEnv" alt="${systemProperties['env_name'] eq null ? 'development' : systemProperties['env_name']}"/>
+		<img src="${request.contextPath}/resources/icons/environment/${systemProperties['env_name'] eq null ? 'development' : systemProperties['env_name']}.gif" width="58" height="50" class="versionEnv" alt="${systemProperties['env_name'] eq null ? 'development' : systemProperties['env_name']}"/>
 		<h:form id="form" enctype="multipart/form-data; charset=utf-8">
 			<!-- regular layout (does not work with chromeshades) -->
 			<p:layout fullPage="true" >
 				<p:layoutUnit id="top" position="north" resizable="false" size="115">
 					<div role="banner">
 						<h:panelGrid columns="3" style="width: 100%">
-							<h:outputLink id="logo_link" value="http://www.jaxio.com/" title="Go to Jaxio" ><h:graphicImage id="logoHeader" alt="Logo Jaxio" name="img/logo-jaxio.png" style="border: 0px;"/></h:outputLink>
+							<h:outputLink id="logo_link" value="http://www.jaxio.com/" title="Go to Jaxio" ><h:graphicImage id="logoHeader" width="179" height="63" alt="Logo Jaxio" name="img/logo-jaxio.png" style="border: 0px;"/></h:outputLink>
 							<h1 style="text-align: center;">${empty title? msg.main_title : title}</h1>
 							<h:panelGroup>
 								<div style="float: right;">

@@ -1,0 +1,33 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsf/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:app="http://springfuse.jaxio.com/app"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components">	
+	<p:outputPanel rendered="#{not empty conversationManager.currentConversation}">
+	<hr/>
+	<h3>Information about the current conversation context</h3>
+    <p:dataTable var="beanEntry" value="#{conversationManager.currentConversation.currentContext.beanEntries}">  
+        <p:column headerText="Bean name">  
+            <h:outputText value="#{beanEntry.key}" />  
+        </p:column>  
+  
+        <p:column headerText="Bean hashcode">  
+            <h:outputText value="#{beanEntry.value.hashCode()}" />  
+        </p:column>  
+    </p:dataTable>  
+
+    <p:dataTable var="varEntry" value="#{conversationManager.currentConversation.currentContext.varEntries}">  
+        <p:column headerText="Var name">  
+            <h:outputText value="#{varEntry.key}" />  
+        </p:column>  
+  
+        <p:column headerText="Var value">  
+            <h:outputText value="#{varEntry.value}" />  
+        </p:column>  
+    </p:dataTable>  	
+	<hr/>
+	</p:outputPanel>
+</ui:composition>

@@ -50,7 +50,7 @@ public class LegacyController implements ConversationFactory {
             Conversation conversation = Conversation.newInstance(request);
             ConversationContext<Legacy> ctx = newSearchContext();
             ctx.setLabelWithKey("legacy");
-            conversation.push(ctx);
+            conversation.setNextContext(ctx);
             return conversation;
         }
 

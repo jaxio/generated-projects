@@ -317,23 +317,434 @@
       <xs:enumeration value="HashSet"/>
     </xs:restriction>
   </xs:simpleType>
-  <xs:complexType name="celerioTemplateContext">
+  <xs:complexType name="classTypeOverride">
+    <xs:annotation>
+      <xs:documentation>Override the class conventions such as GeneratedPackage, suffix and prefixes</xs:documentation>
+    </xs:annotation>
+    <xs:sequence/>
+    <xs:attribute type="tns:classType" use="required" name="classType">
+      <xs:annotation>
+        <xs:documentation>The ClassType to override</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="prefix">
+      <xs:annotation>
+        <xs:documentation>Override the prefix for this ClassType</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="suffix">
+      <xs:annotation>
+        <xs:documentation>Override the suffix for this ClassType</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="tns:generatedPackage" name="generatedPackage">
+      <xs:annotation>
+        <xs:documentation>Override the GeneratedPackage for this ClassType</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="entityContextProperty">
+    <xs:annotation>
+      <xs:documentation>Used to introduce a new 'namer' property on each Celerio's entity context instance. Entity namer properties are convenient when writing classes that support entities, for example: Controller, Service, Dao, Validator etc... example: var name is obtained with ${entity.property.var} and has the value "prefixEntityNameSuffix".</xs:documentation>
+    </xs:annotation>
+    <xs:sequence/>
+    <xs:attribute type="xs:string" name="property">
+      <xs:annotation>
+        <xs:documentation>The property name.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="rootPackage">
+      <xs:annotation>
+        <xs:documentation>The root package. Defaults to the globally defined root package.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="subPackage">
+      <xs:annotation>
+        <xs:documentation>The sub package. For example: "security", "web.security". No defaults.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="prefix">
+      <xs:annotation>
+        <xs:documentation>Prefix prepended to the entity name.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="suffix">
+      <xs:annotation>
+        <xs:documentation>Prefix appended to the entity name.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="entityConfig">
+    <xs:annotation>
+      <xs:documentation>Describes an entity config</xs:documentation>
+    </xs:annotation>
     <xs:sequence>
-      <xs:element name="entityContextProperties" minOccurs="0">
+      <xs:element name="usages" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>For future use</xs:documentation>
+        </xs:annotation>
         <xs:complexType>
           <xs:sequence>
-            <xs:element type="tns:entityContextProperty" name="entityContextProperty" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element type="xs:string" name="usage" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element type="tns:inheritance" name="inheritance" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Inheritance configuration.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="tns:extendsClass" name="extendsClass" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Specify the base class that this entity should extends. Only for root entity.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="implementsInterfaces" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Specify the extra interfaces that this entity should implement.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:implementsInterface" name="implementsInterface" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="metaAttributes" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Meta attributes are free form key value pairs.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:metaAttribute" name="metaAttribute" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="columnConfigs" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>This entity's columnConfigs. Note that for entities without inheritance or for entities with a JOIN inheritance strategy, if a column is present in the table's meta data but has no corresponding entityConfig in this list, then an entityConfig is created by default and added automatically to this list.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:columnConfig" name="columnConfig" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="customAnnotations" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>List of custom annotations to apply on this entity.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:customAnnotation" name="customAnnotation" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="entityName">
+      <xs:annotation>
+        <xs:documentation><![CDATA[The JPA entity's type. <br> For example, entityName="BankAccount". <br> By default, the entity name is deduced from the table name. <br> For example: 'bank_account' will become 'BankAccount';]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="sequenceName">
+      <xs:annotation>
+        <xs:documentation>Allows you to specify the sequence name to use in order to generate this entity pk value. When a sequence name is provided the corresponding @SequenceGenerator and @GeneratedValue annotations are added to the primary key attribute.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="tableName">
+      <xs:annotation>
+        <xs:documentation>The underlying table name for the entity. If not set, inheritance must be configured.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:boolean" name="indexed">
+      <xs:annotation>
+        <xs:documentation>Should this entity be annotated with hibernate search @Indexed annotation? False by default.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:boolean" name="middleTable">
+      <xs:annotation>
+        <xs:documentation>By convention a table is considered as a many-to-many middle table if it has two foreign keys and no other regular columns. This attribute allows you to consider this table as a middle table, even if it has other regular columns. A regular column is a column that is not used as a primary key or as an optimistic lock.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="comment">
+      <xs:annotation>
+        <xs:documentation>The comment that will be inserted in this entity's JavaDoc.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="rootPackage">
+      <xs:annotation>
+        <xs:documentation><![CDATA[Allows you to override the default root package.<br> Example: com.yourcompany]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="subPackage">
+      <xs:annotation>
+        <xs:documentation><![CDATA[When you define a sub-package, the resulting entity's package becomes "<rootPackage>.domain.<subPackage>" instead of "<rootPackage>.domain". There is no sub-package by default.]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="tns:associationDirection" name="associationDirection">
+      <xs:annotation>
+        <xs:documentation>It is pertinent only if this entity's table plays the role of a middle table in a many-to-many association. In that case you can use this parameter to set the many-to-many association direction.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="tns:collectionType" name="collectionType">
+      <xs:annotation>
+        <xs:documentation>You can override the default collection type for this entity</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="label">
+      <xs:annotation>
+        <xs:documentation>The label for this entity. It is copied in the entity properties file located in the folder 'src/main/resources/localization/domain-generated'.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="genericGenerator">
+    <xs:sequence>
+      <xs:element name="parameters" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:metaAttribute" name="parameter" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="name"/>
+    <xs:attribute type="xs:string" name="strategy"/>
+  </xs:complexType>
+  <xs:complexType name="pack">
+    <xs:annotation>
+      <xs:documentation>A pack is the aggregation of templates and static files that produces functionalities.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="filenames" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Control the generation output by filtering the generated files based on their filename.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:pattern" name="filename" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="templates" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Control the generation output by filtering the execution of the generation templates based on their filename.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:pattern" name="template" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:string" use="required" name="name">
+      <xs:annotation>
+        <xs:documentation>Name of the pack</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="path">
+      <xs:annotation>
+        <xs:documentation><![CDATA[Path of the pack, it should be relative to the project, or absolute.<br> Example: src/main/packs/my-own-pack/]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:boolean" use="required" name="enable">
+      <xs:annotation>
+        <xs:documentation>Should this pack be used ?</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:int" name="order">
+      <xs:annotation>
+        <xs:documentation>Specify the pack order, its main interest is when two packs produce the same artifacts.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="oneToOneConfig">
+    <xs:sequence>
+      <xs:element name="cascades" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The list of JPA cascade types for the this one-to-one association.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:cascade" name="cascade" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="var">
+      <xs:annotation>
+        <xs:documentation>The variable name for this one-to-one association. It should be singular, for example: 'parent'.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="tns:fetchType" name="fetch">
+      <xs:annotation>
+        <xs:documentation>The JPA fetch type for this one-to-one association.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:boolean" name="ajax">
+      <xs:annotation>
+        <xs:documentation>Should this many to one be represented as an ajax drop down instead of a simple list ?</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="implementsInterface">
+    <xs:sequence/>
+    <xs:attribute type="xs:string" use="required" name="fullType">
+      <xs:annotation>
+        <xs:documentation>The full interface name that this entity implements. For example 'com.mycompany.MyInterface'</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="restriction">
+    <xs:sequence>
+      <xs:element name="classTypes" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Restrict the generation to the following classTypes</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:classType" name="classType" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="wellKnownFolders" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Restrict the generation to the following wellKnownFolders</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:wellKnownFolder" name="wellKnownFolder" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="generatedPackages" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Restrict the generation to the following generatedPackages</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:generatedPackage" name="generatedPackage" minOccurs="0" maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="inheritance">
+  <xs:complexType name="include">
+    <xs:annotation>
+      <xs:documentation>Include a configuration file dedicated to entityConfigs. Use it on large project to split your entityConfigs configuration into smaller pieces.</xs:documentation>
+    </xs:annotation>
     <xs:sequence/>
-    <xs:attribute type="xs:string" name="discriminatorColumn"/>
-    <xs:attribute type="xs:string" name="discriminatorValue"/>
-    <xs:attribute type="xs:string" name="parentEntityName"/>
-    <xs:attribute type="tns:inheritanceType" name="strategy"/>
+    <xs:attribute type="xs:string" use="required" name="filename">
+      <xs:annotation>
+        <xs:documentation>The path to a configuration file whose entityConfigs tag will be loaded. The path must be relative to the folder containing the main configuration file. Beware, only the entityConfigs tag will be loaded from this file. For example: includes/ref/country.xml</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="xmlFormatter">
+    <xs:sequence/>
+    <xs:attribute type="xs:boolean" use="required" name="enableXmlFormatter">
+      <xs:annotation>
+        <xs:documentation>Enable Formatter for all XML generated file. Default to false. Note: currently formatting sort attributes in alphabetical order. This is not convenient for certain tags.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:int" name="maximumLineWidth"/>
+    <xs:attribute type="xs:int" name="indent"/>
+  </xs:complexType>
+  <xs:complexType name="methodConventionOverride">
+    <xs:annotation>
+      <xs:documentation>change the prefix/suffix conventions for a given method</xs:documentation>
+    </xs:annotation>
+    <xs:sequence/>
+    <xs:attribute type="tns:methodConvention" use="required" name="methodConvention">
+      <xs:annotation>
+        <xs:documentation><![CDATA[Method type to override<br> Example: GET_LOCALIZED]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="prefix">
+      <xs:annotation>
+        <xs:documentation><![CDATA[Override the prefix for this methodConvention<br> Example: get]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="suffix">
+      <xs:annotation>
+        <xs:documentation><![CDATA[Override the suffix for this methodConvention<br> Example: Localized]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="conventions">
+    <xs:annotation>
+      <xs:documentation>Change the default celerio conventions to your own needs.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element type="tns:fieldNaming" name="fieldNaming" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Allows you to change the way Celerio calculates the default field name out of a column name.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="tns:eclipseFormatter" name="eclipseFormatter" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines the formatting option of the generated Java files.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="tns:xmlFormatter" name="xmlFormatter" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines the formatting options of the generated XML/XHTML files.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="classTypes" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Override the conventions for classes</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:classTypeOverride" name="classType" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="generatedPackages" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Override the conventions for packages</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:generatedPackageOverride" name="generatedPackage" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="methodConventions" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Override the conventions for methods</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:methodConventionOverride" name="methodConvention" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="wellKnownFolders" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Override the conventions for folders</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:wellKnownFolderOverride" name="wellKnownFolder" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="tns:collectionType" name="collectionType">
+      <xs:annotation>
+        <xs:documentation>You can override the default collection type for this entity</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="identifiableProperty">
+      <xs:annotation>
+        <xs:documentation>The property name used in the Identifiable interface. Defaults to 'id'. If all your primary key are mapped to the same property name, you should change the identifiable property here to limit redundancy.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="tns:trueFalse" name="entitySubPackagePreprended">
+      <xs:annotation>
+        <xs:documentation>When constructing the package name of a class constructed using a GeneratedPackage, tell if the GeneratedPackage subPackage should be appended. For example given the entity 'MyEntity' with subpackage 'mysubpackage', and the generated package ManagerImpl with subpackage 'impl' then the packageName of all classes for MyEntity constructed using ManagerImpl will have the subpackage 'impl.mysubpackage'</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
   <xs:complexType name="column">
     <xs:annotation>
@@ -397,46 +808,108 @@
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
-  <xs:element type="tns:celerio" name="celerio"/>
-  <xs:complexType name="pattern">
+  <xs:complexType name="celerio">
+    <xs:sequence>
+      <xs:element name="includes" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>For large projects, you can split the content of the entityConfigs tag into multiple files and 'include' the files here.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:include" name="include" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element type="tns:configuration" name="configuration" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Configure the celerio generator, such as conventions, jdbc connectivity, and other</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="entityConfigs" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Configure the generated entities.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:entityConfig" name="entityConfig" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="sharedEnumConfigs" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Configure enums that will be used in multiple entities, and referenced by their name in ColumnConfig</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:enumConfig" name="sharedEnumConfig" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="indexedField">
     <xs:annotation>
-      <xs:documentation>A pattern is a structure to help handling inclusion and exclusion of resources</xs:documentation>
+      <xs:documentation>Allows you to configure Hibernate Search Field annotation.</xs:documentation>
     </xs:annotation>
     <xs:sequence/>
-    <xs:attribute type="xs:string" use="required" name="pattern">
+    <xs:attribute type="xs:string" name="bridgeImpl">
       <xs:annotation>
-        <xs:documentation><![CDATA[if the pattern contains '?', '*', '**' the matching will be done using an ant matcher, otherwise it will do a equalsIgnoreCase <ul> <li>? matches one character</li> <li>* matches zero or more characters</li> <li>** matches zero or more 'directories' in a path</li> </ul> Some examples: <ul> <li>com/t?st.jsp - matches com/test.jsp but also com/tast.jsp or com/txst.jsp</li> <li>com/yourcompany/**\/*.jsp - matches all .jsp files in the com/yourcompany directory</li> </ul>]]></xs:documentation>
+        <xs:documentation>The full type (ex: "com.jaxio.search.TikaBridge") of the field bridge implementation to use. When not null it is used by the @FieldBridge annotation.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute type="xs:boolean" use="required" name="include">
+    <xs:attribute type="xs:string" name="name"/>
+    <xs:attribute type="tns:store" name="store"/>
+    <xs:attribute type="xs:boolean" name="index"/>
+    <xs:attribute type="tns:analyze" name="analyze"/>
+    <xs:attribute type="xs:string" name="analyzer"/>
+    <xs:attribute type="tns:norms" name="norms"/>
+    <xs:attribute type="tns:termVector" name="termVector"/>
+  </xs:complexType>
+  <xs:complexType name="headerComment">
+    <xs:annotation>
+      <xs:documentation>Specify your own file header comments</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="lines" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Set each line to be added to the header files.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="xs:string" name="line" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:boolean" name="include">
       <xs:annotation>
-        <xs:documentation>True is is an inclusion pattern, false for an exclusion ?</xs:documentation>
+        <xs:documentation>Should the header be present in the generated files ?</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:boolean" name="showTemplateName">
+      <xs:annotation>
+        <xs:documentation>Should the template name be present in the header. This is useful when dealing with large amount of templates and packs for debugging purposes or support information.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
-  <xs:complexType name="importedKey">
+  <xs:complexType name="dateMapping">
     <xs:annotation>
-      <xs:documentation>Description of the primary key columns that are referenced by a table's foreign key columns (the primary keys imported by a table).</xs:documentation>
+      <xs:documentation>Global rule to map columns whose JDBC TYPE is DATE, TIME or TIMESTAMP to a Java type.</xs:documentation>
     </xs:annotation>
     <xs:sequence/>
-    <xs:attribute type="xs:string" use="required" name="fkColumnName">
+    <xs:attribute type="tns:mappedType" name="mappedType">
       <xs:annotation>
-        <xs:documentation>Foreign key column name</xs:documentation>
+        <xs:documentation>The mapped type to use when both the jdbcType and the columnNamePattern matches what is expected.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute type="xs:string" use="required" name="fkName">
+    <xs:attribute type="tns:jdbcType" name="columnJdbcType">
       <xs:annotation>
-        <xs:documentation>Foreign key name</xs:documentation>
+        <xs:documentation>Only column with this JdbcType are concerned by this mapping. Accepted JdbcType are DATE, TIME, TIMESTAMP. When set to null, we assume the column JdbcType may be DATE, TIME, or TIMESTAMP.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute type="xs:string" use="required" name="pkColumnName">
+    <xs:attribute type="xs:string" name="columnNameRegExp">
       <xs:annotation>
-        <xs:documentation>Primary key column name being imported</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" use="required" name="pkTableName">
-      <xs:annotation>
-        <xs:documentation>Primary key table name being imported</xs:documentation>
+        <xs:documentation>An optional regular expression to restrict the mapping by column name. The matching is case insensitive.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
@@ -461,7 +934,72 @@
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
-  <xs:element type="tns:metadata" name="metadata"/>
+  <xs:complexType name="eclipseFormatter">
+    <xs:sequence/>
+    <xs:attribute type="tns:formatterEnum" use="required" name="formatterChoice"/>
+    <xs:attribute type="xs:string" name="formatterFile"/>
+  </xs:complexType>
+  <xs:complexType name="celerioTemplateContext">
+    <xs:sequence>
+      <xs:element name="entityContextProperties" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:entityContextProperty" name="entityContextProperty" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="customAnnotation">
+    <xs:sequence/>
+    <xs:attribute type="xs:string" name="annotation">
+      <xs:annotation>
+        <xs:documentation>The full qualified custom annotation to apply to this property. For example: @com.mycompany.MyAnnotation(debug = true)</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="enumValue">
+    <xs:sequence>
+      <xs:element name="comments" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Set comments for this enum value.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="xs:string" name="comment" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:string" use="required" name="value">
+      <xs:annotation>
+        <xs:documentation><![CDATA[Value <br> Example: MS]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="name">
+      <xs:annotation>
+        <xs:documentation><![CDATA[Name of the enum value, by default is is the one defined in value<br> Example: Miss]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="label">
+      <xs:annotation>
+        <xs:documentation><![CDATA[Label to be used when representing this enum value <br> Example: gender.male]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="metadata">
+    <xs:sequence>
+      <xs:element type="tns:jdbcConnectivity" name="jdbcConnectivity" minOccurs="0"/>
+      <xs:element type="tns:databaseInfo" name="databaseInfo" minOccurs="0"/>
+      <xs:element name="tables" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:table" name="table" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
   <xs:complexType name="databaseInfo">
     <xs:annotation>
       <xs:documentation>Information about the database where celerio extracted the metadata</xs:documentation>
@@ -476,155 +1014,6 @@
     <xs:attribute type="xs:string" name="driverName"/>
     <xs:attribute type="xs:string" name="driverVersion"/>
     <xs:attribute type="xs:string" name="extraInfo"/>
-  </xs:complexType>
-  <xs:complexType name="cascade">
-    <xs:sequence/>
-    <xs:attribute type="tns:cascadeType" name="type">
-      <xs:annotation>
-        <xs:documentation>JPA cascade type.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="include">
-    <xs:annotation>
-      <xs:documentation>Include a configuration file dedicated to entityConfigs. Use it on large project to split your entityConfigs configuration into smaller pieces.</xs:documentation>
-    </xs:annotation>
-    <xs:sequence/>
-    <xs:attribute type="xs:string" use="required" name="filename">
-      <xs:annotation>
-        <xs:documentation>The path to a configuration file whose entityConfigs tag will be loaded. The path must be relative to the folder containing the main configuration file. Beware, only the entityConfigs tag will be loaded from this file. For example: includes/ref/country.xml</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="index">
-    <xs:annotation>
-      <xs:documentation>Description of the given table's indices and statistics</xs:documentation>
-    </xs:annotation>
-    <xs:sequence/>
-    <xs:attribute type="xs:string" use="required" name="columnName">
-      <xs:annotation>
-        <xs:documentation>Column name</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" use="required" name="indexName">
-      <xs:annotation>
-        <xs:documentation>Index name</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:boolean" use="required" name="nonUnique">
-      <xs:annotation>
-        <xs:documentation>Can index values be non-unique</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="safeHtml">
-    <xs:annotation>
-      <xs:documentation>Add Hibernate SafeHtml annotation on this field.</xs:documentation>
-    </xs:annotation>
-    <xs:sequence/>
-    <xs:attribute type="tns:safeHtmlWhiteListType" name="whitelistType"/>
-  </xs:complexType>
-  <xs:complexType name="manyToOneConfig">
-    <xs:sequence>
-      <xs:element name="cascades" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>The list of JPA cascade types for the this ManyToOne association.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:cascade" name="cascade" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute type="xs:string" name="var">
-      <xs:annotation>
-        <xs:documentation>The variable name for this many-to-one relation. It should be singular, for example: 'parent'.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="tns:fetchType" name="fetch">
-      <xs:annotation>
-        <xs:documentation>The JPA fetch type for this ManyToOne association.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:boolean" name="ajax">
-      <xs:annotation>
-        <xs:documentation>Should this many to one be represented as an ajax drop down instead of a simple list ?</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="customAnnotation">
-    <xs:sequence/>
-    <xs:attribute type="xs:string" name="annotation">
-      <xs:annotation>
-        <xs:documentation>The full qualified custom annotation to apply to this property. For example: @com.mycompany.MyAnnotation(debug = true)</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="eclipseFormatter">
-    <xs:sequence/>
-    <xs:attribute type="tns:formatterEnum" use="required" name="formatterChoice"/>
-    <xs:attribute type="xs:string" name="formatterFile"/>
-  </xs:complexType>
-  <xs:complexType name="generatedValue">
-    <xs:sequence/>
-    <xs:attribute type="xs:string" name="generator">
-      <xs:annotation>
-        <xs:documentation>The name of the primary key generator to use</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="tns:generationType" name="strategy">
-      <xs:annotation>
-        <xs:documentation>The primary key generation strategy that the persistence provider must use to generate the annotated entity primary key.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="restriction">
-    <xs:sequence>
-      <xs:element name="classTypes" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Restrict the generation to the following classTypes</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:classType" name="classType" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="wellKnownFolders" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Restrict the generation to the following wellKnownFolders</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:wellKnownFolder" name="wellKnownFolder" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="generatedPackages" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Restrict the generation to the following generatedPackages</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:generatedPackage" name="generatedPackage" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="genericGenerator">
-    <xs:sequence>
-      <xs:element name="parameters" minOccurs="0">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:metaAttribute" name="parameter" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute type="xs:string" name="name"/>
-    <xs:attribute type="xs:string" name="strategy"/>
   </xs:complexType>
   <xs:complexType name="jdbcConnectivity">
     <xs:sequence>
@@ -681,112 +1070,38 @@
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
-  <xs:complexType name="xmlFormatter">
-    <xs:sequence/>
-    <xs:attribute type="xs:boolean" use="required" name="enableXmlFormatter">
-      <xs:annotation>
-        <xs:documentation>Enable Formatter for all XML generated file. Default to false. Note: currently formatting sort attributes in alphabetical order. This is not convenient for certain tags.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:int" name="maximumLineWidth"/>
-    <xs:attribute type="xs:int" name="indent"/>
-  </xs:complexType>
-  <xs:complexType name="generation">
-    <xs:sequence/>
-    <xs:attribute type="xs:string" name="modelBasePrefix"/>
-    <xs:attribute type="xs:boolean" use="required" name="generateCacheAnnotationInEntity">
-      <xs:annotation>
-        <xs:documentation>Tell whether or not the Hibernate @Cache should be generated in Entity. Defaults to true.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:boolean" use="required" name="useMavenCelerioPlugin"/>
-    <xs:attribute type="xs:string" name="version"/>
-  </xs:complexType>
-  <xs:complexType name="dateMapping">
+  <xs:complexType name="importedKey">
     <xs:annotation>
-      <xs:documentation>Global rule to map columns whose JDBC TYPE is DATE, TIME or TIMESTAMP to a Java type.</xs:documentation>
+      <xs:documentation>Description of the primary key columns that are referenced by a table's foreign key columns (the primary keys imported by a table).</xs:documentation>
     </xs:annotation>
     <xs:sequence/>
-    <xs:attribute type="tns:mappedType" name="mappedType">
+    <xs:attribute type="xs:string" use="required" name="fkColumnName">
       <xs:annotation>
-        <xs:documentation>The mapped type to use when both the jdbcType and the columnNamePattern matches what is expected.</xs:documentation>
+        <xs:documentation>Foreign key column name</xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute type="tns:jdbcType" name="columnJdbcType">
+    <xs:attribute type="xs:string" use="required" name="fkName">
       <xs:annotation>
-        <xs:documentation>Only column with this JdbcType are concerned by this mapping. Accepted JdbcType are DATE, TIME, TIMESTAMP. When set to null, we assume the column JdbcType may be DATE, TIME, or TIMESTAMP.</xs:documentation>
+        <xs:documentation>Foreign key name</xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute type="xs:string" name="columnNameRegExp">
+    <xs:attribute type="xs:string" use="required" name="pkColumnName">
       <xs:annotation>
-        <xs:documentation>An optional regular expression to restrict the mapping by column name. The matching is case insensitive.</xs:documentation>
+        <xs:documentation>Primary key column name being imported</xs:documentation>
       </xs:annotation>
     </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="classTypeOverride">
-    <xs:annotation>
-      <xs:documentation>Override the class conventions such as GeneratedPackage, suffix and prefixes</xs:documentation>
-    </xs:annotation>
-    <xs:sequence/>
-    <xs:attribute type="tns:classType" use="required" name="classType">
+    <xs:attribute type="xs:string" use="required" name="pkTableName">
       <xs:annotation>
-        <xs:documentation>The ClassType to override</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="prefix">
-      <xs:annotation>
-        <xs:documentation>Override the prefix for this ClassType</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="suffix">
-      <xs:annotation>
-        <xs:documentation>Override the suffix for this ClassType</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="tns:generatedPackage" name="generatedPackage">
-      <xs:annotation>
-        <xs:documentation>Override the GeneratedPackage for this ClassType</xs:documentation>
+        <xs:documentation>Primary key table name being imported</xs:documentation>
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
-  <xs:complexType name="implementsInterface">
+  <xs:complexType name="inheritance">
     <xs:sequence/>
-    <xs:attribute type="xs:string" use="required" name="fullType">
-      <xs:annotation>
-        <xs:documentation>The full interface name that this entity implements. For example 'com.mycompany.MyInterface'</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="entityContextProperty">
-    <xs:annotation>
-      <xs:documentation>Used to introduce a new 'namer' property on each Celerio's entity context instance. Entity namer properties are convenient when writing classes that support entities, for example: Controller, Service, Dao, Validator etc... example: var name is obtained with ${entity.property.var} and has the value "prefixEntityNameSuffix".</xs:documentation>
-    </xs:annotation>
-    <xs:sequence/>
-    <xs:attribute type="xs:string" name="property">
-      <xs:annotation>
-        <xs:documentation>The property name.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="rootPackage">
-      <xs:annotation>
-        <xs:documentation>The root package. Defaults to the globally defined root package.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="subPackage">
-      <xs:annotation>
-        <xs:documentation>The sub package. For example: "security", "web.security". No defaults.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="prefix">
-      <xs:annotation>
-        <xs:documentation>Prefix prepended to the entity name.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="suffix">
-      <xs:annotation>
-        <xs:documentation>Prefix appended to the entity name.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
+    <xs:attribute type="xs:string" name="discriminatorColumn"/>
+    <xs:attribute type="xs:string" name="discriminatorValue"/>
+    <xs:attribute type="xs:string" name="parentEntityName"/>
+    <xs:attribute type="tns:inheritanceType" name="strategy"/>
   </xs:complexType>
   <xs:complexType name="columnConfig">
     <xs:sequence>
@@ -1022,609 +1337,12 @@
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
-  <xs:complexType name="conventions">
-    <xs:annotation>
-      <xs:documentation>Change the default celerio conventions to your own needs.</xs:documentation>
-    </xs:annotation>
-    <xs:sequence>
-      <xs:element type="tns:fieldNaming" name="fieldNaming" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Allows you to change the way Celerio calculates the default field name out of a column name.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element type="tns:eclipseFormatter" name="eclipseFormatter" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Defines the formatting option of the generated Java files.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element type="tns:xmlFormatter" name="xmlFormatter" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Defines the formatting options of the generated XML/XHTML files.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="classTypes" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Override the conventions for classes</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:classTypeOverride" name="classType" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="generatedPackages" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Override the conventions for packages</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:generatedPackageOverride" name="generatedPackage" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="methodConventions" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Override the conventions for methods</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:methodConventionOverride" name="methodConvention" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="wellKnownFolders" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Override the conventions for folders</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:wellKnownFolderOverride" name="wellKnownFolder" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute type="tns:collectionType" name="collectionType">
-      <xs:annotation>
-        <xs:documentation>You can override the default collection type for this entity</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="identifiableProperty">
-      <xs:annotation>
-        <xs:documentation>The property name used in the Identifiable interface. Defaults to 'id'. If all your primary key are mapped to the same property name, you should change the identifiable property here to limit redundancy.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="tns:trueFalse" name="entitySubPackagePreprended">
-      <xs:annotation>
-        <xs:documentation>When constructing the package name of a class constructed using a GeneratedPackage, tell if the GeneratedPackage subPackage should be appended. For example given the entity 'MyEntity' with subpackage 'mysubpackage', and the generated package ManagerImpl with subpackage 'impl' then the packageName of all classes for MyEntity constructed using ManagerImpl will have the subpackage 'impl.mysubpackage'</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="indexedField">
-    <xs:annotation>
-      <xs:documentation>Allows you to configure Hibernate Search Field annotation.</xs:documentation>
-    </xs:annotation>
-    <xs:sequence/>
-    <xs:attribute type="xs:string" name="bridgeImpl">
-      <xs:annotation>
-        <xs:documentation>The full type (ex: "com.jaxio.search.TikaBridge") of the field bridge implementation to use. When not null it is used by the @FieldBridge annotation.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="name"/>
-    <xs:attribute type="tns:store" name="store"/>
-    <xs:attribute type="xs:boolean" name="index"/>
-    <xs:attribute type="tns:analyze" name="analyze"/>
-    <xs:attribute type="xs:string" name="analyzer"/>
-    <xs:attribute type="tns:norms" name="norms"/>
-    <xs:attribute type="tns:termVector" name="termVector"/>
-  </xs:complexType>
-  <xs:complexType name="enumConfig">
-    <xs:annotation>
-      <xs:documentation>Describes an enum class</xs:documentation>
-    </xs:annotation>
-    <xs:sequence>
-      <xs:element name="enumValues">
-        <xs:annotation>
-          <xs:documentation>Specify the values that will be added to the current enum</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:enumValue" name="enumValue" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="comments" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Set comments for this enumeration.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="xs:string" name="comment" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute type="xs:string" use="required" name="name">
-      <xs:annotation>
-        <xs:documentation><![CDATA[Set the name of the generated enum.<br> Example: name="CreditCardEnum"]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="rootPackage">
-      <xs:annotation>
-        <xs:documentation><![CDATA[Allows you to override the default root package.<br> Example: com.yourcompany]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="subPackage">
-      <xs:annotation>
-        <xs:documentation><![CDATA[When you define a sub-package, the resulting enum's package becomes "<rootPackage>.domain.<subPackage>" instead of "<rootPackage>.domain". There is no sub-package by default.]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="tns:enumType" name="type">
-      <xs:annotation>
-        <xs:documentation>JPA enum type</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="userType">
-      <xs:annotation>
-        <xs:documentation><![CDATA[Specifiy the user type implementation to use to be given to hibernate <br/> Example: name="com.youcompany.hibernate.support.CustomDateUserType"]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="jodaTime">
-    <xs:annotation>
-      <xs:documentation>Configure the Hibernate type to use when mapping an attribute whose type is LocalDate or LocalDateTime.</xs:documentation>
-    </xs:annotation>
-    <xs:sequence/>
-    <xs:attribute type="xs:string" name="localDateHibernateType">
-      <xs:annotation>
-        <xs:documentation>The Hibernate type to use for Joda LocalDate. Defaults to "org.jadira.usertype.dateandtime.joda.PersistentLocalDate". You may set it instead to "org.joda.time.contrib.hibernate.PersistentLocalDate" if you use hibernate 3.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="localDateTimeHibernateType">
-      <xs:annotation>
-        <xs:documentation>The Hibernate type to use for Joda LocalDateTime. Defaults to "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime". You may set it instead to "org.joda.time.contrib.hibernate.PersistentLocalDateTime" if you use hibernate 3.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="oneToOneConfig">
-    <xs:sequence>
-      <xs:element name="cascades" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>The list of JPA cascade types for the this one-to-one association.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:cascade" name="cascade" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute type="xs:string" name="var">
-      <xs:annotation>
-        <xs:documentation>The variable name for this one-to-one association. It should be singular, for example: 'parent'.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="tns:fetchType" name="fetch">
-      <xs:annotation>
-        <xs:documentation>The JPA fetch type for this one-to-one association.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:boolean" name="ajax">
-      <xs:annotation>
-        <xs:documentation>Should this many to one be represented as an ajax drop down instead of a simple list ?</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="metaAttribute">
-    <xs:annotation>
-      <xs:documentation>Meta attributes are free form key value pairs</xs:documentation>
-    </xs:annotation>
-    <xs:sequence/>
-    <xs:attribute type="xs:string" use="required" name="name">
-      <xs:annotation>
-        <xs:documentation>name of you meta attribute</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" use="required" name="value">
-      <xs:annotation>
-        <xs:documentation>value for this attribute</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="celerio">
-    <xs:sequence>
-      <xs:element name="includes" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>For large projects, you can split the content of the entityConfigs tag into multiple files and 'include' the files here.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:include" name="include" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element type="tns:configuration" name="configuration" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Configure the celerio generator, such as conventions, jdbc connectivity, and other</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="entityConfigs" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Configure the generated entities.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:entityConfig" name="entityConfig" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="sharedEnumConfigs" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Configure enums that will be used in multiple entities, and referenced by their name in ColumnConfig</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:enumConfig" name="sharedEnumConfig" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="generatedPackageOverride">
-    <xs:annotation>
-      <xs:documentation>Override the convention for a given GeneratedPackage</xs:documentation>
-    </xs:annotation>
-    <xs:sequence/>
-    <xs:attribute type="tns:generatedPackage" use="required" name="generatedPackage">
-      <xs:annotation>
-        <xs:documentation>The GeneratedPackage to override</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="rootPackage">
-      <xs:annotation>
-        <xs:documentation><![CDATA[Override the root package<br> Example: com.yourcompany]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="subPackage">
-      <xs:annotation>
-        <xs:documentation><![CDATA[Override the sub package, if rootPackage is also specified they will be merged.<br> Example: my.subpackage]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="entityConfig">
-    <xs:annotation>
-      <xs:documentation>Describes an entity config</xs:documentation>
-    </xs:annotation>
-    <xs:sequence>
-      <xs:element name="usages" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>For future use</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="xs:string" name="usage" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element type="tns:inheritance" name="inheritance" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Inheritance configuration.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element type="tns:extendsClass" name="extendsClass" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Specify the base class that this entity should extends. Only for root entity.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="implementsInterfaces" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Specify the extra interfaces that this entity should implement.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:implementsInterface" name="implementsInterface" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="metaAttributes" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Meta attributes are free form key value pairs.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:metaAttribute" name="metaAttribute" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="columnConfigs" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>This entity's columnConfigs. Note that for entities without inheritance or for entities with a JOIN inheritance strategy, if a column is present in the table's meta data but has no corresponding entityConfig in this list, then an entityConfig is created by default and added automatically to this list.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:columnConfig" name="columnConfig" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="customAnnotations" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>List of custom annotations to apply on this entity.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:customAnnotation" name="customAnnotation" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute type="xs:string" name="entityName">
-      <xs:annotation>
-        <xs:documentation><![CDATA[The JPA entity's type. <br> For example, entityName="BankAccount". <br> By default, the entity name is deduced from the table name. <br> For example: 'bank_account' will become 'BankAccount';]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="sequenceName">
-      <xs:annotation>
-        <xs:documentation>Allows you to specify the sequence name to use in order to generate this entity pk value. When a sequence name is provided the corresponding @SequenceGenerator and @GeneratedValue annotations are added to the primary key attribute.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="tableName">
-      <xs:annotation>
-        <xs:documentation>The underlying table name for the entity. If not set, inheritance must be configured.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:boolean" name="indexed">
-      <xs:annotation>
-        <xs:documentation>Should this entity be annotated with hibernate search @Indexed annotation? False by default.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:boolean" name="middleTable">
-      <xs:annotation>
-        <xs:documentation>By convention a table is considered as a many-to-many middle table if it has two foreign keys and no other regular columns. This attribute allows you to consider this table as a middle table, even if it has other regular columns. A regular column is a column that is not used as a primary key or as an optimistic lock.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="comment">
-      <xs:annotation>
-        <xs:documentation>The comment that will be inserted in this entity's JavaDoc.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="rootPackage">
-      <xs:annotation>
-        <xs:documentation><![CDATA[Allows you to override the default root package.<br> Example: com.yourcompany]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="subPackage">
-      <xs:annotation>
-        <xs:documentation><![CDATA[When you define a sub-package, the resulting entity's package becomes "<rootPackage>.domain.<subPackage>" instead of "<rootPackage>.domain". There is no sub-package by default.]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="tns:associationDirection" name="associationDirection">
-      <xs:annotation>
-        <xs:documentation>It is pertinent only if this entity's table plays the role of a middle table in a many-to-many association. In that case you can use this parameter to set the many-to-many association direction.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="tns:collectionType" name="collectionType">
-      <xs:annotation>
-        <xs:documentation>You can override the default collection type for this entity</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="label">
-      <xs:annotation>
-        <xs:documentation>The label for this entity. It is copied in the entity properties file located in the folder 'src/main/resources/localization/domain-generated'.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="extendsClass">
-    <xs:sequence/>
-    <xs:attribute type="xs:string" use="required" name="fullType">
-      <xs:annotation>
-        <xs:documentation>The full class name that this entity extends. For example 'com.mycompany.MyClass'. This is taken into account only if the entity is a root entity.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="metadata">
-    <xs:sequence>
-      <xs:element type="tns:jdbcConnectivity" name="jdbcConnectivity" minOccurs="0"/>
-      <xs:element type="tns:databaseInfo" name="databaseInfo" minOccurs="0"/>
-      <xs:element name="tables" minOccurs="0">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:table" name="table" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="methodConventionOverride">
-    <xs:annotation>
-      <xs:documentation>change the prefix/suffix conventions for a given method</xs:documentation>
-    </xs:annotation>
-    <xs:sequence/>
-    <xs:attribute type="tns:methodConvention" use="required" name="methodConvention">
-      <xs:annotation>
-        <xs:documentation><![CDATA[Method type to override<br> Example: GET_LOCALIZED]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="prefix">
-      <xs:annotation>
-        <xs:documentation><![CDATA[Override the prefix for this methodConvention<br> Example: get]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="suffix">
-      <xs:annotation>
-        <xs:documentation><![CDATA[Override the suffix for this methodConvention<br> Example: Localized]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="pack">
-    <xs:annotation>
-      <xs:documentation>A pack is the aggregation of templates and static files that produces functionalities.</xs:documentation>
-    </xs:annotation>
-    <xs:sequence>
-      <xs:element name="filenames" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Control the generation output by filtering the generated files based on their filename.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:pattern" name="filename" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="templates" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Control the generation output by filtering the execution of the generation templates based on their filename.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:pattern" name="template" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute type="xs:string" use="required" name="name">
-      <xs:annotation>
-        <xs:documentation>Name of the pack</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="path">
-      <xs:annotation>
-        <xs:documentation><![CDATA[Path of the pack, it should be relative to the project, or absolute.<br> Example: src/main/packs/my-own-pack/]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:boolean" use="required" name="enable">
-      <xs:annotation>
-        <xs:documentation>Should this pack be used ?</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:int" name="order">
-      <xs:annotation>
-        <xs:documentation>Specify the pack order, its main interest is when two packs produce the same artifacts.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="enumValue">
-    <xs:sequence>
-      <xs:element name="comments" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Set comments for this enum value.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="xs:string" name="comment" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute type="xs:string" use="required" name="value">
-      <xs:annotation>
-        <xs:documentation><![CDATA[Value <br> Example: MS]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="name">
-      <xs:annotation>
-        <xs:documentation><![CDATA[Name of the enum value, by default is is the one defined in value<br> Example: Miss]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="label">
-      <xs:annotation>
-        <xs:documentation><![CDATA[Label to be used when representing this enum value <br> Example: gender.male]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
   <xs:complexType name="ajax">
     <xs:sequence/>
     <xs:attribute type="xs:boolean" name="oneToOne"/>
     <xs:attribute type="xs:boolean" name="manyToOne"/>
   </xs:complexType>
-  <xs:complexType name="manyToManyConfig">
-    <xs:annotation>
-      <xs:documentation>The ManyToManyConfig allows you to fine tune your @ManyToMany association. The ManyToManyConfig element must be a child of a columnConfig element referencing (i.e foreignkey) the entity that is the target of this @ManyToMany association. The columnConfig necessarily belongs to a 'join entity'.</xs:documentation>
-    </xs:annotation>
-    <xs:sequence>
-      <xs:element name="cascades" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>The list of JPA cascade types for the this ManyToMany association.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="tns:cascade" name="cascade" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute type="xs:string" name="var">
-      <xs:annotation>
-        <xs:documentation>The variable name for the collection. It should be plural, for example: 'children'.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:string" name="elementVar">
-      <xs:annotation>
-        <xs:documentation>The variable name for an element of the collection. For example, if the variable name for the collection is 'children', the elementVar should be child. This elementVar will be used to generate convenient methods for the collection, such as an adder method addChild(YourType child).</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="tns:fetchType" name="fetch">
-      <xs:annotation>
-        <xs:documentation>The JPA fetch type for this ManyToMany association.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="headerComment">
-    <xs:annotation>
-      <xs:documentation>Specify your own file header comments</xs:documentation>
-    </xs:annotation>
-    <xs:sequence>
-      <xs:element name="lines" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Set each line to be added to the header files.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="xs:string" name="line" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute type="xs:boolean" name="include">
-      <xs:annotation>
-        <xs:documentation>Should the header be present in the generated files ?</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:boolean" name="showTemplateName">
-      <xs:annotation>
-        <xs:documentation>Should the template name be present in the header. This is useful when dealing with large amount of templates and packs for debugging purposes or support information.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="numberMapping">
-    <xs:annotation>
-      <xs:documentation>Global rule to map columns whose JDBC TYPE correspond to a number to a Java type.</xs:documentation>
-    </xs:annotation>
-    <xs:sequence/>
-    <xs:attribute type="tns:mappedType" name="mappedType">
-      <xs:annotation>
-        <xs:documentation>The mapped type to use when both the column size and decimal digit value fall into the specified ranges.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:int" name="columnSizeMin">
-      <xs:annotation>
-        <xs:documentation>The minimum (inclusive) column size to fall into this mapping range.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:int" name="columnSizeMax">
-      <xs:annotation>
-        <xs:documentation>The maximum (exclusive) column size to fall into this mapping range.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:int" name="columnDecimalDigitsMin">
-      <xs:annotation>
-        <xs:documentation>The minimum (inclusive) column decimal digit value to fall into this mapping range.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute type="xs:int" name="columnDecimalDigitsMax">
-      <xs:annotation>
-        <xs:documentation>The maximum (exclusive) column decimal digit value to fall into this mapping range.</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
+  <xs:element type="tns:celerio" name="celerio"/>
   <xs:complexType name="table">
     <xs:annotation>
       <xs:documentation>Describes all the metadata for a given table</xs:documentation>
@@ -1687,6 +1405,35 @@
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
+  <xs:complexType name="oneToManyConfig">
+    <xs:sequence>
+      <xs:element name="cascades" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The list of JPA cascade types for the this OneToMany association.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:cascade" name="cascade" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="var">
+      <xs:annotation>
+        <xs:documentation>The variable name for the collection. It should be plural, for example: 'children'.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="elementVar">
+      <xs:annotation>
+        <xs:documentation>The variable name for an element of the collection. For example, if the variable name for the collection is 'children', the elementVar should be child. This elementVar will be used to generate convenient methods for the collection, such as an adder method addChild(YourType child).</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="tns:fetchType" name="fetch">
+      <xs:annotation>
+        <xs:documentation>The JPA fetch type for this OneToMany association.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
   <xs:complexType name="fieldNaming">
     <xs:annotation>
       <xs:documentation><![CDATA[By default Celerio calculates Java field name based on the underlying column name. <br> This setting allows you to change the column name that is passed to Celerio to calculate the default field name. <br> You can for example remove well known prefix pattern from your column names.]]></xs:documentation>
@@ -1702,6 +1449,65 @@
         <xs:documentation>The replacement String. For example, assuming you want to remove from all column names the prefix string that consists of 3 chars and a '_', you can use 'regexp="^.{3}_{1}" replace=""'.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="enumConfig">
+    <xs:annotation>
+      <xs:documentation>Describes an enum class</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="enumValues">
+        <xs:annotation>
+          <xs:documentation>Specify the values that will be added to the current enum</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:enumValue" name="enumValue" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="comments" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Set comments for this enumeration.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="xs:string" name="comment" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:string" use="required" name="name">
+      <xs:annotation>
+        <xs:documentation><![CDATA[Set the name of the generated enum.<br> Example: name="CreditCardEnum"]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="rootPackage">
+      <xs:annotation>
+        <xs:documentation><![CDATA[Allows you to override the default root package.<br> Example: com.yourcompany]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="subPackage">
+      <xs:annotation>
+        <xs:documentation><![CDATA[When you define a sub-package, the resulting enum's package becomes "<rootPackage>.domain.<subPackage>" instead of "<rootPackage>.domain". There is no sub-package by default.]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="tns:enumType" name="type">
+      <xs:annotation>
+        <xs:documentation>JPA enum type</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="userType">
+      <xs:annotation>
+        <xs:documentation><![CDATA[Specifiy the user type implementation to use to be given to hibernate <br/> Example: name="com.youcompany.hibernate.support.CustomDateUserType"]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="safeHtml">
+    <xs:annotation>
+      <xs:documentation>Add Hibernate SafeHtml annotation on this field.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence/>
+    <xs:attribute type="tns:safeHtmlWhiteListType" name="whitelistType"/>
   </xs:complexType>
   <xs:complexType name="configuration">
     <xs:sequence>
@@ -1857,11 +1663,49 @@
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
-  <xs:complexType name="oneToManyConfig">
+  <xs:complexType name="cascade">
+    <xs:sequence/>
+    <xs:attribute type="tns:cascadeType" name="type">
+      <xs:annotation>
+        <xs:documentation>JPA cascade type.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="pattern">
+    <xs:annotation>
+      <xs:documentation>A pattern is a structure to help handling inclusion and exclusion of resources</xs:documentation>
+    </xs:annotation>
+    <xs:sequence/>
+    <xs:attribute type="xs:string" use="required" name="pattern">
+      <xs:annotation>
+        <xs:documentation><![CDATA[if the pattern contains '?', '*', '**' the matching will be done using an ant matcher, otherwise it will do a equalsIgnoreCase <ul> <li>? matches one character</li> <li>* matches zero or more characters</li> <li>** matches zero or more 'directories' in a path</li> </ul> Some examples: <ul> <li>com/t?st.jsp - matches com/test.jsp but also com/tast.jsp or com/txst.jsp</li> <li>com/yourcompany/**\/*.jsp - matches all .jsp files in the com/yourcompany directory</li> </ul>]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:boolean" use="required" name="include">
+      <xs:annotation>
+        <xs:documentation>True is is an inclusion pattern, false for an exclusion ?</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="generation">
+    <xs:sequence/>
+    <xs:attribute type="xs:string" name="modelBasePrefix"/>
+    <xs:attribute type="xs:boolean" use="required" name="generateCacheAnnotationInEntity">
+      <xs:annotation>
+        <xs:documentation>Tell whether or not the Hibernate @Cache should be generated in Entity. Defaults to true.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:boolean" use="required" name="useMavenCelerioPlugin"/>
+    <xs:attribute type="xs:string" name="version"/>
+  </xs:complexType>
+  <xs:complexType name="manyToManyConfig">
+    <xs:annotation>
+      <xs:documentation>The ManyToManyConfig allows you to fine tune your @ManyToMany association. The ManyToManyConfig element must be a child of a columnConfig element referencing (i.e foreignkey) the entity that is the target of this @ManyToMany association. The columnConfig necessarily belongs to a 'join entity'.</xs:documentation>
+    </xs:annotation>
     <xs:sequence>
       <xs:element name="cascades" minOccurs="0">
         <xs:annotation>
-          <xs:documentation>The list of JPA cascade types for the this OneToMany association.</xs:documentation>
+          <xs:documentation>The list of JPA cascade types for the this ManyToMany association.</xs:documentation>
         </xs:annotation>
         <xs:complexType>
           <xs:sequence>
@@ -1882,7 +1726,163 @@
     </xs:attribute>
     <xs:attribute type="tns:fetchType" name="fetch">
       <xs:annotation>
-        <xs:documentation>The JPA fetch type for this OneToMany association.</xs:documentation>
+        <xs:documentation>The JPA fetch type for this ManyToMany association.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="extendsClass">
+    <xs:sequence/>
+    <xs:attribute type="xs:string" use="required" name="fullType">
+      <xs:annotation>
+        <xs:documentation>The full class name that this entity extends. For example 'com.mycompany.MyClass'. This is taken into account only if the entity is a root entity.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:element type="tns:metadata" name="metadata"/>
+  <xs:complexType name="numberMapping">
+    <xs:annotation>
+      <xs:documentation>Global rule to map columns whose JDBC TYPE correspond to a number to a Java type.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence/>
+    <xs:attribute type="tns:mappedType" name="mappedType">
+      <xs:annotation>
+        <xs:documentation>The mapped type to use when both the column size and decimal digit value fall into the specified ranges.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:int" name="columnSizeMin">
+      <xs:annotation>
+        <xs:documentation>The minimum (inclusive) column size to fall into this mapping range.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:int" name="columnSizeMax">
+      <xs:annotation>
+        <xs:documentation>The maximum (exclusive) column size to fall into this mapping range.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:int" name="columnDecimalDigitsMin">
+      <xs:annotation>
+        <xs:documentation>The minimum (inclusive) column decimal digit value to fall into this mapping range.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:int" name="columnDecimalDigitsMax">
+      <xs:annotation>
+        <xs:documentation>The maximum (exclusive) column decimal digit value to fall into this mapping range.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="jodaTime">
+    <xs:annotation>
+      <xs:documentation>Configure the Hibernate type to use when mapping an attribute whose type is LocalDate or LocalDateTime.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence/>
+    <xs:attribute type="xs:string" name="localDateHibernateType">
+      <xs:annotation>
+        <xs:documentation>The Hibernate type to use for Joda LocalDate. Defaults to "org.jadira.usertype.dateandtime.joda.PersistentLocalDate". You may set it instead to "org.joda.time.contrib.hibernate.PersistentLocalDate" if you use hibernate 3.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="localDateTimeHibernateType">
+      <xs:annotation>
+        <xs:documentation>The Hibernate type to use for Joda LocalDateTime. Defaults to "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime". You may set it instead to "org.joda.time.contrib.hibernate.PersistentLocalDateTime" if you use hibernate 3.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="generatedPackageOverride">
+    <xs:annotation>
+      <xs:documentation>Override the convention for a given GeneratedPackage</xs:documentation>
+    </xs:annotation>
+    <xs:sequence/>
+    <xs:attribute type="tns:generatedPackage" use="required" name="generatedPackage">
+      <xs:annotation>
+        <xs:documentation>The GeneratedPackage to override</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="rootPackage">
+      <xs:annotation>
+        <xs:documentation><![CDATA[Override the root package<br> Example: com.yourcompany]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="subPackage">
+      <xs:annotation>
+        <xs:documentation><![CDATA[Override the sub package, if rootPackage is also specified they will be merged.<br> Example: my.subpackage]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="metaAttribute">
+    <xs:annotation>
+      <xs:documentation>Meta attributes are free form key value pairs</xs:documentation>
+    </xs:annotation>
+    <xs:sequence/>
+    <xs:attribute type="xs:string" use="required" name="name">
+      <xs:annotation>
+        <xs:documentation>name of you meta attribute</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" use="required" name="value">
+      <xs:annotation>
+        <xs:documentation>value for this attribute</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="generatedValue">
+    <xs:sequence/>
+    <xs:attribute type="xs:string" name="generator">
+      <xs:annotation>
+        <xs:documentation>The name of the primary key generator to use</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="tns:generationType" name="strategy">
+      <xs:annotation>
+        <xs:documentation>The primary key generation strategy that the persistence provider must use to generate the annotated entity primary key.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="index">
+    <xs:annotation>
+      <xs:documentation>Description of the given table's indices and statistics</xs:documentation>
+    </xs:annotation>
+    <xs:sequence/>
+    <xs:attribute type="xs:string" use="required" name="columnName">
+      <xs:annotation>
+        <xs:documentation>Column name</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" use="required" name="indexName">
+      <xs:annotation>
+        <xs:documentation>Index name</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:boolean" use="required" name="nonUnique">
+      <xs:annotation>
+        <xs:documentation>Can index values be non-unique</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="manyToOneConfig">
+    <xs:sequence>
+      <xs:element name="cascades" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The list of JPA cascade types for the this ManyToOne association.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="tns:cascade" name="cascade" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="var">
+      <xs:annotation>
+        <xs:documentation>The variable name for this many-to-one relation. It should be singular, for example: 'parent'.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="tns:fetchType" name="fetch">
+      <xs:annotation>
+        <xs:documentation>The JPA fetch type for this ManyToOne association.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:boolean" name="ajax">
+      <xs:annotation>
+        <xs:documentation>Should this many to one be represented as an ajax drop down instead of a simple list ?</xs:documentation>
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>

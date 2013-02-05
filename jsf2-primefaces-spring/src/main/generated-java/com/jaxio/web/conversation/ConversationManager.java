@@ -83,7 +83,7 @@ public class ConversationManager implements ApplicationContextAware {
     // --------------------------------------
 
     /**
-     * Creates a new {@link Conversation}, calls the {@link ConversationListener#conversationCreated} but does NOT bound the newly created application to
+     * Creates a new {@link Conversation}, calls the {@link ConversationListener#conversationCreated} but does NOT bound the newly created conversation to
      * the current thread.
      */
     public Conversation createConversation(HttpServletRequest request) throws UnexpectedConversationException {
@@ -97,6 +97,13 @@ public class ConversationManager implements ApplicationContextAware {
         return conversation;
     }
 
+    /**
+     * Resume the {@link Conversation} having the passed id. Before resuming it, if a pending ConversationContext is present, 
+     * it is pushed on the conversation contextes stack. 
+     * @param id the id of the conversation to resume 
+     * @param request
+     * @throws UnexpectedConversationException
+     */
     public void resumeConversation(String id, HttpServletRequest request) throws UnexpectedConversationException {
         Conversation conversation = conversationMap(request.getSession()).get(id);
 
@@ -104,7 +111,7 @@ public class ConversationManager implements ApplicationContextAware {
             conversation.pushNextContext();
 
             if (!request.getRequestURI().contains(conversation.getViewUri())) {
-                throw new UnexpectedConversationException("Uri not in sync with conversation", request.getRequestURI(), conversation.getMenuUrl());
+                throw new UnexpectedConversationException("Uri not in sync with conversation", request.getRequestURI(), conversation.getUrl());
             }
             conversationResuming(conversation);
             currentConversation.set(conversation);
@@ -113,20 +120,21 @@ public class ConversationManager implements ApplicationContextAware {
         }
     }
 
+    /**
+     * Pause the current conversation. Before pausing it, pops the current context as needed.  
+     */
     public void pauseCurrentConversation() {
         Conversation conversation = currentConversation.get();
         if (conversation != null) {
             // we check for not null beacause the conversation could have 
-            // been ended during the current request. 
+            // been ended during the current request.        	
+            if (conversation.isPopCurrentContextOnNextPause()) {
+                conversation.popCurrentContext();
+                conversation.setPopCurrentContextOnNextPause(false);
+            }
             conversationPausing(conversation);
             currentConversation.set(null);
         }
-    }
-
-    public void popCurrentContext() {
-        Conversation conversation = currentConversation.get();
-        ConversationContext<?> removedContext = conversation.popContext();
-        conversationContextPopped(conversation, removedContext);
     }
 
     /**
@@ -156,7 +164,7 @@ public class ConversationManager implements ApplicationContextAware {
         for (Conversation conversation : conversationMap().values()) {
             MenuItem htmlMenuItem = new MenuItem();
             htmlMenuItem.setValue(conversation.getLabel());
-            htmlMenuItem.setUrl(conversation.getMenuUrl());
+            htmlMenuItem.setUrl(conversation.getUrl());
             if (current != null && current.getId().equals(conversation.getId())) {
                 htmlMenuItem.setDisabled(true);
             }
@@ -277,12 +285,6 @@ public class ConversationManager implements ApplicationContextAware {
     private void conversationResuming(Conversation conversation) {
         for (ConversationListener cl : getConversationListeners()) {
             cl.conversationResuming(conversation);
-        }
-    }
-
-    private void conversationContextPopped(Conversation conversation, ConversationContext<?> conversationContext) {
-        for (ConversationListener cl : getConversationListeners()) {
-            cl.conversationContextPopped(conversation, conversationContext);
         }
     }
 

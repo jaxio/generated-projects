@@ -24,10 +24,11 @@ public class Conversation implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Stack<ConversationContext<?>> contextes = new Stack<ConversationContext<?>>();
-    private ConversationContext<?> nextContext;
     private String id;
     private EntityManager em;
+    private Stack<ConversationContext<?>> contextes = new Stack<ConversationContext<?>>();
+    private boolean popCurrentContextOnNextPause = false;
+    private ConversationContext<?> nextContext;
 
     /**
      * Create a new conversation and assign it a unique id in the scope of the user's session.
@@ -50,6 +51,9 @@ public class Conversation implements Serializable {
         this.id = id;
     }
 
+    /**
+     * Returns this conversation Id.
+     */
     public String getId() {
         return id;
     }
@@ -62,15 +66,29 @@ public class Conversation implements Serializable {
         return em;
     }
 
-    public void push(ConversationContext<?> newContext) {
+    /**
+     * Set a flag to instruct the conversation manager to pop the current conversation context when it pauses the current conversation.
+     * Why do we need this? When an action is triggered from within a dataTable, the JSF runtime executes some EL after our action. By doing so 
+     * it requests a conversation scoped bean that belongs to the current context. If this context is popped too soon, the bean is recreated!
+     * @param popCurrentContextOnNextPause
+     */
+    public void setPopCurrentContextOnNextPause(boolean popCurrentContextOnNextPause) {
+        this.popCurrentContextOnNextPause = popCurrentContextOnNextPause;
+    }
+
+    /**
+     * Whether the current conversation context should be popped by the conversatin manager before pausing the current conversation.
+     * @return
+     */
+    public boolean isPopCurrentContextOnNextPause() {
+        return popCurrentContextOnNextPause;
+    }
+
+    public void setNextContext(ConversationContext<?> newContext) {
         newContext.setConversationId(getId());
-        if (contextes.size() == 0) {
-            contextes.push(newContext);
-        } else {
-            // we delay the context push because apparently some EL is invoked after bean action is performed
-            // which it leads in some cases to re-creation of 'conversation scoped' bean.
-            nextContext = newContext; // will be pushed at next request during resuming...
-        }
+        // we delay the context push because apparently some EL is invoked after bean action is performed
+        // which it leads in some cases to re-creation of 'conversation scoped' bean.
+        nextContext = newContext; // will be pushed at next request during resuming...
     }
 
     protected void pushNextContext() {
@@ -80,20 +98,20 @@ public class Conversation implements Serializable {
         }
     }
 
-    public void pushSub(ConversationContext<?> newContext) {
+    public void setNextContextSub(ConversationContext<?> newContext) {
         newContext.setSub(true);
-        push(newContext);
+        setNextContext(newContext);
     }
 
-    public void pushSubReadOnly(ConversationContext<?> newContext) {
+    public void setNextContextSubReadOnly(ConversationContext<?> newContext) {
         newContext.setSub(true);
         newContext.setReadonly(true);
-        push(newContext);
+        setNextContext(newContext);
     }
 
-    public void pushReadOnly(ConversationContext<?> newContext) {
+    public void setNextContextReadOnly(ConversationContext<?> newContext) {
         newContext.setReadonly(true);
-        push(newContext);
+        setNextContext(newContext);
     }
 
     @SuppressWarnings("unchecked")
@@ -105,8 +123,7 @@ public class Conversation implements Serializable {
         return contextes;
     }
 
-    protected ConversationContext<?> popContext() {
-        // Note: popContext is protected, only conversationManager should call it, so it can notify the listeners. 
+    protected ConversationContext<?> popCurrentContext() {
         if (contextes.size() > 1) {
             return contextes.pop();
         } else {
@@ -115,10 +132,32 @@ public class Conversation implements Serializable {
     }
 
     /**
-     * Returns the view url for the next page.
+     * Returns the view url for the next page. Used by action when returning the view.
      */
     public String nextView() {
-        return nextContext != null ? nextContext.view() : contextes.peek().view();
+        if (nextContext != null) {
+            return nextContext.view();
+        }
+
+        if (popCurrentContextOnNextPause) {
+            ConversationContext<?> beforeLast = contextes.elementAt(contextes.size() - 2);
+            return beforeLast.view();
+        }
+
+        return contextes.peek().view();
+    }
+
+    public String nextUrl() {
+        if (nextContext != null) {
+            return nextContext.getUrl();
+        }
+
+        if (popCurrentContextOnNextPause) {
+            ConversationContext<?> beforeLast = contextes.elementAt(contextes.size() - 2);
+            return beforeLast.getUrl();
+        }
+
+        return contextes.peek().getUrl();
     }
 
     // ------------------------------------------
@@ -135,8 +174,8 @@ public class Conversation implements Serializable {
     /**
      * @return the menu url of the last pushed context. 
      */
-    public String getMenuUrl() {
-        return contextes.peek().getMenuUrl();
+    public String getUrl() {
+        return contextes.peek().getUrl();
     }
 
     /**

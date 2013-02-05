@@ -50,7 +50,7 @@ public class BookController implements ConversationFactory {
             Conversation conversation = Conversation.newInstance(request);
             ConversationContext<Book> ctx = newSearchContext();
             ctx.setLabelWithKey("book");
-            conversation.push(ctx);
+            conversation.setNextContext(ctx);
             return conversation;
         }
 

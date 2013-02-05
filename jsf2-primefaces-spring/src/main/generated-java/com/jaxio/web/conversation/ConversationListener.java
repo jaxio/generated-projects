@@ -29,11 +29,6 @@ public interface ConversationListener {
     void conversationPausing(Conversation conversation);
 
     /**
-     * Called just after the passed ConversationContext was popped from the passed conversations's ConversationContext stack. 
-     */
-    void conversationContextPopped(Conversation conversation, ConversationContext<?> contextRemoved);
-
-    /**
      * Called to indicate the conversation is ending.
      */
     void conversationEnding(Conversation conversation);

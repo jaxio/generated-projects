@@ -45,6 +45,9 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
 
     public void setAccount(Account account) {
         this.account = account;
+        books = new SelectableListDataModel<Book>(account.getBooks());
+        documents = new SelectableListDataModel<Document>(account.getDocuments());
+        roles = new SelectableListDataModel<Role>(account.getRoles());
     }
 
     public Account getAccount() {
@@ -61,23 +64,14 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     }
 
     public SelectableListDataModel<Book> getBooks() {
-        if (books == null) {
-            books = new SelectableListDataModel<Book>(account.getBooks());
-        }
         return books;
     }
 
     public SelectableListDataModel<Document> getDocuments() {
-        if (documents == null) {
-            documents = new SelectableListDataModel<Document>(account.getDocuments());
-        }
         return documents;
     }
 
     public SelectableListDataModel<Role> getRoles() {
-        if (roles == null) {
-            roles = new SelectableListDataModel<Role>(account.getRoles());
-        }
         return roles;
     }
 
@@ -88,7 +82,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     public String viewHomeAddress() {
         ConversationContext<Address> ctx = AddressController.newEditContext(account.getHomeAddress());
         ctx.setLabelWithKey("account_homeAddress");
-        conversation().pushSubReadOnly(ctx);
+        conversation().setNextContextSubReadOnly(ctx);
         return ctx.view();
     }
 
@@ -96,7 +90,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ConversationContext<Address> ctx = AddressController.newSearchContext();
         ctx.setLabelWithKey("account_homeAddress");
         ctx.setCallBack(selectHomeAddressCallBack);
-        conversation().pushSub(ctx);
+        conversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -115,7 +109,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ConversationContext<Address> ctx = AddressController.newEditContext(new Address());
         ctx.setLabelWithKey("account_homeAddress");
         ctx.setCallBack(addHomeAddressCallBack);
-        conversation().pushSub(ctx);
+        conversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -132,7 +126,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     public String editHomeAddress() {
         ConversationContext<Address> ctx = AddressController.newEditContext(account.getHomeAddress());
         ctx.setLabelWithKey("account_homeAddress");
-        conversation().pushSub(ctx);
+        conversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -147,7 +141,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ConversationContext<Book> ctx = BookController.newEditContext(books.getSelectedRow());
         ctx.setLabelWithKey("account_books");
         ctx.setCallBack(editBookCallBack);
-        conversation().pushSub(ctx);
+        conversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -163,7 +157,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     public String viewBook() {
         ConversationContext<Book> ctx = BookController.newEditContext(books.getSelectedRow());
         ctx.setLabelWithKey("account_books");
-        conversation().pushSubReadOnly(ctx);
+        conversation().setNextContextSubReadOnly(ctx);
         return ctx.view();
     }
 
@@ -185,7 +179,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ConversationContext<Book> ctx = BookController.newEditContext(book);
         ctx.setLabelWithKey("account_books");
         ctx.setCallBack(addBookCallBack);
-        conversation().pushSub(ctx);
+        conversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -210,7 +204,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ConversationContext<Document> ctx = DocumentController.newEditContext(documents.getSelectedRow());
         ctx.setLabelWithKey("account_documents");
         ctx.setCallBack(editDocumentCallBack);
-        conversation().pushSub(ctx);
+        conversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -226,7 +220,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     public String viewDocument() {
         ConversationContext<Document> ctx = DocumentController.newEditContext(documents.getSelectedRow());
         ctx.setLabelWithKey("account_documents");
-        conversation().pushSubReadOnly(ctx);
+        conversation().setNextContextSubReadOnly(ctx);
         return ctx.view();
     }
 
@@ -248,7 +242,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ConversationContext<Document> ctx = DocumentController.newEditContext(document);
         ctx.setLabelWithKey("account_documents");
         ctx.setCallBack(addDocumentCallBack);
-        conversation().pushSub(ctx);
+        conversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -270,7 +264,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ctx.setLabelWithKey("account_roles");
         ctx.setCallBack(selectRoleCallBack);
         ctx.setVar("multiCheckboxSelection", true);
-        conversation().pushSub(ctx);
+        conversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -295,7 +289,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ConversationContext<Role> ctx = RoleController.newEditContext(roles.getSelectedRow());
         ctx.setLabelWithKey("account_roles");
         ctx.setCallBack(editRoleCallBack);
-        conversation().pushSub(ctx);
+        conversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -311,7 +305,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     public String viewRole() {
         ConversationContext<Role> ctx = RoleController.newEditContext(roles.getSelectedRow());
         ctx.setLabelWithKey("account_roles");
-        conversation().pushSubReadOnly(ctx);
+        conversation().setNextContextSubReadOnly(ctx);
         return ctx.view();
     }
 
@@ -331,7 +325,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ConversationContext<Role> ctx = RoleController.newEditContext(new Role());
         ctx.setLabelWithKey("account_roles");
         ctx.setCallBack(addRoleCallBack);
-        conversation().pushSub(ctx);
+        conversation().setNextContextSub(ctx);
         return ctx.view();
     }
 

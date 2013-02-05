@@ -50,7 +50,7 @@ public class AccountController implements ConversationFactory {
             Conversation conversation = Conversation.newInstance(request);
             ConversationContext<Account> ctx = newSearchContext();
             ctx.setLabelWithKey("account");
-            conversation.push(ctx);
+            conversation.setNextContext(ctx);
             return conversation;
         }
 

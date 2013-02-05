@@ -50,7 +50,7 @@ public class RoleController implements ConversationFactory {
             Conversation conversation = Conversation.newInstance(request);
             ConversationContext<Role> ctx = newSearchContext();
             ctx.setLabelWithKey("role");
-            conversation.push(ctx);
+            conversation.setNextContext(ctx);
             return conversation;
         }
 

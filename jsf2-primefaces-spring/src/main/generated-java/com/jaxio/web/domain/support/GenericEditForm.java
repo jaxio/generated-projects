@@ -19,7 +19,6 @@ import com.jaxio.web.conversation.Conversation;
 import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationManager;
 import com.jaxio.web.util.MessageUtil;
-import com.jaxio.web.util.PrimeFacesUtil;
 
 /**
  * Base Edit Form for JPA entities.
@@ -56,17 +55,6 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
      */
     public String ok() {
         return context().getCallBack().ok(getEntity());
-    }
-
-    /**
-     * Close the current edit page, but check first if any unsaved data is pending.
-     */
-    public String close() {
-        Conversation conversation = conversation();
-        if (!PrimeFacesUtil.showAskForSaveDialog(conversation.getEntityManager(), getEntity())) {
-            return context().getCallBack().back();
-        }
-        return null;
     }
 
     /**

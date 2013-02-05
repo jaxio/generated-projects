@@ -50,7 +50,7 @@ public class MoreTypesDemoController implements ConversationFactory {
             Conversation conversation = Conversation.newInstance(request);
             ConversationContext<MoreTypesDemo> ctx = newSearchContext();
             ctx.setLabelWithKey("moreTypesDemo");
-            conversation.push(ctx);
+            conversation.setNextContext(ctx);
             return conversation;
         }
 

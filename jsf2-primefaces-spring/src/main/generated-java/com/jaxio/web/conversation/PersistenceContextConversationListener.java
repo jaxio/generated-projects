@@ -29,13 +29,6 @@ public class PersistenceContextConversationListener implements ConversationListe
 
     @Override
     public void conversationCreated(Conversation conversation) {
-        if (conversation.getCurrentContext().isPersistenceContext()) {
-            EntityManager em = entityManagerFactory.createEntityManager();
-            conversation.setEntityManager(em);
-            if (log.isDebugEnabled()) {
-                log.debug("conversation " + conversation.getId() + ": entity manager created");
-            }
-        }
     }
 
     @Override
@@ -48,7 +41,6 @@ public class PersistenceContextConversationListener implements ConversationListe
                     log.debug("conversation " + conversation.getId() + ": entity manager created");
                 }
             }
-
             bind(conversation.getEntityManager());
         }
     }
@@ -61,15 +53,6 @@ public class PersistenceContextConversationListener implements ConversationListe
             // _HACK_ as we depend on Hibernate
             Session session = em.unwrap(Session.class);
             session.disconnect(); // will be reconnected automatically as needed.
-        }
-    }
-
-    @Override
-    public void conversationContextPopped(Conversation conversation, ConversationContext<?> contextRemoved) {
-        if (!contextRemoved.isPersistenceContext() && conversation.getCurrentContext().isPersistenceContext()) {
-            // tricky case: we  bind the entity manager as the callback method (which is executed just after the context is popped) 
-            // could rely on it.
-            bind(conversation.getEntityManager());
         }
     }
 
