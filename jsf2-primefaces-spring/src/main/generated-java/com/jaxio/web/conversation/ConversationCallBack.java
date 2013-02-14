@@ -7,6 +7,8 @@
  */
 package com.jaxio.web.conversation;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class ConversationCallBack<T> implements Serializable {
     }
 
     final public String ok(T entity) {
-        popCurrentContextOnNextPause();
+        incrementPopContextOnNextPauseCounter();
         onOk(entity);
         return nextView();
     }
@@ -39,7 +41,7 @@ public class ConversationCallBack<T> implements Serializable {
     }
 
     final public String selected(T entity) {
-        popCurrentContextOnNextPause();
+        incrementPopContextOnNextPauseCounter();
         onSelected(entity);
         return nextView();
     }
@@ -51,7 +53,7 @@ public class ConversationCallBack<T> implements Serializable {
     }
 
     final public String selected(List<T> entities) {
-        popCurrentContextOnNextPause();
+        incrementPopContextOnNextPauseCounter();
         onSelected(entities);
         return nextView();
     }
@@ -63,7 +65,7 @@ public class ConversationCallBack<T> implements Serializable {
     }
 
     final public String saved(T entity) {
-        popCurrentContextOnNextPause();
+        incrementPopContextOnNextPauseCounter();
         onSaved(entity);
         return nextView();
     }
@@ -75,7 +77,7 @@ public class ConversationCallBack<T> implements Serializable {
     }
 
     final public String notSaved(T entity) {
-        popCurrentContextOnNextPause();
+        incrementPopContextOnNextPauseCounter();
         onNotSaved(entity);
         return nextView();
     }
@@ -87,7 +89,7 @@ public class ConversationCallBack<T> implements Serializable {
     }
 
     final public String deleted(T entity) {
-        popCurrentContextOnNextPause();
+        incrementPopContextOnNextPauseCounter();
         onDeleted(entity);
         return nextView();
     }
@@ -99,7 +101,7 @@ public class ConversationCallBack<T> implements Serializable {
     }
 
     final public String back() {
-        popCurrentContextOnNextPause();
+        incrementPopContextOnNextPauseCounter();
         onBack();
         return nextView();
     }
@@ -112,11 +114,11 @@ public class ConversationCallBack<T> implements Serializable {
 
     // Context utils
 
-    private final void popCurrentContextOnNextPause() {
-        ConversationManager.getInstance().getCurrentConversation().setPopCurrentContextOnNextPause(true);
+    private final void incrementPopContextOnNextPauseCounter() {
+        getCurrentConversation().incrementPopContextOnNextPauseCounter();
     }
 
     private final String nextView() {
-        return ConversationManager.getInstance().getCurrentConversation().nextView();
+        return getCurrentConversation().nextView();
     }
 }

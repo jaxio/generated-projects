@@ -7,6 +7,8 @@
  */
 package com.jaxio.web.conversation;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
+
 import java.util.Iterator;
 
 import javax.faces.context.ExceptionHandler;
@@ -15,7 +17,6 @@ import javax.faces.event.ExceptionQueuedEvent;
 import org.omnifaces.exceptionhandler.FullAjaxExceptionHandler;
 import org.springframework.dao.DataAccessException;
 
-import com.jaxio.web.conversation.Conversation;
 import com.jaxio.web.conversation.ConversationManager;
 import com.jaxio.web.util.ExceptionUtil;
 import com.jaxio.web.util.MessageUtil;
@@ -39,9 +40,7 @@ public class ConversationAwareExceptionHandler extends FullAjaxExceptionHandler 
             // nice message
             MessageUtil.getInstance().error(exception);
 
-            Conversation currentConversation = ConversationManager.getInstance().getCurrentConversation();
-
-            if (currentConversation != null && ExceptionUtil.isCausedBy(exception, DataAccessException.class)) {
+            if (getCurrentConversation() != null && ExceptionUtil.isCausedBy(exception, DataAccessException.class)) {
                 // DATA ACCESS EXCEPTION
                 // As per JPA spec it is safer to do not reuse the entity manager.
                 // Therefore, we end the conversation.

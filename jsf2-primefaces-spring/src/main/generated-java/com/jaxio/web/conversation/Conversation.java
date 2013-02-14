@@ -15,19 +15,22 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 /**
  * A conversation holds a context stack (1 context per view visited) and the entity manager used 
  * during the entire conversation (spans over several view).
  */
 public class Conversation implements Serializable {
     public static final String CONVERSATION_COUNTER_KEY = "convCounter";
+    private static final Logger log = Logger.getLogger(Conversation.class);
 
     private static final long serialVersionUID = 1L;
 
     private String id;
     private EntityManager em;
     private Stack<ConversationContext<?>> contextes = new Stack<ConversationContext<?>>();
-    private boolean popCurrentContextOnNextPause = false;
+    private int popContextOnNextPauseCounter = 0;
     private ConversationContext<?> nextContext;
 
     /**
@@ -58,30 +61,53 @@ public class Conversation implements Serializable {
         return id;
     }
 
+    /**
+     * Set the shared {@link EntityManager} used by this conversation's {@link ConversationContext contextes} when their flag useConversationEntityManager is true.
+     * The flag is true when we edit an entity which is part of a root's entity graph.
+     * For 'search' view, we do not use the passed entityManager. 
+     */
     public void setEntityManager(EntityManager entityManager) {
         this.em = entityManager;
     }
 
+    /**
+     * The shared {@link EntityManager} used by this conversation's {@link ConversationContext contextes}.  
+     */
     public EntityManager getEntityManager() {
         return em;
     }
 
     /**
-     * Set a flag to instruct the conversation manager to pop the current conversation context when it pauses the current conversation.
-     * Why do we need this? When an action is triggered from within a dataTable, the JSF runtime executes some EL after our action. By doing so 
-     * it requests a conversation scoped bean that belongs to the current context. If this context is popped too soon, the bean is recreated!
-     * @param popCurrentContextOnNextPause
+     * Whether at least one of this Conversations's {@link ConversationContext} need the entity manager ?
      */
-    public void setPopCurrentContextOnNextPause(boolean popCurrentContextOnNextPause) {
-        this.popCurrentContextOnNextPause = popCurrentContextOnNextPause;
+    public boolean isEntityManagerStillNeeded() {
+        if (nextContext != null && nextContext.useConversationEntityManager()) {
+            return true;
+        }
+
+        int ccCount = contextes.size() - popContextOnNextPauseCounter;
+        for (int i = 0; i < ccCount; i++) {
+            if (contextes.elementAt(i).useConversationEntityManager()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
-     * Whether the current conversation context should be popped by the conversatin manager before pausing the current conversation.
-     * @return
+     * Increment the number of conversation context that must be popped from the stack by the conversation manager when it pauses the current conversation.
+     * Why don't we pop directly the context here? When an action is triggered from within a dataTable, the JSF runtime executes some EL after our action. By doing so 
+     * it requests a conversation scoped bean that belongs to the current context. If this context is popped too soon, the bean is recreated!
      */
-    public boolean isPopCurrentContextOnNextPause() {
-        return popCurrentContextOnNextPause;
+    public void incrementPopContextOnNextPauseCounter() {
+        popContextOnNextPauseCounter++;
+    }
+
+    /**
+     * The number of context that must be popped on next conversation pause.
+     */
+    public int getPopContextOnNextPauseCounter() {
+        return popContextOnNextPauseCounter;
     }
 
     public void setNextContext(ConversationContext<?> newContext) {
@@ -91,9 +117,12 @@ public class Conversation implements Serializable {
         nextContext = newContext; // will be pushed at next request during resuming...
     }
 
-    protected void pushNextContext() {
+    protected void pushNextContextIfNeeded() {
         if (nextContext != null) {
             contextes.push(nextContext);
+            if (log.isDebugEnabled()) {
+                log.debug("pushed 1 context on stack: " + nextContext.getLabel());
+            }
             nextContext = null;
         }
     }
@@ -114,6 +143,13 @@ public class Conversation implements Serializable {
         setNextContext(newContext);
     }
 
+    public final int getConversationContextesCount() {
+        return contextes.size();
+    }
+
+    /**
+     * Returns the context on top on stack BUT BEWARE, the context could have been scheduled for popping.
+     */
     @SuppressWarnings("unchecked")
     public <T extends ConversationContext<?>> T getCurrentContext() {
         return (T) contextes.peek();
@@ -123,12 +159,18 @@ public class Conversation implements Serializable {
         return contextes;
     }
 
-    protected ConversationContext<?> popCurrentContext() {
-        if (contextes.size() > 1) {
-            return contextes.pop();
-        } else {
-            throw new IllegalStateException("Attention, trying to pop the initial context. Sign of unbalanced push/pop");
+    protected void popContextesIfNeeded() {
+        if (log.isDebugEnabled() && popContextOnNextPauseCounter > 1) {
+            log.debug("There are " + popContextOnNextPauseCounter + " to pop from the stack");
         }
+
+        for (int i = 0; i < popContextOnNextPauseCounter; i++) {
+            ConversationContext<?> ccPopped = contextes.pop();
+            if (log.isDebugEnabled()) {
+                log.debug("popped 1 context from stack: " + ccPopped.getLabel());
+            }
+        }
+        popContextOnNextPauseCounter = 0;
     }
 
     /**
@@ -139,9 +181,9 @@ public class Conversation implements Serializable {
             return nextContext.view();
         }
 
-        if (popCurrentContextOnNextPause) {
-            ConversationContext<?> beforeLast = contextes.elementAt(contextes.size() - 2);
-            return beforeLast.view();
+        if (popContextOnNextPauseCounter > 0) {
+            ConversationContext<?> contextOnTopOfStackOnNextResume = contextes.elementAt(contextes.size() - 1 - popContextOnNextPauseCounter);
+            return contextOnTopOfStackOnNextResume.view();
         }
 
         return contextes.peek().view();
@@ -152,9 +194,9 @@ public class Conversation implements Serializable {
             return nextContext.getUrl();
         }
 
-        if (popCurrentContextOnNextPause) {
-            ConversationContext<?> beforeLast = contextes.elementAt(contextes.size() - 2);
-            return beforeLast.getUrl();
+        if (popContextOnNextPauseCounter > 0) {
+            ConversationContext<?> contextOnTopOfStackOnNextResume = contextes.elementAt(contextes.size() - 1 - popContextOnNextPauseCounter);
+            return contextOnTopOfStackOnNextResume.getUrl();
         }
 
         return contextes.peek().getUrl();

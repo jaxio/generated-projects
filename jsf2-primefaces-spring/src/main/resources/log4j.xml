@@ -11,16 +11,16 @@
 
 	<appender name="Console" class="org.apache.log4j.ConsoleAppender">
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d{HH:mm:ss-SSS} - %X{login} - %C.%M(%L) - %m%n" />
+			<param name="ConversionPattern" value="[%d{ISO8601}] [%t] [%X{login}] [%C{3}.%M] %m%n" />
 		</layout>
 	</appender>
 
 	<appender name="File" class="org.apache.log4j.RollingFileAppender">
 		<param name="File" value="@project.name@-@project.version@.log" />
-		<param name="MaxFileSize" value="5000KB" />
+		<param name="MaxFileSize" value="1000KB" />
 		<param name="MaxBackupIndex" value="20" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="[%d{ISO8601}] [%t] [%X{session_id}] [%X{login}] [%C] | %m%n" />
+			<param name="ConversionPattern" value="[%d{ISO8601}] [%t] [%X{session_id}] [%X{login}] [%C{3}.%M] %m%n" />
 		</layout>
 	</appender>
 
@@ -31,11 +31,6 @@
 	<logger name="com.jaxio.dao">
 		<level value="warn" />
 	</logger>
-
-	<!-- JSF Phase listener (debug purpose) -->
-	<!-- <logger name="org.springframework.faces.support.RequestLoggingPhaseListener"> -->
-	<!-- <level value="${log4j.level}" /> -->
-	<!-- </logger> -->
 
 	<!-- TRANSACTION -->
 	<logger name="org.springframework.transaction">

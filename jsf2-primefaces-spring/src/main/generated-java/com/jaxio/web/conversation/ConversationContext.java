@@ -10,8 +10,10 @@ package com.jaxio.web.conversation;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.jaxio.util.ResourcesUtil;
 
@@ -23,26 +25,76 @@ import com.jaxio.util.ResourcesUtil;
 public class ConversationContext<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    // support for 'conversation' scope
+    /**
+     *  Stores 'conversation' scope beans.
+     */
     private Map<String, Object> beans = new HashMap<String, Object>();
+
+    /**
+     *  Stores variables such as 'readonly', 'sub', etc.
+     */
     private Map<String, Object> vars = new HashMap<String, Object>();
+
+    /**
+     * Stores jsf component id that require special treatment: process the request as if useConversationEntityManager was false.
+     * Typical use case is for autoComplete component that should perform query outside of the conversation entity manager.
+     */
+    private Set<String> sourcesIgnoringUseConversationEntityManager = new HashSet<String>();
 
     private String conversationId;
     private ConversationCallBack<T> callBack = new ConversationCallBack<T>();
     private String label = "(todo label)"; // Up to the developer to call setLabel or setLabelWithKey
     private String viewUri;
-    private boolean persistenceContext = true;
+    private boolean useConversationEntityManager = true;
 
-    public void setPersistenceContext(boolean persistenceContext) {
-        this.persistenceContext = persistenceContext;
+    /**
+     * Use this method if the passed entity is either new (not persisted yet) or persistent that is, already present in the conversation's entity manager.
+     */
+    public void setEntity(T entity) {
+        setVar("entity", entity);
+    }
+
+    @SuppressWarnings("unchecked")
+    public T getEntityAndRemove() {
+        return (T) vars.remove("entity");
     }
 
     /**
-     * Whether this context relies on the conversation's entity manager or not.
-     * If true, then the entity manager of the conversation is used.
+     * Use this method if you want the entity to be loaded afterward, using the conversation's entityManager.
+     * Our classical usage is as follow: when selecting an entity for edition/view from a search view, we use this method
+     * as the entity manager used in the search view is not kept by the conversation.
      */
-    public boolean isPersistenceContext() {
-        return persistenceContext;
+    public void setEntityId(Serializable entityId) {
+        setVar("entityId", entityId);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <PK> PK getEntityIdAndRemove() {
+        return (PK) vars.remove("entityId");
+    }
+
+    public void setUseConversationEntityManager(boolean useConversationEntityManager) {
+        this.useConversationEntityManager = useConversationEntityManager;
+    }
+
+    /**
+     * Whether this conversation context needs the conversation's entity manager to be bind or not.
+     * If true, then the entity manager of the conversation is binded when this context is active.
+     */
+    public boolean useConversationEntityManager() {
+        return useConversationEntityManager;
+    }
+
+    /**
+     * Consider the useConversationEntityManager as false when the passed componentId is a javax.faces.source.
+     * @param componentId
+     */
+    public void addSourceIgnoringUseConversationEntityManager(String componentId) {
+        sourcesIgnoringUseConversationEntityManager.add(componentId);
+    }
+
+    public boolean ignoreUseConversationEntityManager(String componentId) {
+        return sourcesIgnoringUseConversationEntityManager.contains(componentId);
     }
 
     protected void setConversationId(String conversationId) {
@@ -51,7 +103,7 @@ public class ConversationContext<T> implements Serializable {
 
     /**
      * Sets the label displayed in the conversation menu.
-     * @param labelKey the property key.
+     * @param labelKey the resource property key.
      */
     public void setLabelWithKey(String labelKey) {
         this.label = ResourcesUtil.getInstance().getProperty(labelKey);
@@ -106,14 +158,7 @@ public class ConversationContext<T> implements Serializable {
     }
 
     /**
-     * Helper to set an entity parameter in this context so it can be used in the view when calling the editForm init method.
-     */
-    public void setEntityParam(String paramName, T entity) {
-        setVar(paramName, entity);
-    }
-
-    /**
-     * The callback to use just after this context is popped from the conversation's context stack. 
+     * The callback to use just after this context is flagged for pop from the conversation's context stack. 
      */
     public void setCallBack(ConversationCallBack<T> callBack) {
         this.callBack = callBack;
@@ -161,7 +206,7 @@ public class ConversationContext<T> implements Serializable {
         beans.put(name, bean);
     }
 
-    Object getBean(String name) {
+    public Object getBean(String name) {
         return beans.get(name);
     }
 
@@ -169,12 +214,12 @@ public class ConversationContext<T> implements Serializable {
         vars.put(name, var);
     }
 
-    protected Object getVar(String name) {
+    public Object getVar(String name) {
         return vars.get(name);
     }
 
     @SuppressWarnings("unchecked")
-    protected <E> E getVar(String name, Class<E> type) {
+    public <E> E getVar(String name, Class<E> type) {
         return (E) vars.get(name);
     }
 

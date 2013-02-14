@@ -7,31 +7,31 @@
  */
 package com.jaxio.web.domain.support;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
+
 import java.io.Serializable;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import com.jaxio.dao.support.JpaUniqueUtil;
 import com.jaxio.domain.Identifiable;
 import com.jaxio.repository.support.Repository;
-import com.jaxio.web.conversation.Conversation;
 import com.jaxio.web.conversation.ConversationContext;
-import com.jaxio.web.conversation.ConversationManager;
 import com.jaxio.web.util.MessageUtil;
 
 /**
  * Base Edit Form for JPA entities.
  */
 public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Serializable> {
+    private E entity;
+
     @Inject
     protected JpaUniqueUtil jpaUniqueUtil;
 
     @Inject
     protected MessageUtil messageUtil;
-
-    @Inject
-    protected ConversationManager conversationManager;
 
     protected Repository<E, PK> repository;
 
@@ -40,9 +40,30 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
     }
 
     /**
+     * Retrieves the entity or entityId parameter from the current ConversationContext and
+     * load the entity from the repository in case the entityId was found in the current ConversationContext. 
+     */
+    @PostConstruct
+    protected void init() {
+        PK entityIdParam = context().getEntityIdAndRemove();
+
+        if (entityIdParam != null) {
+            this.entity = repository.getById(entityIdParam);
+        } else {
+            this.entity = context().getEntityAndRemove();
+        }
+
+        if (this.entity == null) {
+            throw new IllegalStateException("Could not find any entity. Please fix me");
+        }
+    }
+
+    /**
      * Return the entity that this edit form backs.
      */
-    abstract public E getEntity();
+    public E getEntity() {
+        return entity;
+    }
 
     // ------------------------------------
     // Actions
@@ -69,13 +90,6 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
      */
     public String back() {
         return context().getCallBack().back();
-    }
-
-    /**
-     * Send action is used from main edit page. It is used to send the data without validating/saving it.
-     */
-    public void send() {
-        messageUtil.info("status_submitted_ok");
     }
 
     /**
@@ -116,16 +130,9 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
     }
 
     /**
-     * Returns the current {@link Conversation}.
-     */
-    public Conversation conversation() {
-        return conversationManager.getCurrentConversation();
-    }
-
-    /**
      * Returns the current {@link ConversationContext}.
      */
     public ConversationContext<E> context() {
-        return conversationManager.getCurrentConversation().getCurrentContext();
+        return getCurrentConversation().getCurrentContext();
     }
 }

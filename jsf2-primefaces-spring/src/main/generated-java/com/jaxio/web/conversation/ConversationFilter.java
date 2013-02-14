@@ -7,15 +7,22 @@
  */
 package com.jaxio.web.conversation;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
+
 import java.io.IOException;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.jaxio.context.LogContext;
 import com.jaxio.context.UserContext;
@@ -25,11 +32,17 @@ import com.jaxio.context.UserContext;
  * By convention, the conversation id is carried by the _cid_ parameter.
  * To create a new conversation, you must request the initial conversation view and pass the _ncid_=value parameter.
  */
-public class ConversationFilter extends OncePerRequestFilter {
+@Named
+public class ConversationFilter implements Filter {
     private static final Logger log = Logger.getLogger(ConversationFilter.class);
 
+    @Inject
+    private ConversationManager conversationManager;
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         // set up log context for this thread so these information can be used by log4j
         String username = UserContext.getUsername();
@@ -43,9 +56,10 @@ public class ConversationFilter extends OncePerRequestFilter {
             // RESUME existing conversation
             // -----------------------------
             try {
-                ConversationManager.getInstance().resumeConversation(cid, request);
+                conversationManager.resumeConversation(cid, request);
                 if (log.isDebugEnabled()) {
-                    log.debug("Conversation " + cid + " resumed: " + request.getRequestURI());
+                    log.debug("Conv. " + cid + " resumed. Nb ctx: " + getCurrentConversation().getConversationContextesCount() + ". Uri: "
+                            + request.getRequestURI());
                 }
             } catch (UnexpectedConversationException uue) {
                 log.error(uue.getMessage());
@@ -56,22 +70,21 @@ public class ConversationFilter extends OncePerRequestFilter {
             try {
                 filterChain.doFilter(request, response);
             } finally {
-                ConversationManager.getInstance().pauseCurrentConversation();
+                conversationManager.pauseCurrentConversation();
             }
         } else if (!request.getRequestURI().contains("/javax.faces.resource/") && "true".equals(request.getParameter("_ncid_"))) {
             // -----------------------------
             // CREATE new conversation
             // -----------------------------
-            ConversationManager cm = ConversationManager.getInstance();
 
             // Limitation (per user) on the number of simultaneous conversations.
-            if (cm.isMaxConversationsReached(request.getSession())) {
+            if (conversationManager.isMaxConversationsReached(request.getSession())) {
                 response.sendRedirect(request.getContextPath() + "/error/limit.faces");
                 return;
             } else {
                 // CREATE a new conversation
                 try {
-                    Conversation conversation = cm.createConversation(request);
+                    Conversation conversation = conversationManager.createConversation(request);
                     response.sendRedirect(request.getContextPath() + conversation.nextUrl());
                 } catch (UnexpectedConversationException uue) {
                     log.error(uue.getMessage());
@@ -85,5 +98,13 @@ public class ConversationFilter extends OncePerRequestFilter {
             // -----------------------------
             filterChain.doFilter(request, response);
         }
+    }
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
+
+    @Override
+    public void destroy() {
     }
 }

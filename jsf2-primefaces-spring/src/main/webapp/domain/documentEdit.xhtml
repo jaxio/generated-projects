@@ -31,7 +31,7 @@
 				value="#{documentEditForm.document.documentFileName}"><p:fileDownload value="#{documentController.getStreamedContent(documentEditForm.document)}"/></h:commandLink>
 		</p:outputPanel>
 
-		<app:autoComplete id="account" value="#{documentEditForm.document.account}" required="true" 
+		<app:autoComplete id="account" value="#{documentEditForm.selectedAccount}" required="true" 
 			label="${msg.document_account}" hasinverse="true"
 			controller="#{accountController}" printer="#{accountPrinter}" converter="#{accountJsfConverter}">
 			<app:iconView actionBean="#{documentEditForm}" action="viewAccount" title="${msg.document_account}" rendered="${not empty documentEditForm.document.account}" />

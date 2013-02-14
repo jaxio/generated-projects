@@ -7,6 +7,7 @@
  */
 package com.jaxio.web.domain;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
 import java.util.Arrays;
 import java.util.Map;
 import javax.faces.convert.Converter;
@@ -69,7 +70,12 @@ public class RoleLazyDataModel extends GenericLazyDataModel<Role, Integer, RoleS
 
     @Override
     protected ConversationContext<Role> getSelectedContext(Role selected) {
-        return RoleController.newEditContext(selected);
+        if (selected.isIdSet()) {
+            // just the id matters as we want to reload it in the conversation entity manager.
+            return RoleController.newEditContext(selected.getId());
+        } else {
+            return RoleController.newEditContext(selected); // fresh entity (creation)
+        }
     }
 
     // -----------------------------------
@@ -85,7 +91,7 @@ public class RoleLazyDataModel extends GenericLazyDataModel<Role, Integer, RoleS
     }
 
     public String multiSelect() {
-        return conversationManager.getCurrentConversation() //
+        return getCurrentConversation() //
                 .<ConversationContext<Role>> getCurrentContext() //
                 .getCallBack() //
                 .selected(Arrays.asList(selectedRows));

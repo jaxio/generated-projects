@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Legacy;
+import com.jaxio.domain.LegacyPk;
 import com.jaxio.repository.LegacyRepository;
 import com.jaxio.web.conversation.Conversation;
 import com.jaxio.web.conversation.ConversationContext;
@@ -74,13 +75,23 @@ public class LegacyController implements ConversationFactory {
     // --------------------------------    
 
     /**
-     * Helper to construct a new ConversationContext for edition.
+     * Helper to construct a new ConversationContext to edit an Legacy.
+     * @param legacy the entity to edit.
      */
-    public static ConversationContext<Legacy> newEditContext(Legacy legacy) {
+    public static ConversationContext<Legacy> newEditContext(final Legacy legacy) {
         ConversationContext<Legacy> ctx = new ConversationContext<Legacy>();
-        LegacyEditForm legacyEditForm = new LegacyEditForm();
-        legacyEditForm.setLegacy(legacy);
-        ctx.addBean("legacyEditForm", legacyEditForm); // will be autowired by our ConversationScope...
+        ctx.setEntity(legacy); // used by GenericEditForm.init()
+        ctx.setViewUri(editUri);
+        return ctx;
+    }
+
+    /**
+     * Helper to construct a new ConversationContext to edit an Legacy.
+     * @param id the id of the entity to edit.
+     */
+    public static ConversationContext<Legacy> newEditContext(final LegacyPk id) {
+        ConversationContext<Legacy> ctx = new ConversationContext<Legacy>();
+        ctx.setEntityId(id); // used by GenericEditForm.init()
         ctx.setViewUri(editUri);
         return ctx;
     }
@@ -90,6 +101,7 @@ public class LegacyController implements ConversationFactory {
      */
     public static ConversationContext<Legacy> newSearchContext() {
         ConversationContext<Legacy> ctx = new ConversationContext<Legacy>();
+        ctx.setUseConversationEntityManager(false);
         ctx.setViewUri(selectUri);
         return ctx;
     }

@@ -7,11 +7,10 @@
  */
 package com.jaxio.web.conversation;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
+
 import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.Scope;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 /**
  * Beans in the conversation scope reside in a {@link Conversation conversation}'s {@link ConversationContext}.
@@ -19,44 +18,26 @@ import org.springframework.context.ApplicationContextAware;
  * hosting ConversationContext is on top of the conversation's contextes stack.
  * 
  * Such a design decision allows a conversation to have 2 'conversation scoped' beans with 
- * the same name (they just have to reside in 2 difference ConversationContext).
+ * the same name (they just have to reside in 2 different ConversationContext).
  * This prevents bean name clash in complex navigation scenario within the same conversation.
  */
-public class ConversationScope implements Scope, ApplicationContextAware {
-    private AutowireCapableBeanFactory autowireCapableBeanFactory;
-    protected ConversationManager cm;
-
-    public void setApplicationContext(ApplicationContext appCtx) {
-        autowireCapableBeanFactory = appCtx.getAutowireCapableBeanFactory();
-    }
-
-    public void setConversationManager(ConversationManager cm) {
-        this.cm = cm;
-    }
+public class ConversationScope implements Scope {
 
     @Override
     public String getConversationId() {
-        return cm.getCurrentConversation().getId();
+        return getCurrentConversation().getId();
     }
 
     @Override
     public Object get(String name, ObjectFactory<?> objectFactory) {
-        Object bean = cm.getCurrentConversation().getBean(name);
+        Conversation currentConversation = getCurrentConversation();
+        Object bean = currentConversation.getBean(name);
 
         if (bean == null) {
             bean = objectFactory.getObject();
-            cm.getCurrentConversation().addBean(name, bean);
-            cm.getCurrentConversation().setVar("__" + name + "__wired", Boolean.TRUE);
-        } else {
-            // let's check if the bean has been wired.
-            Boolean wired = cm.getCurrentConversation().getVar("__" + name + "__wired", Boolean.class);
-            if (wired == null) {
-                // bean was created manually. The creator expects us to wire it: 
-                autowireCapableBeanFactory.autowireBean(bean);
-                cm.getCurrentConversation().setVar("__" + name + "__wired", Boolean.TRUE);
-            }
-            // TODO: we could detect if bean was serialized in order to re-wire it... 
+            currentConversation.addBean(name, bean);
         }
+
         return bean;
     }
 
@@ -72,6 +53,6 @@ public class ConversationScope implements Scope, ApplicationContextAware {
 
     @Override
     public Object resolveContextualObject(String key) {
-        return cm.getCurrentConversation().getVar(key);
+        return getCurrentConversation().getVar(key);
     }
 }

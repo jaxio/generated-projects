@@ -283,5 +283,4 @@ public class Document implements Identifiable<String>, Serializable {
                 .add("version", getVersion()) //
                 .toString();
     }
-
 }

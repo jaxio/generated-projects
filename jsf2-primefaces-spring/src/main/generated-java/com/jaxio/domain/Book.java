@@ -200,5 +200,4 @@ public class Book implements Identifiable<Integer>, Serializable {
                 .add("version", getVersion()) //
                 .toString();
     }
-
 }

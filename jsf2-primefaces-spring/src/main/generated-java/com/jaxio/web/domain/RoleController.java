@@ -76,13 +76,23 @@ public class RoleController implements ConversationFactory {
     // --------------------------------    
 
     /**
-     * Helper to construct a new ConversationContext for edition.
+     * Helper to construct a new ConversationContext to edit an Role.
+     * @param role the entity to edit.
      */
-    public static ConversationContext<Role> newEditContext(Role role) {
+    public static ConversationContext<Role> newEditContext(final Role role) {
         ConversationContext<Role> ctx = new ConversationContext<Role>();
-        RoleEditForm roleEditForm = new RoleEditForm();
-        roleEditForm.setRole(role);
-        ctx.addBean("roleEditForm", roleEditForm); // will be autowired by our ConversationScope...
+        ctx.setEntity(role); // used by GenericEditForm.init()
+        ctx.setViewUri(editUri);
+        return ctx;
+    }
+
+    /**
+     * Helper to construct a new ConversationContext to edit an Role.
+     * @param id the id of the entity to edit.
+     */
+    public static ConversationContext<Role> newEditContext(final Integer id) {
+        ConversationContext<Role> ctx = new ConversationContext<Role>();
+        ctx.setEntityId(id); // used by GenericEditForm.init()
         ctx.setViewUri(editUri);
         return ctx;
     }
@@ -92,6 +102,7 @@ public class RoleController implements ConversationFactory {
      */
     public static ConversationContext<Role> newSearchContext() {
         ConversationContext<Role> ctx = new ConversationContext<Role>();
+        ctx.setUseConversationEntityManager(false);
         ctx.setViewUri(selectUri);
         return ctx;
     }

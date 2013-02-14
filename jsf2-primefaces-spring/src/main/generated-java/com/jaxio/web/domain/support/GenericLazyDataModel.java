@@ -7,13 +7,14 @@
  */
 package com.jaxio.web.domain.support;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 import javax.faces.convert.Converter;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.omnifaces.util.Faces;
 import org.primefaces.event.SelectEvent;
@@ -27,22 +28,18 @@ import com.jaxio.domain.Identifiable;
 import com.jaxio.printer.TypeAwarePrinter;
 import com.jaxio.repository.support.Repository;
 import com.jaxio.util.ResourcesUtil;
-import com.jaxio.web.conversation.ConversationCallBack;
 import com.jaxio.web.conversation.ConversationContext;
-import com.jaxio.web.conversation.ConversationManager;
 import com.jaxio.web.util.MessageUtil;
 import com.jaxio.web.util.PrimeFacesUtil;
 
 /**
- * Base search form for JPA entities. It supports 'Server Side Pagination' using PrimeFaces LazyDataModel.
+ * Extends PrimeFaces' {@link LazyDataModel} in order to support 'Server Side Pagination'.
  */
 public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extends Serializable, F extends GenericSearchForm<E, F>> extends LazyDataModel<E> {
     private static final long serialVersionUID = 1L;
 
     @Inject
     private ResourcesUtil resourcesUtil;
-    @Inject
-    protected ConversationManager conversationManager;
     @Inject
     private MessageUtil messageUtil;
     @Inject
@@ -57,6 +54,7 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
 
     abstract protected GenericSearchForm<E, F> getSearchForm();
 
+    @Override
     public List<E> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters) {
         SearchParameters sp = getSearchForm().toSearchParameters();
         E example = getSearchForm().getEntity();
@@ -122,7 +120,7 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
     /**
      * Convert PrimeFaces SortOrder to our OrderByDirection.
      */
-    private OrderByDirection convert(SortOrder order) {
+    protected OrderByDirection convert(SortOrder order) {
         return order == SortOrder.DESCENDING ? OrderByDirection.DESC : OrderByDirection.ASC;
     }
 
@@ -149,25 +147,12 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
     /**
      * support for edit(), sendNew() and onRowSelect methods 
      */
-    private String edit(E selectedRow) {
+    protected String edit(E selectedRow) {
         ConversationContext<E> ctx = getSelectedContext(selectedRow);
         ctx.setLabel("Edit " + printer.print(selectedRow));
-        ctx.setCallBack(editCallBack);
-        conversationManager.getCurrentConversation().setNextContext(ctx);
+        getCurrentConversation().setNextContext(ctx);
         return ctx.view();
     }
-
-    protected ConversationCallBack<E> editCallBack = new ConversationCallBack<E>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onNotSaved(E selection) {
-            EntityManager em = conversationManager.getCurrentConversation().getEntityManager();
-            if (em != null) {
-                em.clear();
-            }
-        }
-    };
 
     /**
      * Action to view the selected entity.
@@ -175,7 +160,7 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
     public String view() {
         ConversationContext<E> ctx = getSelectedContext(getRowData());
         ctx.setLabel("View " + printer.print(getRowData()));
-        conversationManager.getCurrentConversation().setNextContextSubReadOnly(ctx);
+        getCurrentConversation().setNextContextSubReadOnly(ctx);
         return ctx.view();
     }
 
@@ -186,8 +171,8 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
         return select(getRowData());
     }
 
-    private String select(E selectedRow) {
-        return conversationManager.getCurrentConversation() //
+    protected String select(E selectedRow) {
+        return getCurrentConversation() //
                 .<ConversationContext<E>> getCurrentContext() //
                 .getCallBack() //
                 .selected(selectedRow);
@@ -200,7 +185,7 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
     public void onRowSelect(SelectEvent event) {
         E selected = getSelectedRow();
         if (selected != null) {
-            if (conversationManager.getCurrentConversation().<ConversationContext<E>> getCurrentContext().isSub()) {
+            if (getCurrentConversation().<ConversationContext<E>> getCurrentContext().isSub()) {
                 Faces.navigate(select(selected));
             } else {
                 Faces.navigate(edit(selected));

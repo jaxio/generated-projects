@@ -15,29 +15,18 @@ import com.jaxio.repository.more.MoreTypesDemoRepository;
 import com.jaxio.web.domain.support.GenericEditForm;
 
 /**
- * View Helper to edit {@link MoreTypesDemo}.
+ * View Helper/Controller to edit {@link MoreTypesDemo}.
  */
 @Named
 @Scope("conversation")
 public class MoreTypesDemoEditForm extends GenericEditForm<MoreTypesDemo, Integer> {
-    private MoreTypesDemo moreTypesDemo;
 
     @Inject
     public void setMoreTypesDemoRepository(MoreTypesDemoRepository moreTypesDemoRepository) {
         setRepository(moreTypesDemoRepository);
     }
 
-    public void setMoreTypesDemo(MoreTypesDemo moreTypesDemo) {
-        this.moreTypesDemo = moreTypesDemo;
-    }
-
     public MoreTypesDemo getMoreTypesDemo() {
-        return moreTypesDemo;
+        return getEntity();
     }
-
-    @Override
-    public MoreTypesDemo getEntity() {
-        return moreTypesDemo;
-    }
-
 }

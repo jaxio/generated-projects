@@ -203,5 +203,4 @@ public class Legacy implements Identifiable<LegacyPk>, Serializable {
                 .add("extraInfo", getExtraInfo()) //
                 .toString();
     }
-
 }

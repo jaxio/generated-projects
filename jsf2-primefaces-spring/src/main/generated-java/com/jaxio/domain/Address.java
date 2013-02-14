@@ -140,5 +140,4 @@ public class Address implements Identifiable<Integer>, Serializable {
                 .add("version", getVersion()) //
                 .toString();
     }
-
 }

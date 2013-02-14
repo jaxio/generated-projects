@@ -7,6 +7,8 @@
  */
 package com.jaxio.web.conversation;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
+
 import javax.el.ELContext;
 import javax.el.ELException;
 
@@ -20,7 +22,7 @@ public class ConversationAwareElResolver extends SpringBeanFacesELResolver {
     @Override
     public Object getValue(ELContext elContext, Object base, Object property) throws ELException {
         if (base == null && property != null) {
-            Conversation currentConversation = ConversationManager.getInstance().getCurrentConversation();
+            Conversation currentConversation = getCurrentConversation();
             if (currentConversation != null) {
                 Object result = currentConversation.getVar(property.toString());
                 if (result != null) {
@@ -36,7 +38,7 @@ public class ConversationAwareElResolver extends SpringBeanFacesELResolver {
     @Override
     public Class<?> getType(ELContext elContext, Object base, Object property) throws ELException {
         if (base == null && property != null) {
-            Conversation currentConversation = ConversationManager.getInstance().getCurrentConversation();
+            Conversation currentConversation = getCurrentConversation();
             if (currentConversation != null) {
                 Object value = currentConversation.getVar(property.toString());
                 if (value != null) {

@@ -7,8 +7,7 @@
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">	
 	<p:outputPanel rendered="#{not empty conversationManager.currentConversation}">
-	<hr/>
-	<h3>Information about the current conversation context</h3>
+	<h3 style="background-color:red; color:yellow; text-align: center">Find below some debug information about the current conversation context</h3>
     <p:dataTable var="beanEntry" value="#{conversationManager.currentConversation.currentContext.beanEntries}">  
         <p:column headerText="Bean name">  
             <h:outputText value="#{beanEntry.key}" />  
@@ -28,6 +27,5 @@
             <h:outputText value="#{varEntry.value}" />  
         </p:column>  
     </p:dataTable>  	
-	<hr/>
 	</p:outputPanel>
 </ui:composition>

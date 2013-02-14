@@ -255,5 +255,4 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
                 .add("version", getVersion()) //
                 .toString();
     }
-
 }

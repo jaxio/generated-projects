@@ -31,7 +31,7 @@
 		<app:inputDateTime id="birthDate" value="#{accountEditForm.account.birthDate}" label="${msg.account_birthDate}" />
 		<app:inputTextArea id="description" value="#{accountEditForm.account.description}" label="${msg.account_description}" />
 
-		<app:autoComplete id="homeAddress" value="#{accountEditForm.account.homeAddress}" required="false" 
+		<app:autoComplete id="homeAddress" value="#{accountEditForm.selectedHomeAddress}" required="false" 
 			label="${msg.account_homeAddress}" hasinverse="false"
 			controller="#{addressController}" printer="#{addressPrinter}" converter="#{addressJsfConverter}">
 			<app:iconSearch actionBean="#{accountEditForm}" action="selectHomeAddress" title="${msg.account_homeAddress}" rendered="${not readonly}" />

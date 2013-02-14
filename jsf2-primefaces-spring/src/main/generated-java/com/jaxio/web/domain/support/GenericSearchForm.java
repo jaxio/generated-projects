@@ -7,6 +7,8 @@
  */
 package com.jaxio.web.domain.support;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
+
 import java.io.Serializable;
 import javax.inject.Inject;
 import com.jaxio.dao.support.SearchParameters;
@@ -43,7 +45,7 @@ public abstract class GenericSearchForm<E, F extends GenericSearchForm<E, F>> im
     // ------------------------------------
 
     public String back() {
-        return conversationManager.getCurrentConversation().getCurrentContext().getCallBack().back();
+        return getCurrentConversation().getCurrentContext().getCallBack().back();
     }
 
     /**
@@ -51,6 +53,6 @@ public abstract class GenericSearchForm<E, F extends GenericSearchForm<E, F>> im
      */
     public String quit() {
         conversationManager.endCurrentConversation();
-        return "/home.faces?faces-redirect=true"; // clean url
+        return "/home.faces?faces-redirect=true"; // TODO: clean url, referer or else
     }
 }

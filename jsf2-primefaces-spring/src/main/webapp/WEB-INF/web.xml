@@ -46,8 +46,7 @@
 	</filter-mapping>
     <filter>
         <filter-name>sessionExpirationFilter</filter-name>
-        <filter-class>com.jaxio.web.conversation.SessionExpirationFilter
-    </filter-class>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>sessionExpirationFilter</filter-name>
@@ -67,11 +66,22 @@
     </filter-mapping>    
     <filter>
         <filter-name>conversationFilter</filter-name>
-        <filter-class>com.jaxio.web.conversation.ConversationFilter
-    </filter-class>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>conversationFilter</filter-name>
+        <servlet-name>facesServlet</servlet-name>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+    </filter-mapping>
+    <!-- The openEntityManagerInViewFilter (since it is placed after the conversationFilter) either reuses the conversation's entity manager or create one just for the request. -->
+    <filter>
+        <filter-name>openEntityManagerInViewFilter</filter-name>
+        <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>openEntityManagerInViewFilter</filter-name>
         <servlet-name>facesServlet</servlet-name>
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>REQUEST</dispatcher>

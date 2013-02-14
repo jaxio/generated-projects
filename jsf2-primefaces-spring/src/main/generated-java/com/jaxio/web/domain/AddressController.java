@@ -74,13 +74,23 @@ public class AddressController implements ConversationFactory {
     // --------------------------------    
 
     /**
-     * Helper to construct a new ConversationContext for edition.
+     * Helper to construct a new ConversationContext to edit an Address.
+     * @param address the entity to edit.
      */
-    public static ConversationContext<Address> newEditContext(Address address) {
+    public static ConversationContext<Address> newEditContext(final Address address) {
         ConversationContext<Address> ctx = new ConversationContext<Address>();
-        AddressEditForm addressEditForm = new AddressEditForm();
-        addressEditForm.setAddress(address);
-        ctx.addBean("addressEditForm", addressEditForm); // will be autowired by our ConversationScope...
+        ctx.setEntity(address); // used by GenericEditForm.init()
+        ctx.setViewUri(editUri);
+        return ctx;
+    }
+
+    /**
+     * Helper to construct a new ConversationContext to edit an Address.
+     * @param id the id of the entity to edit.
+     */
+    public static ConversationContext<Address> newEditContext(final Integer id) {
+        ConversationContext<Address> ctx = new ConversationContext<Address>();
+        ctx.setEntityId(id); // used by GenericEditForm.init()
         ctx.setViewUri(editUri);
         return ctx;
     }
@@ -90,6 +100,7 @@ public class AddressController implements ConversationFactory {
      */
     public static ConversationContext<Address> newSearchContext() {
         ConversationContext<Address> ctx = new ConversationContext<Address>();
+        ctx.setUseConversationEntityManager(false);
         ctx.setViewUri(selectUri);
         return ctx;
     }

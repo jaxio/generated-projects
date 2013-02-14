@@ -20,7 +20,7 @@
 		<app:input id="title" value="#{bookEditForm.book.title}" size="100" label="${msg.book_title}" required="true" />
 		<app:input id="numberOfPages" value="#{bookEditForm.book.numberOfPages}" label="${msg.book_numberOfPages}" required="true" />
 
-		<app:autoComplete id="account" value="#{bookEditForm.book.account}" required="false" 
+		<app:autoComplete id="account" value="#{bookEditForm.selectedAccount}" required="false" 
 			label="${msg.book_account}" hasinverse="true"
 			controller="#{accountController}" printer="#{accountPrinter}" converter="#{accountJsfConverter}">
 			<app:iconView actionBean="#{bookEditForm}" action="viewAccount" title="${msg.book_account}" rendered="${not empty bookEditForm.book.account}" />

@@ -76,14 +76,26 @@ public class AccountController implements ConversationFactory {
     // --------------------------------    
 
     /**
-     * Helper to construct a new ConversationContext for edition.
+     * Helper to construct a new ConversationContext to edit an Account.
+     * @param account the entity to edit.
      */
-    public static ConversationContext<Account> newEditContext(Account account) {
+    public static ConversationContext<Account> newEditContext(final Account account) {
         ConversationContext<Account> ctx = new ConversationContext<Account>();
-        AccountEditForm accountEditForm = new AccountEditForm();
-        accountEditForm.setAccount(account);
-        ctx.addBean("accountEditForm", accountEditForm); // will be autowired by our ConversationScope...
+        ctx.setEntity(account); // used by GenericEditForm.init()
         ctx.setViewUri(editUri);
+        ctx.addSourceIgnoringUseConversationEntityManager("form:homeAddress");
+        return ctx;
+    }
+
+    /**
+     * Helper to construct a new ConversationContext to edit an Account.
+     * @param id the id of the entity to edit.
+     */
+    public static ConversationContext<Account> newEditContext(final String id) {
+        ConversationContext<Account> ctx = new ConversationContext<Account>();
+        ctx.setEntityId(id); // used by GenericEditForm.init()
+        ctx.setViewUri(editUri);
+        ctx.addSourceIgnoringUseConversationEntityManager("form:homeAddress");
         return ctx;
     }
 
@@ -92,6 +104,7 @@ public class AccountController implements ConversationFactory {
      */
     public static ConversationContext<Account> newSearchContext() {
         ConversationContext<Account> ctx = new ConversationContext<Account>();
+        ctx.setUseConversationEntityManager(false);
         ctx.setViewUri(selectUri);
         return ctx;
     }

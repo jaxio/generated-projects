@@ -7,7 +7,9 @@
  */
 package com.jaxio.web.domain;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.omnifaces.util.Faces;
@@ -27,12 +29,11 @@ import com.jaxio.web.domain.support.SelectableListDataModel;
 import com.jaxio.web.util.TabBean;
 
 /**
- * View Helper to edit {@link Account}.
+ * View Helper/Controller to edit {@link Account}.
  */
 @Named
 @Scope("conversation")
 public class AccountEditForm extends GenericEditForm<Account, String> {
-    private Account account;
     private TabBean tabBean = new TabBean();
     private SelectableListDataModel<Book> books;
     private SelectableListDataModel<Document> documents;
@@ -43,22 +44,59 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         setRepository(accountRepository);
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
-        books = new SelectableListDataModel<Book>(account.getBooks());
-        documents = new SelectableListDataModel<Document>(account.getDocuments());
-        roles = new SelectableListDataModel<Role>(account.getRoles());
+    /**
+     * Prepare the x-to-many list data models.
+     */
+    @Override
+    @PostConstruct
+    protected void init() {
+        super.init();
+
+        // _HACK_ Attention: you must realize that associations below (when lazy) are fetched from the view, non transactionnally.
+
+        if (books == null) {
+            books = new SelectableListDataModel<Book>(getAccount().getBooks());
+        }
+
+        if (documents == null) {
+            documents = new SelectableListDataModel<Document>(getAccount().getDocuments());
+        }
+
+        if (roles == null) {
+            roles = new SelectableListDataModel<Role>(getAccount().getRoles());
+        }
     }
 
     public Account getAccount() {
-        return account;
+        return getEntity();
     }
 
-    @Override
-    public Account getEntity() {
-        return account;
+    // --------------------------------------------------
+    // Support for auto-complete and callback many to one 
+    // --------------------------------------------------
+
+    public void setSelectedHomeAddress(Address address) {
+        // detach the currently set target if present
+        //  1) to prevent any potential modification to go to the db
+        //  2) to reduce session size        	
+        if (getAccount().getHomeAddress() != null) {
+            getCurrentConversation().getEntityManager().detach(getAccount().getHomeAddress());
+        }
+
+        if (address != null) {
+            getAccount().setHomeAddress(getCurrentConversation().getEntityManager().merge(address));
+        } else {
+            getAccount().setHomeAddress(null);
+        }
     }
 
+    public Address getSelectedHomeAddress() {
+        return getAccount().getHomeAddress();
+    }
+
+    /**
+     * View helper to store the x-to-many associations tab's index. 
+     */
     public TabBean getTabBean() {
         return tabBean;
     }
@@ -80,9 +118,9 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     // --------------------------------------------
 
     public String viewHomeAddress() {
-        ConversationContext<Address> ctx = AddressController.newEditContext(account.getHomeAddress());
+        ConversationContext<Address> ctx = AddressController.newEditContext(getAccount().getHomeAddress());
         ctx.setLabelWithKey("account_homeAddress");
-        conversation().setNextContextSubReadOnly(ctx);
+        getCurrentConversation().setNextContextSubReadOnly(ctx);
         return ctx.view();
     }
 
@@ -90,7 +128,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ConversationContext<Address> ctx = AddressController.newSearchContext();
         ctx.setLabelWithKey("account_homeAddress");
         ctx.setCallBack(selectHomeAddressCallBack);
-        conversation().setNextContextSub(ctx);
+        getCurrentConversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -100,8 +138,8 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         // will be invoked from the AccountLazyDataModel
         @Override
         protected void onSelected(Address address) {
-            account.setHomeAddress(address);
-            messageUtil.infoEntity("status_selected_ok", address);
+            setSelectedHomeAddress(address);
+            messageUtil.infoEntity("status_selected_ok", getAccount().getHomeAddress());
         }
     };
 
@@ -109,7 +147,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ConversationContext<Address> ctx = AddressController.newEditContext(new Address());
         ctx.setLabelWithKey("account_homeAddress");
         ctx.setCallBack(addHomeAddressCallBack);
-        conversation().setNextContextSub(ctx);
+        getCurrentConversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -118,15 +156,20 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
 
         @Override
         protected void onOk(Address address) {
-            account.setHomeAddress(address);
+            // detach the currently set target if present
+            if (getAccount().getHomeAddress() != null) {
+                getCurrentConversation().getEntityManager().detach(getAccount().getHomeAddress());
+            }
+
+            getAccount().setHomeAddress(address);
             messageUtil.infoEntity("status_created_ok", address);
         }
     };
 
     public String editHomeAddress() {
-        ConversationContext<Address> ctx = AddressController.newEditContext(account.getHomeAddress());
+        ConversationContext<Address> ctx = AddressController.newEditContext(getAccount().getHomeAddress());
         ctx.setLabelWithKey("account_homeAddress");
-        conversation().setNextContextSub(ctx);
+        getCurrentConversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -141,7 +184,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ConversationContext<Book> ctx = BookController.newEditContext(books.getSelectedRow());
         ctx.setLabelWithKey("account_books");
         ctx.setCallBack(editBookCallBack);
-        conversation().setNextContextSub(ctx);
+        getCurrentConversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -157,29 +200,29 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     public String viewBook() {
         ConversationContext<Book> ctx = BookController.newEditContext(books.getSelectedRow());
         ctx.setLabelWithKey("account_books");
-        conversation().setNextContextSubReadOnly(ctx);
+        getCurrentConversation().setNextContextSubReadOnly(ctx);
         return ctx.view();
     }
 
     /**
-     * This listener force the navigation to the edit or view page of the target @{link ${relation.toEntity.type}}.
+     * This listener force the navigation to the edit or view page of the target @{link Book}.
      */
     public void onBookRowSelect(SelectEvent event) {
         Faces.navigate(context().isReadOnly() ? viewBook() : editBook());
     }
 
     public void removeBook() {
-        account.removeBook(books.getSelectedRow());
+        getAccount().removeBook(books.getSelectedRow());
         messageUtil.infoEntity("status_removed_ok", books.getSelectedRow());
     }
 
     public String addBook() {
         Book book = new Book();
-        book.setAccount(account); // for display
+        book.setAccount(getAccount()); // for display
         ConversationContext<Book> ctx = BookController.newEditContext(book);
         ctx.setLabelWithKey("account_books");
         ctx.setCallBack(addBookCallBack);
-        conversation().setNextContextSub(ctx);
+        getCurrentConversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -188,7 +231,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
 
         @Override
         protected void onOk(Book book) {
-            account.addBook(book);
+            getAccount().addBook(book);
             messageUtil.infoEntity("status_added_new_ok", book);
         }
     };
@@ -204,7 +247,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ConversationContext<Document> ctx = DocumentController.newEditContext(documents.getSelectedRow());
         ctx.setLabelWithKey("account_documents");
         ctx.setCallBack(editDocumentCallBack);
-        conversation().setNextContextSub(ctx);
+        getCurrentConversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -220,29 +263,29 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     public String viewDocument() {
         ConversationContext<Document> ctx = DocumentController.newEditContext(documents.getSelectedRow());
         ctx.setLabelWithKey("account_documents");
-        conversation().setNextContextSubReadOnly(ctx);
+        getCurrentConversation().setNextContextSubReadOnly(ctx);
         return ctx.view();
     }
 
     /**
-     * This listener force the navigation to the edit or view page of the target @{link ${relation.toEntity.type}}.
+     * This listener force the navigation to the edit or view page of the target @{link Document}.
      */
     public void onDocumentRowSelect(SelectEvent event) {
         Faces.navigate(context().isReadOnly() ? viewDocument() : editDocument());
     }
 
     public void removeDocument() {
-        account.removeDocument(documents.getSelectedRow());
+        getAccount().removeDocument(documents.getSelectedRow());
         messageUtil.infoEntity("status_removed_ok", documents.getSelectedRow());
     }
 
     public String addDocument() {
         Document document = new Document();
-        document.setAccount(account); // for display
+        document.setAccount(getAccount()); // for display
         ConversationContext<Document> ctx = DocumentController.newEditContext(document);
         ctx.setLabelWithKey("account_documents");
         ctx.setCallBack(addDocumentCallBack);
-        conversation().setNextContextSub(ctx);
+        getCurrentConversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -251,7 +294,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
 
         @Override
         protected void onOk(Document document) {
-            account.addDocument(document);
+            getAccount().addDocument(document);
             messageUtil.infoEntity("status_added_new_ok", document);
         }
     };
@@ -264,7 +307,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ctx.setLabelWithKey("account_roles");
         ctx.setCallBack(selectRoleCallBack);
         ctx.setVar("multiCheckboxSelection", true);
-        conversation().setNextContextSub(ctx);
+        getCurrentConversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -274,9 +317,10 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         @Override
         protected void onSelected(List<Role> roles) {
             for (Role role : roles) {
-                if (!account.getRoles().contains(role)) {
-                    account.getRoles().add(role);
-                    messageUtil.infoEntity("status_added_existing_ok", role);
+                Role mergedRole = getCurrentConversation().getEntityManager().merge(role);
+                if (!getAccount().containsRole(mergedRole)) {
+                    getAccount().addRole(mergedRole);
+                    messageUtil.infoEntity("status_added_existing_ok", mergedRole);
                 }
             }
         }
@@ -289,7 +333,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ConversationContext<Role> ctx = RoleController.newEditContext(roles.getSelectedRow());
         ctx.setLabelWithKey("account_roles");
         ctx.setCallBack(editRoleCallBack);
-        conversation().setNextContextSub(ctx);
+        getCurrentConversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -305,19 +349,23 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     public String viewRole() {
         ConversationContext<Role> ctx = RoleController.newEditContext(roles.getSelectedRow());
         ctx.setLabelWithKey("account_roles");
-        conversation().setNextContextSubReadOnly(ctx);
+        getCurrentConversation().setNextContextSubReadOnly(ctx);
         return ctx.view();
     }
 
     /**
-     * This listener force the navigation to the edit or view page of the target @{link ${relation.toEntity.type}}.
+     * This listener force the navigation to the edit or view page of the target @{link Role}.
      */
     public void onRoleRowSelect(SelectEvent event) {
         Faces.navigate(context().isReadOnly() ? viewRole() : editRole());
     }
 
     public void removeRole() {
-        account.removeRole(roles.getSelectedRow());
+        getAccount().removeRole(roles.getSelectedRow());
+        // let's detach it for 2 reasons: 
+        //  1) to prevent any potential modification to go to the db
+        //  2) reduce session size	
+        getCurrentConversation().getEntityManager().detach(roles.getSelectedRow());
         messageUtil.infoEntity("status_removed_ok", roles.getSelectedRow());
     }
 
@@ -325,7 +373,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         ConversationContext<Role> ctx = RoleController.newEditContext(new Role());
         ctx.setLabelWithKey("account_roles");
         ctx.setCallBack(addRoleCallBack);
-        conversation().setNextContextSub(ctx);
+        getCurrentConversation().setNextContextSub(ctx);
         return ctx.view();
     }
 
@@ -334,7 +382,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
 
         @Override
         protected void onOk(Role role) {
-            account.addRole(role);
+            getAccount().addRole(role);
             messageUtil.infoEntity("status_added_new_ok", role);
         }
     };

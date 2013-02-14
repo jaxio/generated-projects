@@ -33,13 +33,13 @@
 	    <property name="scopes">
 	        <map>
 	            <entry key="conversation">
-	                <bean class="com.jaxio.web.conversation.ConversationScope" p:conversationManager-ref="conversationManager"/>
+	                <bean class="com.jaxio.web.conversation.ConversationScope" />
 	            </entry>
 	        </map>
 	    </property>
 	</bean>
-    
-	<bean id="persistenceContextConversationListener" class="com.jaxio.web.conversation.PersistenceContextConversationListener">
+
+	<bean id="entityManagerConversationListener" class="com.jaxio.web.conversation.EntityManagerConversationListener">
 		<constructor-arg ref="entityManagerFactory" />
     </bean>
 </beans>

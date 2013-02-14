@@ -7,6 +7,7 @@
  */
 package com.jaxio.web.domain.more;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
 import java.util.Arrays;
 import javax.faces.convert.Converter;
 import javax.inject.Inject;
@@ -55,7 +56,12 @@ public class MoreTypesDemoLazyDataModel extends GenericLazyDataModel<MoreTypesDe
 
     @Override
     protected ConversationContext<MoreTypesDemo> getSelectedContext(MoreTypesDemo selected) {
-        return MoreTypesDemoController.newEditContext(selected);
+        if (selected.isIdSet()) {
+            // just the id matters as we want to reload it in the conversation entity manager.
+            return MoreTypesDemoController.newEditContext(selected.getId());
+        } else {
+            return MoreTypesDemoController.newEditContext(selected); // fresh entity (creation)
+        }
     }
 
     // -----------------------------------
@@ -71,7 +77,7 @@ public class MoreTypesDemoLazyDataModel extends GenericLazyDataModel<MoreTypesDe
     }
 
     public String multiSelect() {
-        return conversationManager.getCurrentConversation() //
+        return getCurrentConversation() //
                 .<ConversationContext<MoreTypesDemo>> getCurrentContext() //
                 .getCallBack() //
                 .selected(Arrays.asList(selectedRows));

@@ -7,6 +7,8 @@
  */
 package com.jaxio.web.util;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -18,7 +20,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 import com.jaxio.context.UserContext;
 import com.jaxio.web.conversation.Conversation;
-import com.jaxio.web.conversation.ConversationManager;
 
 /**
  * Simple pass over to access static 'userContext'from EL.
@@ -57,7 +58,7 @@ public class UserContextUtil {
         this.locale = locale;
         FacesContext.getCurrentInstance().getViewRoot().setLocale(locale);
         LocaleContextHolder.setLocale(locale);
-        Conversation currentConversation = ConversationManager.getInstance().getCurrentConversation();
+        Conversation currentConversation = getCurrentConversation();
 
         if (currentConversation != null) {
             return FacesContext.getCurrentInstance().getViewRoot().getViewId() + "?faces-redirect=true&_cid_=" + currentConversation.getId();

@@ -7,6 +7,8 @@
  */
 package com.jaxio.web.conversation;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Interface to be implemented if you wish to listen to the lifecycle of {@link Conversation conversations}.
  */
@@ -21,7 +23,7 @@ public interface ConversationListener {
     /**
      * Called to indicate the conversation is being resumed.
      */
-    void conversationResuming(Conversation conversation);
+    void conversationResuming(Conversation conversation, HttpServletRequest request);
 
     /**
      * Called to indicate the passed Conversation is being paused.

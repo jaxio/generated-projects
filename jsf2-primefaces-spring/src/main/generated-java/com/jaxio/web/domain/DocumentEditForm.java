@@ -7,6 +7,7 @@
  */
 package com.jaxio.web.domain;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.springframework.context.annotation.Scope;
@@ -18,29 +19,42 @@ import com.jaxio.web.domain.AccountController;
 import com.jaxio.web.domain.support.GenericEditForm;
 
 /**
- * View Helper to edit {@link Document}.
+ * View Helper/Controller to edit {@link Document}.
  */
 @Named
 @Scope("conversation")
 public class DocumentEditForm extends GenericEditForm<Document, String> {
-    private Document document;
 
     @Inject
     public void setDocumentRepository(DocumentRepository documentRepository) {
         setRepository(documentRepository);
     }
 
-    public void setDocument(Document document) {
-        this.document = document;
-    }
-
     public Document getDocument() {
-        return document;
+        return getEntity();
     }
 
-    @Override
-    public Document getEntity() {
-        return document;
+    // --------------------------------------------------
+    // Support for auto-complete and callback many to one 
+    // --------------------------------------------------
+
+    public void setSelectedAccount(Account account) {
+        // detach the currently set target if present
+        //  1) to prevent any potential modification to go to the db
+        //  2) to reduce session size        	
+        if (getDocument().getAccount() != null) {
+            getCurrentConversation().getEntityManager().detach(getDocument().getAccount());
+        }
+
+        if (account != null) {
+            getDocument().setAccount(getCurrentConversation().getEntityManager().merge(account));
+        } else {
+            getDocument().setAccount(null);
+        }
+    }
+
+    public Account getSelectedAccount() {
+        return getDocument().getAccount();
     }
 
     // --------------------------------------------
@@ -48,9 +62,9 @@ public class DocumentEditForm extends GenericEditForm<Document, String> {
     // --------------------------------------------
 
     public String viewAccount() {
-        ConversationContext<Account> ctx = AccountController.newEditContext(document.getAccount());
+        ConversationContext<Account> ctx = AccountController.newEditContext(getDocument().getAccount());
         ctx.setLabelWithKey("document_account");
-        conversation().setNextContextSubReadOnly(ctx);
+        getCurrentConversation().setNextContextSubReadOnly(ctx);
         return ctx.view();
     }
 }

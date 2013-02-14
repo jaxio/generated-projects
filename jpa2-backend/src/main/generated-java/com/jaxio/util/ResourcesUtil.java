@@ -26,7 +26,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 public class ResourcesUtil {
 
     private static ResourcesUtil instance;
-    private static MessageSource messageSource;
+    private MessageSource messageSource;
 
     @Inject
     public ResourcesUtil(MessageSource ms) {

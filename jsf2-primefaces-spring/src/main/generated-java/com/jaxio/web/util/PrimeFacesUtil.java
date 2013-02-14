@@ -7,6 +7,8 @@
  */
 package com.jaxio.web.util;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.primefaces.context.RequestContext;
 
 /**
@@ -21,5 +23,9 @@ public class PrimeFacesUtil {
         if (RequestContext.getCurrentInstance() != null) {
             RequestContext.getCurrentInstance().execute("APP.updateSearchResultsRegion(\"" + text + "\")");
         }
+    }
+
+    static public boolean isAjax(HttpServletRequest request) {
+        return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
     }
 }

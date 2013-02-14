@@ -34,8 +34,8 @@ public class LogPhaseListener extends DefaultPhaseListener {
 
     @Override
     public void beforePhase(PhaseEvent event) {
-        if (log.isDebugEnabled()) {
-            log.debug(event.getPhaseId());
-        }
+        //    	if (log.isDebugEnabled()) {    	
+        //    		log.debug(event.getPhaseId());
+        //    	}
     }
 }

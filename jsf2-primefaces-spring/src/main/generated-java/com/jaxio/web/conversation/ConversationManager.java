@@ -8,6 +8,7 @@
 package com.jaxio.web.conversation;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static com.jaxio.web.conversation.ConversationHolder.setCurrentConversation;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -39,7 +40,6 @@ public class ConversationManager implements ApplicationContextAware {
     private Collection<ConversationFactory> conversationFactories;
     private Collection<ConversationListener> conversationListeners;
     private Map<String, ConversationFactory> conversationFactoryByUri = newHashMap();
-    private ThreadLocal<Conversation> currentConversation = new ThreadLocal<Conversation>();
     private int maxConversations = 5;
 
     /**
@@ -74,8 +74,12 @@ public class ConversationManager implements ApplicationContextAware {
         return conversationMap(session).size() >= maxConversations;
     }
 
+    /**
+     * Returns the current conversation. Note that this method is mainly here so it can be used from the view.
+     * Use directly ConversationHolder.getCurrentConversation() from Java code.
+     */
     public Conversation getCurrentConversation() {
-        return currentConversation.get();
+        return ConversationHolder.getCurrentConversation();
     }
 
     // --------------------------------------
@@ -108,13 +112,13 @@ public class ConversationManager implements ApplicationContextAware {
         Conversation conversation = conversationMap(request.getSession()).get(id);
 
         if (conversation != null) {
-            conversation.pushNextContext();
+            conversation.pushNextContextIfNeeded();
 
             if (!request.getRequestURI().contains(conversation.getViewUri())) {
                 throw new UnexpectedConversationException("Uri not in sync with conversation", request.getRequestURI(), conversation.getUrl());
             }
-            conversationResuming(conversation);
-            currentConversation.set(conversation);
+            conversationResuming(conversation, request);
+            setCurrentConversation(conversation);
         } else {
             throw new UnexpectedConversationException("No conversation found for id=" + id, request.getRequestURI(), "/home.faces");
         }
@@ -124,16 +128,16 @@ public class ConversationManager implements ApplicationContextAware {
      * Pause the current conversation. Before pausing it, pops the current context as needed.  
      */
     public void pauseCurrentConversation() {
-        Conversation conversation = currentConversation.get();
+        Conversation conversation = getCurrentConversation();
+
+        // we check for not null because the conversation could have 
+        // been ended during the current request.
         if (conversation != null) {
-            // we check for not null beacause the conversation could have 
-            // been ended during the current request.        	
-            if (conversation.isPopCurrentContextOnNextPause()) {
-                conversation.popCurrentContext();
-                conversation.setPopCurrentContextOnNextPause(false);
-            }
+            // call order of 2 methods below is important as we want all the contextes (even the one we are about to be popped)
+            // to be visible from the conversation listener.
             conversationPausing(conversation);
-            currentConversation.set(null);
+            conversation.popContextesIfNeeded();
+            setCurrentConversation(null);
         }
     }
 
@@ -141,9 +145,9 @@ public class ConversationManager implements ApplicationContextAware {
      * End the current Conversation.
      */
     public void endCurrentConversation() {
-        Conversation conversation = currentConversation.get();
+        Conversation conversation = getCurrentConversation();
         conversationEnding(conversation);
-        currentConversation.set(null);
+        setCurrentConversation(null);
         conversationMap().remove(conversation.getId());
     }
 
@@ -160,12 +164,12 @@ public class ConversationManager implements ApplicationContextAware {
 
     public MenuModel getConversationMenuModel() {
         MenuModel model = new DefaultMenuModel();
-        Conversation current = getCurrentConversation();
+        Conversation currentConversation = getCurrentConversation();
         for (Conversation conversation : conversationMap().values()) {
             MenuItem htmlMenuItem = new MenuItem();
             htmlMenuItem.setValue(conversation.getLabel());
             htmlMenuItem.setUrl(conversation.getUrl());
-            if (current != null && current.getId().equals(conversation.getId())) {
+            if (currentConversation != null && currentConversation.getId().equals(conversation.getId())) {
                 htmlMenuItem.setDisabled(true);
             }
             model.addMenuItem(htmlMenuItem);
@@ -251,6 +255,7 @@ public class ConversationManager implements ApplicationContextAware {
                 if (cf.canCreateConversation(request)) {
                     conversationFactoryByUri.put(uri, cf);
                     result = cf;
+                    break;
                 }
             }
         }
@@ -282,9 +287,9 @@ public class ConversationManager implements ApplicationContextAware {
         }
     }
 
-    private void conversationResuming(Conversation conversation) {
+    private void conversationResuming(Conversation conversation, HttpServletRequest request) {
         for (ConversationListener cl : getConversationListeners()) {
-            cl.conversationResuming(conversation);
+            cl.conversationResuming(conversation, request);
         }
     }
 

@@ -93,14 +93,26 @@ public class DocumentController implements ConversationFactory {
     // --------------------------------    
 
     /**
-     * Helper to construct a new ConversationContext for edition.
+     * Helper to construct a new ConversationContext to edit an Document.
+     * @param document the entity to edit.
      */
-    public static ConversationContext<Document> newEditContext(Document document) {
+    public static ConversationContext<Document> newEditContext(final Document document) {
         ConversationContext<Document> ctx = new ConversationContext<Document>();
-        DocumentEditForm documentEditForm = new DocumentEditForm();
-        documentEditForm.setDocument(document);
-        ctx.addBean("documentEditForm", documentEditForm); // will be autowired by our ConversationScope...
+        ctx.setEntity(document); // used by GenericEditForm.init()
         ctx.setViewUri(editUri);
+        ctx.addSourceIgnoringUseConversationEntityManager("form:account");
+        return ctx;
+    }
+
+    /**
+     * Helper to construct a new ConversationContext to edit an Document.
+     * @param id the id of the entity to edit.
+     */
+    public static ConversationContext<Document> newEditContext(final String id) {
+        ConversationContext<Document> ctx = new ConversationContext<Document>();
+        ctx.setEntityId(id); // used by GenericEditForm.init()
+        ctx.setViewUri(editUri);
+        ctx.addSourceIgnoringUseConversationEntityManager("form:account");
         return ctx;
     }
 
@@ -109,6 +121,7 @@ public class DocumentController implements ConversationFactory {
      */
     public static ConversationContext<Document> newSearchContext() {
         ConversationContext<Document> ctx = new ConversationContext<Document>();
+        ctx.setUseConversationEntityManager(false);
         ctx.setViewUri(selectUri);
         return ctx;
     }

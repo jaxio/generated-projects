@@ -7,6 +7,7 @@
  */
 package com.jaxio.web.domain;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.springframework.context.annotation.Scope;
@@ -18,29 +19,42 @@ import com.jaxio.web.domain.AccountController;
 import com.jaxio.web.domain.support.GenericEditForm;
 
 /**
- * View Helper to edit {@link Book}.
+ * View Helper/Controller to edit {@link Book}.
  */
 @Named
 @Scope("conversation")
 public class BookEditForm extends GenericEditForm<Book, Integer> {
-    private Book book;
 
     @Inject
     public void setBookRepository(BookRepository bookRepository) {
         setRepository(bookRepository);
     }
 
-    public void setBook(Book book) {
-        this.book = book;
-    }
-
     public Book getBook() {
-        return book;
+        return getEntity();
     }
 
-    @Override
-    public Book getEntity() {
-        return book;
+    // --------------------------------------------------
+    // Support for auto-complete and callback many to one 
+    // --------------------------------------------------
+
+    public void setSelectedAccount(Account account) {
+        // detach the currently set target if present
+        //  1) to prevent any potential modification to go to the db
+        //  2) to reduce session size        	
+        if (getBook().getAccount() != null) {
+            getCurrentConversation().getEntityManager().detach(getBook().getAccount());
+        }
+
+        if (account != null) {
+            getBook().setAccount(getCurrentConversation().getEntityManager().merge(account));
+        } else {
+            getBook().setAccount(null);
+        }
+    }
+
+    public Account getSelectedAccount() {
+        return getBook().getAccount();
     }
 
     // --------------------------------------------
@@ -48,9 +62,9 @@ public class BookEditForm extends GenericEditForm<Book, Integer> {
     // --------------------------------------------
 
     public String viewAccount() {
-        ConversationContext<Account> ctx = AccountController.newEditContext(book.getAccount());
+        ConversationContext<Account> ctx = AccountController.newEditContext(getBook().getAccount());
         ctx.setLabelWithKey("book_account");
-        conversation().setNextContextSubReadOnly(ctx);
+        getCurrentConversation().setNextContextSubReadOnly(ctx);
         return ctx.view();
     }
 }

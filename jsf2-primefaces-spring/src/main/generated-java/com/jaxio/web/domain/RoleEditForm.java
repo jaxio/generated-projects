@@ -15,29 +15,18 @@ import com.jaxio.repository.RoleRepository;
 import com.jaxio.web.domain.support.GenericEditForm;
 
 /**
- * View Helper to edit {@link Role}.
+ * View Helper/Controller to edit {@link Role}.
  */
 @Named
 @Scope("conversation")
 public class RoleEditForm extends GenericEditForm<Role, Integer> {
-    private Role role;
 
     @Inject
     public void setRoleRepository(RoleRepository roleRepository) {
         setRepository(roleRepository);
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
     public Role getRole() {
-        return role;
+        return getEntity();
     }
-
-    @Override
-    public Role getEntity() {
-        return role;
-    }
-
 }

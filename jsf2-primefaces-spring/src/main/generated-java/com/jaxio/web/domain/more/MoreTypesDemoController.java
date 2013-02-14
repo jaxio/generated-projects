@@ -74,13 +74,23 @@ public class MoreTypesDemoController implements ConversationFactory {
     // --------------------------------    
 
     /**
-     * Helper to construct a new ConversationContext for edition.
+     * Helper to construct a new ConversationContext to edit an MoreTypesDemo.
+     * @param moreTypesDemo the entity to edit.
      */
-    public static ConversationContext<MoreTypesDemo> newEditContext(MoreTypesDemo moreTypesDemo) {
+    public static ConversationContext<MoreTypesDemo> newEditContext(final MoreTypesDemo moreTypesDemo) {
         ConversationContext<MoreTypesDemo> ctx = new ConversationContext<MoreTypesDemo>();
-        MoreTypesDemoEditForm moreTypesDemoEditForm = new MoreTypesDemoEditForm();
-        moreTypesDemoEditForm.setMoreTypesDemo(moreTypesDemo);
-        ctx.addBean("moreTypesDemoEditForm", moreTypesDemoEditForm); // will be autowired by our ConversationScope...
+        ctx.setEntity(moreTypesDemo); // used by GenericEditForm.init()
+        ctx.setViewUri(editUri);
+        return ctx;
+    }
+
+    /**
+     * Helper to construct a new ConversationContext to edit an MoreTypesDemo.
+     * @param id the id of the entity to edit.
+     */
+    public static ConversationContext<MoreTypesDemo> newEditContext(final Integer id) {
+        ConversationContext<MoreTypesDemo> ctx = new ConversationContext<MoreTypesDemo>();
+        ctx.setEntityId(id); // used by GenericEditForm.init()
         ctx.setViewUri(editUri);
         return ctx;
     }
@@ -90,6 +100,7 @@ public class MoreTypesDemoController implements ConversationFactory {
      */
     public static ConversationContext<MoreTypesDemo> newSearchContext() {
         ConversationContext<MoreTypesDemo> ctx = new ConversationContext<MoreTypesDemo>();
+        ctx.setUseConversationEntityManager(false);
         ctx.setViewUri(selectUri);
         return ctx;
     }

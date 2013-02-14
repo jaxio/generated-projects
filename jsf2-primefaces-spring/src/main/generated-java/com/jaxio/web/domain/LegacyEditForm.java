@@ -16,29 +16,18 @@ import com.jaxio.repository.LegacyRepository;
 import com.jaxio.web.domain.support.GenericEditForm;
 
 /**
- * View Helper to edit {@link Legacy}.
+ * View Helper/Controller to edit {@link Legacy}.
  */
 @Named
 @Scope("conversation")
 public class LegacyEditForm extends GenericEditForm<Legacy, LegacyPk> {
-    private Legacy legacy;
 
     @Inject
     public void setLegacyRepository(LegacyRepository legacyRepository) {
         setRepository(legacyRepository);
     }
 
-    public void setLegacy(Legacy legacy) {
-        this.legacy = legacy;
-    }
-
     public Legacy getLegacy() {
-        return legacy;
+        return getEntity();
     }
-
-    @Override
-    public Legacy getEntity() {
-        return legacy;
-    }
-
 }

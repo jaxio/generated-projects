@@ -9,12 +9,17 @@ package com.jaxio.web.conversation;
 
 import java.io.IOException;
 
+import javax.inject.Named;
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.web.filter.OncePerRequestFilter;
+import com.jaxio.web.util.PrimeFacesUtil;
 
 /**
  * This filter handles session expiration during ajax request.
@@ -23,10 +28,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * Note: if you do not use Spring Security filter then you do not need this filter since you can 
  * handle ViewExpiredException as any other exception (see {@link ConversationAwareExceptionHandler}).
  */
-public class SessionExpirationFilter extends OncePerRequestFilter {
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+@Named
+public class SessionExpirationFilter implements Filter {
 
-        if (isAjax(request) && !request.isRequestedSessionIdValid()) {
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
+
+        if (PrimeFacesUtil.isAjax(request) && !request.isRequestedSessionIdValid()) {
             response.getWriter().print(xmlPartialRedirectToPage(request, "/login.faces?session_expired=1"));
             response.flushBuffer();
             return;
@@ -35,14 +45,18 @@ public class SessionExpirationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean isAjax(HttpServletRequest request) {
-        return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
-    }
-
     private String xmlPartialRedirectToPage(HttpServletRequest request, String page) {
         return "<?xml version='1.0' encoding='UTF-8'?>" //
                 + "<partial-response>" //
                 + "<redirect url=\"" + request.getContextPath() + page + "\"/>" //
                 + "</partial-response>";
+    }
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
+
+    @Override
+    public void destroy() {
     }
 }

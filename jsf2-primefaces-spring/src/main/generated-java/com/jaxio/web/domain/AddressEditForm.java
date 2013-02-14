@@ -15,29 +15,18 @@ import com.jaxio.repository.AddressRepository;
 import com.jaxio.web.domain.support.GenericEditForm;
 
 /**
- * View Helper to edit {@link Address}.
+ * View Helper/Controller to edit {@link Address}.
  */
 @Named
 @Scope("conversation")
 public class AddressEditForm extends GenericEditForm<Address, Integer> {
-    private Address address;
 
     @Inject
     public void setAddressRepository(AddressRepository addressRepository) {
         setRepository(addressRepository);
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
     public Address getAddress() {
-        return address;
+        return getEntity();
     }
-
-    @Override
-    public Address getEntity() {
-        return address;
-    }
-
 }

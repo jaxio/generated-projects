@@ -118,5 +118,4 @@ public class Role implements Identifiable<Integer>, Serializable {
                 .add("roleName", getRoleName()) //
                 .toString();
     }
-
 }

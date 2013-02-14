@@ -74,14 +74,26 @@ public class BookController implements ConversationFactory {
     // --------------------------------    
 
     /**
-     * Helper to construct a new ConversationContext for edition.
+     * Helper to construct a new ConversationContext to edit an Book.
+     * @param book the entity to edit.
      */
-    public static ConversationContext<Book> newEditContext(Book book) {
+    public static ConversationContext<Book> newEditContext(final Book book) {
         ConversationContext<Book> ctx = new ConversationContext<Book>();
-        BookEditForm bookEditForm = new BookEditForm();
-        bookEditForm.setBook(book);
-        ctx.addBean("bookEditForm", bookEditForm); // will be autowired by our ConversationScope...
+        ctx.setEntity(book); // used by GenericEditForm.init()
         ctx.setViewUri(editUri);
+        ctx.addSourceIgnoringUseConversationEntityManager("form:account");
+        return ctx;
+    }
+
+    /**
+     * Helper to construct a new ConversationContext to edit an Book.
+     * @param id the id of the entity to edit.
+     */
+    public static ConversationContext<Book> newEditContext(final Integer id) {
+        ConversationContext<Book> ctx = new ConversationContext<Book>();
+        ctx.setEntityId(id); // used by GenericEditForm.init()
+        ctx.setViewUri(editUri);
+        ctx.addSourceIgnoringUseConversationEntityManager("form:account");
         return ctx;
     }
 
@@ -90,6 +102,7 @@ public class BookController implements ConversationFactory {
      */
     public static ConversationContext<Book> newSearchContext() {
         ConversationContext<Book> ctx = new ConversationContext<Book>();
+        ctx.setUseConversationEntityManager(false);
         ctx.setViewUri(selectUri);
         return ctx;
     }
