@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"		
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:composite="http://java.sun.com/jsf/composite">
+<head>
+	<title>Displays error messages in an accessible fashion.</title>
+</head>
+<body>
+	<composite:interface>
+	</composite:interface>
+
+	<composite:implementation>
+		<div id="#{cc.clientId}"> 
+			<ui:repeat var="item" value="#{messagesHelper.getGlobalMessages()}" varStatus="status" rendered="${messagesHelper.hasGlobalMessages()}">
+				<div class="ui-messages-${item.severity} ui-corner-all">
+					<span class="ui-messages-${item.severity}-icon"></span>
+					<span class="ui-messages-${item.severity}-summary"><a id="gMsgNo${status.index}" href="javascript:void" 
+						onclick="PrimeFaces.focus(null, 'form:center');" >${item.facesMessage.summary}</a></span>
+				</div>
+			</ui:repeat>
+			<p:outputPanel layout="block" rendered="${messagesHelper.hasOnlyGlobalMessages()}">
+				<script type="text/javascript">
+					$(function() {
+						setTimeout(function() {
+							APP.focusTo('gMsgNo0');
+						}, 400);
+					});
+				</script>
+			</p:outputPanel>
+			
+			<p:outputPanel layout="block" styleClass="ui-messages-${messagesHelper.maxSeverity} ui-corner-all" rendered="${messagesHelper.hasNonGlobalMessages()}">
+				<span class="ui-messages-${messagesHelper.maxSeverity}-icon"></span>
+				<span class="ui-messages-${messagesHelper.maxSeverity}-summary">
+					<a id="errorPresent" href="javascript:void" onclick="APP.focusTo('errorMsgNo0'); return false;">
+						<h:outputText value="${messagesHelper.nonGlobalMessagesIntro}" />
+					</a>
+				</span>
+				<ol>
+					<ui:repeat var="item" value="${messagesHelper.getNonGlobalMessages()}" varStatus="status">
+						<li><a id="errorMsgNo${status.index}" href="#" onclick="APP.focusTo('${item.sourceId}'); return false;">${item.facesMessage.summary}</a></li>
+					</ui:repeat>
+				</ol>
+				<script type="text/javascript">
+					$(function() {
+						setTimeout(function() {
+							APP.focusTo('errorPresent');
+						}, 400);
+					});
+				</script>
+			</p:outputPanel>
+		</div>
+	</composite:implementation>
+</body>
+</html>

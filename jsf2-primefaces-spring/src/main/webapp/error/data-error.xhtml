@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:app="http://springfuse.jaxio.com/app"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" 
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:of="http://omnifaces.org/functions"	
+	template="/WEB-INF/layouts/main.xhtml">
+	<ui:define name="content">
+		<p:panel header="Data error" rendered="#{!userContext.isFrench()}">
+			<h2>Database returned an error. Your conversation has been closed.</h2>
+			<h:panelGrid columns="2">		
+		 		<h:outputText value="Date/time" /> <h:outputText value="#{of:formatDate(now, 'yyyy-MM-dd HH:mm:ss')}" />
+		 		<h:outputText value="Exception type" /> <h:outputText value="#{requestScope['javax.servlet.error.exception_type']}" />
+		 		<h:outputText value="Exception message" /> <h:outputText value="#{requestScope['javax.servlet.error.message']}" />
+			</h:panelGrid>
+		</p:panel>
+		<p:panel header="Erreur de données" rendered="#{userContext.isFrench()}">
+			<h2>Une erreur a été renvoyée par la base de données. Votre conversation a été fermée.</h2>
+			<h:panelGrid columns="2">		
+		 		<h:outputText value="Date/heure" /> <h:outputText value="#{of:formatDate(now, 'yyyy-MM-dd HH:mm:ss')}" />
+		 		<h:outputText value="Type d'exception" /> <h:outputText value="#{requestScope['javax.servlet.error.exception_type']}" />
+		 		<h:outputText value="Message" /> <h:outputText value="#{requestScope['javax.servlet.error.message']}" />
+			</h:panelGrid>
+		</p:panel>	
+	</ui:define>
+</ui:composition>

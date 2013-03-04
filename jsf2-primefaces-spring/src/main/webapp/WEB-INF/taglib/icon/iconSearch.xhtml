@@ -1,0 +1,15 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<p:commandLink
+		ajax="false"
+		action="#{actionBean[action]}"
+		process="@form"
+		disabled="#{readonly}"
+		rendered="#{empty rendered or rendered}"
+		styleClass="ui-button"
+		title="${msg.icon_search} ${empty title? '' : title}" >
+		<ui:insert/>
+		<div class="ui-button ui-icon iconSearch"/>
+	</p:commandLink>
+</ui:composition>

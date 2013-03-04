@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:c="http://java.sun.com/jsp/jstl/core"
+		xmlns:p="http://primefaces.org/ui"
+		xmlns:app="http://springfuse.jaxio.com/app"
+		xmlns:appcc="http://java.sun.com/jsf/composite/components"
+		contentType="text/html" 
+		encoding="UTF-8"
+		lang="${userContext.locale}">
+	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="${userContext.locale}" lang="${userContext.locale}">
+	<h:head>
+		<f:facet name="first">
+			<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+			<title>${empty title? msg.main_title : title}</title>
+		</f:facet>
+		<f:facet name="last">
+			<h:outputStylesheet name="css/main.css" />
+			<h:outputScript name="js/main.js" />
+		</f:facet>
+	</h:head>
+	<h:body>
+		<p:growl widgetVar="growlNotificationBar" showDetail="true" sticky="false" life="1500" />
+		<img src="${request.contextPath}/resources/icons/environment/${systemProperties['env_name'] eq null ? 'development' : systemProperties['env_name']}.gif" width="58" height="50" class="versionEnv" alt="${systemProperties['env_name'] eq null ? 'development' : systemProperties['env_name']}"/>
+		<h:form id="form" enctype="multipart/form-data; charset=utf-8">
+			<!-- regular layout (does not work with chromeshades) -->
+			<p:layout fullPage="true" >
+				<p:layoutUnit id="top" position="north" resizable="false" size="115">
+					<div role="banner">
+						<h:panelGrid columns="3" style="width: 100%">
+							<h:outputLink id="logo_link" value="http://www.jaxio.com/" title="Go to Jaxio" ><h:graphicImage id="logoHeader" width="179" height="63" alt="Logo Jaxio" name="img/logo-jaxio.png" style="border: 0px;"/></h:outputLink>
+							<h1 style="text-align: center;">${empty title? msg.main_title : title}</h1>
+							<h:panelGroup>
+								<div style="float: right;">
+									<h:outputFormat rendered="#{userContext.isLoggedIn()}" value="${userContext.username}" style="margin-right: 5px;"/>
+									<h:outputLink id="login_link" value="${facesContext.externalContext.requestContextPath}/login.faces" styleClass="userInfo-user" rendered="${userContext.isAnonymousUser()}"><h:outputText value="${msg.connexion}"/></h:outputLink>
+									<h:outputLink id="logout_link" value="${facesContext.externalContext.requestContextPath}/logout.faces" styleClass="userInfo-user" rendered="${userContext.isLoggedIn()}"><h:outputText value="${msg.logout}"/></h:outputLink>
+									<a id="home_link" href="${facesContext.externalContext.requestContextPath}/home.faces" class="userInfo-welcome">${msg.home}</a>
+									<p:commandLink id="switchToFrench" action="#{userContext.switchToFrench()}" styleClass="userInfo-fr" rendered="#{!userContext.isFrench()}" />
+									<p:commandLink id="switchToEnglish" action="#{userContext.switchToEnglish()}" styleClass="userInfo-en" rendered="#{userContext.isFrench()}" />
+								</div>
+							</h:panelGroup>
+						</h:panelGrid>
+					</div>
+					<div role="navigation">
+						<p:toolbar>
+							<ui:insert name="toolbarChildren"/>
+							<p:toolbarGroup align="right">
+								<p:menuButton
+									value="Conversations (${conversationManager.conversationCount})"
+									model="#{conversationManager.conversationMenuModel}" />
+
+								<p:menuButton value="Domain">
+											<p:menuitem value="${msg.account}" url="/domain/accountSelect.faces?_ncid_=true" />
+													<p:menuitem value="${msg.address}" url="/domain/addressSelect.faces?_ncid_=true" />
+																	<p:menuitem value="${msg.legacy}" url="/domain/legacySelect.faces?_ncid_=true" />
+													<p:menuitem value="${msg.moreTypesDemo}" url="/domain/more/moreTypesDemoSelect.faces?_ncid_=true" />
+													<p:menuitem value="${msg.role}" url="/domain/roleSelect.faces?_ncid_=true" />
+											</p:menuButton>
+								<p:menuButton value="Debug">
+									<p:menuitem value="Throw exception!" action="#{exceptionUtil.throwRuntimeException()}" process="@this" ajax="false" immediate="true" icon="ui-icon ui-icon-alert" />
+									<p:menuitem value="Throw ajax exception!" action="#{exceptionUtil.throwRuntimeException()}" update="messages" process="@this" ajax="true" immediate="true" icon="ui-icon ui-icon-alert" style="width:300px"/>
+								</p:menuButton>
+							</p:toolbarGroup>
+						</p:toolbar>
+						<p:outputPanel rendered="#{readonly}">
+							<!-- give focus to cancel to ease keyboard navigation -->
+							<script type="text/javascript">
+								$(function() {
+									setTimeout(function() {
+										APP.focusTo('form:cancel');
+									}, 200);
+								});
+							</script>
+						</p:outputPanel>
+					</div>
+				</p:layoutUnit>
+				<p:layoutUnit id="center" position="center">
+					<div id="messagesRegion" aria-label="form feedback" aria-live="assertive" aria-relevant="additions">
+						<appcc:messages id="messages" />
+					</div>
+					<p:focus context="center" rendered="${messagesHelper.hasNoMessages()}" />
+					<ui:insert name="content"/>
+				</p:layoutUnit>
+				<p:layoutUnit id="bottom" position="south" size="30">
+					<p:outputPanel layout="block" rendered="#{!userContext.isFrench()}">
+						© 2005-2012 <a href="http://www.jaxio.com/" target="blank">JAXIO</a> - Generated by <a href="http://www.jaxio.com/en/celerio.html" target="blank">Celerio</a> - <a href="http://www.jaxio.com/en/contact-us.html" target="blank">Contact us</a> - Follow us on Twitter <a href="http://www.twitter.com/springfuse" target="blank">@springfuse</a>
+					</p:outputPanel>
+					<p:outputPanel layout="block" rendered="#{userContext.isFrench()}">
+						© 2005-2012 <a href="http://www.jaxio.com/" target="blank">JAXIO</a> - Application générée par <a href="http://www.jaxio.com/celerio.html" target="blank">Celerio</a> - <a href="http://www.jaxio.com/nous-contacter.html" target="blank">Contactez-nous</a> - Suivez-nous sur Twitter <a href="http://www.twitter.com/springfuse" target="blank">@springfuse</a>
+					</p:outputPanel>
+				</p:layoutUnit>
+			</p:layout>
+			<ui:insert name="dialogs"/>
+		</h:form>
+		<script type="text/javascript">
+			// example with asynchronous google analytics
+			var _gaq = _gaq || [];
+			_gaq.push([ '_setAccount', 'UA-166864-24' ]); // change with your google id
+			_gaq.push([ '_setCustomVar', 1, 'rootPackage', 'jsf2Prime_com.jaxio', 1 ]); // example of user defined variable
+			_gaq.push([ '_trackPageview' ]);
+			(function() {
+				var ga = document.createElement('script');
+				ga.type = 'text/javascript';
+				ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl': 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(ga, s);
+			})();
+		</script>
+	</h:body>
+	</html>
+</f:view>

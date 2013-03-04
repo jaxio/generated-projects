@@ -1,0 +1,132 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:app="http://springfuse.jaxio.com/app"
+	xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"	
+	template="/WEB-INF/layouts/main.xhtml">
+	<ui:define name="toolbarChildren">
+		<p:toolbarGroup rendered="#{sub or readonly}">
+			<p:commandButton id="back" action="#{searchForm.back()}" process="@none" ajax="false" immediate="true"
+				value="#{msg.back}" icon="ui-icon-arrowreturnthick-1-w"/>
+		</p:toolbarGroup>	
+		<p:toolbarGroup align="left" rendered="#{not sub and not readonly}">
+			<p:commandButton id="close" action="close" ajax="true" immediate="true" process="@this"
+				icon="ui-icon-close"
+				value="#{msg.menu_close}"
+				title="#{msg.menu_close} #{title}"
+				rendered="#{not empty bean}" />
+			<p:commandButton id="quit" action="#{searchForm.quit()}" ajax="false" process="@form"
+				icon="ui-icon-closethick"
+				value="#{msg.menu_quit}"
+				title="#{msg.menu_quit} #{title}"
+				rendered="#{empty bean}"/>
+			<p:commandButton id="delete" icon="ui-icon-trash"
+				onclick="askForDeleteDialog.show(); APP.focusAskForDeleteDialog();"
+				value="#{msg.menu_delete_and_close}"
+				title="#{msg.menu_delete_and_close} #{title}"
+				rendered="#{not empty bean}"
+				disabled="#{empty bean.id}" />
+			<p:separator />
+			<p:commandButton id="sendNew" action="#{data.sendNew()}" ajax="false" immediate="true" process="@this"
+				icon="ui-icon-document"
+				rendered="#{empty bean}"
+				value="#{msg.menu_new}"
+				title="#{msg.menu_new} #{title}" />
+			<p:commandButton id="newLocation"
+				onclick="APP.menu.newLocation();"
+				icon="ui-icon-document"
+				rendered="#{not empty bean}"
+				value="#{msg.menu_new}"
+				title="#{msg.menu_new} #{title}" />
+			<p:commandButton id="openLocation"
+				onclick="APP.menu.openLocation();"
+				icon="ui-icon-folder-open"
+				value="#{msg.menu_open}"
+				title="#{msg.menu_open} #{title}"
+				rendered="#{not empty bean}" />
+		</p:toolbarGroup>
+	</ui:define>
+	<ui:define name="content">
+		<p:breadCrumb model="#{conversationManager.breadCrumbMenuModel}" rendered="#{conversationManager.renderBreadCrumb}" />	
+		<p:fieldset id="filtersFieldset" legend="#{msg.search_criteria}">
+			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/>		
+			<f:validateBean disabled="true">
+				<h:panelGrid columns="4">
+					<ui:insert name="filters" />
+				</h:panelGrid>
+			</f:validateBean>
+		</p:fieldset>
+		<p:commandButton id="search" actionListener="#{data.onSearch()}" process="@form"
+			icon="iconSearch" styleClass="aria-search-button default"
+			update="messages searchResults" value="#{msg.menu_search}"
+			title="#{msg.menu_search} #{title}" />
+		<p:commandButton icon="ui-icon-power" value="${msg.search_reset}"
+			actionListener="#{searchForm.reset()}"
+			update="messages filtersFieldset searchResults searchFormName"/>
+		<p:commandButton id="saveSearch" action="saveSearch" process="@form"
+			rendered="#{savedSearch}" icon="ui-icon-disk"
+			update="filtersFieldset messages searchResults"
+			value="${msg.search_save}" />
+		<p:autoComplete id="searchFormName"
+			value="#{searchForm.searchFormName}" rendered="#{savedSearch}"
+			completeMethod="#{savedSearchService.finderFor(searchForm).find}"
+			var="item" itemValue="#{item}" itemLabel="#{item}" dropdown="true"
+			size="30">
+			<p:ajax event="itemSelect" listener="#{savedSearchService.onChange}"
+				update="filtersFieldset messages searchResults" />
+			<f:attribute name="searchForm" value="#{searchForm}" />
+			<f:validateBean binding="#{lenientBeanValidator}" />
+		</p:autoComplete>
+		<ui:insert name="buttons" />
+		<br />
+		<span style="height: 16px; display: block;">
+			<p:ajaxStatus>
+				<f:facet name="start">
+					<h:graphicImage name="icons/ajaxloading.gif" alt="" />
+				</f:facet>
+				<f:facet name="error">
+					<h:outputText value="${msg.error_ajax}" />
+				</f:facet>
+				<f:facet name="success">
+					<h:outputText value="" />
+				</f:facet>
+			</p:ajaxStatus>
+		</span>
+		<!-- safari/voiceover requires 'span' (not 'div') for live region-->
+		<span id="searchResultsRegion" aria-label="${msg.search_results}" aria-live="assertive" aria-relevant="additions">
+		</span>
+		<c:if test="#{not multiCheckboxSelection}">
+			<p:dataTable id="searchResults"
+				value="#{data}" var="item" lazy="true"
+				paginator="true" paginatorAlwaysVisible="true"
+				rowsPerPageTemplate="10,25,50,100" rows="10"
+				selectionMode="single" selection="#{data.selectedRow}">
+				<ui:insert name="result" />
+			</p:dataTable>
+		</c:if>
+		<c:if test="#{multiCheckboxSelection}">
+			<p:dataTable id="searchResults"
+				value="#{data}" var="item" lazy="true"
+				paginator="true" paginatorAlwaysVisible="true"
+				rowsPerPageTemplate="10,25,50,100" rows="10"
+				selection="#{data.selectedRows}">
+				<ui:insert name="result" />
+				<f:facet name="footer">
+					<app:iconSelect actionBean="#{data}" action="multiSelect" rendered="true" process="@this" />
+				</f:facet>
+			</p:dataTable>
+		</c:if>
+		<script type="text/javascript">APP.updateSearchResultsRegion('#{resourcesUtil.getPluralableProperty("search_results_status", data.rowCount)}');</script>
+	</ui:define>
+	<ui:define name="dialogs">
+		<p:confirmDialog widgetVar="askForDeleteItemDialog" header="${msg.menu_delete}?" message="${msg.dialog_delete_confirm}">
+	        <h:panelGrid id="askForDeleteItemDialogContent" columns="2" cellpadding="4" style="margin:0 auto;">  
+	            <h:outputText value="${typeAwarePrinter.print(data.selectedRow)}" style="font-weight:bold" rendered="${not empty data.selectedRow}"/>  
+	        </h:panelGrid>		
+			<p:commandButton id="askForDeleteItemDialogYes" action="#{data.delete()}" ajax="true" immediate="true" oncomplete="askForDeleteItemDialog.hide();" process="@this" value="${msg.yes}" title="${msg.dialog_delete_confirm} ${msg.yes}" icon="ui-icon-check" update=":form:searchResults :form:messages"/>
+			<p:commandButton id="askForDeleteItemDialogNo" value="${msg.no}" title="${msg.dialog_delete_confirm} ${msg.no}" onclick="askForDeleteItemDialog.hide(); return false;" icon="ui-icon-cancel"/>
+		</p:confirmDialog>
+	</ui:define>	
+</ui:composition >
