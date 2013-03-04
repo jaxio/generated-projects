@@ -14,9 +14,9 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import com.jaxio.util.*;
+import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
-import static org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,7 +30,6 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.log4j.Logger;
-import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
