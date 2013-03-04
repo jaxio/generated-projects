@@ -1,15 +1,18 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"	
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:outputLabel for="audit" value="${msg.audit}" rendered="${empty rendered ? true : rendered}" />
-	<h:panelGrid id="audit" rendered="${empty rendered ? true : rendered}">
-		<h:outputText value="${msg.creation_author} ${creationAuthor}" rendered="${not empty creationAuthor}" />
-		<h:outputText value="${msg.creation_date} ${creationDate}" rendered="${not empty creationDate}" />
-		<h:outputText value="${msg.last_modification_author} ${lastModificationAuthor}" rendered="${not empty lastModificationAuthor}" />
-		<h:outputText value="${msg.last_modification_date} ${lastModificationDate}" rendered="${not empty lastModificationDate}" />
-	</h:panelGrid>
+	<c:if test="${creationAuthor ne null or creationDate ne null or lastModificationAuthor ne null or lastModificationDate ne null}">
+		<app:outputLabel for="audit" value="${msg.audit}" rendered="${empty rendered ? true : rendered}" />
+		<h:panelGrid id="audit" rendered="${empty rendered ? true : rendered}">
+			<h:outputText value="${msg.creation_author} ${creationAuthor}" rendered="${not empty creationAuthor}" />
+			<h:outputText value="${msg.creation_date} ${creationDate}" rendered="${not empty creationDate}" />
+			<h:outputText value="${msg.last_modification_author} ${lastModificationAuthor}" rendered="${not empty lastModificationAuthor}" />
+			<h:outputText value="${msg.last_modification_date} ${lastModificationDate}" rendered="${not empty lastModificationDate}" />
+		</h:panelGrid>
+	</c:if>
 </ui:composition>

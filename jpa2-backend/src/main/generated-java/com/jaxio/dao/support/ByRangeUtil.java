@@ -38,13 +38,13 @@ public class ByRangeUtil {
                     } else {
                         predicates.add(builder.or(rangePredicate, builder.isNull(root.get(range.getField()))));
                     }
-                }
-
-                // no range at all, let's take the opportunity to keep only null...
-                if (TRUE == range.getIncludeNull()) {
-                    predicates.add(builder.isNull(root.get(range.getField())));
-                } else if (FALSE == range.getIncludeNull()) {
-                    predicates.add(builder.isNotNull(root.get(range.getField())));
+                } else {
+                    // no from/to is set, but include null or not could be:
+                    if (TRUE == range.getIncludeNull()) {
+                        predicates.add(builder.isNull(root.get(range.getField())));
+                    } else if (FALSE == range.getIncludeNull()) {
+                        predicates.add(builder.isNotNull(root.get(range.getField())));
+                    }
                 }
             }
         }

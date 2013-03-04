@@ -22,6 +22,7 @@
 		</f:facet>
 	</h:head>
 	<h:body>
+		<p:growl widgetVar="growlNotificationBar" showDetail="true" sticky="false" life="1500" />
 		<img src="${request.contextPath}/resources/icons/environment/${systemProperties['env_name'] eq null ? 'development' : systemProperties['env_name']}.gif" width="58" height="50" class="versionEnv" alt="${systemProperties['env_name'] eq null ? 'development' : systemProperties['env_name']}"/>
 		<h:form id="form" enctype="multipart/form-data; charset=utf-8">
 			<!-- regular layout (does not work with chromeshades) -->
@@ -37,8 +38,8 @@
 									<h:outputLink id="login_link" value="${facesContext.externalContext.requestContextPath}/login.faces" styleClass="userInfo-user" rendered="${userContext.isAnonymousUser()}"><h:outputText value="${msg.connexion}"/></h:outputLink>
 									<h:outputLink id="logout_link" value="${facesContext.externalContext.requestContextPath}/logout.faces" styleClass="userInfo-user" rendered="${userContext.isLoggedIn()}"><h:outputText value="${msg.logout}"/></h:outputLink>
 									<a id="home_link" href="${facesContext.externalContext.requestContextPath}/home.faces" class="userInfo-welcome">${msg.home}</a>
-									<p:commandLink action="#{userContext.switchToFrench()}" styleClass="userInfo-fr" rendered="#{!userContext.isFrench()}" />
-									<p:commandLink action="#{userContext.switchToEnglish()}" styleClass="userInfo-en" rendered="#{userContext.isFrench()}" />
+									<p:commandLink id="switchToFrench" action="#{userContext.switchToFrench()}" styleClass="userInfo-fr" rendered="#{!userContext.isFrench()}" />
+									<p:commandLink id="switchToEnglish" action="#{userContext.switchToEnglish()}" styleClass="userInfo-en" rendered="#{userContext.isFrench()}" />
 								</div>
 							</h:panelGroup>
 						</h:panelGrid>

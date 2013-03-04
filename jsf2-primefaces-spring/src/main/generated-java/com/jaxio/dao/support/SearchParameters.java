@@ -67,7 +67,7 @@ public class SearchParameters implements Serializable {
     private int firstResult = 0;
 
     // Joins
-    private List<SingularAttribute<?, ?>> leftJoinAttributes = newArrayList();
+    private List<SingularAttribute<?, ?>> leftJoins = newArrayList();
 
     // ranges
     private List<Range<?, ?>> ranges = newArrayList();
@@ -86,6 +86,10 @@ public class SearchParameters implements Serializable {
 
     // extra parameters
     private Map<String, Object> extraParameters = newHashMap();
+
+    private boolean useANDInManyToMany = true;
+
+    private boolean useDistinct = false;
 
     // -----------------------------------
     // SearchMode
@@ -505,19 +509,26 @@ public class SearchParameters implements Serializable {
     /**
      * Returns the attribute (x-to-one association) which must be fetched with a left join.
      */
-    public List<SingularAttribute<?, ?>> getLeftJoinAttributes() {
-        return leftJoinAttributes;
+    public List<SingularAttribute<?, ?>> getLeftJoins() {
+        return leftJoins;
     }
 
-    public boolean hasLeftJoinAttributes() {
-        return !leftJoinAttributes.isEmpty();
+    public boolean hasLeftJoins() {
+        return !leftJoins.isEmpty();
     }
 
     /**
      * The passed attribute (x-to-one association) will be fetched with a left join.
      */
-    public SearchParameters addLeftJoinAttribute(SingularAttribute<?, ?> xToOneAttribute) {
-        leftJoinAttributes.add(xToOneAttribute);
+    public void addLeftJoin(SingularAttribute<?, ?> xToOneAttribute) {
+        leftJoins.add(xToOneAttribute);
+    }
+
+    /**
+     * Fluently set the join attribute
+     */
+    public SearchParameters leftJoin(SingularAttribute<?, ?> xToOneAttribute) {
+        addLeftJoin(xToOneAttribute);
         return this;
     }
 
@@ -581,6 +592,54 @@ public class SearchParameters implements Serializable {
 
     public Map<String, Object> getExtraParameters() {
         return extraParameters;
+    }
+
+    // -----------------------------------
+    // Use and in NN Search 
+    // -----------------------------------
+
+    public SearchParameters useORInManyToMany() {
+        return useANDInManyToMany(false);
+    }
+
+    public SearchParameters useANDInManyToMany() {
+        return useANDInManyToMany(true);
+    }
+
+    public SearchParameters useANDInManyToMany(boolean useANDInNNSearch) {
+        this.useANDInManyToMany = useANDInNNSearch;
+        return this;
+    }
+
+    public boolean getUseANDInManyToMany() {
+        return this.useANDInManyToMany;
+    }
+
+    // -----------------------------------
+    // Distinct
+    // -----------------------------------
+
+    public void setDistinct(boolean useDistinct) {
+        this.useDistinct = useDistinct;
+    }
+
+    public boolean getDistinct() {
+        return useDistinct;
+    }
+
+    public SearchParameters distinct(boolean useDistinct) {
+        setDistinct(useDistinct);
+        return this;
+    }
+
+    public SearchParameters useDistinct() {
+        setDistinct(true);
+        return this;
+    }
+
+    public SearchParameters disableDistinct() {
+        setDistinct(false);
+        return this;
     }
 
     @Override

@@ -130,7 +130,9 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
         }
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<E> criteriaQuery = builder.createQuery(type);
-        // criteriaQuery.distinct(true); // TODO: when active, breaks the sort on x-to-one property!
+        if (sp.getDistinct()) {
+            criteriaQuery.distinct(true);
+        }
         Root<E> root = criteriaQuery.from(type);
 
         // predicate
@@ -140,14 +142,14 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
         }
 
         // left join
-        if (sp.hasLeftJoinAttributes()) {
-            for (SingularAttribute<?, ?> arg : sp.getLeftJoinAttributes()) {
+        if (sp.hasLeftJoins()) {
+            for (SingularAttribute<?, ?> arg : sp.getLeftJoins()) {
                 root.fetch((SingularAttribute<E, ?>) arg, JoinType.LEFT);
             }
         }
 
         // order by
-        criteriaQuery.orderBy(buildJpaOrders(sp.getOrders(), root, builder));
+        criteriaQuery.orderBy(buildJpaOrders(sp.getOrders(), root, builder, sp));
 
         TypedQuery<E> typedQuery = entityManager.createQuery(criteriaQuery);
 
@@ -187,11 +189,13 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
-        // criteriaQuery.distinct(true); // TODO: not taken into account !
         Root<E> root = criteriaQuery.from(type);
 
-        // count
-        criteriaQuery = criteriaQuery.select(builder.count(root));
+        if (sp.getDistinct()) {
+            criteriaQuery = criteriaQuery.select(builder.countDistinct(root));
+        } else {
+            criteriaQuery = criteriaQuery.select(builder.count(root));
+        }
 
         // predicate
         Predicate predicate = getPredicate(root, criteriaQuery, builder, entity, sp);
