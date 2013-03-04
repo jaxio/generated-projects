@@ -7,9 +7,9 @@
  */
 package com.jaxio.domain;
 
-import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
+import static org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -30,6 +30,7 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;
@@ -41,6 +42,7 @@ import com.jaxio.domain.IdentifiableHashBuilder;
 
 @Entity
 @Table(name = "DOCUMENT")
+@Cache(usage = NONSTRICT_READ_WRITE)
 @FilterDef(name = "myDocumentFilter", defaultCondition = "ACCOUNT_ID = :currentAccountId ", parameters = @ParamDef(name = "currentAccountId", type = "org.hibernate.type.StringType"))
 @Filter(name = "myDocumentFilter")
 public class Document implements Identifiable<String>, Serializable {
@@ -221,8 +223,9 @@ public class Document implements Identifiable<String>, Serializable {
     // many-to-one: Document.accountId ==> Account.id
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    @Cache(usage = NONSTRICT_READ_WRITE)
     @JoinColumn(name = "ACCOUNT_ID", nullable = false)
-    @ManyToOne(cascade = { PERSIST, MERGE }, fetch = LAZY)
+    @ManyToOne(cascade = PERSIST, fetch = LAZY)
     public Account getAccount() {
         return account;
     }

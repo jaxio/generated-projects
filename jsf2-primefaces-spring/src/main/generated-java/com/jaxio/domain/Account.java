@@ -8,11 +8,11 @@
 package com.jaxio.domain;
 
 import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.TemporalType.TIMESTAMP;
+import static org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,6 +36,7 @@ import javax.persistence.Version;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;
@@ -52,6 +53,7 @@ import com.jaxio.domain.Role;
 
 @Entity
 @Table(name = "ACCOUNT")
+@Cache(usage = NONSTRICT_READ_WRITE)
 @FilterDef(name = "myAccountFilter", defaultCondition = "ID = :currentAccountId ", parameters = @ParamDef(name = "currentAccountId", type = "org.hibernate.type.StringType"))
 @Filter(name = "myAccountFilter")
 public class Account implements Identifiable<String>, Serializable {
@@ -330,8 +332,9 @@ public class Account implements Identifiable<String>, Serializable {
     // many-to-one: Account.addressId ==> Address.id
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    @Cache(usage = NONSTRICT_READ_WRITE)
     @JoinColumn(name = "ADDRESS_ID")
-    @ManyToOne(cascade = { PERSIST, MERGE }, fetch = LAZY)
+    @ManyToOne(cascade = PERSIST, fetch = LAZY)
     public Address getHomeAddress() {
         return homeAddress;
     }
@@ -360,6 +363,7 @@ public class Account implements Identifiable<String>, Serializable {
     // one to many: account ==> books
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    @Cache(usage = NONSTRICT_READ_WRITE)
     @OneToMany(mappedBy = "account", orphanRemoval = true, cascade = ALL)
     public List<Book> getBooks() {
         return books;
@@ -411,6 +415,7 @@ public class Account implements Identifiable<String>, Serializable {
     // one to many: account ==> documents
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    @Cache(usage = NONSTRICT_READ_WRITE)
     @OneToMany(mappedBy = "account", orphanRemoval = true, cascade = ALL)
     public List<Document> getDocuments() {
         return documents;
@@ -469,8 +474,9 @@ public class Account implements Identifiable<String>, Serializable {
     /**
      * Returns the roles list.
      */
+    @Cache(usage = NONSTRICT_READ_WRITE)
     @JoinTable(name = "ACCOUNT_ROLE", joinColumns = @JoinColumn(name = "ACCOUNT_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
-    @ManyToMany(cascade = { PERSIST, MERGE })
+    @ManyToMany(cascade = PERSIST)
     public List<Role> getRoles() {
         return roles;
     }

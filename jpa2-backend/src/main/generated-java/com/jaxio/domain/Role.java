@@ -7,6 +7,7 @@
  */
 package com.jaxio.domain;
 
+import static org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,11 +17,13 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.Cache;
 import org.hibernate.validator.constraints.NotEmpty;
 import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "`ROLE`")
+@Cache(usage = NONSTRICT_READ_WRITE)
 public class Role implements Identifiable<Integer>, Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger log = Logger.getLogger(Role.class);

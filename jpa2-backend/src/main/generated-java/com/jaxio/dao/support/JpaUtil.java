@@ -22,8 +22,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Fetch;
-import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
@@ -107,11 +105,11 @@ public class JpaUtil {
         }
     }
 
-    public static <E> List<Order> buildJpaOrders(Iterable<OrderBy> orders, Root<E> root, CriteriaBuilder builder, SearchParameters sp) {
+    public static <E> List<Order> buildJpaOrders(Iterable<OrderBy> orders, Root<E> root, CriteriaBuilder builder) {
         List<Order> jpaOrders = newArrayList();
 
         for (OrderBy ob : orders) {
-            Path<?> path = getPropertyOrderPath(root, ob.getProperty(), sp);
+            Path<?> path = getPropertyPath(root, ob.getProperty());
 
             if (ob.isOrderDesc()) {
                 jpaOrders.add(builder.desc(path));
@@ -123,35 +121,13 @@ public class JpaUtil {
     }
 
     /**
-     * Convert the passed propertyPath into a JPA path. <br>
+     * Convert the passed propertyPath into a JPA path.
      * Note: JPA will do joins if the property is in an associated entity.
      */
-    @SuppressWarnings("unchecked")
-    private static <E> Path<?> getPropertyOrderPath(Root<E> root, String propertyPath, SearchParameters sp) {
+    private static <E> Path<?> getPropertyPath(Path<E> root, String propertyPath) {
         String[] pathItems = StringUtils.split(propertyPath, ".");
 
-        Path<?> path = null;
-
-        String pathItem = pathItems[0];
-        if (sp.getDistinct()) {
-            // handle case when order on already fetched attribute
-            for (Fetch<E, ?> fetch : root.getFetches()) {
-                if (pathItem.equals(fetch.getAttribute().getName()) && fetch instanceof Join<?, ?>) {
-                    path = (Join<E, ?>) fetch;
-                }
-            }
-            for (Join<E, ?> join : root.getJoins()) {
-                if (pathItem.equals(join.getAttribute().getName()) && join instanceof Join<?, ?>) {
-                    path = (Join<E, ?>) join;
-                }
-            }
-        }
-
-        // if no fetch matches the required path item, load it from root
-        if (path == null) {
-            path = root.get(pathItem);
-        }
-
+        Path<?> path = root.get(pathItems[0]);
         for (int i = 1; i < pathItems.length; i++) {
             path = path.get(pathItems[i]);
         }

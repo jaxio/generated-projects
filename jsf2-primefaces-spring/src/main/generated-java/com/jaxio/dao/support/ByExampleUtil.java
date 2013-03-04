@@ -32,7 +32,6 @@ import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.apache.log4j.Logger;
 import org.springframework.util.ReflectionUtils;
 
 import com.google.common.base.Throwables;
@@ -45,8 +44,6 @@ import com.jaxio.domain.Identifiable;
 @Named
 @Singleton
 public class ByExampleUtil {
-    private static final Logger log = Logger.getLogger(ByExampleUtil.class);
-
     @PersistenceContext
     private EntityManager em;
 
@@ -113,8 +110,7 @@ public class ByExampleUtil {
     }
 
     /**
-     * Invoke byExample method for each not null x-to-one association when their pk is not set. This allows you to search entities based on an associated
-     * entity's properties value.
+     * Invoke byExample method for each not null x-to-one association when their pk is not set. This allows you to search entities based on an associated entity's properties value.
      */
     @SuppressWarnings("unchecked")
     public <T extends Identifiable<?>, M2O extends Identifiable<?>> List<Predicate> byExampleOnXToOne(ManagedType<T> mt, Root<T> mtPath, final T mtValue,
@@ -141,20 +137,11 @@ public class ByExampleUtil {
         List<Predicate> predicates = newArrayList();
         for (PluralAttribute<T, ?, ?> pa : mt.getDeclaredPluralAttributes()) {
             if (pa.getCollectionType() == PluralAttribute.CollectionType.LIST) {
-                List<?> values = (List<?>) getValue(mtValue, mt.getAttribute(pa.getName()));
-                if (values != null && !values.isEmpty()) {
-                    if (sp.getUseANDInManyToMany()) {
-                        if (values.size() > 3) {
-                            log.warn("Please note that using AND restriction on an Many to Many relationship requires as many joins as values");
-                        }
-                        for (Object value : values) {
-                            ListJoin<T, ?> join = mtPath.join(mt.getDeclaredList(pa.getName()));
-                            predicates.add(join.in(value));
-                        }
-                    } else {
-                        ListJoin<T, ?> join = mtPath.join(mt.getDeclaredList(pa.getName()));
-                        predicates.add(join.in(values));
-                    }
+                List<?> value = (List<?>) getValue(mtValue, mt.getAttribute(pa.getName()));
+
+                if (value != null && !value.isEmpty()) {
+                    ListJoin<T, ?> join = mtPath.join(mt.getDeclaredList(pa.getName()));
+                    predicates.add(join.in(value));
                 }
             }
         }

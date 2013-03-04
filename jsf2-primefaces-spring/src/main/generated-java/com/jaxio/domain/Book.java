@@ -7,9 +7,9 @@
  */
 package com.jaxio.domain;
 
-import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
+import static org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,6 +23,7 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
@@ -33,6 +34,7 @@ import com.jaxio.domain.IdentifiableHashBuilder;
 
 @Entity
 @Table(name = "BOOK")
+@Cache(usage = NONSTRICT_READ_WRITE)
 @FilterDef(name = "myBookFilter", defaultCondition = "ACCOUNT_ID = :currentAccountId ", parameters = @ParamDef(name = "currentAccountId", type = "org.hibernate.type.StringType"))
 @Filter(name = "myBookFilter")
 public class Book implements Identifiable<Integer>, Serializable {
@@ -140,8 +142,9 @@ public class Book implements Identifiable<Integer>, Serializable {
     // many-to-one: Book.accountId ==> Account.id
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    @Cache(usage = NONSTRICT_READ_WRITE)
     @JoinColumn(name = "ACCOUNT_ID")
-    @ManyToOne(cascade = { PERSIST, MERGE }, fetch = LAZY)
+    @ManyToOne(cascade = PERSIST, fetch = LAZY)
     public Account getAccount() {
         return account;
     }

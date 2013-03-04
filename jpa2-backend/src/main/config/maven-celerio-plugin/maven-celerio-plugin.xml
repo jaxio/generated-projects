@@ -27,53 +27,6 @@
 			<!-- <dateMapping columnJdbcType="DATE" mappedType="M_JODA_LOCALDATE"/> -->
 		</dateMappings>
 
-        <!-- default configuration for fetch type / cascades / 2d level cache--> 
-        <defaultEntityCacheConfig usage="NONE" />
-        
-        <defaultManyToOneConfig fetch="LAZY">
-            <cascades>
-                <cascade type="PERSIST"/>
-                <cascade type="MERGE"/>
-            </cascades>
-            <cacheConfig usage="NONE" />
-        </defaultManyToOneConfig>
-        
-        <defaultOneToManyConfig orphanRemoval="true">
-            <cascades>
-                <cascade type="ALL"/>
-            </cascades>
-            <cacheConfig usage="NONE" />
-        </defaultOneToManyConfig>
-        
-        <defaultOneToOneConfig fetch="LAZY">
-            <cascades>
-                <cascade type="NONE"/>
-            </cascades>
-            <cacheConfig usage="NONE" />
-        </defaultOneToOneConfig>
-        
-        <defaultInverseOneToOneConfig fetch="LAZY">
-            <cascades>
-                <cascade type="ALL"/>
-            </cascades>
-            <cacheConfig usage="NONE" />        
-        </defaultInverseOneToOneConfig>
-        
-        <defaultManyToManyConfig>
-            <cascades>
-                <cascade type="PERSIST"/>
-                <cascade type="MERGE"/>
-            </cascades>
-            <cacheConfig usage="NONE" />        
-        </defaultManyToManyConfig>
-        
-        <defaultInverseManyToManyConfig>
-            <cascades>
-                <cascade type="ALL"/>
-            </cascades>
-            <cacheConfig usage="NONE" />
-        </defaultInverseManyToManyConfig>
-        
 		<conventions identifiableProperty="id" />
 	</configuration>
 

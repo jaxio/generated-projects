@@ -6,5 +6,10 @@
 # Template pack-backend-jpa:src/main/resources/localization/domain/README.p.vm.txt
 #
 
-This folder contains Resources file for entities.
-Note that each base file must be declared in the Spring configuration file applicationContext.xml
+This folder contains the properties you want to override.
+
+Remember, you should not edit directly the properties files present in the src/main/resources/localization/domain-generated folder.
+Instead if you want to override a property you should create a new properties file in this folder
+and set the property to its desired value.
+
+Don't forget to declare your new properties files in the Spring configuration file applicationContext.xml

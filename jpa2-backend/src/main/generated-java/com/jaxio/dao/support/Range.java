@@ -111,7 +111,7 @@ public class Range<E, D extends Comparable<? super D>> implements Serializable {
         return getTo() != null;
     }
 
-    public void setIncludeNull(Boolean includeNull) {
+    public void setIncludeNull(boolean includeNull) {
         this.includeNull = includeNull;
     }
 
