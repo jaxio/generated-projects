@@ -10,7 +10,7 @@ package com.jaxio.domain;
 import java.io.*;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.fest.assertions.Assertions.assertThat;
 import org.junit.Test;
 
 import com.jaxio.util.*;
@@ -35,15 +35,15 @@ public class RoleTest {
     @Test
     public void newInstanceHasNoPrimaryKey() {
         Role model = new Role();
-        assertFalse(model.isIdSet());
+        assertThat(model.isIdSet()).isFalse();
     }
 
     @Test
     public void isIdSetReturnsTrue() {
         Role model = new Role();
         model.setId(ValueGenerator.getUniqueInteger());
-        assertNotNull(model.getId());
-        assertTrue(model.isIdSet());
+        assertThat(model.getId()).isNotNull();
+        assertThat(model.isIdSet()).isTrue();
     }
 
     // test columns methods
@@ -51,7 +51,7 @@ public class RoleTest {
     @Test
     public void toStringNotNull() {
         Role model = new Role();
-        assertNotNull(model.toString());
+        assertThat(model.toString()).isNotNull();
     }
 
     @Test
@@ -61,8 +61,8 @@ public class RoleTest {
         String roleName = ValueGenerator.getUniqueString(100);
         model1.setRoleName(roleName);
         model2.setRoleName(roleName);
-        assertTrue(model1.equals(model2));
-        assertTrue(model2.equals(model1));
-        assertTrue(model1.hashCode() == model2.hashCode());
+        assertThat(model1).isEqualTo(model2);
+        assertThat(model2).isEqualTo(model1);
+        assertThat(model1.hashCode()).isEqualTo(model2.hashCode());
     }
 }

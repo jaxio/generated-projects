@@ -7,66 +7,51 @@
  */
 package com.jaxio.web.domain.more;
 
-import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.more.MoreTypesDemo;
 import com.jaxio.repository.more.MoreTypesDemoRepository;
 import com.jaxio.web.conversation.Conversation;
 import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationFactory;
+import com.jaxio.web.domain.support.GenericController;
+import com.jaxio.web.permission.more.MoreTypesDemoPermission;
 
 /**
  * Stateless controller for MoreTypesDemo conversation start. Provides also auto-complete support. 
  */
 @Named
 @Singleton
-public class MoreTypesDemoController implements ConversationFactory {
+public class MoreTypesDemoController extends GenericController<MoreTypesDemo, Integer> implements ConversationFactory {
     public final static String editUri = "/domain/more/moreTypesDemoEdit.faces";
     public final static String selectUri = "/domain/more/moreTypesDemoSelect.faces";
-    private MoreTypesDemoRepository moreTypesDemoRepository;
 
     @Inject
-    public void setMoreTypesDemoRepository(MoreTypesDemoRepository moreTypesDemoRepository) {
-        this.moreTypesDemoRepository = moreTypesDemoRepository;
+    public MoreTypesDemoController(MoreTypesDemoRepository moreTypesDemoRepository, MoreTypesDemoPermission moreTypesDemoPermission) {
+        super(moreTypesDemoRepository, moreTypesDemoPermission);
     }
 
-    // --------------------------------
-    // ConversationFactoryImpl
-    // --------------------------------
+    // -------------------
+    // ConversationFactory
+    // -------------------
 
     @Override
     public boolean canCreateConversation(HttpServletRequest request) {
-        return selectUri.equals(request.getServletPath());
+        return selectUri.equals(request.getServletPath()) || editUri.equals(request.getServletPath());
     }
 
     @Override
     public Conversation createConversation(HttpServletRequest request) {
         String uri = request.getServletPath();
         if (selectUri.equals(uri)) {
-            Conversation conversation = Conversation.newInstance(request);
-            ConversationContext<MoreTypesDemo> ctx = newSearchContext();
-            ctx.setLabelWithKey("moreTypesDemo");
-            conversation.setNextContext(ctx);
-            return conversation;
+            return Conversation.newConversation(request, newSearchContext("moreTypesDemo"));
+        } else if (editUri.equals(uri)) {
+            return Conversation.newConversation(request, newEditContext("moreTypesDemo", new MoreTypesDemo()));
+        } else {
+            throw new IllegalStateException("Unexpected conversation creation demand");
         }
-
-        throw new IllegalStateException("Unexpected conversation creation demand");
-    }
-
-    // --------------------------------
-    // Autocomplete support
-    // --------------------------------
-
-    /**
-     * This method is used from primefaces autocomplete components.
-     */
-    public List<MoreTypesDemo> complete(String value) {
-        SearchParameters sp = new SearchParameters().anywhere().searchPattern(value);
-        return moreTypesDemoRepository.find(sp);
     }
 
     // --------------------------------
@@ -77,20 +62,10 @@ public class MoreTypesDemoController implements ConversationFactory {
      * Helper to construct a new ConversationContext to edit an MoreTypesDemo.
      * @param moreTypesDemo the entity to edit.
      */
-    public static ConversationContext<MoreTypesDemo> newEditContext(final MoreTypesDemo moreTypesDemo) {
+    public ConversationContext<MoreTypesDemo> newEditContext(final MoreTypesDemo moreTypesDemo) {
         ConversationContext<MoreTypesDemo> ctx = new ConversationContext<MoreTypesDemo>();
         ctx.setEntity(moreTypesDemo); // used by GenericEditForm.init()
-        ctx.setViewUri(editUri);
-        return ctx;
-    }
-
-    /**
-     * Helper to construct a new ConversationContext to edit an MoreTypesDemo.
-     * @param id the id of the entity to edit.
-     */
-    public static ConversationContext<MoreTypesDemo> newEditContext(final Integer id) {
-        ConversationContext<MoreTypesDemo> ctx = new ConversationContext<MoreTypesDemo>();
-        ctx.setEntityId(id); // used by GenericEditForm.init()
+        ctx.setIsNewEntity(!moreTypesDemo.isIdSet());
         ctx.setViewUri(editUri);
         return ctx;
     }
@@ -98,9 +73,8 @@ public class MoreTypesDemoController implements ConversationFactory {
     /**
      * Helper to construct a new ConversationContext for search/selection.
      */
-    public static ConversationContext<MoreTypesDemo> newSearchContext() {
+    public ConversationContext<MoreTypesDemo> newSearchContext() {
         ConversationContext<MoreTypesDemo> ctx = new ConversationContext<MoreTypesDemo>();
-        ctx.setUseConversationEntityManager(false);
         ctx.setViewUri(selectUri);
         return ctx;
     }

@@ -16,7 +16,7 @@ public class DateUtil {
      * retrieved from Oracle (second precision only).
      */
     public boolean secondPrecisionDateEquality(Date date1, Date date2) {
-        return secondPrecisionDate(date1).equals(date2);
+        return secondPrecisionDate(date1).equals(secondPrecisionDate(date2));
     }
 
     public static String secondPrecisionDate(Date date) {

@@ -11,15 +11,13 @@ import java.io.Serializable;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
 /**
- * A conversation holds a context stack (1 context per view visited) and the entity manager used 
- * during the entire conversation (spans over several view).
+ * A conversation holds a context stack (1 context per view visited).
  */
 public class Conversation implements Serializable {
     public static final String CONVERSATION_COUNTER_KEY = "convCounter";
@@ -28,7 +26,7 @@ public class Conversation implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String id;
-    private EntityManager em;
+    private int conversationContextIdCounter = 0;
     private Stack<ConversationContext<?>> contextes = new Stack<ConversationContext<?>>();
     private int popContextOnNextPauseCounter = 0;
     private ConversationContext<?> nextContext;
@@ -36,7 +34,7 @@ public class Conversation implements Serializable {
     /**
      * Create a new conversation and assign it a unique id in the scope of the user's session.
      */
-    public static Conversation newInstance(HttpServletRequest request) {
+    public static Conversation newConversation(HttpServletRequest request) {
         HttpSession session = request.getSession();
         AtomicInteger counter = (AtomicInteger) session.getAttribute(CONVERSATION_COUNTER_KEY);
         if (counter == null) {
@@ -45,6 +43,15 @@ public class Conversation implements Serializable {
         }
 
         return new Conversation(String.valueOf(counter.incrementAndGet()));
+    }
+
+    /**
+     * Create a new conversation and assign it a unique id in the scope of the user's session.
+     */
+    public static Conversation newConversation(HttpServletRequest request, ConversationContext<?> conversationContext) {
+        Conversation newInstance = newConversation(request);
+        newInstance.setNextContext(conversationContext);
+        return newInstance;
     }
 
     public Conversation() {
@@ -62,36 +69,30 @@ public class Conversation implements Serializable {
     }
 
     /**
-     * Set the shared {@link EntityManager} used by this conversation's {@link ConversationContext contextes} when their flag useConversationEntityManager is true.
-     * The flag is true when we edit an entity which is part of a root's entity graph.
-     * For 'search' view, we do not use the passed entityManager. 
+     * Here to handle browser's back button
+     * @param ccid
+     * @param request
      */
-    public void setEntityManager(EntityManager entityManager) {
-        this.em = entityManager;
-    }
+    protected void handleOutOfSynchContext(String ccid, HttpServletRequest request) throws UnexpectedConversationException {
+        ConversationContext<?> requestedContext = null;
 
-    /**
-     * The shared {@link EntityManager} used by this conversation's {@link ConversationContext contextes}.  
-     */
-    public EntityManager getEntityManager() {
-        return em;
-    }
-
-    /**
-     * Whether at least one of this Conversations's {@link ConversationContext} need the entity manager ?
-     */
-    public boolean isEntityManagerStillNeeded() {
-        if (nextContext != null && nextContext.useConversationEntityManager()) {
-            return true;
-        }
-
-        int ccCount = contextes.size() - popContextOnNextPauseCounter;
-        for (int i = 0; i < ccCount; i++) {
-            if (contextes.elementAt(i).useConversationEntityManager()) {
-                return true;
+        for (ConversationContext<?> ctx : contextes) {
+            if (requestedContext == null) {
+                if (ctx.getId().equals(ccid)) {
+                    requestedContext = ctx;
+                }
+            } else {
+                // we pop all contextes that are placed after the contexId requested
+                incrementPopContextOnNextPauseCounter();
             }
         }
-        return false;
+
+        if (requestedContext != null) {
+            popContextesIfNeeded();
+        } else {
+            throw new UnexpectedConversationException("Uri not in sync with conversation expecting _ccid_=" + getCurrentContext().getId() + " but got " + ccid,
+                    request.getRequestURI(), getUrl());
+        }
     }
 
     /**
@@ -111,6 +112,7 @@ public class Conversation implements Serializable {
     }
 
     public void setNextContext(ConversationContext<?> newContext) {
+        newContext.setId(String.valueOf(++conversationContextIdCounter));
         newContext.setConversationId(getId());
         // we delay the context push because apparently some EL is invoked after bean action is performed
         // which it leads in some cases to re-creation of 'conversation scoped' bean.
@@ -165,12 +167,21 @@ public class Conversation implements Serializable {
         }
 
         for (int i = 0; i < popContextOnNextPauseCounter; i++) {
-            ConversationContext<?> ccPopped = contextes.pop();
-            if (log.isDebugEnabled()) {
-                log.debug("popped 1 context from stack: " + ccPopped.getLabel());
+            if (contextes.size() > 0) {
+                ConversationContext<?> ccPopped = contextes.pop();
+                if (log.isDebugEnabled()) {
+                    log.debug("popped 1 context from stack: " + ccPopped.getLabel());
+                }
+            } else {
+                log.warn("Attention, too many pop requested! Could be source of potential bug");
             }
         }
+
         popContextOnNextPauseCounter = 0;
+
+        if (contextes.size() == 0 && log.isInfoEnabled()) {
+            log.info("All contextes have been popped. Natural conversation ending will be performed");
+        }
     }
 
     /**
@@ -182,13 +193,23 @@ public class Conversation implements Serializable {
         }
 
         if (popContextOnNextPauseCounter > 0) {
-            ConversationContext<?> contextOnTopOfStackOnNextResume = contextes.elementAt(contextes.size() - 1 - popContextOnNextPauseCounter);
-            return contextOnTopOfStackOnNextResume.view();
+            int nextActiveContextIndex = contextes.size() - 1 - popContextOnNextPauseCounter;
+            if (nextActiveContextIndex >= 0) {
+                ConversationContext<?> contextOnTopOfStackOnNextResume = contextes.elementAt(nextActiveContextIndex);
+                return contextOnTopOfStackOnNextResume.view();
+            } else {
+                // means that all will be popped => natural conversation ending.
+                return "/home.faces?faces-redirect=true"; // TODO: clean url, referer or else		        
+            }
         }
 
+        // normally, here, not contextes.size check is needed.
         return contextes.peek().view();
     }
 
+    /**
+     * Returns the url for the next page. Used by filter.
+     */
     public String nextUrl() {
         if (nextContext != null) {
             return nextContext.getUrl();

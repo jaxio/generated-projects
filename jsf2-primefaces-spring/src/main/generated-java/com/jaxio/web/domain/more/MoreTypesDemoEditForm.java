@@ -9,16 +9,16 @@ package com.jaxio.web.domain.more;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.springframework.context.annotation.Scope;
 import com.jaxio.domain.more.MoreTypesDemo;
 import com.jaxio.repository.more.MoreTypesDemoRepository;
 import com.jaxio.web.domain.support.GenericEditForm;
+import com.jaxio.web.faces.Conversation;
 
 /**
  * View Helper/Controller to edit {@link MoreTypesDemo}.
  */
 @Named
-@Scope("conversation")
+@Conversation
 public class MoreTypesDemoEditForm extends GenericEditForm<MoreTypesDemo, Integer> {
 
     @Inject

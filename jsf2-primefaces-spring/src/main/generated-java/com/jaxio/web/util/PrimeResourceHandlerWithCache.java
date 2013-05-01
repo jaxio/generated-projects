@@ -7,7 +7,7 @@
  */
 package com.jaxio.web.util;
 
-import static com.google.common.collect.Maps.newConcurrentMap;
+import static com.google.common.collect.Maps.newHashMap;
 
 import java.util.Map;
 
@@ -23,23 +23,30 @@ import org.primefaces.application.PrimeResourceHandler;
  */
 public class PrimeResourceHandlerWithCache extends PrimeResourceHandler {
 
-    private Map<String, Resource> resCache = newConcurrentMap();
+    private Map<String, Resource> resCache = newHashMap();
 
     public PrimeResourceHandlerWithCache(ResourceHandler wrapped) {
         super(wrapped);
     }
 
     @Override
-    public Resource createResource(String resourceName, String libraryName) {
-        String key = resourceName + "__" + libraryName;
-        Resource resource = resCache.get(key);
+    public Resource createResource(String resourceName) {
+        return createResource(resourceName, "");
+    }
 
-        if (resource == null) {
-            resource = super.createResource(resourceName, libraryName);
-            if (resource != null) {
-                resCache.put(key, resource);
-            }
+    @Override
+    public Resource createResource(String resourceName, String libraryName) {
+        return createResource(resourceName, libraryName, "");
+    }
+
+    @Override
+    public Resource createResource(String resourceName, String libraryName, String contentType) {
+        String key = resourceName + "__" + libraryName + "__" + contentType;
+        if (resCache.containsKey(key)) {
+            return resCache.get(key);
         }
+        Resource resource = super.createResource(resourceName, libraryName, contentType);
+        resCache.put(key, resource);
         return resource;
     }
 }

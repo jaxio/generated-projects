@@ -18,6 +18,7 @@ import javax.validation.constraints.Size;
 import org.apache.log4j.Logger;
 import org.hibernate.validator.constraints.NotEmpty;
 import com.google.common.base.Objects;
+import com.jaxio.domain.Role_;
 
 @Entity
 @Table(name = "`ROLE`")
@@ -29,21 +30,9 @@ public class Role implements Identifiable<Integer>, Serializable {
     private Integer id; // pk
     private String roleName; // unique (not null)
 
-    // ---------------------------
-    // Constructors
-    // ---------------------------
-
-    public Role() {
-    }
-
-    public Role(Integer primaryKey) {
-        setId(primaryKey);
-    }
-
     // -------------------------------
     // Getter & Setter
     // -------------------------------
-
     // -- [id] ------------------------
 
     @Column(name = "ID", precision = 10)
@@ -111,8 +100,8 @@ public class Role implements Identifiable<Integer>, Serializable {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add("id", getId()) //
-                .add("roleName", getRoleName()) //
+                .add(Role_.id.getName(), getId()) //
+                .add(Role_.roleName.getName(), getRoleName()) //
                 .toString();
     }
 }

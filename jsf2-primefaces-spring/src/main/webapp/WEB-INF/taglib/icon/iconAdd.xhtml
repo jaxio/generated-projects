@@ -8,7 +8,7 @@
 		disabled="#{readonly}"
 		rendered="#{empty rendered or rendered}"
 		styleClass="ui-button"
-		title="${msg.icon_add} ${empty title? '' : title}" >
+		title="#{msg.icon_add} #{empty title? '' : title}" >
 		<ui:insert/>
 		<div class="ui-button ui-icon iconAdd"/>
 	</p:commandLink>

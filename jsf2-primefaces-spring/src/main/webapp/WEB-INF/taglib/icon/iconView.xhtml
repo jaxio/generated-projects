@@ -7,7 +7,7 @@
 		process="${empty process? '@form' : process}"
 		rendered="#{empty rendered or rendered}"
 		styleClass="ui-button"
-		title="${msg.icon_view} ${empty title? '' : title}">
+		title="#{msg.icon_view} #{empty title? '' : title}">
 		<ui:insert/>
 		<div class="ui-button ui-icon iconView"/>
 	</p:commandLink>

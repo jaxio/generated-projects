@@ -7,23 +7,37 @@
  */
 package com.jaxio.web.domain;
 
-import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.springframework.context.annotation.Scope;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Book;
 import com.jaxio.repository.BookRepository;
-import com.jaxio.web.conversation.ConversationContext;
+import com.jaxio.repository.support.EntityGraphLoader;
 import com.jaxio.web.domain.AccountController;
 import com.jaxio.web.domain.support.GenericEditForm;
+import com.jaxio.web.faces.Conversation;
 
 /**
  * View Helper/Controller to edit {@link Book}.
  */
 @Named
-@Scope("conversation")
+@Conversation
 public class BookEditForm extends GenericEditForm<Book, Integer> {
+
+    // used to preload lazy associations transactionally
+    private EntityGraphLoader<Book> entityGraphLoader = new EntityGraphLoader<Book>() {
+        @Override
+        public void loadGraph(Book book) {
+            if (book.getAccount() != null) {
+                book.getAccount().toString();
+            }
+        }
+    };
+
+    @Override
+    protected EntityGraphLoader<Book> getEntityGraphLoader() {
+        return entityGraphLoader;
+    }
 
     @Inject
     public void setBookRepository(BookRepository bookRepository) {
@@ -34,37 +48,30 @@ public class BookEditForm extends GenericEditForm<Book, Integer> {
         return getEntity();
     }
 
-    // --------------------------------------------------
-    // Support for auto-complete and callback many to one 
-    // --------------------------------------------------
+    // --------------------------------------------
+    // Actions for account association
+    // --------------------------------------------
+    @Inject
+    private AccountController accountController;
 
-    public void setSelectedAccount(Account account) {
-        // detach the currently set target if present
-        //  1) to prevent any potential modification to go to the db
-        //  2) to reduce session size        	
-        if (getBook().getAccount() != null) {
-            getCurrentConversation().getEntityManager().detach(getBook().getAccount());
-        }
-
-        if (account != null) {
-            getBook().setAccount(getCurrentConversation().getEntityManager().merge(account));
-        } else {
-            getBook().setAccount(null);
-        }
+    public String viewAccount() {
+        return accountController.editSubReadOnlyView("book_account", getBook().getAccount());
     }
 
+    /**
+     * Helper for the autoComplete component used for the Book's account property.
+     */
     public Account getSelectedAccount() {
         return getBook().getAccount();
     }
 
-    // --------------------------------------------
-    // Actions for account association
-    // --------------------------------------------
-
-    public String viewAccount() {
-        ConversationContext<Account> ctx = AccountController.newEditContext(getBook().getAccount());
-        ctx.setLabelWithKey("book_account");
-        getCurrentConversation().setNextContextSubReadOnly(ctx);
-        return ctx.view();
+    /**
+     * Helper for the autoComplete component used for the Book's account property.
+     * Handles ajax autoComplete event and regular page postback.
+     */
+    public void setSelectedAccount(Account account) {
+        if (accountController.shouldReplace(getBook().getAccount(), account)) {
+            getBook().setAccount(account);
+        }
     }
 }

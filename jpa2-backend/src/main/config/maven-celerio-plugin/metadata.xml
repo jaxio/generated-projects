@@ -5,11 +5,11 @@
       <tableType>TABLE</tableType>
     </tableTypes>
   </jdbcConnectivity>
-  <databaseInfo databaseMajorVersion="1" databaseMinorVersion="3" databaseProductName="H2" databaseProductVersion="1.3.167 (2012-05-23)" driverMajorVersion="1" driverMinorVersion="3" driverName="H2 JDBC Driver" driverVersion="1.3.167 (2012-05-23)" extraInfo=""/>
+  <databaseInfo databaseMajorVersion="1" databaseMinorVersion="3" databaseProductName="H2" databaseProductVersion="1.3.171 (2013-03-17)" driverMajorVersion="1" driverMinorVersion="3" driverName="H2 JDBC Driver" driverVersion="1.3.171 (2013-03-17)" extraInfo=""/>
   <tables>
     <table name="ACCOUNT" type="TABLE">
       <columns>
-        <column name="ID" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="1" size="32" type="CHAR"/>
+        <column name="ID" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="1" size="36" type="CHAR"/>
         <column name="LOGIN" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="100" type="VARCHAR"/>
         <column name="PASSWORD" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="100" type="VARCHAR"/>
         <column name="EMAIL" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="4" size="100" type="VARCHAR"/>
@@ -41,7 +41,7 @@
     </table>
     <table name="ACCOUNT_ROLE" type="TABLE">
       <columns>
-        <column name="ACCOUNT_ID" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="1" size="32" type="CHAR"/>
+        <column name="ACCOUNT_ID" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="1" size="36" type="CHAR"/>
         <column name="ROLE_ID" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="10" type="INTEGER"/>
       </columns>
       <indexes>
@@ -61,7 +61,7 @@
     </table>
     <table name="ADDRESS" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_69283FF5_F238_4E7B_B825_77735C9985B6)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_0016D935_EF77_4CAA_B3AD_85CE4F9F75B0)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="STREET_NAME" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="2" size="100" type="VARCHAR"/>
         <column name="CITY" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="100" type="VARCHAR"/>
         <column name="VERSION" columnDef="0" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="4" size="10" type="INTEGER"/>
@@ -76,8 +76,8 @@
     </table>
     <table name="BOOK" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_96BEDFDC_FF96_4B27_AA9C_C0E1AD7A66A0)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
-        <column name="ACCOUNT_ID" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="2" size="32" type="CHAR"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_F80FC24F_9227_4765_AB41_C84562919D1A)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ACCOUNT_ID" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="2" size="36" type="CHAR"/>
         <column name="TITLE" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="100" type="VARCHAR"/>
         <column name="NUMBER_OF_PAGES" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="4" size="10" type="INTEGER"/>
         <column name="VERSION" columnDef="0" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="5" size="10" type="INTEGER"/>
@@ -95,8 +95,8 @@
     </table>
     <table name="DOCUMENT" type="TABLE">
       <columns>
-        <column name="ID" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="1" size="32" type="CHAR"/>
-        <column name="ACCOUNT_ID" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="32" type="CHAR"/>
+        <column name="ID" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="1" size="36" type="CHAR"/>
+        <column name="ACCOUNT_ID" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="36" type="CHAR"/>
         <column name="DOCUMENT_CONTENT_TYPE" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="100" type="VARCHAR"/>
         <column name="DOCUMENT_SIZE" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="4" size="10" type="INTEGER"/>
         <column name="DOCUMENT_FILE_NAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="5" size="100" type="VARCHAR"/>
@@ -135,7 +135,7 @@
     </table>
     <table name="MORE_TYPES_DEMO" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_F2C949EF_A52D_4D96_A07F_087F35B39C4C)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_FCDE64CF_257D_4C1F_AF1B_15C746BC8AD4)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="NUMBER_INT" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="2" size="10" type="INTEGER"/>
         <column name="NUMBER_LONG" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="3" size="19" type="BIGINT"/>
         <column name="NUMBER_DOUBLE" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="4" size="17" type="DOUBLE"/>
@@ -158,7 +158,7 @@
     </table>
     <table name="ROLE" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_5428F104_2DA6_4700_B1E4_1FB58D661F56)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_6C740B71_7379_4A7B_BE98_A4245312E072)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="ROLE_NAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="100" type="VARCHAR"/>
       </columns>
       <indexes>
@@ -166,6 +166,25 @@
         <indexe columnName="ROLE_NAME" indexName="ROLE_UNIQUE_1_INDEX_2" nonUnique="false"/>
       </indexes>
       <importedKeys/>
+      <primaryKeys>
+        <primaryKey>ID</primaryKey>
+      </primaryKeys>
+    </table>
+    <table name="SAVED_SEARCH" type="TABLE">
+      <columns>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_DFF7812A_2890_436E_B6FF_602E73F598BF)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="NAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="128" type="VARCHAR"/>
+        <column name="FORM_CLASSNAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="256" type="VARCHAR"/>
+        <column name="FORM_CONTENT" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="4" size="2147483647" type="VARBINARY"/>
+        <column name="ACCOUNT_ID" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="5" size="36" type="CHAR"/>
+      </columns>
+      <indexes>
+        <indexe columnName="ID" indexName="PRIMARY_KEY_1E" nonUnique="false"/>
+        <indexe columnName="ACCOUNT_ID" indexName="SAVED_SEASRCH_FK_1_INDEX_1" nonUnique="true"/>
+      </indexes>
+      <importedKeys>
+        <importedKey fkColumnName="ACCOUNT_ID" fkName="SAVED_SEASRCH_FK_1" pkColumnName="ID" pkTableName="ACCOUNT"/>
+      </importedKeys>
       <primaryKeys>
         <primaryKey>ID</primaryKey>
       </primaryKeys>

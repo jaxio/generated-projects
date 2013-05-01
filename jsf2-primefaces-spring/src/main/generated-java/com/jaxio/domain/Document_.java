@@ -22,9 +22,6 @@ public abstract class Document_ {
     public static volatile SingularAttribute<Document, byte[]> documentBinary;
     public static volatile SingularAttribute<Document, Integer> version;
 
-    // Technical attributes for query by example
-    public static volatile SingularAttribute<Document, String> accountId;
-
     // Many to one
     public static volatile SingularAttribute<Document, Account> account;
 }

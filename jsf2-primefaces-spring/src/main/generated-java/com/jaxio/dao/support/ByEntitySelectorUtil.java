@@ -34,7 +34,7 @@ public class ByEntitySelectorUtil {
 
                 for (Identifiable<?> selection : selector.getSelected()) {
                     if (selector.getField() != null) {
-                        selectorPredicates.add(builder.equal(root.get(selector.getField()), selection.getId()));
+                        selectorPredicates.add(builder.equal(root.get(selector.getField()).get("id"), selection.getId()));
                     } else {
                         selectorPredicates.add(builder.equal(root.get(selector.getCpkField()).get(selector.getCpkInnerField().getName()), selection.getId()));
                     }

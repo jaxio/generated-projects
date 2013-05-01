@@ -9,26 +9,25 @@ package com.jaxio.web.domain;
 
 import static com.jaxio.dao.support.EntitySelector.newEntitySelector;
 import static com.jaxio.domain.Document_.account;
-import static com.jaxio.domain.Document_.accountId;
 import javax.inject.Named;
-import org.springframework.context.annotation.Scope;
 import com.jaxio.dao.support.EntitySelector;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Document;
 import com.jaxio.web.domain.support.GenericSearchForm;
+import com.jaxio.web.faces.Conversation;
 
 /**
  * View Helper to find/select {@link Document}.
  * It exposes a {@link Document} instance so it can be used in search by Example query.
  */
 @Named
-@Scope("conversation")
-public class DocumentSearchForm extends GenericSearchForm<Document, DocumentSearchForm> {
+@Conversation
+public class DocumentSearchForm extends GenericSearchForm<Document, String, DocumentSearchForm> {
     private static final long serialVersionUID = 1L;
 
     private Document document = new Document();
-    private EntitySelector<Document, Account, String> accountSelector = newEntitySelector(accountId);
+    private EntitySelector<Document, Account, String> accountSelector = newEntitySelector(account);
 
     public Document getDocument() {
         return document;
@@ -48,7 +47,7 @@ public class DocumentSearchForm extends GenericSearchForm<Document, DocumentSear
         return new SearchParameters() //
                 .anywhere() //
                 .leftJoin(account) //
-                .entitySelector(accountSelector) //
+                .entity(accountSelector) //
         ;
     }
 

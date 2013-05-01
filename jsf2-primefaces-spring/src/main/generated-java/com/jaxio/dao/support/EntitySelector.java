@@ -24,7 +24,7 @@ import com.jaxio.domain.Identifiable;
 public class EntitySelector<E, T extends Identifiable<TPK>, TPK extends Serializable> implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final SingularAttribute<E, TPK> field;
+    private final SingularAttribute<E, T> field;
     private final SingularAttribute<E, ?> cpkField;
     private final SingularAttribute<?, TPK> cpkInnerField;
     private List<T> selected = newArrayList();
@@ -32,7 +32,7 @@ public class EntitySelector<E, T extends Identifiable<TPK>, TPK extends Serializ
     /**
      * @param field the property holding an foreign key.
      */
-    public EntitySelector(SingularAttribute<E, TPK> field) {
+    public EntitySelector(SingularAttribute<E, T> field) {
         this.field = field;
         this.cpkField = null;
         this.cpkInnerField = null;
@@ -44,7 +44,7 @@ public class EntitySelector<E, T extends Identifiable<TPK>, TPK extends Serializ
         this.field = null; // not used        
     }
 
-    public SingularAttribute<E, TPK> getField() {
+    public SingularAttribute<E, T> getField() {
         return field;
     }
 
@@ -83,8 +83,7 @@ public class EntitySelector<E, T extends Identifiable<TPK>, TPK extends Serializ
     /**
      * Import statically this helper for smooth instanciation.
      */
-    static public <E2, T2 extends Identifiable<TPK2>, TPK2 extends Serializable> EntitySelector<E2, T2, TPK2> newEntitySelector(
-            SingularAttribute<E2, TPK2> field) {
+    public static <E2, T2 extends Identifiable<TPK2>, TPK2 extends Serializable> EntitySelector<E2, T2, TPK2> newEntitySelector(SingularAttribute<E2, T2> field) {
         return new EntitySelector<E2, T2, TPK2>(field);
     }
 
@@ -92,7 +91,7 @@ public class EntitySelector<E, T extends Identifiable<TPK>, TPK extends Serializ
      * Import statically this helper for smooth instanciation.
      * It is used in the case where the PK is composite AND the pk member(s) are/is also a foreign key. 
      */
-    static public <E2, T2 extends Identifiable<TPK2>, TPK2 extends Serializable, CPK2> EntitySelector<E2, T2, TPK2> newEntitySelectorInCpk(
+    public static <E2, T2 extends Identifiable<TPK2>, TPK2 extends Serializable, CPK2> EntitySelector<E2, T2, TPK2> newEntitySelectorInCpk(
             SingularAttribute<E2, CPK2> cpkField, SingularAttribute<CPK2, TPK2> cpkInnerField) {
         return new EntitySelector<E2, T2, TPK2>(cpkField, cpkInnerField);
     }

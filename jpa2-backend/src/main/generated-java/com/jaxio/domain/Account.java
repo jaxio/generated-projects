@@ -44,6 +44,7 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 import com.google.common.base.Objects;
 import com.jaxio.audit.AuditContextHolder;
+import com.jaxio.domain.Account_;
 import com.jaxio.domain.Address;
 import com.jaxio.domain.Book;
 import com.jaxio.domain.Civility;
@@ -75,9 +76,6 @@ public class Account implements Identifiable<String>, Serializable {
     private String lastModificationAuthor;
     private Integer version;
 
-    // Technical attributes for query by example
-    private Integer addressId;
-
     // Many to one
     private Address homeAddress; // (addressId)
 
@@ -87,17 +85,6 @@ public class Account implements Identifiable<String>, Serializable {
 
     // Many to many
     private List<Role> roles = new ArrayList<Role>();
-
-    // ---------------------------
-    // Constructors
-    // ---------------------------
-
-    public Account() {
-    }
-
-    public Account(String primaryKey) {
-        setId(primaryKey);
-    }
 
     // -------------------------------
     // Role names support
@@ -122,12 +109,11 @@ public class Account implements Identifiable<String>, Serializable {
     // -------------------------------
     // Getter & Setter
     // -------------------------------
-
     // -- [id] ------------------------
 
-    @Column(name = "ID", length = 32)
-    @GeneratedValue(generator = "strategy-uuid")
-    @GenericGenerator(name = "strategy-uuid", strategy = "uuid")
+    @Column(name = "ID", length = 36)
+    @GeneratedValue(generator = "strategy-uuid2")
+    @GenericGenerator(name = "strategy-uuid2", strategy = "uuid2")
     @Id
     public String getId() {
         return id;
@@ -253,17 +239,6 @@ public class Account implements Identifiable<String>, Serializable {
         this.description = description;
     }
 
-    // -- [addressId] ------------------------
-
-    @Column(name = "ADDRESS_ID", precision = 10, insertable = false, updatable = false)
-    public Integer getAddressId() {
-        return addressId;
-    }
-
-    private void setAddressId(Integer addressId) {
-        this.addressId = addressId;
-    }
-
     // -- [creationDate] ------------------------
 
     @Column(name = "CREATION_DATE", length = 23)
@@ -343,13 +318,6 @@ public class Account implements Identifiable<String>, Serializable {
      */
     public void setHomeAddress(Address homeAddress) {
         this.homeAddress = homeAddress;
-
-        // We set the foreign key property so it can be used by our JPA search by Example facility.
-        if (homeAddress != null) {
-            setAddressId(homeAddress.getId());
-        } else {
-            setAddressId(null);
-        }
     }
 
     // --------------------------------------------------------------------
@@ -544,22 +512,21 @@ public class Account implements Identifiable<String>, Serializable {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add("id", getId()) //
-                .add("username", getUsername()) //
-                .add("password", getPassword()) //
-                .add("email", getEmail()) //
-                .add("isEnabled", getIsEnabled()) //
-                .add("civility", getCivility()) //
-                .add("firstName", getFirstName()) //
-                .add("lastName", getLastName()) //
-                .add("birthDate", getBirthDate()) //
-                .add("description", getDescription()) //
-                .add("addressId", getAddressId()) //
-                .add("creationDate", getCreationDate()) //
-                .add("creationAuthor", getCreationAuthor()) //
-                .add("lastModificationDate", getLastModificationDate()) //
-                .add("lastModificationAuthor", getLastModificationAuthor()) //
-                .add("version", getVersion()) //
+                .add(Account_.id.getName(), getId()) //
+                .add(Account_.username.getName(), getUsername()) //
+                .add(Account_.password.getName(), getPassword()) //
+                .add(Account_.email.getName(), getEmail()) //
+                .add(Account_.isEnabled.getName(), getIsEnabled()) //
+                .add(Account_.civility.getName(), getCivility()) //
+                .add(Account_.firstName.getName(), getFirstName()) //
+                .add(Account_.lastName.getName(), getLastName()) //
+                .add(Account_.birthDate.getName(), getBirthDate()) //
+                .add(Account_.description.getName(), getDescription()) //
+                .add(Account_.creationDate.getName(), getCreationDate()) //
+                .add(Account_.creationAuthor.getName(), getCreationAuthor()) //
+                .add(Account_.lastModificationDate.getName(), getLastModificationDate()) //
+                .add(Account_.lastModificationAuthor.getName(), getLastModificationAuthor()) //
+                .add(Account_.version.getName(), getVersion()) //
                 .toString();
     }
 

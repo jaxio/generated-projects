@@ -7,8 +7,6 @@
  */
 package com.jaxio.web.domain.support;
 
-import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -17,14 +15,14 @@ import javax.inject.Inject;
 
 import com.jaxio.dao.support.JpaUniqueUtil;
 import com.jaxio.domain.Identifiable;
+import com.jaxio.repository.support.EntityGraphLoader;
 import com.jaxio.repository.support.Repository;
-import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.util.MessageUtil;
 
 /**
  * Base Edit Form for JPA entities.
  */
-public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Serializable> {
+public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Serializable> extends CommonAction<E> {
     private E entity;
 
     @Inject
@@ -39,22 +37,34 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
         this.repository = repository;
     }
 
+    protected EntityGraphLoader<E> getEntityGraphLoader() {
+        return null;
+    }
+
     /**
      * Retrieves the entity or entityId parameter from the current ConversationContext and
-     * load the entity from the repository in case the entityId was found in the current ConversationContext. 
+     * load the entity from the repository. 
      */
     @PostConstruct
     protected void init() {
-        PK entityIdParam = context().getEntityIdAndRemove();
-
-        if (entityIdParam != null) {
-            this.entity = repository.getById(entityIdParam);
-        } else {
-            this.entity = context().getEntityAndRemove();
+        if (context().getEntity() == null) {
+            throw new IllegalStateException("Could not find any entity. Please fix me");
         }
 
-        if (this.entity == null) {
-            throw new IllegalStateException("Could not find any entity. Please fix me");
+        if (context().isNewEntity()) {
+            // no need to merge anything since it is a brand new entity, not yet persisted.
+            entity = context().getEntity();
+        } else if (context().isSub()) {
+            // entity is persistent and we are in sub mode (not the root edit page of the graph)
+            entity = repository.mergeWithoutFlush(context().getEntity(), getEntityGraphLoader());
+        } else {
+            // entity is persistent and we are in the root edit page.
+            // we either come from a main search page or brand new edit conversation
+            entity = repository.getById(context().getEntity().getId(), getEntityGraphLoader());
+        }
+
+        if (entity == null) {
+            throw new IllegalStateException("Could not find any entity, after init! Was it deleted?");
         }
     }
 
@@ -86,20 +96,12 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
     }
 
     /**
-     * Back action is used from readonly page to go back. It is expected to be non-ajax.
-     */
-    public String back() {
-        return context().getCallBack().back();
-    }
-
-    /**
      * deleteAndClose action is used form modal dialogs in the main edit page. 
      */
     public String deleteAndClose() {
-        E entity = getEntity();
-        repository.delete(entity);
-        messageUtil.infoEntity("status_deleted_ok", entity);
-        return context().getCallBack().deleted(entity);
+        repository.delete(getEntity());
+        messageUtil.infoEntity("status_deleted_ok", getEntity());
+        return context().getCallBack().deleted(getEntity());
     }
 
     /**
@@ -116,7 +118,16 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
         if (!validate(entity)) {
             return false;
         }
-        repository.save(entity);
+
+        // Note: merge work also on new entity (actually it works better with many to many association)
+        // we replace current entity with the merged one so the callback receive the merged one.
+        entity = repository.merge(entity);
+
+        if (context().isNewEntity()) {
+            // if for some reason, save is invoked again, no need to persist anymore.
+            context().setIsNewEntity(false);
+        }
+
         messageUtil.infoEntity("status_saved_ok", entity);
         return true;
     }
@@ -129,10 +140,9 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
         return errors.isEmpty();
     }
 
-    /**
-     * Returns the current {@link ConversationContext}.
-     */
-    public ConversationContext<E> context() {
-        return getCurrentConversation().getCurrentContext();
+    protected void checkPermission(boolean check) {
+        if (!check) {
+            throw new IllegalStateException();
+        }
     }
 }

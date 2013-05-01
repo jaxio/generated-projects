@@ -29,7 +29,7 @@
 		<!-- jdbc driver dependency -->
 		<jdbc.groupId>com.h2database</jdbc.groupId>
 		<jdbc.artifactId>h2</jdbc.artifactId>
-		<jdbc.version>1.3.167</jdbc.version>
+		<jdbc.version>1.3.171</jdbc.version>
 		<!-- jdbc settings for h2 -->
 		<jdbc.type>h2</jdbc.type>
 		<jdbc.driver>org.h2.Driver</jdbc.driver>
@@ -48,11 +48,11 @@
 		<!-- Version dependencies when used in multiple dependencies -->
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 		<maven-celerio-plugin.outputDir>${project.basedir}</maven-celerio-plugin.outputDir>
-		<maven-celerio-plugin.version>3.0.97</maven-celerio-plugin.version>
+		<maven-celerio-plugin.version>3.0.98</maven-celerio-plugin.version>
 		<hibernate.version>4.1.9.Final</hibernate.version>
-		<spring.version>3.2.0.RELEASE</spring.version>
+		<spring.version>3.2.2.RELEASE</spring.version>
 		<spring-security.version>3.1.3.RELEASE</spring-security.version>
-		<jsf-api.version>2.1.17</jsf-api.version>
+		<jsf-api.version>2.1.20</jsf-api.version>
 		<primefaces.version>3.4.2</primefaces.version>
 		<primefaces-themes.version>1.0.9</primefaces-themes.version>
 		<slf4j.version>1.5.10</slf4j.version>
@@ -194,7 +194,7 @@
 				<!-- jdbc driver dependency -->
 				<jdbc.groupId>com.h2database</jdbc.groupId>
 				<jdbc.artifactId>h2</jdbc.artifactId>
-				<jdbc.version>1.3.167</jdbc.version>
+				<jdbc.version>1.3.171</jdbc.version>
 				<!-- jdbc settings -->
 				<jdbc.type>h2</jdbc.type>
 				<jdbc.driver>org.h2.Driver</jdbc.driver>
@@ -468,29 +468,6 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 			</pluginRepositories>
 		</profile>
 	</profiles>
-	<!-- ~~~~~~~~~ -->
-	<!-- REPORTING -->
-	<!-- ~~~~~~~~~ -->
-	<reporting>
-		<plugins>
-			<plugin>
-				<!-- http://mojo.codehaus.org/cobertura-maven-plugin/ -->
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.5.1</version>
-			</plugin>
-			<plugin>
-				<!-- http://mojo.codehaus.org/findbugs-maven-plugin/ -->
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.4.0</version>
-				<configuration>
-					<findbugsXmlOutput>true</findbugsXmlOutput>
-					<xmlOutput>true</xmlOutput>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
 	<!-- ~~~~~~~~~~~~ -->
 	<!-- DEPENDENCIES -->
 	<!-- ~~~~~~~~~~~~ -->
@@ -505,7 +482,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>2.1</version>
+			<version>2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jadira.usertype</groupId>
@@ -568,7 +545,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.9.2</version>
+			<version>1.9.12</version>
 		</dependency>
 		<!-- ~~~~~~~~~~ -->
 		<!-- VALIDATION -->
@@ -630,14 +607,19 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<!-- UTILS -->
 		<!-- ~~~~~ -->
 		<dependency>
+			<groupId>net.sf.jxls</groupId>
+			<artifactId>jxls-core</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>12.0</version>
+			<version>14.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.1</version>
+			<version>2.4</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -652,7 +634,12 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.6</version>
+			<version>1.7</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.8.3</version>
 		</dependency>
 		<!-- ~~~~~~ -->
 		<!-- SPRING -->
@@ -661,6 +648,11 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 			<groupId>javax.inject</groupId>
 			<artifactId>javax.inject</artifactId>
 			<version>1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -690,12 +682,12 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>1.6.12</version>
+			<version>1.7.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
-			<version>1.6.12</version>
+			<version>1.7.2</version>
 		</dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -705,11 +697,6 @@ GRANT CONNECT, RESOURCE TO ${database.user};
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
         </dependency>
 
@@ -826,13 +813,13 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.10</version>
+			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>1.9.0</version>
+			<version>1.9.5</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -850,7 +837,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
-			<version>2.29.1</version>
+			<version>2.31.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -952,25 +939,27 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 				<version>1.7</version>
 				<executions>
 					<execution>
-						<id>Adding src/main/generated-java location to build</id>
+						<id>Adding generated java folder to build</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>add-source</goal>
 						</goals>
 						<configuration>
 							<sources>
+								<source>${maven-celerio-plugin.outputDir}/src/main/java</source>
 								<source>${maven-celerio-plugin.outputDir}/src/main/generated-java</source>
 							</sources>
 						</configuration>
 					</execution>
 					<execution>
-						<id>Adding src/test/generated-java location to test build</id>
+						<id>Adding generated java test location to test build</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>add-test-source</goal>
 						</goals>
 						<configuration>
 							<sources>
+								<source>${maven-celerio-plugin.outputDir}/src/test/java</source>
 								<source>${maven-celerio-plugin.outputDir}/src/test/generated-java</source>
 							</sources>
 						</configuration>
@@ -1092,19 +1081,19 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 				<!-- http://maven.apache.org/plugins/maven-install-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-install-plugin</artifactId>
-				<version>2.3.1</version>
+				<version>2.4</version>
 			</plugin>
 			<plugin>
 				<!-- http://maven.apache.org/plugins/maven-clean-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.4.1</version>
+				<version>2.5</version>
 			</plugin>
 			<plugin>
 				<!-- http://maven.apache.org/plugins/maven-surefire-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.12</version>
+				<version>2.12.4</version>
 				<configuration>
 					<!-- surefire uses a new jvm, MAVEN_OPTS are ignored, so you better set the memory options here -->
 					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
@@ -1114,7 +1103,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 				<!-- http://maven.apache.org/plugins/maven-release-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.2.1</version>
+				<version>2.2.2</version>
 				<configuration>
 					<arguments>-Pdb,metadata,gen</arguments>
 					<releaseProfiles>db,metadata,gen</releaseProfiles>

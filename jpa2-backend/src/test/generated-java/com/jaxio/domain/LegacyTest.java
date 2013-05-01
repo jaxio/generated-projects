@@ -10,7 +10,7 @@ package com.jaxio.domain;
 import java.io.*;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.fest.assertions.Assertions.assertThat;
 import org.junit.Test;
 
 import com.jaxio.util.*;
@@ -36,8 +36,8 @@ public class LegacyTest {
     @Test
     public void newInstanceHasNoPrimaryKey() {
         Legacy model = new Legacy();
-        assertNotNull(model.getId());
-        assertFalse(model.isIdSet());
+        assertThat(model.getId()).isNotNull();
+        assertThat(model.isIdSet()).isFalse();
     }
 
     @Test
@@ -45,8 +45,8 @@ public class LegacyTest {
         Legacy model = new Legacy();
         LegacyPk pk = new LegacyPk();
         model.setId(pk);
-        assertFalse(model.isIdSet());
-        assertSame(pk, model.getId());
+        assertThat(model.isIdSet()).isFalse();
+        assertThat(model.getId()).isSameAs(pk);
     }
 
     @Test
@@ -58,8 +58,8 @@ public class LegacyTest {
         pk.setName(ValueGenerator.getUniqueString(16));
         model.setId(pk);
 
-        assertTrue(model.isIdSet());
-        assertSame(pk, model.getId());
+        assertThat(model.isIdSet()).isTrue();
+        assertThat(model.getId()).isSameAs(pk);
     }
 
     // test columns methods
@@ -71,12 +71,10 @@ public class LegacyTest {
     @Test
     public void compositePrimaryKey_setId() {
         Legacy model = new Legacy();
-        assertNotNull(model.getId());
-
-        assertNull(model.getCode());
-        assertNull(model.getDept());
-        assertNull(model.getName());
-
+        assertThat(model.getId()).isNotNull();
+        assertThat(model.getCode()).isNull();
+        assertThat(model.getDept()).isNull();
+        assertThat(model.getName()).isNull();
         LegacyPk pk = new LegacyPk();
 
         String code = ValueGenerator.getUniqueString(8);
@@ -88,15 +86,15 @@ public class LegacyTest {
 
         model.setId(pk);
 
-        assertEquals(code, model.getCode());
-        assertEquals(dept, model.getDept());
-        assertEquals(name, model.getName());
+        assertThat(model.getCode()).isEqualTo(code);
+        assertThat(model.getDept()).isEqualTo(dept);
+        assertThat(model.getName()).isEqualTo(name);
     }
 
     @Test
     public void toStringNotNull() {
         Legacy model = new Legacy();
-        assertNotNull(model.toString());
+        assertThat(model.toString()).isNotNull();
     }
 
     @Test
@@ -118,10 +116,10 @@ public class LegacyTest {
 
         model1.setExtraInfo("a");
         model2.setExtraInfo("a");
-        assertTrue(model1.isIdSet());
-        assertTrue(model2.isIdSet());
-        assertTrue(model1.hashCode() == model2.hashCode());
-        assertTrue(model1.equals(model2));
-        assertTrue(model2.equals(model1));
+        assertThat(model1.isIdSet()).isTrue();
+        assertThat(model2.isIdSet()).isTrue();
+        assertThat(model1.hashCode()).isEqualTo(model2.hashCode());
+        assertThat(model1).isEqualTo(model2);
+        assertThat(model2).isEqualTo(model1);
     }
 }

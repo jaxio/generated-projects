@@ -51,43 +51,88 @@
 		</p:panel>
 
 		<p:panel header="Start a new conversation" rendered="#{!userContext.isFrench()}">
-		<p>Here is the list of generated conversations:</p>
-		<ul>
-			<li>
-				<h:outputLink value="domain/accountSelect.faces?_ncid_=true">
-					<h:outputText value="${msg.account}" />
-				</h:outputLink>
-			</li>
-			<li>
-				<h:outputLink value="domain/addressSelect.faces?_ncid_=true">
-					<h:outputText value="${msg.address}" />
-				</h:outputLink>
-			</li>
-			<li>
-				<h:outputLink value="domain/bookSelect.faces?_ncid_=true">
-					<h:outputText value="${msg.book}" />
-				</h:outputLink>
-			</li>
-			<li>
-				<h:outputLink value="domain/documentSelect.faces?_ncid_=true">
-					<h:outputText value="${msg.document}" />
-				</h:outputLink>
-			</li>
-			<li>
-				<h:outputLink value="domain/legacySelect.faces?_ncid_=true">
-					<h:outputText value="${msg.legacy}" />
-				</h:outputLink>
-			</li>
-			<li>
-				<h:outputLink value="domain/more/moreTypesDemoSelect.faces?_ncid_=true">
-					<h:outputText value="${msg.moreTypesDemo}" />
-				</h:outputLink>
-			</li>
-			<li>
-				<h:outputLink value="domain/roleSelect.faces?_ncid_=true">
-					<h:outputText value="${msg.role}" />
-				</h:outputLink>
-			</li>
+			<p>Here is the list of generated conversations:</p>
+			<ul>
+				<li>
+					<h:outputText value="#{msg.account} " />
+					<h:outputLink value="domain/accountSelect.faces?_ncid_=true" rendered="#{accountPermission.canSearch()}">
+						<h:outputText value="List"/>
+					</h:outputLink>
+					<h:outputText value=" " />
+					<h:outputLink value="domain/accountEdit.faces?_ncid_=true" rendered="#{accountPermission.canCreate()}">
+						<h:outputText value="New" />
+					</h:outputLink>
+				</li>
+				<li>
+					<h:outputText value="#{msg.address} " />
+					<h:outputLink value="domain/addressSelect.faces?_ncid_=true" rendered="#{addressPermission.canSearch()}">
+						<h:outputText value="List"/>
+					</h:outputLink>
+					<h:outputText value=" " />
+					<h:outputLink value="domain/addressEdit.faces?_ncid_=true" rendered="#{addressPermission.canCreate()}">
+						<h:outputText value="New" />
+					</h:outputLink>
+				</li>
+				<li>
+					<h:outputText value="#{msg.book} " />
+					<h:outputLink value="domain/bookSelect.faces?_ncid_=true" rendered="#{bookPermission.canSearch()}">
+						<h:outputText value="List"/>
+					</h:outputLink>
+					<h:outputText value=" " />
+					<h:outputLink value="domain/bookEdit.faces?_ncid_=true" rendered="#{bookPermission.canCreate()}">
+						<h:outputText value="New" />
+					</h:outputLink>
+				</li>
+				<li>
+					<h:outputText value="#{msg.document} " />
+					<h:outputLink value="domain/documentSelect.faces?_ncid_=true" rendered="#{documentPermission.canSearch()}">
+						<h:outputText value="List"/>
+					</h:outputLink>
+					<h:outputText value=" " />
+					<h:outputLink value="domain/documentEdit.faces?_ncid_=true" rendered="#{documentPermission.canCreate()}">
+						<h:outputText value="New" />
+					</h:outputLink>
+				</li>
+				<li>
+					<h:outputText value="#{msg.legacy} " />
+					<h:outputLink value="domain/legacySelect.faces?_ncid_=true" rendered="#{legacyPermission.canSearch()}">
+						<h:outputText value="List"/>
+					</h:outputLink>
+					<h:outputText value=" " />
+					<h:outputLink value="domain/legacyEdit.faces?_ncid_=true" rendered="#{legacyPermission.canCreate()}">
+						<h:outputText value="New" />
+					</h:outputLink>
+				</li>
+				<li>
+					<h:outputText value="#{msg.moreTypesDemo} " />
+					<h:outputLink value="domain/more/moreTypesDemoSelect.faces?_ncid_=true" rendered="#{moreTypesDemoPermission.canSearch()}">
+						<h:outputText value="List"/>
+					</h:outputLink>
+					<h:outputText value=" " />
+					<h:outputLink value="domain/more/moreTypesDemoEdit.faces?_ncid_=true" rendered="#{moreTypesDemoPermission.canCreate()}">
+						<h:outputText value="New" />
+					</h:outputLink>
+				</li>
+				<li>
+					<h:outputText value="#{msg.role} " />
+					<h:outputLink value="domain/roleSelect.faces?_ncid_=true" rendered="#{rolePermission.canSearch()}">
+						<h:outputText value="List"/>
+					</h:outputLink>
+					<h:outputText value=" " />
+					<h:outputLink value="domain/roleEdit.faces?_ncid_=true" rendered="#{rolePermission.canCreate()}">
+						<h:outputText value="New" />
+					</h:outputLink>
+				</li>
+				<li>
+					<h:outputText value="#{msg.savedSearch} " />
+					<h:outputLink value="domain/savedSearchSelect.faces?_ncid_=true" rendered="#{savedSearchPermission.canSearch()}">
+						<h:outputText value="List"/>
+					</h:outputLink>
+					<h:outputText value=" " />
+					<h:outputLink value="domain/savedSearchEdit.faces?_ncid_=true" rendered="#{savedSearchPermission.canCreate()}">
+						<h:outputText value="New" />
+					</h:outputLink>
+				</li>
 			</ul>
 		</p:panel>
 
@@ -95,45 +140,90 @@
 			<p>Voici la liste des conversations générées:</p>
 			<ul>
 				<li>
-				<h:outputLink value="domain/accountSelect.faces?_ncid_=true">
-						<h:outputText value="${msg.account}" />
+					<h:outputText value="#{msg.account} " />
+					<h:outputLink value="domain/accountSelect.faces?_ncid_=true" rendered="#{accountPermission.canSearch()}">
+						<h:outputText value="Liste"/>
+					</h:outputLink>
+					<h:outputText value=" " />
+					<h:outputLink value="domain/accountEdit.faces?_ncid_=true" rendered="#{accountPermission.canCreate()}">
+						<h:outputText value="Créer" />
 					</h:outputLink>
 				</li>
 				<li>
-				<h:outputLink value="domain/addressSelect.faces?_ncid_=true">
-						<h:outputText value="${msg.address}" />
+					<h:outputText value="#{msg.address} " />
+					<h:outputLink value="domain/addressSelect.faces?_ncid_=true" rendered="#{addressPermission.canSearch()}">
+						<h:outputText value="Liste"/>
+					</h:outputLink>
+					<h:outputText value=" " />
+					<h:outputLink value="domain/addressEdit.faces?_ncid_=true" rendered="#{addressPermission.canCreate()}">
+						<h:outputText value="Créer" />
 					</h:outputLink>
 				</li>
 				<li>
-				<h:outputLink value="domain/bookSelect.faces?_ncid_=true">
-						<h:outputText value="${msg.book}" />
+					<h:outputText value="#{msg.book} " />
+					<h:outputLink value="domain/bookSelect.faces?_ncid_=true" rendered="#{bookPermission.canSearch()}">
+						<h:outputText value="Liste"/>
+					</h:outputLink>
+					<h:outputText value=" " />
+					<h:outputLink value="domain/bookEdit.faces?_ncid_=true" rendered="#{bookPermission.canCreate()}">
+						<h:outputText value="Créer" />
 					</h:outputLink>
 				</li>
 				<li>
-				<h:outputLink value="domain/documentSelect.faces?_ncid_=true">
-						<h:outputText value="${msg.document}" />
+					<h:outputText value="#{msg.document} " />
+					<h:outputLink value="domain/documentSelect.faces?_ncid_=true" rendered="#{documentPermission.canSearch()}">
+						<h:outputText value="Liste"/>
+					</h:outputLink>
+					<h:outputText value=" " />
+					<h:outputLink value="domain/documentEdit.faces?_ncid_=true" rendered="#{documentPermission.canCreate()}">
+						<h:outputText value="Créer" />
 					</h:outputLink>
 				</li>
 				<li>
-				<h:outputLink value="domain/legacySelect.faces?_ncid_=true">
-						<h:outputText value="${msg.legacy}" />
+					<h:outputText value="#{msg.legacy} " />
+					<h:outputLink value="domain/legacySelect.faces?_ncid_=true" rendered="#{legacyPermission.canSearch()}">
+						<h:outputText value="Liste"/>
+					</h:outputLink>
+					<h:outputText value=" " />
+					<h:outputLink value="domain/legacyEdit.faces?_ncid_=true" rendered="#{legacyPermission.canCreate()}">
+						<h:outputText value="Créer" />
 					</h:outputLink>
 				</li>
 				<li>
-				<h:outputLink value="domain/more/moreTypesDemoSelect.faces?_ncid_=true">
-						<h:outputText value="${msg.moreTypesDemo}" />
+					<h:outputText value="#{msg.moreTypesDemo} " />
+					<h:outputLink value="domain/more/moreTypesDemoSelect.faces?_ncid_=true" rendered="#{moreTypesDemoPermission.canSearch()}">
+						<h:outputText value="Liste"/>
+					</h:outputLink>
+					<h:outputText value=" " />
+					<h:outputLink value="domain/more/moreTypesDemoEdit.faces?_ncid_=true" rendered="#{moreTypesDemoPermission.canCreate()}">
+						<h:outputText value="Créer" />
 					</h:outputLink>
 				</li>
 				<li>
-				<h:outputLink value="domain/roleSelect.faces?_ncid_=true">
-						<h:outputText value="${msg.role}" />
+					<h:outputText value="#{msg.role} " />
+					<h:outputLink value="domain/roleSelect.faces?_ncid_=true" rendered="#{rolePermission.canSearch()}">
+						<h:outputText value="Liste"/>
+					</h:outputLink>
+					<h:outputText value=" " />
+					<h:outputLink value="domain/roleEdit.faces?_ncid_=true" rendered="#{rolePermission.canCreate()}">
+						<h:outputText value="Créer" />
+					</h:outputLink>
+				</li>
+				<li>
+					<h:outputText value="#{msg.savedSearch} " />
+					<h:outputLink value="domain/savedSearchSelect.faces?_ncid_=true" rendered="#{savedSearchPermission.canSearch()}">
+						<h:outputText value="Liste"/>
+					</h:outputLink>
+					<h:outputText value=" " />
+					<h:outputLink value="domain/savedSearchEdit.faces?_ncid_=true" rendered="#{savedSearchPermission.canCreate()}">
+						<h:outputText value="Créer" />
 					</h:outputLink>
 				</li>
 			</ul>
 		</p:panel>
 
 		<p:panel header="Fine tuning code generation" rendered="#{!userContext.isFrench()}">
-			<p><a href="http://www.springfuse.com/documentation/configuration.html">You can fine tune the code generation</a> using Celerio configuration file which can be found in the folder
+			<p>You can <a href="http://www.springfuse.com/documentation/configuration.html">fine tune the code generation</a> using Celerio configuration file which can be found in the folder
 			"appli/src/main/config/maven-celerio-plugin".
 			This file allows you to:</p>
 			<ul>
@@ -146,7 +236,7 @@
 			</ul>
 		</p:panel>
 		<p:panel header="Configurer la génération" rendered="#{userContext.isFrench()}">
-			<p><a href="http://www.springfuse.com/documentation/configuration.html">Vous pouvez configurer la génération</a> en utilisant le fichier de configuration maven-celerio-plugin.xml qui se trouve sous
+			<p>Vous pouvez <a href="http://www.springfuse.com/documentation/configuration.html">configurer la génération</a> en utilisant le fichier de configuration maven-celerio-plugin.xml qui se trouve
 			dans le répertoire "appli/src/main/config/maven-celerio-plugin". Ce fichier vous permet par exemple de:</p>
 			<ul>
 				<li>Générer les associations inverses (i.e. one-to-many)</li>

@@ -73,15 +73,16 @@ public class SearchParameters implements Serializable {
     private List<Range<?, ?>> ranges = newArrayList();
 
     // property selectors
-    private List<PropertySelector<?, ?>> propertySelectors = newArrayList();
+    private List<PropertySelector<?, ?>> properties = newArrayList();
 
     // entity selectors
-    private List<EntitySelector<?, ? extends Identifiable<?>, ?>> entitySelectors = newArrayList();
+    private List<EntitySelector<?, ? extends Identifiable<?>, ?>> entities = newArrayList();
 
     // pattern to match against all strings.
     private String searchPattern;
-    // cache
-    private Boolean cacheable = true;
+    // Warn: before enabling cache for queries,
+    // check this: https://hibernate.atlassian.net/browse/HHH-1523
+    private Boolean cacheable = false;
     private String cacheRegion;
 
     // extra parameters
@@ -420,48 +421,48 @@ public class SearchParameters implements Serializable {
     // Search by property selector support
     // -----------------------------------
 
-    public List<PropertySelector<?, ?>> getPropertySelectors() {
-        return propertySelectors;
+    public List<PropertySelector<?, ?>> getProperties() {
+        return properties;
     }
 
-    public void addPropertySelector(PropertySelector<?, ?> propertySelector) {
-        propertySelectors.add(propertySelector);
+    public void addProperty(PropertySelector<?, ?> propertySelector) {
+        properties.add(propertySelector);
     }
 
     /**
      * Add the passed {@link PropertySelector} in order to construct an OR predicate for the corresponding property. 
      */
-    public SearchParameters propertySelector(PropertySelector<?, ?> propertySelector) {
-        addPropertySelector(propertySelector);
+    public SearchParameters property(PropertySelector<?, ?> propertySelector) {
+        addProperty(propertySelector);
         return this;
     }
 
-    public void clearPropertySelectors() {
-        propertySelectors.clear();
+    public void clearProperties() {
+        properties.clear();
     }
 
     // -----------------------------------
     // Search by entity selector support
     // -----------------------------------
 
-    public List<EntitySelector<?, ? extends Identifiable<?>, ?>> getEntitySelectors() {
-        return entitySelectors;
+    public List<EntitySelector<?, ? extends Identifiable<?>, ?>> getEntities() {
+        return entities;
     }
 
-    public void addEntitySelector(EntitySelector<?, ? extends Identifiable<?>, ?> entitySelector) {
-        entitySelectors.add(entitySelector);
+    public void addEntity(EntitySelector<?, ? extends Identifiable<?>, ?> entitySelector) {
+        entities.add(entitySelector);
     }
 
     /**
      * Add the passed {@link EntitySelector} in order to construct an OR predicate for the underlying foreign key. 
      */
-    public SearchParameters entitySelector(EntitySelector<?, ? extends Identifiable<?>, ?> entitySelector) {
-        addEntitySelector(entitySelector);
+    public SearchParameters entity(EntitySelector<?, ? extends Identifiable<?>, ?> entitySelector) {
+        addEntity(entitySelector);
         return this;
     }
 
-    public void clearEntitySelectors() {
-        entitySelectors.clear();
+    public void clearEntities() {
+        entities.clear();
     }
 
     // -----------------------------------
@@ -537,7 +538,9 @@ public class SearchParameters implements Serializable {
     // -----------------------------------
 
     /**
-     * Default to true.
+     * Default to false.
+     * Please read https://hibernate.atlassian.net/browse/HHH-1523
+     * before using cache.
      */
     public void setCacheable(boolean cacheable) {
         this.cacheable = cacheable;

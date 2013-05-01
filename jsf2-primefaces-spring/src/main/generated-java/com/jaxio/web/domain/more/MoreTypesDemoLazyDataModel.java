@@ -7,79 +7,22 @@
  */
 package com.jaxio.web.domain.more;
 
-import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
-import java.util.Arrays;
-import javax.faces.convert.Converter;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.springframework.context.annotation.Scope;
 import com.jaxio.domain.more.MoreTypesDemo;
 import com.jaxio.repository.more.MoreTypesDemoRepository;
-import com.jaxio.repository.support.Repository;
-import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.converter.more.MoreTypesDemoJsfConverter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
-import com.jaxio.web.domain.support.GenericSearchForm;
+import com.jaxio.web.faces.Conversation;
 
-/**
- * Provides server-side pagination for search.
- * TODO: dependencies wiring after deserialization (get inspiration from http://jira.springframework.org/browse/SWF-1224 )
- */
 @Named
-@Scope("conversation")
+@Conversation
 public class MoreTypesDemoLazyDataModel extends GenericLazyDataModel<MoreTypesDemo, Integer, MoreTypesDemoSearchForm> {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    transient private MoreTypesDemoRepository moreTypesDemoRepository;
-    @Inject
-    transient private MoreTypesDemoJsfConverter moreTypesDemoConverter;
-    @Inject
-    transient private MoreTypesDemoSearchForm moreTypesDemoSearchForm;
-
-    private MoreTypesDemo[] selectedRows;
-
-    @Override
-    protected Repository<MoreTypesDemo, Integer> getRepository() {
-        return moreTypesDemoRepository;
-    }
-
-    @Override
-    protected Converter getConverter() {
-        return moreTypesDemoConverter;
-    }
-
-    @Override
-    protected GenericSearchForm<MoreTypesDemo, MoreTypesDemoSearchForm> getSearchForm() {
-        return moreTypesDemoSearchForm;
-    }
-
-    @Override
-    protected ConversationContext<MoreTypesDemo> getSelectedContext(MoreTypesDemo selected) {
-        if (selected.isIdSet()) {
-            // just the id matters as we want to reload it in the conversation entity manager.
-            return MoreTypesDemoController.newEditContext(selected.getId());
-        } else {
-            return MoreTypesDemoController.newEditContext(selected); // fresh entity (creation)
-        }
-    }
-
-    // -----------------------------------
-    // Multi selection support
-    // -----------------------------------
-
-    public void setSelectedRows(MoreTypesDemo[] selectedRows) {
-        this.selectedRows = selectedRows;
-    }
-
-    public MoreTypesDemo[] getSelectedRows() {
-        return selectedRows;
-    }
-
-    public String multiSelect() {
-        return getCurrentConversation() //
-                .<ConversationContext<MoreTypesDemo>> getCurrentContext() //
-                .getCallBack() //
-                .selected(Arrays.asList(selectedRows));
+    public MoreTypesDemoLazyDataModel(MoreTypesDemoRepository moreTypesDemoRepository, MoreTypesDemoJsfConverter moreTypesDemoConverter,
+            MoreTypesDemoController moreTypesDemoController, MoreTypesDemoSearchForm moreTypesDemoSearchForm) {
+        super(moreTypesDemoRepository, moreTypesDemoConverter, moreTypesDemoController, moreTypesDemoSearchForm);
     }
 }

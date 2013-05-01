@@ -7,6 +7,7 @@
  */
 package com.jaxio.web.domain.more;
 
+import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
 import static com.jaxio.dao.support.Ranges.RangeBigDecimal.newRangeBigDecimal;
 import static com.jaxio.dao.support.Ranges.RangeBigInteger.newRangeBigInteger;
 import static com.jaxio.dao.support.Ranges.RangeDate.newRangeDate;
@@ -26,8 +27,10 @@ import static com.jaxio.domain.more.MoreTypesDemo_.numberDouble;
 import static com.jaxio.domain.more.MoreTypesDemo_.numberFloat;
 import static com.jaxio.domain.more.MoreTypesDemo_.numberInt;
 import static com.jaxio.domain.more.MoreTypesDemo_.numberLong;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import javax.inject.Named;
-import org.springframework.context.annotation.Scope;
+import com.jaxio.dao.support.PropertySelector;
 import com.jaxio.dao.support.Ranges.RangeBigDecimal;
 import com.jaxio.dao.support.Ranges.RangeBigInteger;
 import com.jaxio.dao.support.Ranges.RangeDate;
@@ -40,14 +43,15 @@ import com.jaxio.dao.support.Ranges.RangeLong;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.more.MoreTypesDemo;
 import com.jaxio.web.domain.support.GenericSearchForm;
+import com.jaxio.web.faces.Conversation;
 
 /**
  * View Helper to find/select {@link MoreTypesDemo}.
  * It exposes a {@link MoreTypesDemo} instance so it can be used in search by Example query.
  */
 @Named
-@Scope("conversation")
-public class MoreTypesDemoSearchForm extends GenericSearchForm<MoreTypesDemo, MoreTypesDemoSearchForm> {
+@Conversation
+public class MoreTypesDemoSearchForm extends GenericSearchForm<MoreTypesDemo, Integer, MoreTypesDemoSearchForm> {
     private static final long serialVersionUID = 1L;
 
     private MoreTypesDemo moreTypesDemo = new MoreTypesDemo();
@@ -61,6 +65,12 @@ public class MoreTypesDemoSearchForm extends GenericSearchForm<MoreTypesDemo, Mo
     private RangeDate<MoreTypesDemo> dateJavaTemporalTimestampRange = newRangeDate(dateJavaTemporalTimestamp);
     private RangeLocalDate<MoreTypesDemo> dateJodaRange = newRangeLocalDate(dateJoda);
     private RangeLocalDateTime<MoreTypesDemo> dateTimeJodaRange = newRangeLocalDateTime(dateTimeJoda);
+    private PropertySelector<MoreTypesDemo, Integer> numberIntSelector = newPropertySelector(numberInt);
+    private PropertySelector<MoreTypesDemo, Long> numberLongSelector = newPropertySelector(numberLong);
+    private PropertySelector<MoreTypesDemo, Double> numberDoubleSelector = newPropertySelector(numberDouble);
+    private PropertySelector<MoreTypesDemo, Float> numberFloatSelector = newPropertySelector(numberFloat);
+    private PropertySelector<MoreTypesDemo, BigInteger> numberBigIntegerSelector = newPropertySelector(numberBigInteger);
+    private PropertySelector<MoreTypesDemo, BigDecimal> numberBigDecimalSelector = newPropertySelector(numberBigDecimal);
 
     public MoreTypesDemo getMoreTypesDemo() {
         return moreTypesDemo;
@@ -112,6 +122,31 @@ public class MoreTypesDemoSearchForm extends GenericSearchForm<MoreTypesDemo, Mo
         return dateTimeJodaRange;
     }
 
+    // Selectors for property
+    public PropertySelector<MoreTypesDemo, Integer> getNumberIntSelector() {
+        return numberIntSelector;
+    }
+
+    public PropertySelector<MoreTypesDemo, Long> getNumberLongSelector() {
+        return numberLongSelector;
+    }
+
+    public PropertySelector<MoreTypesDemo, Double> getNumberDoubleSelector() {
+        return numberDoubleSelector;
+    }
+
+    public PropertySelector<MoreTypesDemo, Float> getNumberFloatSelector() {
+        return numberFloatSelector;
+    }
+
+    public PropertySelector<MoreTypesDemo, BigInteger> getNumberBigIntegerSelector() {
+        return numberBigIntegerSelector;
+    }
+
+    public PropertySelector<MoreTypesDemo, BigDecimal> getNumberBigDecimalSelector() {
+        return numberBigDecimalSelector;
+    }
+
     public SearchParameters toSearchParameters() {
         return new SearchParameters() //
                 .anywhere() //
@@ -125,6 +160,12 @@ public class MoreTypesDemoSearchForm extends GenericSearchForm<MoreTypesDemo, Mo
                 .range(dateJavaTemporalTimestampRange) //
                 .range(dateJodaRange) //
                 .range(dateTimeJodaRange) //
+                .property(numberIntSelector) //
+                .property(numberLongSelector) //
+                .property(numberDoubleSelector) //
+                .property(numberFloatSelector) //
+                .property(numberBigIntegerSelector) //
+                .property(numberBigDecimalSelector) //
         ;
     }
 
@@ -146,5 +187,11 @@ public class MoreTypesDemoSearchForm extends GenericSearchForm<MoreTypesDemo, Mo
         this.dateJavaTemporalTimestampRange = other.getDateJavaTemporalTimestampRange();
         this.dateJodaRange = other.getDateJodaRange();
         this.dateTimeJodaRange = other.getDateTimeJodaRange();
+        this.numberIntSelector = other.getNumberIntSelector();
+        this.numberLongSelector = other.getNumberLongSelector();
+        this.numberDoubleSelector = other.getNumberDoubleSelector();
+        this.numberFloatSelector = other.getNumberFloatSelector();
+        this.numberBigIntegerSelector = other.getNumberBigIntegerSelector();
+        this.numberBigDecimalSelector = other.getNumberBigDecimalSelector();
     }
 }

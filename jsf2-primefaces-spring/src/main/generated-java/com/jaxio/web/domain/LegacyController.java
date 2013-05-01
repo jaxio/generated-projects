@@ -7,67 +7,52 @@
  */
 package com.jaxio.web.domain;
 
-import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Legacy;
 import com.jaxio.domain.LegacyPk;
 import com.jaxio.repository.LegacyRepository;
 import com.jaxio.web.conversation.Conversation;
 import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationFactory;
+import com.jaxio.web.domain.support.GenericController;
+import com.jaxio.web.permission.LegacyPermission;
 
 /**
  * Stateless controller for Legacy conversation start. Provides also auto-complete support. 
  */
 @Named
 @Singleton
-public class LegacyController implements ConversationFactory {
+public class LegacyController extends GenericController<Legacy, LegacyPk> implements ConversationFactory {
     public final static String editUri = "/domain/legacyEdit.faces";
     public final static String selectUri = "/domain/legacySelect.faces";
-    private LegacyRepository legacyRepository;
 
     @Inject
-    public void setLegacyRepository(LegacyRepository legacyRepository) {
-        this.legacyRepository = legacyRepository;
+    public LegacyController(LegacyRepository legacyRepository, LegacyPermission legacyPermission) {
+        super(legacyRepository, legacyPermission);
     }
 
-    // --------------------------------
-    // ConversationFactoryImpl
-    // --------------------------------
+    // -------------------
+    // ConversationFactory
+    // -------------------
 
     @Override
     public boolean canCreateConversation(HttpServletRequest request) {
-        return selectUri.equals(request.getServletPath());
+        return selectUri.equals(request.getServletPath()) || editUri.equals(request.getServletPath());
     }
 
     @Override
     public Conversation createConversation(HttpServletRequest request) {
         String uri = request.getServletPath();
         if (selectUri.equals(uri)) {
-            Conversation conversation = Conversation.newInstance(request);
-            ConversationContext<Legacy> ctx = newSearchContext();
-            ctx.setLabelWithKey("legacy");
-            conversation.setNextContext(ctx);
-            return conversation;
+            return Conversation.newConversation(request, newSearchContext("legacy"));
+        } else if (editUri.equals(uri)) {
+            return Conversation.newConversation(request, newEditContext("legacy", new Legacy()));
+        } else {
+            throw new IllegalStateException("Unexpected conversation creation demand");
         }
-
-        throw new IllegalStateException("Unexpected conversation creation demand");
-    }
-
-    // --------------------------------
-    // Autocomplete support
-    // --------------------------------
-
-    /**
-     * This method is used from primefaces autocomplete components.
-     */
-    public List<Legacy> complete(String value) {
-        SearchParameters sp = new SearchParameters().anywhere().searchPattern(value);
-        return legacyRepository.find(sp);
     }
 
     // --------------------------------
@@ -78,20 +63,10 @@ public class LegacyController implements ConversationFactory {
      * Helper to construct a new ConversationContext to edit an Legacy.
      * @param legacy the entity to edit.
      */
-    public static ConversationContext<Legacy> newEditContext(final Legacy legacy) {
+    public ConversationContext<Legacy> newEditContext(final Legacy legacy) {
         ConversationContext<Legacy> ctx = new ConversationContext<Legacy>();
         ctx.setEntity(legacy); // used by GenericEditForm.init()
-        ctx.setViewUri(editUri);
-        return ctx;
-    }
-
-    /**
-     * Helper to construct a new ConversationContext to edit an Legacy.
-     * @param id the id of the entity to edit.
-     */
-    public static ConversationContext<Legacy> newEditContext(final LegacyPk id) {
-        ConversationContext<Legacy> ctx = new ConversationContext<Legacy>();
-        ctx.setEntityId(id); // used by GenericEditForm.init()
+        ctx.setIsNewEntity(!legacy.isIdSet());
         ctx.setViewUri(editUri);
         return ctx;
     }
@@ -99,9 +74,8 @@ public class LegacyController implements ConversationFactory {
     /**
      * Helper to construct a new ConversationContext for search/selection.
      */
-    public static ConversationContext<Legacy> newSearchContext() {
+    public ConversationContext<Legacy> newSearchContext() {
         ConversationContext<Legacy> ctx = new ConversationContext<Legacy>();
-        ctx.setUseConversationEntityManager(false);
         ctx.setViewUri(selectUri);
         return ctx;
     }

@@ -56,6 +56,8 @@ public class GenericJsfConverter<E extends Identifiable<PK>, PK extends Serializ
         if (object == null || !Identifiable.class.isAssignableFrom(object.getClass())) {
             return "-1";
         }
-        return ((Identifiable<PK>) object).getId().toString();
+
+        Identifiable<PK> io = (Identifiable<PK>) object;
+        return io.isIdSet() ? io.getId().toString() : "-1";
     }
 }

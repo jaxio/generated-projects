@@ -8,14 +8,21 @@
 package com.jaxio.web.domain.support;
 
 import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
+import static com.google.common.collect.Maps.newHashMap;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.faces.convert.Converter;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.WordUtils;
 import org.omnifaces.util.Faces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
@@ -31,11 +38,12 @@ import com.jaxio.util.ResourcesUtil;
 import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.util.MessageUtil;
 import com.jaxio.web.util.PrimeFacesUtil;
+import com.jaxio.context.UserContext;
 
 /**
- * Extends PrimeFaces' {@link LazyDataModel} in order to support 'Server Side Pagination'.
+ * Extends PrimeFaces {@link LazyDataModel} in order to support server-side pagination, row selection, multi select etc.
  */
-public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extends Serializable, F extends GenericSearchForm<E, F>> extends LazyDataModel<E> {
+public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extends Serializable, F extends GenericSearchForm<E, PK, F>> extends LazyDataModel<E> {
     private static final long serialVersionUID = 1L;
 
     @Inject
@@ -46,21 +54,31 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
     private TypeAwarePrinter printer;
 
     private E selectedRow;
+    private E[] selectedRows;
     private boolean bypassFirstOffset = true;
 
-    abstract protected Repository<E, PK> getRepository();
+    protected Repository<E, PK> repository;
+    protected Converter converter;
+    protected GenericController<E, PK> controller;
+    protected GenericSearchForm<E, PK, F> searchForm;
 
-    abstract protected Converter getConverter();
+    public GenericLazyDataModel() {
+    }
 
-    abstract protected GenericSearchForm<E, F> getSearchForm();
+    public GenericLazyDataModel(Repository<E, PK> repository, Converter converter, GenericController<E, PK> controller, GenericSearchForm<E, PK, F> searchForm) {
+        this.repository = repository;
+        this.converter = converter;
+        this.controller = controller;
+        this.searchForm = searchForm;
+    }
 
     @Override
     public List<E> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters) {
-        SearchParameters sp = getSearchForm().toSearchParameters();
-        E example = getSearchForm().getEntity();
-        setRowCount(getRepository().findCount(example, sp)); // total count so the paginator may display the total number of pages
+        SearchParameters sp = searchForm.toSearchParameters();
+        E example = searchForm.getEntity();
+        setRowCount(repository.findCount(example, sp)); // total count so the paginator may display the total number of pages
         populateSearchParameters(sp, first, pageSize, sortField, sortOrder, filters); // load one page of data        
-        return getRepository().find(example, sp);
+        return repository.find(example, sp);
     }
 
     /**
@@ -89,12 +107,21 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
         sp.setMaxResults(pageSize);
 
         sp.clearOrders();
-        if (sortField != null) {
-            OrderByDirection obd = convert(sortOrder);
-            sp.addOrderBy(new OrderBy(sortField, obd));
+        if (isNotEmpty(sortField)) {
+            sp.addOrderBy(new OrderBy(sortField, convert(sortOrder)));
+        } else {
+            defaultOrder(sp);
         }
         return sp;
     }
+
+    protected void defaultOrder(SearchParameters sp) {
+
+    }
+
+    // ---------------------
+    // Select row
+    // ---------------------
 
     /**
      * Returns the currently selected row.
@@ -117,6 +144,25 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
         this.selectedRow = null;
     }
 
+    // ---------------------
+    // Multi select
+    // ---------------------
+
+    public void setSelectedRows(E[] selectedRows) {
+        this.selectedRows = selectedRows;
+    }
+
+    public E[] getSelectedRows() {
+        return selectedRows;
+    }
+
+    public String multiSelect() {
+        return getCurrentConversation() //
+                .<ConversationContext<E>> getCurrentContext() //
+                .getCallBack() //
+                .selected(Arrays.asList(getSelectedRows()));
+    }
+
     /**
      * Convert PrimeFaces SortOrder to our OrderByDirection.
      */
@@ -128,13 +174,19 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
     // Actions
     // ---------------------
 
-    abstract protected ConversationContext<E> getSelectedContext(E selected);
+    public ConversationContext<E> getSelectedContext(E selected) {
+        return controller.newEditContext(selected);
+    }
 
     /**
      * Action to create a new entity.
      */
     public String sendNew() {
-        return edit(getRepository().getNew());
+        E newEntity = repository.getNew();
+        ConversationContext<E> ctx = getSelectedContext(newEntity);
+        ctx.setLabel("Create new " + newEntity.getClass().getSimpleName());
+        getCurrentConversation().setNextContext(ctx);
+        return ctx.view();
     }
 
     /**
@@ -145,7 +197,7 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
     }
 
     /**
-     * support for edit(), sendNew() and onRowSelect methods 
+     * support for edit() and onRowSelect methods 
      */
     protected String edit(E selectedRow) {
         ConversationContext<E> ctx = getSelectedContext(selectedRow);
@@ -200,7 +252,7 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
         E selected = getSelectedRow();
         if (selected != null) {
             String infoArg = printer.print(selected);
-            getRepository().delete(selected);
+            repository.delete(selected);
             messageUtil.info("status_deleted_ok", infoArg);
             resetSelectedRow();
         }
@@ -220,5 +272,46 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
             }
         }
         return null;
+    }
+
+    // -------------
+    // Excel related
+    // -------------
+
+    @Inject
+    private ExcelExportService excelExportService;
+
+    @Inject
+    private ExcelExportSupport excelExportSupport;
+
+    public void onExcel() throws IOException {
+        SearchParameters searchParameters = searchForm.toSearchParameters();
+        Map<String, Object> model = newHashMap();
+        model.put("msg", resourcesUtil);
+        model.put("search_date", excelExportSupport.dateToString(new Date()));
+        model.put("search_by", UserContext.getUsername());
+        model.put("searchParameters", searchParameters);
+        model.put("searchParameters", searchParameters);
+        excelObjects(model, searchParameters);
+        excelExportService.export("excel/" + entityName().toLowerCase() + ".xlsx", model, excelOutputname());
+    }
+
+    protected String excelOutputname() {
+        return entityName() + "-" + new SimpleDateFormat("MM-dd-yyyy_HH-mm-ss").format(new Date()) + ".xlsx";
+    }
+
+    private String entityName() {
+        return repository.getNew().getClass().getSimpleName();
+    }
+
+    protected void excelObjects(Map<String, Object> model, SearchParameters searchParameters) {
+        excelExportSupport.convertSearchParametersToMap(model, searchParameters);
+
+        int count = repository.findCount(searchParameters);
+        model.put("search_nb_results", count);
+        if (count > 65535) {
+            searchParameters.maxResults(65535);
+        }
+        model.put(WordUtils.uncapitalize(entityName()), repository.find(searchParameters));
     }
 }

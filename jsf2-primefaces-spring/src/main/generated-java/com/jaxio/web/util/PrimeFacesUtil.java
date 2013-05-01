@@ -19,13 +19,17 @@ public class PrimeFacesUtil {
     /**
      * Tells the client to update the search results region with the passed text.
      */
-    static public void updateSearchResultsRegion(String text) {
+    public static void updateSearchResultsRegion(String text) {
         if (RequestContext.getCurrentInstance() != null) {
             RequestContext.getCurrentInstance().execute("APP.updateSearchResultsRegion(\"" + text + "\")");
         }
     }
 
-    static public boolean isAjax(HttpServletRequest request) {
+    public static boolean isAjax(HttpServletRequest request) {
         return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+    }
+
+    public static void forceClose() {
+        RequestContext.getCurrentInstance().execute("APP.menu.forceClose()");
     }
 }

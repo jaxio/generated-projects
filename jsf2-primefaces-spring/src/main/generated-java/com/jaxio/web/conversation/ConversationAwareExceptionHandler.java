@@ -12,22 +12,27 @@ import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversati
 import java.util.Iterator;
 
 import javax.faces.context.ExceptionHandler;
+import javax.faces.context.ExceptionHandlerWrapper;
 import javax.faces.event.ExceptionQueuedEvent;
 
-import org.omnifaces.exceptionhandler.FullAjaxExceptionHandler;
 import org.springframework.dao.DataAccessException;
 
-import com.jaxio.web.conversation.ConversationManager;
 import com.jaxio.web.util.ExceptionUtil;
 import com.jaxio.web.util.MessageUtil;
 
 /**
  * Exception handling is configured here, in web.xml (see error-page tag) and in faces-config.xml.
  */
-public class ConversationAwareExceptionHandler extends FullAjaxExceptionHandler {
+public class ConversationAwareExceptionHandler extends ExceptionHandlerWrapper {
 
+    private ExceptionHandler wrapped;
+
+    /**
+     * Construct a new exception handler around the given wrapped exception handler.
+     * @param wrapped The wrapped exception handler.
+     */
     public ConversationAwareExceptionHandler(ExceptionHandler wrapped) {
-        super(wrapped);
+        this.wrapped = wrapped;
     }
 
     @Override
@@ -35,19 +40,26 @@ public class ConversationAwareExceptionHandler extends FullAjaxExceptionHandler 
         Iterator<ExceptionQueuedEvent> unhandledExceptionQueuedEvents = getUnhandledExceptionQueuedEvents().iterator();
 
         if (unhandledExceptionQueuedEvents.hasNext()) {
-            Throwable exception = unhandledExceptionQueuedEvents.next().getContext().getException();
+            try {
+                Throwable exception = unhandledExceptionQueuedEvents.next().getContext().getException();
 
-            // nice message
-            MessageUtil.getInstance().error(exception);
+                // nice message
+                MessageUtil.getInstance().error(exception);
 
-            if (getCurrentConversation() != null && ExceptionUtil.isCausedBy(exception, DataAccessException.class)) {
-                // DATA ACCESS EXCEPTION
-                // As per JPA spec it is safer to do not reuse the entity manager.
-                // Therefore, we end the conversation.
-                ConversationManager.getInstance().endCurrentConversation();
-                // fall through, the parent will display the proper view.
+                if (getCurrentConversation() != null && ExceptionUtil.isCausedBy(exception, DataAccessException.class)) {
+                    // TODO: how do we treat DATA ACCESS EXCEPTION?
+                    // ConversationManager.getInstance().endCurrentConversation();
+                    // fall through, the parent will display the proper view.
+                }
+            } finally {
+                unhandledExceptionQueuedEvents.remove();
             }
         }
-        super.handle();
+        wrapped.handle();
+    }
+
+    @Override
+    public ExceptionHandler getWrapped() {
+        return wrapped;
     }
 }

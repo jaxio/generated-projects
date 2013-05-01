@@ -1,0 +1,21 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:app="http://springfuse.jaxio.com/app">
+	<app:outputLabel for="#{id}_input" value="#{label}" />
+	<h:panelGrid id="#{id}Grid" columns="2" styleClass="aria-role-presentation">
+		<p:autoComplete id="#{id}" value="#{value.selected}" label="#{label}"
+			completeMethod="#{controller[action]}"
+			var="item"
+			itemValue="#{item}"
+			itemLabel="#{item}"
+			multiple="true"
+			queryDelay="2"
+			forceSelection="false">
+			<f:attribute name="property" value="#{property}" />
+			<ui:insert/>
+		</p:autoComplete>
+	</h:panelGrid>
+</ui:composition>

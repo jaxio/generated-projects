@@ -25,4 +25,9 @@ public class LegacyJsfConverter extends GenericJsfConverter<Legacy, LegacyPk> {
     public LegacyJsfConverter(LegacyRepository legacyRepository) {
         super(legacyRepository, Legacy.class, LegacyPk.class);
     }
+
+    @Override
+    protected LegacyPk toPk(String pkAsString) {
+        return LegacyPk.fromString(pkAsString);
+    }
 }

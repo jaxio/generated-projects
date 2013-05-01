@@ -12,46 +12,23 @@
 				value="#{msg.back}" icon="ui-icon-arrowreturnthick-1-w"/>
 		</p:toolbarGroup>	
 		<p:toolbarGroup align="left" rendered="#{not sub and not readonly}">
-			<p:commandButton id="close" action="close" ajax="true" immediate="true" process="@this"
-				icon="ui-icon-close"
-				value="#{msg.menu_close}"
-				title="#{msg.menu_close} #{title}"
-				rendered="#{not empty bean}" />
 			<p:commandButton id="quit" action="#{searchForm.quit()}" ajax="false" process="@form"
 				icon="ui-icon-closethick"
 				value="#{msg.menu_quit}"
-				title="#{msg.menu_quit} #{title}"
-				rendered="#{empty bean}"/>
-			<p:commandButton id="delete" icon="ui-icon-trash"
-				onclick="askForDeleteDialog.show(); APP.focusAskForDeleteDialog();"
-				value="#{msg.menu_delete_and_close}"
-				title="#{msg.menu_delete_and_close} #{title}"
-				rendered="#{not empty bean}"
-				disabled="#{empty bean.id}" />
+				title="#{msg.menu_quit} #{title}" />
 			<p:separator />
 			<p:commandButton id="sendNew" action="#{data.sendNew()}" ajax="false" immediate="true" process="@this"
 				icon="ui-icon-document"
-				rendered="#{empty bean}"
+				rendered="#{empty bean and permission.canCreate()}"
 				value="#{msg.menu_new}"
 				title="#{msg.menu_new} #{title}" />
-			<p:commandButton id="newLocation"
-				onclick="APP.menu.newLocation();"
-				icon="ui-icon-document"
-				rendered="#{not empty bean}"
-				value="#{msg.menu_new}"
-				title="#{msg.menu_new} #{title}" />
-			<p:commandButton id="openLocation"
-				onclick="APP.menu.openLocation();"
-				icon="ui-icon-folder-open"
-				value="#{msg.menu_open}"
-				title="#{msg.menu_open} #{title}"
-				rendered="#{not empty bean}" />
 		</p:toolbarGroup>
 	</ui:define>
 	<ui:define name="content">
 		<p:breadCrumb model="#{conversationManager.breadCrumbMenuModel}" rendered="#{conversationManager.renderBreadCrumb}" />	
-		<p:fieldset id="filtersFieldset" legend="#{msg.search_criteria}">
-			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/>		
+		<p:fieldset id="filtersFieldset" legend="#{msg.search_criteria}" toggleable="true">
+			<input type="hidden" name="_cid_" value="#{conversationManager.currentConversation.id}"/>
+			<input type="hidden" name="_ccid_" value="#{conversationManager.currentConversation.currentContext.id}"/>
 			<f:validateBean disabled="true">
 				<h:panelGrid columns="4">
 					<ui:insert name="filters" />
@@ -62,13 +39,15 @@
 			icon="iconSearch" styleClass="aria-search-button default"
 			update="messages searchResults" value="#{msg.menu_search}"
 			title="#{msg.menu_search} #{title}" />
-		<p:commandButton icon="ui-icon-power" value="${msg.search_reset}"
+		<p:commandButton icon="ui-icon-power" value="#{msg.search_reset}"
 			actionListener="#{searchForm.reset()}"
 			update="messages filtersFieldset searchResults searchFormName"/>
-		<p:commandButton id="saveSearch" action="saveSearch" process="@form"
+		<p:commandButton id="excel" action="#{data.onExcel()}" process="@form"
+			icon="iconExcel" value="Excel" ajax="false" />
+		<p:commandButton id="saveSearch" actionListener="#{savedSearchService.save(searchForm)}" process="@form"
 			rendered="#{savedSearch}" icon="ui-icon-disk"
 			update="filtersFieldset messages searchResults"
-			value="${msg.search_save}" />
+			value="#{msg.search_save}" ajax="true" />
 		<p:autoComplete id="searchFormName"
 			value="#{searchForm.searchFormName}" rendered="#{savedSearch}"
 			completeMethod="#{savedSearchService.finderFor(searchForm).find}"
@@ -87,7 +66,7 @@
 					<h:graphicImage name="icons/ajaxloading.gif" alt="" />
 				</f:facet>
 				<f:facet name="error">
-					<h:outputText value="${msg.error_ajax}" />
+					<h:outputText value="#{msg.error_ajax}" />
 				</f:facet>
 				<f:facet name="success">
 					<h:outputText value="" />
@@ -95,7 +74,7 @@
 			</p:ajaxStatus>
 		</span>
 		<!-- safari/voiceover requires 'span' (not 'div') for live region-->
-		<span id="searchResultsRegion" aria-label="${msg.search_results}" aria-live="assertive" aria-relevant="additions">
+		<span id="searchResultsRegion" aria-label="#{msg.search_results}" aria-live="assertive" aria-relevant="additions">
 		</span>
 		<c:if test="#{not multiCheckboxSelection}">
 			<p:dataTable id="searchResults"
@@ -121,12 +100,12 @@
 		<script type="text/javascript">APP.updateSearchResultsRegion('#{resourcesUtil.getPluralableProperty("search_results_status", data.rowCount)}');</script>
 	</ui:define>
 	<ui:define name="dialogs">
-		<p:confirmDialog widgetVar="askForDeleteItemDialog" header="${msg.menu_delete}?" message="${msg.dialog_delete_confirm}">
+		<p:confirmDialog widgetVar="askForDeleteItemDialog" header="#{msg.menu_delete}?" message="#{msg.dialog_delete_confirm}">
 	        <h:panelGrid id="askForDeleteItemDialogContent" columns="2" cellpadding="4" style="margin:0 auto;">  
-	            <h:outputText value="${typeAwarePrinter.print(data.selectedRow)}" style="font-weight:bold" rendered="${not empty data.selectedRow}"/>  
+	            <h:outputText value="#{typeAwarePrinter.print(data.selectedRow)}" style="font-weight:bold" rendered="#{not empty data.selectedRow}"/>  
 	        </h:panelGrid>		
-			<p:commandButton id="askForDeleteItemDialogYes" action="#{data.delete()}" ajax="true" immediate="true" oncomplete="askForDeleteItemDialog.hide();" process="@this" value="${msg.yes}" title="${msg.dialog_delete_confirm} ${msg.yes}" icon="ui-icon-check" update=":form:searchResults :form:messages"/>
-			<p:commandButton id="askForDeleteItemDialogNo" value="${msg.no}" title="${msg.dialog_delete_confirm} ${msg.no}" onclick="askForDeleteItemDialog.hide(); return false;" icon="ui-icon-cancel"/>
+			<p:commandButton id="askForDeleteItemDialogYes" action="#{data.delete()}" ajax="true" immediate="true" oncomplete="askForDeleteItemDialog.hide();" process="@this" value="#{msg.yes}" title="#{msg.dialog_delete_confirm} #{msg.yes}" icon="ui-icon-check" update=":form:searchResults :form:messages"/>
+			<p:commandButton id="askForDeleteItemDialogNo" value="#{msg.no}" title="#{msg.dialog_delete_confirm} #{msg.no}" onclick="askForDeleteItemDialog.hide(); return false;" icon="ui-icon-cancel"/>
 		</p:confirmDialog>
 	</ui:define>	
 </ui:composition >

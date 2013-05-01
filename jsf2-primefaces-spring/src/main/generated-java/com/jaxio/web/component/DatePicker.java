@@ -138,11 +138,11 @@ public class DatePicker extends UIInput implements NamingContainer {
         return sb.toString();
     }
 
-    final private UIInput findUIInput(String id) {
+    private UIInput findUIInput(String id) {
         return (UIInput) findComponent(id);
     }
 
-    final private boolean isConvertible(UIInput input) {
+    private boolean isConvertible(UIInput input) {
         return input.isRendered() && input.getSubmittedValue() != null && !((String) input.getSubmittedValue()).isEmpty();
     }
 }

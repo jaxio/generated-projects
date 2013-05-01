@@ -7,66 +7,51 @@
  */
 package com.jaxio.web.domain;
 
-import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Address;
 import com.jaxio.repository.AddressRepository;
 import com.jaxio.web.conversation.Conversation;
 import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationFactory;
+import com.jaxio.web.domain.support.GenericController;
+import com.jaxio.web.permission.AddressPermission;
 
 /**
  * Stateless controller for Address conversation start. Provides also auto-complete support. 
  */
 @Named
 @Singleton
-public class AddressController implements ConversationFactory {
+public class AddressController extends GenericController<Address, Integer> implements ConversationFactory {
     public final static String editUri = "/domain/addressEdit.faces";
     public final static String selectUri = "/domain/addressSelect.faces";
-    private AddressRepository addressRepository;
 
     @Inject
-    public void setAddressRepository(AddressRepository addressRepository) {
-        this.addressRepository = addressRepository;
+    public AddressController(AddressRepository addressRepository, AddressPermission addressPermission) {
+        super(addressRepository, addressPermission);
     }
 
-    // --------------------------------
-    // ConversationFactoryImpl
-    // --------------------------------
+    // -------------------
+    // ConversationFactory
+    // -------------------
 
     @Override
     public boolean canCreateConversation(HttpServletRequest request) {
-        return selectUri.equals(request.getServletPath());
+        return selectUri.equals(request.getServletPath()) || editUri.equals(request.getServletPath());
     }
 
     @Override
     public Conversation createConversation(HttpServletRequest request) {
         String uri = request.getServletPath();
         if (selectUri.equals(uri)) {
-            Conversation conversation = Conversation.newInstance(request);
-            ConversationContext<Address> ctx = newSearchContext();
-            ctx.setLabelWithKey("address");
-            conversation.setNextContext(ctx);
-            return conversation;
+            return Conversation.newConversation(request, newSearchContext("address"));
+        } else if (editUri.equals(uri)) {
+            return Conversation.newConversation(request, newEditContext("address", new Address()));
+        } else {
+            throw new IllegalStateException("Unexpected conversation creation demand");
         }
-
-        throw new IllegalStateException("Unexpected conversation creation demand");
-    }
-
-    // --------------------------------
-    // Autocomplete support
-    // --------------------------------
-
-    /**
-     * This method is used from primefaces autocomplete components.
-     */
-    public List<Address> complete(String value) {
-        SearchParameters sp = new SearchParameters().anywhere().searchPattern(value);
-        return addressRepository.find(sp);
     }
 
     // --------------------------------
@@ -77,20 +62,10 @@ public class AddressController implements ConversationFactory {
      * Helper to construct a new ConversationContext to edit an Address.
      * @param address the entity to edit.
      */
-    public static ConversationContext<Address> newEditContext(final Address address) {
+    public ConversationContext<Address> newEditContext(final Address address) {
         ConversationContext<Address> ctx = new ConversationContext<Address>();
         ctx.setEntity(address); // used by GenericEditForm.init()
-        ctx.setViewUri(editUri);
-        return ctx;
-    }
-
-    /**
-     * Helper to construct a new ConversationContext to edit an Address.
-     * @param id the id of the entity to edit.
-     */
-    public static ConversationContext<Address> newEditContext(final Integer id) {
-        ConversationContext<Address> ctx = new ConversationContext<Address>();
-        ctx.setEntityId(id); // used by GenericEditForm.init()
+        ctx.setIsNewEntity(!address.isIdSet());
         ctx.setViewUri(editUri);
         return ctx;
     }
@@ -98,9 +73,8 @@ public class AddressController implements ConversationFactory {
     /**
      * Helper to construct a new ConversationContext for search/selection.
      */
-    public static ConversationContext<Address> newSearchContext() {
+    public ConversationContext<Address> newSearchContext() {
         ConversationContext<Address> ctx = new ConversationContext<Address>();
-        ctx.setUseConversationEntityManager(false);
         ctx.setViewUri(selectUri);
         return ctx;
     }

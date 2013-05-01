@@ -4,12 +4,12 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:app="http://springfuse.jaxio.com/app">
-	<app:outputLabel for="${id}" value="${label}" required="${empty required ? false : required}" rendered="${empty rendered ? true : rendered}" />
-	<h:panelGroup rendered="${not readonly and empty rendered ? true : rendered}">
-		<p:editor id="${id}" value="#{value}" width="600">
+	<app:outputLabel for="#{id}" value="#{label}" required="#{empty required ? false : required}" rendered="#{empty rendered ? true : rendered}" />
+	<h:panelGroup rendered="#{not readonly and empty rendered ? true : rendered}">
+		<p:editor id="#{id}" value="#{value}" width="600">
 			<f:validateBean binding="#{lenientBeanValidator}"/>
 			<ui:insert/>
 		</p:editor>
 	</h:panelGroup>
-	<h:outputText value="#{value}" rendered="${readonly and empty rendered ? true : rendered}" />
+	<h:outputText value="#{value}" rendered="#{readonly and empty rendered ? true : rendered}" />
 </ui:composition>

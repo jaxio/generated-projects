@@ -19,7 +19,6 @@ import javax.inject.Singleton;
 
 import org.apache.log4j.Logger;
 
-import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -58,7 +57,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      * @throws DataAccessException when an error occurred while retrieving the account
      */
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
+    public UserDetails loadUserByUsername(String username) {
         if (username == null || username.trim().isEmpty()) {
             throw new UsernameNotFoundException("Empty username");
         }

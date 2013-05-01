@@ -15,7 +15,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 /**
- * Responsible for creating Civility JSF converters required for multiple select.
+ * Boolean converter, used by selectManyCheckbox tag.
  */
 @Named
 @Singleton

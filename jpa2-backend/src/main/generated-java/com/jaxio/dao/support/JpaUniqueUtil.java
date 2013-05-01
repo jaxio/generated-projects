@@ -32,6 +32,7 @@ import javax.persistence.Table;
 import javax.persistence.TypedQuery;
 import javax.persistence.UniqueConstraint;
 
+import org.apache.commons.lang.WordUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -102,7 +103,7 @@ public class JpaUniqueUtil {
     }
 
     private String simpleUniqueConstraintError(Identifiable<?> entity, String property) {
-        return getEntityName(entity).toLowerCase() + "_" + property + "_already_exists";
+        return WordUtils.uncapitalize(getEntityName(entity)) + "_" + property + "_already_exists";
     }
 
     private List<String> validateCompositeUniqueConstraints(Identifiable<?> entity) {
@@ -121,7 +122,7 @@ public class JpaUniqueUtil {
     }
 
     private String compositeUniqueConstraintErrorCode(Identifiable<?> entity, UniqueConstraint uniqueConstraint) {
-        return getEntityName(entity).toLowerCase() + "_"
+        return WordUtils.uncapitalize(getEntityName(entity)) + "_"
                 + (uniqueConstraint.name() == null ? "composite_unique_constraint_error" : uniqueConstraint.name().toLowerCase());
     }
 

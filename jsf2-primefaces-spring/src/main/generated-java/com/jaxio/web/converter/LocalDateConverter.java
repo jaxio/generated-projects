@@ -24,7 +24,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 @FacesConverter(forClass = LocalDate.class, value = "localDateConverter")
 public class LocalDateConverter implements Converter, PartialStateHolder {
 
-    private final String pattern = "yyyy-MM-dd";
+    private static final String pattern = "yyyy-MM-dd";
     private DateTimeFormatter formatter = DateTimeFormat.forPattern(pattern);
 
     /**

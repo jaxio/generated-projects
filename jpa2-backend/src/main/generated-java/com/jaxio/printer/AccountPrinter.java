@@ -7,8 +7,6 @@
  */
 package com.jaxio.printer;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -37,24 +35,9 @@ public class AccountPrinter extends DiscoverablePrinter<Account> {
             return "";
         }
         StringBuilder ret = new StringBuilder(256);
-        if (!isBlank(account.getUsername())) {
-            if (ret.length() != 0) {
-                ret.append('/');
-            }
-            ret.append(account.getUsername().trim());
-        }
-        if (!isBlank(account.getFirstName())) {
-            if (ret.length() != 0) {
-                ret.append('/');
-            }
-            ret.append(account.getFirstName().trim());
-        }
-        if (!isBlank(account.getLastName())) {
-            if (ret.length() != 0) {
-                ret.append('/');
-            }
-            ret.append(account.getLastName().trim());
-        }
+        appendIfNotEmpty(ret, account.getUsername());
+        appendIfNotEmpty(ret, account.getFirstName());
+        appendIfNotEmpty(ret, account.getLastName());
         return ret.toString();
     }
 }

@@ -60,13 +60,13 @@ public class PropertySelector<E, F> implements Serializable {
     }
 
     public boolean isBoolean() {
-        return field != null && field.getJavaType().isAssignableFrom(Boolean.class);
+        return field.getJavaType().isAssignableFrom(Boolean.class);
     }
 
     /**
      * {@link PropertySelector} builder
      */
-    static public <E, F> PropertySelector<E, F> newPropertySelector(SingularAttribute<E, F> field) {
+    public static <E, F> PropertySelector<E, F> newPropertySelector(SingularAttribute<E, F> field) {
         return new PropertySelector<E, F>(field);
     }
 }

@@ -15,55 +15,46 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search data="#{accountLazyDataModel}" searchForm="#{accountSearchForm}" title="${msg.account}">
+	<app:search data="#{accountLazyDataModel}" searchForm="#{accountSearchForm}" permission="#{accountPermission}" title="#{msg.account}" savedSearch="true">
 		<ui:define name="filters">
-			<app:input id="username" value="#{accountSearchForm.account.username}" label="${msg.account_username}"/>
-			<app:input id="password" value="#{accountSearchForm.account.password}" label="${msg.account_password}"/>
-			<app:input id="email" value="#{accountSearchForm.account.email}" label="${msg.account_email}"/>
-			<app:selectManyBoolean id="isEnabled" value="#{accountSearchForm.isEnabledSelector}" nullAllowed="true" label="${msg.account_isEnabled}" />
-			<app:selectManyEnum id="civility" value="#{accountSearchForm.civilitySelector}" items="#{civilityItems}" converter="#{civilityJsfConverter}" nullAllowed="true" label="${msg.account_civility}" />
-			<app:input id="firstName" value="#{accountSearchForm.account.firstName}" label="${msg.account_firstName}"/>
-			<app:input id="lastName" value="#{accountSearchForm.account.lastName}" label="${msg.account_lastName}"/>
-			<app:rangeDateTime id="birthDate" value="#{accountSearchForm.birthDateRange}" label="${msg.account_birthDate}" />
-			<app:input id="description" value="#{accountSearchForm.account.description}" label="${msg.account_description}"/>
-			<app:multiAutoComplete id="homeAddressSelector" value="#{accountSearchForm.homeAddressSelector.selected}" label="${msg.account_homeAddress}" 
+			<app:inputMultiAutoComplete id="username" value="#{accountSearchForm.usernameSelector}" label="#{msg.account_username}" controller="#{accountController}" action="completeProperty" property="username" />
+			<app:inputMultiAutoComplete id="password" value="#{accountSearchForm.passwordSelector}" label="#{msg.account_password}" controller="#{accountController}" action="completeSame" />
+			<app:inputMultiAutoComplete id="email" value="#{accountSearchForm.emailSelector}" label="#{msg.account_email}" controller="#{accountController}" action="completeProperty" property="email" />
+			<app:selectManyBoolean id="isEnabled" value="#{accountSearchForm.isEnabledSelector}" nullAllowed="true" label="#{msg.account_isEnabled}" />
+			<app:selectManyEnum id="civility" value="#{accountSearchForm.civilitySelector}" items="#{civilityItems}" converter="#{civilityJsfConverter}" nullAllowed="true" label="#{msg.account_civility}" />
+			<app:inputMultiAutoComplete id="firstName" value="#{accountSearchForm.firstNameSelector}" label="#{msg.account_firstName}" controller="#{accountController}" action="completeProperty" property="firstName" />
+			<app:inputMultiAutoComplete id="lastName" value="#{accountSearchForm.lastNameSelector}" label="#{msg.account_lastName}" controller="#{accountController}" action="completeProperty" property="lastName" />
+			<app:rangeDateTime id="birthDate" value="#{accountSearchForm.birthDateRange}" label="#{msg.account_birthDate}" />
+			<app:inputMultiAutoComplete id="description" value="#{accountSearchForm.descriptionSelector}" label="#{msg.account_description}" controller="#{accountController}" action="completeProperty" property="description" />
+			<app:multiAutoComplete id="homeAddressSelector" value="#{accountSearchForm.homeAddressSelector.selected}" label="#{msg.account_homeAddress}" 
 				controller="#{addressController}" converter="#{addressJsfConverter}" printer="#{addressPrinter}"/>
-			<app:multiAutoComplete id="rolesSelector" value="#{accountSearchForm.account.roles}" label="${msg.account_roles}" 
+			<app:multiAutoComplete id="rolesSelector" value="#{accountSearchForm.account.roles}" label="#{msg.account_roles}" 
 				controller="#{roleController}" converter="#{roleJsfConverter}" printer="#{rolePrinter}" />
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">
-        		<p:ajax event="rowSelect" listener="#{accountLazyDataModel.onRowSelect}" />
-        	</c:if>
+				<p:ajax event="rowSelect" listener="#{accountLazyDataModel.onRowSelect}" />
+			</c:if>
 			<c:if test="#{multiCheckboxSelection}">
-				<p:column selectionMode="multiple" style="width:18px"/>			
-        	</c:if>
-			<p:column id="account_username" headerText="${msg.account_username}" sortBy="#{item.username}">
+				<p:column selectionMode="multiple" style="width:18px" rendered="#{accountPermission.canSelect()}" />
+			</c:if>
+			<p:column id="account_username" headerText="#{msg.account_username}" sortBy="#{item.username}">
 				<h:outputText value="#{item.username}" />
 			</p:column>
-			<p:column id="account_email" headerText="${msg.account_email}" sortBy="#{item.email}">
+			<p:column id="account_email" headerText="#{msg.account_email}" sortBy="#{item.email}">
 				<h:outputText value="#{item.email}" />
 			</p:column>
-			<p:column id="account_isEnabled" headerText="${msg.account_isEnabled}" sortBy="#{item.isEnabled}">
+			<p:column id="account_isEnabled" headerText="#{msg.account_isEnabled}" sortBy="#{item.isEnabled}">
 				<appcc:outputBoolean value="#{item.isEnabled}" />
 			</p:column>
-			<p:column id="account_homeAddress" headerText="${msg.account_homeAddress}" sortBy="#{item.homeAddress.city}">
+			<p:column id="account_homeAddress" headerText="#{msg.account_homeAddress}" sortBy="#{item.homeAddress.city}">
 				<h:outputText value="#{addressPrinter.print(item.homeAddress)}" />
 			</p:column>
-			<p:column id="open" headerText="${msg.actions}" styleClass="actions-column" resizable="false">
-				<app:iconSelect actionBean="#{accountLazyDataModel}" action="select" process="@this" rendered="#{sub and not multiCheckboxSelection}" title="${accountPrinter.print(item)}" />
-				<app:iconEdit actionBean="#{accountLazyDataModel}" action="edit" process="@this" rendered="#{not sub}" title="${accountPrinter.print(item)}" />
-				<app:iconView actionBean="#{accountLazyDataModel}" action="view" process="@this" title="${accountPrinter.print(item)}" />
-				<p:commandLink update=":form:askForDeleteItemDialogContent" 
-								process="@this"
-								immediate="true" 
-								oncomplete="askForDeleteItemDialog.show(); APP.focusTo('form:askForDeleteItemDialogNo');"
-								styleClass="ui-button"
-								rendered="#{not sub}"
-								title="${accountPrinter.print(item)}">  
-					<f:setPropertyActionListener value="#{item}" target="#{accountLazyDataModel.selectedRow}" />
-					<div class="ui-button ui-icon iconDelete"/>
-				</p:commandLink>  						
+			<p:column id="open" headerText="#{msg.actions}" styleClass="actions-column" resizable="false">
+				<app:iconSelect actionBean="#{accountLazyDataModel}" action="select" rendered="#{sub and not multiCheckboxSelection}" title="#{accountPrinter.print(item)}" />
+				<app:iconEdit actionBean="#{accountLazyDataModel}" action="edit" rendered="#{not sub and accountPermission.canEdit(item)}" title="#{accountPrinter.print(item)}" />
+				<app:iconView actionBean="#{accountLazyDataModel}" action="view" rendered="#{accountPermission.canView(item)}" title="#{accountPrinter.print(item)}" />
+				<app:iconDelete rendered="#{not sub and accountPermission.canDelete(item)}" title="#{accountPrinter.print(item)}" />
 			</p:column>
 		</ui:define>
 	</app:search>

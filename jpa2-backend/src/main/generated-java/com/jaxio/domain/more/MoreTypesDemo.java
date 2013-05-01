@@ -29,6 +29,7 @@ import org.joda.time.LocalDateTime;
 import com.google.common.base.Objects;
 import com.jaxio.domain.Identifiable;
 import com.jaxio.domain.IdentifiableHashBuilder;
+import com.jaxio.domain.more.MoreTypesDemo_;
 
 @Entity
 @Table(name = "MORE_TYPES_DEMO")
@@ -50,21 +51,9 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
     private LocalDateTime dateTimeJoda;
     private Integer version;
 
-    // ---------------------------
-    // Constructors
-    // ---------------------------
-
-    public MoreTypesDemo() {
-    }
-
-    public MoreTypesDemo(Integer primaryKey) {
-        setId(primaryKey);
-    }
-
     // -------------------------------
     // Getter & Setter
     // -------------------------------
-
     // -- [id] ------------------------
 
     @Column(name = "ID", precision = 10)
@@ -238,18 +227,18 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add("id", getId()) //
-                .add("numberInt", getNumberInt()) //
-                .add("numberLong", getNumberLong()) //
-                .add("numberDouble", getNumberDouble()) //
-                .add("numberFloat", getNumberFloat()) //
-                .add("numberBigInteger", getNumberBigInteger()) //
-                .add("numberBigDecimal", getNumberBigDecimal()) //
-                .add("dateJavaTemporalDate", getDateJavaTemporalDate()) //
-                .add("dateJavaTemporalTimestamp", getDateJavaTemporalTimestamp()) //
-                .add("dateJoda", getDateJoda()) //
-                .add("dateTimeJoda", getDateTimeJoda()) //
-                .add("version", getVersion()) //
+                .add(MoreTypesDemo_.id.getName(), getId()) //
+                .add(MoreTypesDemo_.numberInt.getName(), getNumberInt()) //
+                .add(MoreTypesDemo_.numberLong.getName(), getNumberLong()) //
+                .add(MoreTypesDemo_.numberDouble.getName(), getNumberDouble()) //
+                .add(MoreTypesDemo_.numberFloat.getName(), getNumberFloat()) //
+                .add(MoreTypesDemo_.numberBigInteger.getName(), getNumberBigInteger()) //
+                .add(MoreTypesDemo_.numberBigDecimal.getName(), getNumberBigDecimal()) //
+                .add(MoreTypesDemo_.dateJavaTemporalDate.getName(), getDateJavaTemporalDate()) //
+                .add(MoreTypesDemo_.dateJavaTemporalTimestamp.getName(), getDateJavaTemporalTimestamp()) //
+                .add(MoreTypesDemo_.dateJoda.getName(), getDateJoda()) //
+                .add(MoreTypesDemo_.dateTimeJoda.getName(), getDateTimeJoda()) //
+                .add(MoreTypesDemo_.version.getName(), getVersion()) //
                 .toString();
     }
 }

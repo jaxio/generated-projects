@@ -27,34 +27,35 @@
 	<ui:define name="content">
 		<p:breadCrumb model="#{conversationManager.breadCrumbMenuModel}" rendered="#{conversationManager.renderBreadCrumb}" />	
 		<p:fieldset id="fieldset">
-			<input type="hidden" name="_cid_" value="${conversationManager.currentConversation.id}"/>			
+			<input type="hidden" name="_cid_" value="#{conversationManager.currentConversation.id}"/>
+			<input type="hidden" name="_ccid_" value="#{conversationManager.currentConversation.currentContext.id}"/>
 			<f:validateBean disabled="true">
 				<h:panelGrid columns="2" styleClass="aria-role-presentation">
 					<ui:insert name="form" />
 				</h:panelGrid>
-				<app:saveButton title="${title}" bean="#{bean}"/>
+				<app:saveButton title="#{title}" bean="#{bean}"/>
 			</f:validateBean>
 		</p:fieldset>
 		<ui:insert name="tabs" />
 	</ui:define>
 	<ui:define name="dialogs">
 		<ui:insert name="custom-dialogs" />
-		<p:confirmDialog widgetVar="askForDeleteDialog" header="${msg.menu_delete}?" message="${msg.dialog_delete_confirm}">
+		<p:confirmDialog widgetVar="askForDeleteDialog" header="#{msg.menu_delete}?" message="#{msg.dialog_delete_confirm}">
 	        <h:panelGrid id="askForDeleteDialogContent" columns="1" cellpadding="4" style="margin:0 auto;">  
-	            <h:outputText value="${typeAwarePrinter.print(bean.entity)}" style="font-weight:bold" />  
+	            <h:outputText value="#{typeAwarePrinter.print(bean.entity)}" style="font-weight:bold" />  
 	        </h:panelGrid>
-			<p:commandButton id="askForDeleteDialogYes" action="#{bean.deleteAndClose()}" ajax="false" immediate="true" process="@none" value="${msg.yes}" title="${msg.dialog_delete_confirm} ${msg.yes}" icon="ui-icon-check" />
-			<p:commandButton id="askForDeleteDialogNo" value="${msg.no}" title="${msg.dialog_delete_confirm} ${msg.no}" onclick="askForDeleteDialog.hide(); APP.focusTo('form:delete'); return false;" icon="ui-icon-cancel"/>
+			<p:commandButton id="askForDeleteDialogYes" action="#{bean.deleteAndClose()}" ajax="false" immediate="true" process="@none" value="#{msg.yes}" title="#{msg.dialog_delete_confirm} #{msg.yes}" icon="ui-icon-check" />
+			<p:commandButton id="askForDeleteDialogNo" value="#{msg.no}" title="#{msg.dialog_delete_confirm} #{msg.no}" onclick="askForDeleteDialog.hide(); APP.focusTo('form:delete'); return false;" icon="ui-icon-cancel"/>
 		</p:confirmDialog>
-		<p:confirmDialog widgetVar="askForSaveDialog" header="${msg.menu_save}?" message="${msg.dialog_ask_for_save}">
-			<p:commandButton id="askForSaveDialogYes" action="#{bean.saveAndClose()}" ajax="true" process="@form" value="${msg.yes}"
-				title="${msg.dialog_ask_for_save} ${msg.yes}"
+		<p:confirmDialog widgetVar="askForSaveDialog" header="#{msg.menu_save}?" message="#{msg.dialog_ask_for_save}">
+			<p:commandButton id="askForSaveDialogYes" action="#{bean.saveAndClose()}" ajax="true" process="@form" value="#{msg.yes}"
+				title="#{msg.dialog_ask_for_save} #{msg.yes}"
 				onstart="askForSaveDialog.hide()"
 				styleClass="aria-save-button"
 				update="messages" icon="ui-icon-check" />
 			<p:commandButton id="askForSaveDialogNo" action="#{bean.forceClose()}" ajax="false"
-				value="${msg.no}"
-				title="${msg.dialog_ask_for_save} ${msg.no}"
+				value="#{msg.no}"
+				title="#{msg.dialog_ask_for_save} #{msg.no}"
 				icon="ui-icon-cancel" immediate="true" process="@none" />
 		</p:confirmDialog>		
 	</ui:define>	

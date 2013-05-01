@@ -7,8 +7,6 @@
  */
 package com.jaxio.printer;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -37,12 +35,7 @@ public class LegacyPrinter extends DiscoverablePrinter<Legacy> {
             return "";
         }
         StringBuilder ret = new StringBuilder(256);
-        if (!isBlank(legacy.getName())) {
-            if (ret.length() != 0) {
-                ret.append('/');
-            }
-            ret.append(legacy.getName().trim());
-        }
+        appendIfNotEmpty(ret, legacy.getExtraInfo());
         return ret.toString();
     }
 }

@@ -9,7 +9,7 @@
 		rendered="#{rendered}"
 		immediate="#{not empty immediate and immediate}"
 		styleClass="ui-button"
-		title="${msg.icon_select} ${empty title? '' : title}">
+		title="#{msg.icon_select} #{empty title? '' : title}">
 		<ui:insert/>
 		<div class="ui-button ui-icon iconSelect"/>
 	</p:commandLink>

@@ -37,9 +37,6 @@ public abstract class Account_ {
     public static volatile SingularAttribute<Account, String> lastModificationAuthor;
     public static volatile SingularAttribute<Account, Integer> version;
 
-    // Technical attributes for query by example
-    public static volatile SingularAttribute<Account, Integer> addressId;
-
     // Many to one
     public static volatile SingularAttribute<Account, Address> homeAddress;
 

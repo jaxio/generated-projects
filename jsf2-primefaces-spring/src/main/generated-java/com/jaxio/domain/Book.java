@@ -29,6 +29,7 @@ import org.hibernate.annotations.ParamDef;
 import org.hibernate.validator.constraints.NotEmpty;
 import com.google.common.base.Objects;
 import com.jaxio.domain.Account;
+import com.jaxio.domain.Book_;
 import com.jaxio.domain.IdentifiableHashBuilder;
 
 @Entity
@@ -45,27 +46,12 @@ public class Book implements Identifiable<Integer>, Serializable {
     private Integer numberOfPages; // not null
     private Integer version;
 
-    // Technical attributes for query by example
-    private String accountId;
-
     // Many to one
     private Account account; // (accountId)
-
-    // ---------------------------
-    // Constructors
-    // ---------------------------
-
-    public Book() {
-    }
-
-    public Book(Integer primaryKey) {
-        setId(primaryKey);
-    }
 
     // -------------------------------
     // Getter & Setter
     // -------------------------------
-
     // -- [id] ------------------------
 
     @Column(name = "ID", precision = 10)
@@ -82,17 +68,6 @@ public class Book implements Identifiable<Integer>, Serializable {
     @Transient
     public boolean isIdSet() {
         return id != null;
-    }
-
-    // -- [accountId] ------------------------
-
-    @Column(name = "ACCOUNT_ID", length = 32, insertable = false, updatable = false)
-    public String getAccountId() {
-        return accountId;
-    }
-
-    private void setAccountId(String accountId) {
-        this.accountId = accountId;
     }
 
     // -- [title] ------------------------
@@ -153,13 +128,6 @@ public class Book implements Identifiable<Integer>, Serializable {
      */
     public void setAccount(Account account) {
         this.account = account;
-
-        // We set the foreign key property so it can be used by our JPA search by Example facility.
-        if (account != null) {
-            setAccountId(account.getId());
-        } else {
-            setAccountId(null);
-        }
     }
 
     /**
@@ -190,11 +158,10 @@ public class Book implements Identifiable<Integer>, Serializable {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add("id", getId()) //
-                .add("accountId", getAccountId()) //
-                .add("title", getTitle()) //
-                .add("numberOfPages", getNumberOfPages()) //
-                .add("version", getVersion()) //
+                .add(Book_.id.getName(), getId()) //
+                .add(Book_.title.getName(), getTitle()) //
+                .add(Book_.numberOfPages.getName(), getNumberOfPages()) //
+                .add(Book_.version.getName(), getVersion()) //
                 .toString();
     }
 }

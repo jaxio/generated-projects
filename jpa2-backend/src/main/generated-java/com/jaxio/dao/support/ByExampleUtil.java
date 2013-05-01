@@ -15,7 +15,6 @@ import static javax.persistence.metamodel.Attribute.PersistentAttributeType.MANY
 import static javax.persistence.metamodel.Attribute.PersistentAttributeType.ONE_TO_ONE;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.inject.Named;
@@ -27,15 +26,11 @@ import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.apache.log4j.Logger;
-import org.springframework.util.ReflectionUtils;
-
-import com.google.common.base.Throwables;
 
 import com.jaxio.domain.Identifiable;
 
@@ -98,14 +93,14 @@ public class ByExampleUtil {
                 continue;
             }
 
-            Object attrValue = getValue(mtValue, attr);
+            Object attrValue = JpaUtil.getValue(mtValue, attr);
             if (attrValue != null) {
                 if (attr.getJavaType() == String.class) {
                     if (isNotEmpty((String) attrValue)) {
-                        predicates.add(JpaUtil.stringPredicate(mtPath.get(stringAttribute(mt, attr)), attrValue, sp, builder));
+                        predicates.add(JpaUtil.stringPredicate(mtPath.get(JpaUtil.stringAttribute(mt, attr)), attrValue, sp, builder));
                     }
                 } else {
-                    predicates.add(builder.equal(mtPath.get(attribute(mt, attr)), attrValue));
+                    predicates.add(builder.equal(mtPath.get(JpaUtil.attribute(mt, attr)), attrValue));
                 }
             }
         }
@@ -121,13 +116,17 @@ public class ByExampleUtil {
             SearchParameters sp, CriteriaBuilder builder) {
         List<Predicate> predicates = newArrayList();
         for (SingularAttribute<? super T, ?> attr : mt.getSingularAttributes()) {
-            if (attr.getPersistentAttributeType() == MANY_TO_ONE || attr.getPersistentAttributeType() == ONE_TO_ONE) { //
-                M2O m2oValue = (M2O) getValue(mtValue, mt.getAttribute(attr.getName()));
-                if (m2oValue != null && !m2oValue.isIdSet()) {
-                    Class<M2O> m2oType = (Class<M2O>) attr.getBindableJavaType();
-                    ManagedType<M2O> m2oMt = em.getMetamodel().entity(m2oType);
-                    Path<M2O> m2oPath = (Path<M2O>) mtPath.get(attr);
-                    predicates.addAll(byExample(m2oMt, m2oPath, m2oValue, sp, builder));
+            if (attr.getPersistentAttributeType() == MANY_TO_ONE || attr.getPersistentAttributeType() == ONE_TO_ONE) {
+                M2O m2oValue = (M2O) JpaUtil.getValue(mtValue, mt.getAttribute(attr.getName()));
+                Class<M2O> m2oType = (Class<M2O>) attr.getBindableJavaType();
+                Path<M2O> m2oPath = (Path<M2O>) mtPath.get(attr);
+                ManagedType<M2O> m2oMt = em.getMetamodel().entity(m2oType);
+                if (m2oValue != null) {
+                    if (m2oValue.isIdSet()) { // we have an id, let's restrict only on this field
+                        predicates.add(builder.equal(m2oPath.get("id"), m2oValue.getId()));
+                    } else {
+                        predicates.addAll(byExample(m2oMt, m2oPath, m2oValue, sp, builder));
+                    }
                 }
             }
         }
@@ -141,7 +140,7 @@ public class ByExampleUtil {
         List<Predicate> predicates = newArrayList();
         for (PluralAttribute<T, ?, ?> pa : mt.getDeclaredPluralAttributes()) {
             if (pa.getCollectionType() == PluralAttribute.CollectionType.LIST) {
-                List<?> values = (List<?>) getValue(mtValue, mt.getAttribute(pa.getName()));
+                List<?> values = (List<?>) JpaUtil.getValue(mtValue, mt.getAttribute(pa.getName()));
                 if (values != null && !values.isEmpty()) {
                     if (sp.getUseANDInManyToMany()) {
                         if (values.size() > 3) {
@@ -159,21 +158,5 @@ public class ByExampleUtil {
             }
         }
         return predicates;
-    }
-
-    private <T> Object getValue(T example, Attribute<? super T, ?> attr) {
-        try {
-            return ReflectionUtils.invokeMethod((Method) attr.getJavaMember(), example);
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
-        }
-    }
-
-    private <T, A> SingularAttribute<? super T, A> attribute(ManagedType<? super T> mt, Attribute<? super T, A> attr) {
-        return mt.getSingularAttribute(attr.getName(), attr.getJavaType());
-    }
-
-    private <T> SingularAttribute<? super T, String> stringAttribute(ManagedType<? super T> mt, Attribute<? super T, ?> attr) {
-        return mt.getSingularAttribute(attr.getName(), String.class);
     }
 }

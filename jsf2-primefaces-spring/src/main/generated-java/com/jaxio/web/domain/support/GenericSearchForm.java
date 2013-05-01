@@ -7,52 +7,52 @@
  */
 package com.jaxio.web.domain.support;
 
-import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
-
 import java.io.Serializable;
 import javax.inject.Inject;
+
+import com.jaxio.domain.Identifiable;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.web.conversation.ConversationManager;
 
 /**
  * Base Search Form for JPA entities.
  */
-public abstract class GenericSearchForm<E, F extends GenericSearchForm<E, F>> implements Serializable {
+public abstract class GenericSearchForm<E extends Identifiable<PK>, PK extends Serializable, F extends GenericSearchForm<E, PK, F>> extends CommonAction<E>
+        implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private ConversationManager conversationManager;
+    private transient ConversationManager conversationManager;
 
     /**
      * Return the entity example used in this search form.
      */
-    abstract protected E getEntity();
+    protected abstract E getEntity();
 
-    abstract public SearchParameters toSearchParameters();
+    /// saved search form
+    protected String searchFormName;
 
-    // Reset related
-
-    abstract public F newInstance();
-
-    abstract public void resetWithOther(F other);
-
-    public void reset() {
-        resetWithOther(newInstance());
+    public String getSearchFormName() {
+        return searchFormName;
     }
 
-    // ------------------------------------
-    // Actions
-    // ------------------------------------
-
-    public String back() {
-        return getCurrentConversation().getCurrentContext().getCallBack().back();
+    public void setSearchFormName(String searchFormName) {
+        this.searchFormName = searchFormName;
     }
 
     /**
-     * Quit, used from search page. It ends the conversation. It is expected to be non-ajax.
+     * Convert all the search inputs into a @{link SearchParameters}. 
      */
-    public String quit() {
-        conversationManager.endCurrentConversation();
-        return "/home.faces?faces-redirect=true"; // TODO: clean url, referer or else
+    public abstract SearchParameters toSearchParameters();
+
+    // Reset related
+
+    public abstract F newInstance();
+
+    public abstract void resetWithOther(F other);
+
+    public void reset() {
+        setSearchFormName(null);
+        resetWithOther(newInstance());
     }
 }

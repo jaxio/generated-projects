@@ -8,9 +8,11 @@
 package com.jaxio.web.conversation;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newTreeMap;
 import static com.jaxio.web.conversation.ConversationHolder.setCurrentConversation;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
@@ -20,6 +22,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
 
 import org.primefaces.component.menuitem.MenuItem;
 import org.primefaces.model.DefaultMenuModel;
@@ -36,6 +40,8 @@ import org.springframework.context.ApplicationContextAware;
 public class ConversationManager implements ApplicationContextAware {
     private static final String CONVERSATION_MAP = "conversationMap";
     private static ConversationManager instance;
+    private static final Logger log = Logger.getLogger(ConversationManager.class);
+
     private ApplicationContext applicationContext;
     private Collection<ConversationFactory> conversationFactories;
     private Collection<ConversationListener> conversationListeners;
@@ -46,7 +52,7 @@ public class ConversationManager implements ApplicationContextAware {
      * This method should be used only in the following cases: 1) from code having no spring awareness, like filters. 2) from code that are session scoped in
      * order to avoid serialization of the service. In other cases, please have the conversationManager injected normally.
      */
-    static public ConversationManager getInstance() {
+    public static ConversationManager getInstance() {
         return instance;
     }
 
@@ -68,7 +74,7 @@ public class ConversationManager implements ApplicationContextAware {
     }
 
     /**
-     * Whether the max number of conversations per user is reached. Used in from the ConversationFilter (which has no FacesContext yet).
+     * Whether the max number of conversations per user is reached. Used in createConversation (which has no FacesContext yet).
      */
     public boolean isMaxConversationsReached(HttpSession session) {
         return conversationMap(session).size() >= maxConversations;
@@ -88,15 +94,28 @@ public class ConversationManager implements ApplicationContextAware {
 
     /**
      * Creates a new {@link Conversation}, calls the {@link ConversationListener#conversationCreated} but does NOT bound the newly created conversation to
-     * the current thread.
+     * the current thread. Note that when this method is invoked from the {@link ConversationFilter}, no {@link FacesContext} is present yet.
+     * Before creating the conversation, when the max number of conversations for the current user is reached, it first evicts a conversation using FIFO policy.
      */
     public Conversation createConversation(HttpServletRequest request) throws UnexpectedConversationException {
         ConversationFactory conversationFactory = getConversationFactory(request);
         if (conversationFactory == null) {
             throw new UnexpectedConversationException("No conversation factory found", request.getRequestURI(), "/home.faces");
         }
+
+        Map<String, Conversation> conversationMap = conversationMap(request.getSession());
+
+        if (isMaxConversationsReached(request.getSession())) {
+            // FIFO conversation eviction
+            String keyToEvict = conversationMap.keySet().iterator().next();
+            if (log.isInfoEnabled()) {
+                log.info("Max number of conversations (" + maxConversations + ") reached. Evicting conversation " + keyToEvict + " using fifo policy");
+            }
+            conversationMap.remove(keyToEvict); // TODO: special treatment for evicted conversation?
+        }
+
         Conversation conversation = conversationFactory.createConversation(request);
-        conversationMap(request.getSession()).put(conversation.getId(), conversation);
+        conversationMap.put(conversation.getId(), conversation);
         conversationCreated(conversation);
         return conversation;
     }
@@ -105,17 +124,19 @@ public class ConversationManager implements ApplicationContextAware {
      * Resume the {@link Conversation} having the passed id. Before resuming it, if a pending ConversationContext is present, 
      * it is pushed on the conversation contextes stack. 
      * @param id the id of the conversation to resume 
+     * @param ccid the id of the conversation context that should be on top of the stack. 
      * @param request
      * @throws UnexpectedConversationException
      */
-    public void resumeConversation(String id, HttpServletRequest request) throws UnexpectedConversationException {
+    public void resumeConversation(String id, String ccid, HttpServletRequest request) throws UnexpectedConversationException {
         Conversation conversation = conversationMap(request.getSession()).get(id);
 
         if (conversation != null) {
             conversation.pushNextContextIfNeeded();
 
-            if (!request.getRequestURI().contains(conversation.getViewUri())) {
-                throw new UnexpectedConversationException("Uri not in sync with conversation", request.getRequestURI(), conversation.getUrl());
+            // compare the context id
+            if (!conversation.getCurrentContext().getId().equals(ccid)) {
+                conversation.handleOutOfSynchContext(ccid, request);
             }
             conversationResuming(conversation, request);
             setCurrentConversation(conversation);
@@ -125,9 +146,10 @@ public class ConversationManager implements ApplicationContextAware {
     }
 
     /**
-     * Pause the current conversation. Before pausing it, pops the current context as needed.  
+     * Pause the current conversation. Before pausing it, pops the current context as needed.
+     * In case all contextes are popped, then conversation is ended.
      */
-    public void pauseCurrentConversation() {
+    public void pauseCurrentConversation(HttpServletRequest request) {
         Conversation conversation = getCurrentConversation();
 
         // we check for not null because the conversation could have 
@@ -137,18 +159,40 @@ public class ConversationManager implements ApplicationContextAware {
             // to be visible from the conversation listener.
             conversationPausing(conversation);
             conversation.popContextesIfNeeded();
-            setCurrentConversation(null);
+
+            if (conversation.getConversationContextesCount() == 0) {
+                // all was popped, we consider that this is the natural end of the conversation.
+                endCurrentConversation(request.getSession());
+            } else {
+                setCurrentConversation(null);
+            }
         }
     }
 
     /**
-     * End the current Conversation.
+     * End the current Conversation. Invoked from place where no FacesContext is present.
+     */
+    public void endCurrentConversation(HttpSession session) {
+        Conversation endedConversation = endCurrentConversationCommon();
+        conversationMap(session).remove(endedConversation.getId());
+    }
+
+    /**
+     * End the current Conversation. Requires a FacesContext to be present.
      */
     public void endCurrentConversation() {
+        Conversation endedConversation = endCurrentConversationCommon();
+        conversationMap().remove(endedConversation.getId());
+    }
+
+    private Conversation endCurrentConversationCommon() {
         Conversation conversation = getCurrentConversation();
+        if (log.isInfoEnabled()) {
+            log.info("Ending conversation " + conversation.getId());
+        }
         conversationEnding(conversation);
         setCurrentConversation(null);
-        conversationMap().remove(conversation.getId());
+        return conversation;
     }
 
     // --------------------------------------------
@@ -215,11 +259,15 @@ public class ConversationManager implements ApplicationContextAware {
     // Impl details
     // --------------------------------------------    
 
+    /**
+     * Holds the current user's conversations.
+     * Note: When calling this method, you must be sure that the FacesContext is present. For example, FacesContext is not present in ConversationFilter.
+     */
     private Map<String, Conversation> conversationMap() {
         @SuppressWarnings("unchecked")
         Map<String, Conversation> map = (Map<String, Conversation>) sessionMap().get(CONVERSATION_MAP);
         if (map == null) {
-            map = newHashMap();
+            map = newConversationOrderedMap();
             sessionMap().put(CONVERSATION_MAP, map);
         }
         return map;
@@ -229,10 +277,23 @@ public class ConversationManager implements ApplicationContextAware {
         @SuppressWarnings("unchecked")
         Map<String, Conversation> map = (Map<String, Conversation>) session.getAttribute(CONVERSATION_MAP);
         if (map == null) {
-            map = newHashMap();
+            map = newConversationOrderedMap();
             session.setAttribute(CONVERSATION_MAP, map);
         }
         return map;
+    }
+
+    /**
+     * Constructs an ordered map so we can evict conversation on a FIFO basis.
+     * We rely on an Integer comparator as String comparison would not be exact.
+     */
+    private Map<String, Conversation> newConversationOrderedMap() {
+        return newTreeMap(new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                return Integer.valueOf(s1).compareTo(Integer.valueOf(s2));
+            }
+        });
     }
 
     private Map<String, Object> sessionMap() {

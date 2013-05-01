@@ -21,7 +21,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 @Embeddable
 public class LegacyPk implements Comparable<LegacyPk>, Serializable {
-    static final private long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private String code;
     private Integer dept;
@@ -161,7 +161,7 @@ public class LegacyPk implements Comparable<LegacyPk>, Serializable {
             result.setCode(values[0]);
         }
         if (isNotEmpty(values[1])) {
-            result.setDept(new Integer(values[1]));
+            result.setDept(Integer.valueOf(values[1]));
         }
         if (isNotEmpty(values[2])) {
             result.setName(values[2]);

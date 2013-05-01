@@ -26,6 +26,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.apache.commons.lang.Validate;
@@ -253,8 +254,8 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
     protected <R> Predicate getPredicate(Root<E> root, CriteriaQuery<R> query, CriteriaBuilder builder, E entity, SearchParameters sp) {
         return JpaUtil.andPredicate(builder, //
                 byRanges(root, query, builder, sp.getRanges(), type), //
-                byPropertySelectors(root, builder, sp.getPropertySelectors()), //
-                byEntitySelectors(root, builder, sp.getEntitySelectors()), //
+                byPropertySelectors(root, builder, sp, sp.getProperties()), //
+                byEntitySelectors(root, builder, sp.getEntities()), //
                 getByExamplePredicate(root, entity, sp, builder), //
                 byPatternUtil.byPattern(root, query, builder, sp, type), //
                 getExtraPredicate(root, query, builder, entity, sp));
@@ -273,6 +274,8 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
 
     /**
      * Save or update the passed entity E to the repository.
+     * Assume that the entity is already present in the persistence context.
+     * No merge is done.
      * 
      * @param entity the entity to be saved or updated.
      */
@@ -290,10 +293,16 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
             getEntityManager().persist(entity);
             return;
         }
-
         // other cases are update
         // the simple fact to invoke this method, from a service method annotated with @Transactional,
         // does the job (assuming the passed entity is present in the persistence context)
+    }
+
+    /**
+     * Persist the passed entity.
+     */
+    public void persist(E entity) {
+        getEntityManager().persist(entity);
     }
 
     /**
@@ -321,6 +330,33 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
                 log.warn("Attempt to delete an instance that is not present in the database: " + entity.toString());
             }
         }
+    }
+
+    // -----------------
+    // Util
+    // -----------------
+
+    /**
+     * Return the optimistic version value, if any.
+     */
+    @SuppressWarnings("unchecked")
+    public Comparable<Object> getVersion(E entity) {
+        EntityType<E> entityType = entityManager.getMetamodel().entity(type);
+        if (!entityType.hasVersionAttribute()) {
+            return null;
+        }
+        // _HACK_ too bad that JPA does not provide this entityType.getVersion();
+        // read: http://stackoverflow.com/questions/13265094/generic-way-to-get-jpa-entity-version
+
+        SingularAttribute<? super E, ?> version = null;
+        for (SingularAttribute<? super E, ?> sa : entityType.getSingularAttributes()) {
+            if (sa.isVersion()) {
+                version = sa;
+                break;
+            }
+        }
+
+        return (Comparable<Object>) JpaUtil.getValue(entity, version);
     }
 
     // -----------------

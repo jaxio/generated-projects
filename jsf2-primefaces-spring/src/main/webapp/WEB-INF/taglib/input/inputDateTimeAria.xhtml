@@ -5,15 +5,15 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:app="http://springfuse.jaxio.com/app"	
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:outputLabel for="${id}" value="${label}" required="${empty required ? false : required}" rendered="${empty rendered ? true : rendered}" />
-	<h:panelGroup rendered="${not readonly and empty rendered ? true : rendered}">
-		<appcc:datePicker id="${id}" label="${label}" value="#{value}" timeRendered="true">
+	<app:outputLabel for="#{id}" value="#{label}" required="#{empty required ? false : required}" rendered="#{empty rendered ? true : rendered}" />
+	<h:panelGroup rendered="#{not readonly and empty rendered ? true : rendered}">
+		<appcc:datePicker id="#{id}" label="#{label}" value="#{value}" timeRendered="true">
 			<f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
 			<f:validateBean binding="#{lenientBeanValidator}"/>
 			<ui:insert/>
 		</appcc:datePicker>
 	</h:panelGroup>
-	<h:outputText value="#{value}" rendered="${readonly and empty rendered ? true : rendered}">
+	<h:outputText value="#{value}" rendered="#{readonly and empty rendered ? true : rendered}">
 		<f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
 	</h:outputText>
 </ui:composition>

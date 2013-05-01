@@ -1,18 +1,15 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" 
 	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
-	<p:commandLink
-		ajax="true"
-		action="#{actionBean[action]}"
-		onstart="${onstart}"
-		process="@this"
-		disabled="#{readonly}"
-		rendered="#{empty rendered or rendered}"
-		immediate="true"
-		update="${update}"
-		styleClass="ui-button"
-		title="${msg.icon_delete} ${empty title? '' : title}">
-		<ui:insert/>
+	<p:commandLink update=":form:askForDeleteItemDialogContent" 
+					process="@this"
+					immediate="true" 
+					oncomplete="askForDeleteItemDialog.show(); APP.focusTo('form:askForDeleteItemDialogNo');"
+					styleClass="ui-button"
+					rendered="#{rendered}"
+					title="#{title}">
+		<f:setPropertyActionListener value="#{item}" target="#{data.selectedRow}" />
 		<div class="ui-button ui-icon iconDelete"/>
 	</p:commandLink>
 </ui:composition>

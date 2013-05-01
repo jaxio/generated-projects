@@ -52,7 +52,7 @@ public class SelectableListDataModel<E extends Identifiable<?>> extends ListData
         List<E> items = (List<E>) getWrappedData();
 
         for (E item : items) {
-            if (rowKey.equals("" + item.hashCode())) {
+            if (rowKey.equals(String.valueOf(item.hashCode()))) {
                 return item;
             }
         }
@@ -62,6 +62,6 @@ public class SelectableListDataModel<E extends Identifiable<?>> extends ListData
 
     @Override
     public Object getRowKey(E item) {
-        return "" + item.hashCode();
+        return String.valueOf(item.hashCode());
     }
 }

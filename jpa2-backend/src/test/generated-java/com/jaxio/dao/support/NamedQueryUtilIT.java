@@ -27,6 +27,7 @@ import com.jaxio.domain.Document;
 import com.jaxio.domain.Legacy;
 import com.jaxio.domain.more.MoreTypesDemo;
 import com.jaxio.domain.Role;
+import com.jaxio.domain.SavedSearch;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:spring/applicationContext-test.xml" })

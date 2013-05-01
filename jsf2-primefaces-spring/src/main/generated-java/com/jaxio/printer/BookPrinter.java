@@ -7,8 +7,6 @@
  */
 package com.jaxio.printer;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -37,12 +35,7 @@ public class BookPrinter extends DiscoverablePrinter<Book> {
             return "";
         }
         StringBuilder ret = new StringBuilder(256);
-        if (!isBlank(book.getTitle())) {
-            if (ret.length() != 0) {
-                ret.append('/');
-            }
-            ret.append(book.getTitle().trim());
-        }
+        appendIfNotEmpty(ret, book.getTitle());
         return ret.toString();
     }
 }

@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.validator.constraints.NotEmpty;
 import com.google.common.base.Objects;
 import com.jaxio.domain.IdentifiableHashBuilder;
+import com.jaxio.domain.Legacy_;
 
 @Entity
 @Table(name = "LEGACY", uniqueConstraints = { @UniqueConstraint(name = "PRIMARY_KEY_8", columnNames = { "NAME", "CODE", "DEPT" }) })
@@ -33,17 +34,6 @@ public class Legacy implements Identifiable<LegacyPk>, Serializable {
 
     // Raw attributes
     private String extraInfo; // not null
-
-    // ---------------------------
-    // Constructors
-    // ---------------------------
-
-    public Legacy() {
-    }
-
-    public Legacy(LegacyPk primaryKey) {
-        setId(primaryKey);
-    }
 
     // -----------------------
     // Composite Primary Key
@@ -155,7 +145,6 @@ public class Legacy implements Identifiable<LegacyPk>, Serializable {
     // -------------------------------
     // Getter & Setter
     // -------------------------------
-
     // -- [extraInfo] ------------------------
 
     @Size(max = 100)
@@ -197,7 +186,7 @@ public class Legacy implements Identifiable<LegacyPk>, Serializable {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add("extraInfo", getExtraInfo()) //
+                .add(Legacy_.extraInfo.getName(), getExtraInfo()) //
                 .toString();
     }
 }

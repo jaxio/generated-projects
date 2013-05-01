@@ -7,66 +7,51 @@
  */
 package com.jaxio.web.domain;
 
-import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Book;
 import com.jaxio.repository.BookRepository;
 import com.jaxio.web.conversation.Conversation;
 import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationFactory;
+import com.jaxio.web.domain.support.GenericController;
+import com.jaxio.web.permission.BookPermission;
 
 /**
  * Stateless controller for Book conversation start. Provides also auto-complete support. 
  */
 @Named
 @Singleton
-public class BookController implements ConversationFactory {
+public class BookController extends GenericController<Book, Integer> implements ConversationFactory {
     public final static String editUri = "/domain/bookEdit.faces";
     public final static String selectUri = "/domain/bookSelect.faces";
-    private BookRepository bookRepository;
 
     @Inject
-    public void setBookRepository(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
+    public BookController(BookRepository bookRepository, BookPermission bookPermission) {
+        super(bookRepository, bookPermission);
     }
 
-    // --------------------------------
-    // ConversationFactoryImpl
-    // --------------------------------
+    // -------------------
+    // ConversationFactory
+    // -------------------
 
     @Override
     public boolean canCreateConversation(HttpServletRequest request) {
-        return selectUri.equals(request.getServletPath());
+        return selectUri.equals(request.getServletPath()) || editUri.equals(request.getServletPath());
     }
 
     @Override
     public Conversation createConversation(HttpServletRequest request) {
         String uri = request.getServletPath();
         if (selectUri.equals(uri)) {
-            Conversation conversation = Conversation.newInstance(request);
-            ConversationContext<Book> ctx = newSearchContext();
-            ctx.setLabelWithKey("book");
-            conversation.setNextContext(ctx);
-            return conversation;
+            return Conversation.newConversation(request, newSearchContext("book"));
+        } else if (editUri.equals(uri)) {
+            return Conversation.newConversation(request, newEditContext("book", new Book()));
+        } else {
+            throw new IllegalStateException("Unexpected conversation creation demand");
         }
-
-        throw new IllegalStateException("Unexpected conversation creation demand");
-    }
-
-    // --------------------------------
-    // Autocomplete support
-    // --------------------------------
-
-    /**
-     * This method is used from primefaces autocomplete components.
-     */
-    public List<Book> complete(String value) {
-        SearchParameters sp = new SearchParameters().anywhere().searchPattern(value);
-        return bookRepository.find(sp);
     }
 
     // --------------------------------
@@ -77,32 +62,19 @@ public class BookController implements ConversationFactory {
      * Helper to construct a new ConversationContext to edit an Book.
      * @param book the entity to edit.
      */
-    public static ConversationContext<Book> newEditContext(final Book book) {
+    public ConversationContext<Book> newEditContext(final Book book) {
         ConversationContext<Book> ctx = new ConversationContext<Book>();
         ctx.setEntity(book); // used by GenericEditForm.init()
+        ctx.setIsNewEntity(!book.isIdSet());
         ctx.setViewUri(editUri);
-        ctx.addSourceIgnoringUseConversationEntityManager("form:account");
-        return ctx;
-    }
-
-    /**
-     * Helper to construct a new ConversationContext to edit an Book.
-     * @param id the id of the entity to edit.
-     */
-    public static ConversationContext<Book> newEditContext(final Integer id) {
-        ConversationContext<Book> ctx = new ConversationContext<Book>();
-        ctx.setEntityId(id); // used by GenericEditForm.init()
-        ctx.setViewUri(editUri);
-        ctx.addSourceIgnoringUseConversationEntityManager("form:account");
         return ctx;
     }
 
     /**
      * Helper to construct a new ConversationContext for search/selection.
      */
-    public static ConversationContext<Book> newSearchContext() {
+    public ConversationContext<Book> newSearchContext() {
         ConversationContext<Book> ctx = new ConversationContext<Book>();
-        ctx.setUseConversationEntityManager(false);
         ctx.setViewUri(selectUri);
         return ctx;
     }

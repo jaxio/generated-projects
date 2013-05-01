@@ -35,24 +35,9 @@ public class MoreTypesDemoPrinter extends DiscoverablePrinter<MoreTypesDemo> {
             return "";
         }
         StringBuilder ret = new StringBuilder(256);
-        if (moreTypesDemo.getNumberInt() != null) {
-            if (ret.length() != 0) {
-                ret.append('/');
-            }
-            ret.append(moreTypesDemo.getNumberInt());
-        }
-        if (moreTypesDemo.getNumberLong() != null) {
-            if (ret.length() != 0) {
-                ret.append('/');
-            }
-            ret.append(moreTypesDemo.getNumberLong());
-        }
-        if (moreTypesDemo.getNumberDouble() != null) {
-            if (ret.length() != 0) {
-                ret.append('/');
-            }
-            ret.append(moreTypesDemo.getNumberDouble());
-        }
+        appendIfNotEmpty(ret, moreTypesDemo.getNumberInt());
+        appendIfNotEmpty(ret, moreTypesDemo.getNumberLong());
+        appendIfNotEmpty(ret, moreTypesDemo.getNumberDouble());
         return ret.toString();
     }
 }

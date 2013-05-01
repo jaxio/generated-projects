@@ -3,16 +3,16 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:app="http://springfuse.jaxio.com/app">
-	<app:outputLabel for="${id}" value="${label}" />
-	<p:selectManyCheckbox id="${id}" value="#{value.selected}" converter="#{converter}" disabled="${empty disabled ? false : disabled}"
-		layout="${items.list.size() lt 4 ? 'lineDirection' : 'pageDirection'}" rendered="#{not nullAllowed}">
+	<app:outputLabel for="#{id}" value="#{label}" />
+	<p:selectManyCheckbox id="#{id}" value="#{value.selected}" converter="#{converter}" disabled="#{empty disabled ? false : disabled}"
+		layout="#{items.list.size() lt 4 ? 'lineDirection' : 'pageDirection'}" rendered="#{not nullAllowed}">
 		<f:selectItems value="#{items.list}" />
 		<ui:insert/>
 	</p:selectManyCheckbox>
-	<p:selectManyCheckbox id="${id}_null_allowed" value="#{value.selected}" converter="#{converter}" disabled="${empty disabled ? false : disabled}"
-		layout="${items.list.size() lt 4 ? 'lineDirection' : 'pageDirection'}" rendered="#{nullAllowed}">
+	<p:selectManyCheckbox id="#{id}_null_allowed" value="#{value.selected}" converter="#{converter}" disabled="#{empty disabled ? false : disabled}"
+		layout="#{items.list.size() lt 4 ? 'lineDirection' : 'pageDirection'}" rendered="#{nullAllowed}">
 		<f:selectItems value="#{items.list}" />
-		<f:selectItem itemLabel="${msg.null_value}" itemValue="#{null}" />
+		<f:selectItem itemLabel="#{msg.null_value}" itemValue="#{null}" />
 		<ui:insert/>
 	</p:selectManyCheckbox>
 </ui:composition>

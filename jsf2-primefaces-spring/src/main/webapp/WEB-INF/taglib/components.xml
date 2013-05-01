@@ -40,6 +40,10 @@
             <required>true</required>
         </attribute>        
     </tag>
+    <tag>
+    	<tag-name>inputMultiAutoComplete</tag-name>
+        <source>autocomplete/inputMultiAutoComplete.xhtml</source>        
+    </tag>
 	<!-- Panels -->
 	<tag>
 		<tag-name>edit</tag-name>

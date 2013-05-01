@@ -7,93 +7,29 @@
  */
 package com.jaxio.web.domain;
 
-import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
-import java.util.Arrays;
-import java.util.Map;
-import javax.faces.convert.Converter;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.primefaces.model.SortOrder;
-import org.springframework.context.annotation.Scope;
 import com.jaxio.dao.support.OrderBy;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Role;
+import com.jaxio.domain.Role_;
 import com.jaxio.repository.RoleRepository;
-import com.jaxio.repository.support.Repository;
-import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.converter.RoleJsfConverter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
-import com.jaxio.web.domain.support.GenericSearchForm;
+import com.jaxio.web.faces.Conversation;
 
-/**
- * Provides server-side pagination for search.
- * TODO: dependencies wiring after deserialization (get inspiration from http://jira.springframework.org/browse/SWF-1224 )
- */
 @Named
-@Scope("conversation")
+@Conversation
 public class RoleLazyDataModel extends GenericLazyDataModel<Role, Integer, RoleSearchForm> {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    transient private RoleRepository roleRepository;
-    @Inject
-    transient private RoleJsfConverter roleConverter;
-    @Inject
-    transient private RoleSearchForm roleSearchForm;
-
-    private Role[] selectedRows;
-
-    @Override
-    protected Repository<Role, Integer> getRepository() {
-        return roleRepository;
+    public RoleLazyDataModel(RoleRepository roleRepository, RoleJsfConverter roleConverter, RoleController roleController, RoleSearchForm roleSearchForm) {
+        super(roleRepository, roleConverter, roleController, roleSearchForm);
     }
 
     @Override
-    protected Converter getConverter() {
-        return roleConverter;
-    }
-
-    @Override
-    protected GenericSearchForm<Role, RoleSearchForm> getSearchForm() {
-        return roleSearchForm;
-    }
-
-    @Override
-    protected SearchParameters populateSearchParameters(SearchParameters sp, int first, int pageSize, String sortField, SortOrder sortOrder,
-            Map<String, String> filters) {
-        super.populateSearchParameters(sp, first, pageSize, sortField, sortOrder, filters);
-        if (!sp.hasOrders()) {
-            sp.addOrderBy(new OrderBy("roleName"));
-        }
-        return sp;
-    }
-
-    @Override
-    protected ConversationContext<Role> getSelectedContext(Role selected) {
-        if (selected.isIdSet()) {
-            // just the id matters as we want to reload it in the conversation entity manager.
-            return RoleController.newEditContext(selected.getId());
-        } else {
-            return RoleController.newEditContext(selected); // fresh entity (creation)
-        }
-    }
-
-    // -----------------------------------
-    // Multi selection support
-    // -----------------------------------
-
-    public void setSelectedRows(Role[] selectedRows) {
-        this.selectedRows = selectedRows;
-    }
-
-    public Role[] getSelectedRows() {
-        return selectedRows;
-    }
-
-    public String multiSelect() {
-        return getCurrentConversation() //
-                .<ConversationContext<Role>> getCurrentContext() //
-                .getCallBack() //
-                .selected(Arrays.asList(selectedRows));
+    protected void defaultOrder(SearchParameters sp) {
+        sp.addOrderBy(new OrderBy(Role_.roleName));
     }
 }

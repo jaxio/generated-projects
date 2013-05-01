@@ -50,6 +50,17 @@ public abstract class RepositoryImpl<T extends Identifiable<PK>, PK extends Seri
         getDao().save(model);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    public void persist(T model) {
+        getDao().persist(model);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Transactional
     public T merge(T model) {
         return getDao().merge(model);
@@ -63,6 +74,30 @@ public abstract class RepositoryImpl<T extends Identifiable<PK>, PK extends Seri
         T entity = getNew();
         entity.setId(id);
         return get(entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional(readOnly = true)
+    public T getById(PK id, EntityGraphLoader<T> entityGraphLoader) {
+        T entity = getById(id);
+        if (entityGraphLoader != null && entity != null) {
+            entityGraphLoader.loadGraph(entity);
+        }
+        return entity;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional(readOnly = true)
+    public T mergeWithoutFlush(T model, EntityGraphLoader<T> entityGraphLoader) {
+        T entity = getDao().merge(model);
+        if (entityGraphLoader != null && entity != null) {
+            entityGraphLoader.loadGraph(entity);
+        }
+        return entity;
     }
 
     /**
@@ -199,5 +234,12 @@ public abstract class RepositoryImpl<T extends Identifiable<PK>, PK extends Seri
     @Transactional(readOnly = true)
     public int findCount(T model, SearchParameters sp) {
         return getDao().findCount(model, sp);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Comparable<Object> getVersion(T model) {
+        return getDao().getVersion(model);
     }
 }

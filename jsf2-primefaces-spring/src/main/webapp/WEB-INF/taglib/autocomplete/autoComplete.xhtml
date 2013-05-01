@@ -14,15 +14,15 @@
 			itemLabel="#{printer.print(item)}"
 			converter="#{converter}"
 			minQueryLength="#{empty minQueryLength ? 2 : minQueryLength}"
-			queryDelay="#{empty forceSelection ? 100 : forceSelection}"
+			queryDelay="#{empty queryDelay ? 100 : queryDelay}"
 			forceSelection="#{forceSelection}"
 			size="#{empty size ? 50 : size}"
 			dropdown="true"			
-			rendered="#{not readonly and ((not hasinverse and (empty value or not empty value.id)) or (hasinverse and empty value))}">
+			rendered="#{not readonly}">
 			<f:validateBean binding="#{lenientBeanValidator}"/>
 			<p:ajax event="itemSelect" update="#{id}Grid"/>
 		</p:autoComplete>
-		<h:outputText value="#{printer.print(value)}" rendered="#{(readonly or ((hasinverse or (not empty value and empty value.id)) and (not hasinverse or not empty value)))}"/>
+		<h:outputText value="#{printer.print(value)}" rendered="#{readonly}"/>
 		<h:panelGroup>
 			<ui:insert/>
 		</h:panelGroup>

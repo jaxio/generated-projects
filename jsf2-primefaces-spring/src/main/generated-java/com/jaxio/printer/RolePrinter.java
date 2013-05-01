@@ -7,8 +7,6 @@
  */
 package com.jaxio.printer;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -37,12 +35,7 @@ public class RolePrinter extends DiscoverablePrinter<Role> {
             return "";
         }
         StringBuilder ret = new StringBuilder(256);
-        if (!isBlank(role.getRoleName())) {
-            if (ret.length() != 0) {
-                ret.append('/');
-            }
-            ret.append(role.getRoleName().trim());
-        }
+        appendIfNotEmpty(ret, role.getRoleName());
         return ret.toString();
     }
 }

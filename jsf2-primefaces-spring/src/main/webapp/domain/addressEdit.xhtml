@@ -15,10 +15,10 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-<app:edit bean="#{addressEditForm}" title="${msg.address}">
+<app:edit bean="#{addressEditForm}" title="#{msg.address}">
 	<ui:define name="form">
-		<app:input id="streetName" value="#{addressEditForm.address.streetName}" size="100" label="${msg.address_streetName}" />
-		<app:input id="city" value="#{addressEditForm.address.city}" size="100" label="${msg.address_city}" required="true" />
+		<app:input id="streetName" value="#{addressEditForm.address.streetName}" size="100" label="#{msg.address_streetName}" />
+		<app:input id="city" value="#{addressEditForm.address.city}" size="100" label="#{msg.address_city}" required="true" />
 	</ui:define>
 </app:edit>
 </ui:composition>

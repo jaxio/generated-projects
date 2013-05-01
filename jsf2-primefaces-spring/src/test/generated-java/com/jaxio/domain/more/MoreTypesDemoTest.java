@@ -10,7 +10,7 @@ package com.jaxio.domain.more;
 import java.io.*;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.fest.assertions.Assertions.assertThat;
 import org.junit.Test;
 
 import com.jaxio.util.*;
@@ -45,15 +45,15 @@ public class MoreTypesDemoTest {
     @Test
     public void newInstanceHasNoPrimaryKey() {
         MoreTypesDemo model = new MoreTypesDemo();
-        assertFalse(model.isIdSet());
+        assertThat(model.isIdSet()).isFalse();
     }
 
     @Test
     public void isIdSetReturnsTrue() {
         MoreTypesDemo model = new MoreTypesDemo();
         model.setId(ValueGenerator.getUniqueInteger());
-        assertNotNull(model.getId());
-        assertTrue(model.isIdSet());
+        assertThat(model.getId()).isNotNull();
+        assertThat(model.isIdSet()).isTrue();
     }
 
     // test columns methods
@@ -61,7 +61,7 @@ public class MoreTypesDemoTest {
     @Test
     public void toStringNotNull() {
         MoreTypesDemo model = new MoreTypesDemo();
-        assertNotNull(model.toString());
+        assertThat(model.toString()).isNotNull();
     }
 
     @Test
@@ -105,10 +105,10 @@ public class MoreTypesDemoTest {
 
         model1.setVersion(1);
         model2.setVersion(1);
-        assertTrue(model1.isIdSet());
-        assertTrue(model2.isIdSet());
-        assertTrue(model1.hashCode() == model2.hashCode());
-        assertTrue(model1.equals(model2));
-        assertTrue(model2.equals(model1));
+        assertThat(model1.isIdSet()).isTrue();
+        assertThat(model2.isIdSet()).isTrue();
+        assertThat(model1.hashCode()).isEqualTo(model2.hashCode());
+        assertThat(model1).isEqualTo(model2);
+        assertThat(model2).isEqualTo(model1);
     }
 }

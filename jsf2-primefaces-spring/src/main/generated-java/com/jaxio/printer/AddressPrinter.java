@@ -7,8 +7,6 @@
  */
 package com.jaxio.printer;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -37,12 +35,7 @@ public class AddressPrinter extends DiscoverablePrinter<Address> {
             return "";
         }
         StringBuilder ret = new StringBuilder(256);
-        if (!isBlank(address.getCity())) {
-            if (ret.length() != 0) {
-                ret.append('/');
-            }
-            ret.append(address.getCity().trim());
-        }
+        appendIfNotEmpty(ret, address.getCity());
         return ret.toString();
     }
 }

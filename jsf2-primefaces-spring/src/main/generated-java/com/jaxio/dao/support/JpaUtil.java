@@ -28,9 +28,16 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.ManagedType;
+import javax.persistence.metamodel.SingularAttribute;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.ReflectionUtils;
+
+import com.google.common.base.Throwables;
 
 import com.jaxio.domain.Identifiable;
 
@@ -55,7 +62,7 @@ public class JpaUtil {
         } else if (method.getAnnotation(EmbeddedId.class) != null) {
             return true;
         } else {
-            return true;
+            return false;
         }
     }
 
@@ -141,7 +148,7 @@ public class JpaUtil {
                 }
             }
             for (Join<E, ?> join : root.getJoins()) {
-                if (pathItem.equals(join.getAttribute().getName()) && join instanceof Join<?, ?>) {
+                if (pathItem.equals(join.getAttribute().getName())) {
                     path = (Join<E, ?>) join;
                 }
             }
@@ -170,5 +177,49 @@ public class JpaUtil {
             }
         }
         return null;
+    }
+
+    public static <T> boolean isPk(ManagedType<T> mt, SingularAttribute<? super T, ?> attr) {
+        try {
+            Method m = BeanUtils.findMethod(mt.getJavaType(), "get" + WordUtils.capitalize(attr.getName()));
+            if (m != null && m.getAnnotation(Id.class) != null) {
+                return true;
+            }
+
+            Field field = mt.getJavaType().getField(attr.getName());
+            return field.getAnnotation(Id.class) != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static <T> Object getValue(T example, Attribute<? super T, ?> attr) {
+        try {
+            return ReflectionUtils.invokeMethod((Method) attr.getJavaMember(), example);
+        } catch (Exception e) {
+            throw Throwables.propagate(e);
+        }
+    }
+
+    public static <T, A> SingularAttribute<? super T, A> attribute(ManagedType<? super T> mt, Attribute<? super T, A> attr) {
+        return mt.getSingularAttribute(attr.getName(), attr.getJavaType());
+    }
+
+    public static <T> SingularAttribute<? super T, String> stringAttribute(ManagedType<? super T> mt, Attribute<? super T, ?> attr) {
+        return mt.getSingularAttribute(attr.getName(), String.class);
+    }
+
+    public static <T extends Identifiable<?>> boolean hasSimplePk(T entity) {
+        for (Method m : entity.getClass().getMethods()) {
+            if (m.getAnnotation(Id.class) != null) {
+                return true;
+            }
+        }
+        for (Field f : entity.getClass().getFields()) {
+            if (f.getAnnotation(Id.class) != null) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -5,14 +5,14 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">	
 	<h:outputText value="" />
-	<p:fieldset legend="${label}">
-		<h:panelGrid columns="4" id="${id}" styleClass="aria-role-presentation">
-			<label for="form:${id}RangeFrom">${msg.date_range_from}</label>
-			<appcc:datePicker id="${id}RangeFrom" value="#{value.from}" label="${msg.date_range_from}">
+	<p:fieldset legend="#{label}">
+		<h:panelGrid columns="4" id="#{id}" styleClass="aria-role-presentation">
+			<label for="form:#{id}RangeFrom">#{msg.date_range_from}</label>
+			<appcc:datePicker id="#{id}RangeFrom" value="#{value.from}" label="#{msg.date_range_from}">
 				<f:convertDateTime pattern="yyyy-MM-dd" />
 			</appcc:datePicker>
-			<label for="form:${id}RangeTo">${msg.date_range_to}</label>
-			<appcc:datePicker id="${id}RangeTo" value="#{value.to}" label="${msg.date_range_to}">
+			<label for="form:#{id}RangeTo">#{msg.date_range_to}</label>
+			<appcc:datePicker id="#{id}RangeTo" value="#{value.to}" label="#{msg.date_range_to}">
 				<f:convertDateTime pattern="yyyy-MM-dd" />
 			</appcc:datePicker>
 		</h:panelGrid>

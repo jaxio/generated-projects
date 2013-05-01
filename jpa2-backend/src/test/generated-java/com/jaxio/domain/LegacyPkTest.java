@@ -7,7 +7,7 @@
  */
 package com.jaxio.domain;
 
-import static org.junit.Assert.*;
+import static org.fest.assertions.Assertions.assertThat;
 import org.junit.Test;
 
 import java.io.Serializable;
@@ -22,9 +22,9 @@ public class LegacyPkTest {
     @Test
     public void compositePrimaryKeycode_test1() {
         LegacyPk cpk = new LegacyPk();
-        assertFalse(cpk.isCodeSet());
-        assertNull(cpk.getCode());
-        assertTrue(cpk.isEmpty());
+        assertThat(cpk.isCodeSet()).isFalse();
+        assertThat(cpk.getCode()).isNull();
+        assertThat(cpk.isEmpty()).isTrue();
     }
 
     @Test
@@ -32,17 +32,17 @@ public class LegacyPkTest {
         LegacyPk cpk = new LegacyPk();
         cpk.setCode(ValueGenerator.getUniqueString(8));
 
-        assertTrue(cpk.isCodeSet());
-        assertNotNull(cpk.getCode());
-        assertFalse(cpk.isEmpty());
+        assertThat(cpk.isCodeSet()).isTrue();
+        assertThat(cpk.getCode()).isNotNull();
+        assertThat(cpk.isEmpty()).isFalse();
     }
 
     @Test
     public void compositePrimaryKeydept_test1() {
         LegacyPk cpk = new LegacyPk();
-        assertFalse(cpk.isDeptSet());
-        assertNull(cpk.getDept());
-        assertTrue(cpk.isEmpty());
+        assertThat(cpk.isDeptSet()).isFalse();
+        assertThat(cpk.getDept()).isNull();
+        assertThat(cpk.isEmpty()).isTrue();
     }
 
     @Test
@@ -50,17 +50,17 @@ public class LegacyPkTest {
         LegacyPk cpk = new LegacyPk();
         cpk.setDept(ValueGenerator.getUniqueInteger());
 
-        assertTrue(cpk.isDeptSet());
-        assertNotNull(cpk.getDept());
-        assertFalse(cpk.isEmpty());
+        assertThat(cpk.isDeptSet()).isTrue();
+        assertThat(cpk.getDept()).isNotNull();
+        assertThat(cpk.isEmpty()).isFalse();
     }
 
     @Test
     public void compositePrimaryKeyname_test1() {
         LegacyPk cpk = new LegacyPk();
-        assertFalse(cpk.isNameSet());
-        assertNull(cpk.getName());
-        assertTrue(cpk.isEmpty());
+        assertThat(cpk.isNameSet()).isFalse();
+        assertThat(cpk.getName()).isNull();
+        assertThat(cpk.isEmpty()).isTrue();
     }
 
     @Test
@@ -68,15 +68,15 @@ public class LegacyPkTest {
         LegacyPk cpk = new LegacyPk();
         cpk.setName(ValueGenerator.getUniqueString(16));
 
-        assertTrue(cpk.isNameSet());
-        assertNotNull(cpk.getName());
-        assertFalse(cpk.isEmpty());
+        assertThat(cpk.isNameSet()).isTrue();
+        assertThat(cpk.getName()).isNotNull();
+        assertThat(cpk.isEmpty()).isFalse();
     }
 
     @Test
     public void isEmptyTrue() {
         LegacyPk cpk = new LegacyPk();
-        assertTrue(cpk.isEmpty());
+        assertThat(cpk.isEmpty()).isTrue();
     }
 
     @Test
@@ -85,13 +85,13 @@ public class LegacyPkTest {
         cpk.setCode(ValueGenerator.getUniqueString(8));
         cpk.setDept(ValueGenerator.getUniqueInteger());
         cpk.setName(ValueGenerator.getUniqueString(16));
-        assertFalse(cpk.isEmpty());
+        assertThat(cpk.isEmpty()).isFalse();
     }
 
     @Test
     public void toStringNotNullWhenNew() {
         LegacyPk cpk = new LegacyPk();
-        assertNotNull(cpk.toString());
+        assertThat(cpk.toString()).isNotNull();
     }
 
     @Test
@@ -100,23 +100,23 @@ public class LegacyPkTest {
         cpk.setCode(ValueGenerator.getUniqueString(8));
         cpk.setDept(ValueGenerator.getUniqueInteger());
         cpk.setName(ValueGenerator.getUniqueString(16));
-        assertNotNull(cpk.toString());
-        assertFalse(cpk.toString().isEmpty());
+        assertThat(cpk.toString()).isNotNull();
+        assertThat(cpk.toString().isEmpty()).isFalse();
     }
 
     @Test
     public void equality_test1() {
         LegacyPk cpk = new LegacyPk();
-        assertEquals(cpk, cpk);
-        assertEquals(cpk.hashCode(), cpk.hashCode());
-        assertEquals(0, cpk.compareTo(cpk));
+        assertThat(cpk).isEqualTo(cpk);
+        assertThat(cpk.hashCode()).isEqualTo(cpk.hashCode());
+        assertThat(cpk.compareTo(cpk)).isZero();
     }
 
     @Test
     public void equality_test2() {
         LegacyPk cpk = new LegacyPk();
-        assertFalse(cpk.equals(null));
-        assertEquals(-1, cpk.compareTo(null));
+        assertThat(cpk.equals(null)).isFalse();
+        assertThat(cpk.compareTo(null)).isEqualTo(-1);
     }
 
     @Test
@@ -136,10 +136,10 @@ public class LegacyPkTest {
         cpk1.setName(name);
         cpk2.setName(name);
 
-        assertTrue(cpk1.hashCode() == cpk2.hashCode());
-        assertTrue(cpk1.equals(cpk2));
-        assertTrue(cpk2.equals(cpk1));
-        assertEquals(0, cpk1.compareTo(cpk2));
-        assertEquals(0, cpk2.compareTo(cpk1));
+        assertThat(cpk1.hashCode()).isEqualTo(cpk2.hashCode());
+        assertThat(cpk1.equals(cpk2)).isTrue();
+        assertThat(cpk2.equals(cpk1)).isTrue();
+        assertThat(cpk1.compareTo(cpk2)).isZero();
+        assertThat(cpk2.compareTo(cpk1)).isZero();
     }
 }

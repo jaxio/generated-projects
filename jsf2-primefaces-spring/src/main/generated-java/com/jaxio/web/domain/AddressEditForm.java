@@ -9,16 +9,16 @@ package com.jaxio.web.domain;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.springframework.context.annotation.Scope;
 import com.jaxio.domain.Address;
 import com.jaxio.repository.AddressRepository;
 import com.jaxio.web.domain.support.GenericEditForm;
+import com.jaxio.web.faces.Conversation;
 
 /**
  * View Helper/Controller to edit {@link Address}.
  */
 @Named
-@Scope("conversation")
+@Conversation
 public class AddressEditForm extends GenericEditForm<Address, Integer> {
 
     @Inject

@@ -9,16 +9,16 @@ package com.jaxio.web.domain;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.springframework.context.annotation.Scope;
 import com.jaxio.domain.Role;
 import com.jaxio.repository.RoleRepository;
 import com.jaxio.web.domain.support.GenericEditForm;
+import com.jaxio.web.faces.Conversation;
 
 /**
  * View Helper/Controller to edit {@link Role}.
  */
 @Named
-@Scope("conversation")
+@Conversation
 public class RoleEditForm extends GenericEditForm<Role, Integer> {
 
     @Inject

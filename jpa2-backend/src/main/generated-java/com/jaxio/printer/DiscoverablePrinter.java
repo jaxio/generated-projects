@@ -7,6 +7,8 @@
  */
 package com.jaxio.printer;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.format.Printer;
 
@@ -29,5 +31,23 @@ public abstract class DiscoverablePrinter<T> implements Printer<T> {
 
     public String print(T document) {
         return print(document, LocaleContextHolder.getLocale());
+    }
+
+    protected void appendIfNotEmpty(StringBuilder builder, String value) {
+        if (!isBlank(value)) {
+            if (builder.length() != 0) {
+                builder.append('/');
+            }
+            builder.append(value.trim());
+        }
+    }
+
+    protected void appendIfNotEmpty(StringBuilder builder, Object value) {
+        if (value != null) {
+            if (builder.length() != 0) {
+                builder.append('/');
+            }
+            builder.append(value);
+        }
     }
 }

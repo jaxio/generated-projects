@@ -19,6 +19,7 @@ import javax.validation.constraints.Size;
 import org.apache.log4j.Logger;
 import org.hibernate.validator.constraints.NotEmpty;
 import com.google.common.base.Objects;
+import com.jaxio.domain.Address_;
 import com.jaxio.domain.IdentifiableHashBuilder;
 
 @Entity
@@ -33,21 +34,9 @@ public class Address implements Identifiable<Integer>, Serializable {
     private String city; // not null
     private Integer version;
 
-    // ---------------------------
-    // Constructors
-    // ---------------------------
-
-    public Address() {
-    }
-
-    public Address(Integer primaryKey) {
-        setId(primaryKey);
-    }
-
     // -------------------------------
     // Getter & Setter
     // -------------------------------
-
     // -- [id] ------------------------
 
     @Column(name = "ID", precision = 10)
@@ -131,10 +120,10 @@ public class Address implements Identifiable<Integer>, Serializable {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add("id", getId()) //
-                .add("streetName", getStreetName()) //
-                .add("city", getCity()) //
-                .add("version", getVersion()) //
+                .add(Address_.id.getName(), getId()) //
+                .add(Address_.streetName.getName(), getStreetName()) //
+                .add(Address_.city.getName(), getCity()) //
+                .add(Address_.version.getName(), getVersion()) //
                 .toString();
     }
 }

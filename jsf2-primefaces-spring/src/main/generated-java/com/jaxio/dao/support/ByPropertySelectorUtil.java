@@ -18,20 +18,22 @@ import javax.persistence.criteria.Root;
 
 import com.jaxio.dao.support.JpaUtil;
 import com.jaxio.dao.support.PropertySelector;
+import com.jaxio.dao.support.SearchParameters;
 
 /**
  * Helper to create a predicate out of {@link PropertySelector}s.
  */
 public class ByPropertySelectorUtil {
     @SuppressWarnings("unchecked")
-    public static <E> Predicate byPropertySelectors(Root<E> root, CriteriaBuilder builder, final List<PropertySelector<?, ?>> selectors) {
+    public static <E> Predicate byPropertySelectors(Root<E> root, CriteriaBuilder builder, final SearchParameters sp,
+            final List<PropertySelector<?, ?>> selectors) {
         List<Predicate> predicates = newArrayList();
 
         for (PropertySelector<?, ?> selector : selectors) {
             if (selector.isBoolean()) {
                 byBooleanSelector(root, builder, predicates, (PropertySelector<E, Boolean>) selector);
             } else {
-                byObjectSelector(root, builder, predicates, (PropertySelector<E, ?>) selector);
+                byObjectSelector(root, builder, predicates, sp, (PropertySelector<E, ?>) selector);
             }
         }
         return JpaUtil.andPredicate(builder, predicates);
@@ -53,13 +55,20 @@ public class ByPropertySelectorUtil {
         }
     }
 
-    private static <E> void byObjectSelector(Root<E> root, CriteriaBuilder builder, List<Predicate> predicates, PropertySelector<E, ?> selector) {
+    private static <E> void byObjectSelector(Root<E> root, CriteriaBuilder builder, List<Predicate> predicates, SearchParameters sp,
+            PropertySelector<E, ?> selector) {
         if (selector.isNotEmpty()) {
             List<Predicate> selectorPredicates = newArrayList();
 
             for (Object selection : selector.getSelected()) {
-                Path<?> path = root.get(selector.getField());
-                selectorPredicates.add(selection == null ? builder.isNull(path) : builder.equal(path, selection));
+                if (selection instanceof String) {
+                    @SuppressWarnings("unchecked")
+                    Path<String> path = (Path<String>) root.get(selector.getField());
+                    selectorPredicates.add(JpaUtil.stringPredicate(path, selection, sp, builder));
+                } else {
+                    Path<?> path = root.get(selector.getField());
+                    selectorPredicates.add(selection == null ? builder.isNull(path) : builder.equal(path, selection));
+                }
             }
             predicates.add(JpaUtil.orPredicate(builder, selectorPredicates));
         }

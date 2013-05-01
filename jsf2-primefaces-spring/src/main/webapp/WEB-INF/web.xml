@@ -6,7 +6,9 @@
  ! Follow us on twitter: @springfuse
  ! Template pack-jsf2-spring-conversation:src/main/webapp/WEB-INF/web.p.vm.xml
 -->
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 	<!-- The master configuration file for this Spring web application -->
 	<!-- Context Configuration locations for Spring XML files -->
 	<context-param>
@@ -26,14 +28,21 @@
 	<listener>
 		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>
-	
 	<!-- filters -->
-    <filter>
-       <filter-name>gzipResponseFilter</filter-name>
-       <filter-class>org.omnifaces.filter.GzipResponseFilter</filter-class>
-     </filter>
+	<filter>
+		<filter-name>gzipResponseFilter</filter-name>
+		<filter-class>org.omnifaces.filter.GzipResponseFilter</filter-class>
+	</filter>
 	<filter-mapping>
 		<filter-name>gzipResponseFilter</filter-name>
+		<servlet-name>facesServlet</servlet-name>
+	</filter-mapping>
+	<filter>
+		<filter-name>localeResolverRequestFilter</filter-name>
+		<filter-class>com.jaxio.web.filter.LocaleResolverRequestFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>localeResolverRequestFilter</filter-name>
 		<servlet-name>facesServlet</servlet-name>
 	</filter-mapping>
 	<filter>
@@ -44,61 +53,45 @@
 		<filter-name>fileUploadFilter</filter-name>
 		<servlet-name>facesServlet</servlet-name>
 	</filter-mapping>
-    <filter>
-        <filter-name>sessionExpirationFilter</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>sessionExpirationFilter</filter-name>
-        <servlet-name>facesServlet</servlet-name>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>INCLUDE</dispatcher>
+	<filter>
+		<filter-name>sessionExpirationFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>sessionExpirationFilter</filter-name>
+		<servlet-name>facesServlet</servlet-name>
 	</filter-mapping>
-    <!-- spring security filter must be placed after ConversationFilter (read ConversationFilter.java) -->
-    <filter>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <servlet-name>facesServlet</servlet-name>
-    </filter-mapping>    
-    <filter>
-        <filter-name>conversationFilter</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>conversationFilter</filter-name>
-        <servlet-name>facesServlet</servlet-name>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
-    </filter-mapping>
-    <!-- The openEntityManagerInViewFilter (since it is placed after the conversationFilter) either reuses the conversation's entity manager or create one just for the request. -->
-    <filter>
-        <filter-name>openEntityManagerInViewFilter</filter-name>
-        <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>openEntityManagerInViewFilter</filter-name>
-        <servlet-name>facesServlet</servlet-name>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
-    </filter-mapping>
+	<!-- spring security filter must be placed after ConversationFilter (read 
+		ConversationFilter.java) -->
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<servlet-name>facesServlet</servlet-name>
+	</filter-mapping>
+	<filter>
+		<filter-name>conversationFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>conversationFilter</filter-name>
+		<servlet-name>facesServlet</servlet-name>
+	</filter-mapping>
 	<!-- JSF 2 IMPLEMENTATION -->
 	<!-- Use JSF view templates saved as *.xhtml, for use with Facelets -->
 	<context-param>
 		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
 		<param-value>.xhtml</param-value>
 	</context-param>
-    <!-- (in bytes) Ideally the buffer size should be large enough so the largest view can fit in it entirely 
-        for exception handling purposes and also performance reason. -->    
-    <context-param>
-        <param-name>javax.faces.FACELETS_BUFFER_SIZE</param-name>
-        <param-value>10240</param-value>
-    </context-param>    
+	<!-- (in bytes) Ideally the buffer size should be large enough so the largest 
+		view can fit in it entirely for exception handling purposes and also performance 
+		reason. -->
+	<context-param>
+		<param-name>javax.faces.FACELETS_BUFFER_SIZE</param-name>
+		<param-value>10240</param-value>
+	</context-param>
 	<!-- Enables special Facelets debug output during development -->
 	<context-param>
 		<param-name>javax.faces.PROJECT_STAGE</param-name>
@@ -109,11 +102,12 @@
 		<param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
 		<param-value>1</param-value><!-- -1 means disabled -->
 	</context-param>
-    <!-- Resources cache expiration (in millisec). Enabled only in 'Production' stage -->    
-    <context-param>
-        <param-name>com.sun.faces.defaultResourceMaxAge</param-name>
-        <param-value>86400000</param-value>
-    </context-param>
+	<!-- Resources cache expiration (in millisec). Enabled only in 'Production' 
+		stage -->
+	<context-param>
+		<param-name>com.sun.faces.defaultResourceMaxAge</param-name>
+		<param-value>86400000</param-value>
+	</context-param>
 	<context-param>
 		<param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
@@ -137,10 +131,10 @@
 		<param-name>com.sun.faces.expressionFactory</param-name>
 		<param-value>org.jboss.el.ExpressionFactoryImpl</param-value>
 	</context-param>
-    <context-param>
-        <param-name>org.apache.myfaces.EXPRESSION_FACTORY</param-name>
-        <param-value>org.jboss.el.ExpressionFactoryImpl</param-value>
-    </context-param>
+	<context-param>
+		<param-name>org.apache.myfaces.EXPRESSION_FACTORY</param-name>
+		<param-value>org.jboss.el.ExpressionFactoryImpl</param-value>
+	</context-param>
 	<!-- Mime types -->
 	<mime-mapping>
 		<extension>css</extension>
@@ -186,50 +180,42 @@
 		<extension>xml</extension>
 		<mime-type>text/xml</mime-type>
 	</mime-mapping>
-
 	<!-- session timeout (in minutes) -->
 	<session-config>
 		<session-timeout>10</session-timeout>
 	</session-config>
-
-    <!-- Error pages. Please check the ConversationAwareExceptionHandler.java -->
-
-    <error-page>
-        <exception-type>org.springframework.dao.DataAccessException</exception-type>
-        <location>/error/data-error.faces</location>
-    </error-page>
-
-    <error-page><!-- comment it if you use myfaces, otherwise omnifaces will complain severely -->
-        <exception-type>com.sun.faces.context.FacesFileNotFoundException</exception-type>
-        <location>/error/not-found.faces</location>
-    </error-page>
-
-    <error-page>
+	<!-- Error pages. Please check the ConversationAwareExceptionHandler.java -->
+	<error-page>
+		<exception-type>org.springframework.dao.DataAccessException</exception-type>
+		<location>/error/data-error.faces</location>
+	</error-page>
+	<!-- comment it if you use myfaces, otherwise omnifaces will complain severely -->
+	<error-page>
+		<exception-type>com.sun.faces.context.FacesFileNotFoundException</exception-type>
+		<location>/error/not-found.faces</location>
+	</error-page>
+	<error-page>
 		<exception-type>java.lang.Throwable</exception-type>
 		<location>/error/error.faces</location>
 	</error-page>
-
-    <error-page>
-        <error-code>500</error-code>
-        <location>/error/error.faces</location>
-    </error-page>
-    
-    <error-page>
-        <error-code>404</error-code>
-        <location>/error/not-found.faces</location>
-    </error-page>
-
+	<error-page>
+		<error-code>500</error-code>
+		<location>/error/error.faces</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/error/not-found.faces</location>
+	</error-page>
 	<!-- Default page -->
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
-    
-    <security-constraint>
-        <display-name>Restrict direct access to XHTML files</display-name>
-        <web-resource-collection>
-            <web-resource-name>XHTML files</web-resource-name>
-            <url-pattern>*.xhtml</url-pattern>
-        </web-resource-collection>
-        <auth-constraint />
-    </security-constraint> 
+	<security-constraint>
+		<display-name>Restrict direct access to XHTML files</display-name>
+		<web-resource-collection>
+			<web-resource-name>XHTML files</web-resource-name>
+			<url-pattern>*.xhtml</url-pattern>
+		</web-resource-collection>
+		<auth-constraint />
+	</security-constraint>
 </web-app>

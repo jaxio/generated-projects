@@ -1,11 +1,15 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"		
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:composite="http://java.sun.com/jsf/composite">
+<!-- 
+	To learn more about JSF Composite Component, please read
+	http://stackoverflow.com/questions/6822000/when-to-use-uiinclude-tag-files-composite-components-and-or-custom-componen
+	http://balusc.blogspot.de/2013/01/composite-component-with-multiple-input.html
+ -->	
 <head>
 	<title>Displays error messages in an accessible fashion.</title>
 </head>
@@ -15,26 +19,40 @@
 
 	<composite:implementation>
 		<div id="#{cc.clientId}"> 
-			<ui:repeat var="item" value="#{messagesHelper.getGlobalMessages()}" varStatus="status" rendered="${messagesHelper.hasGlobalMessages()}">
-				<div class="ui-messages-${item.severity} ui-corner-all">
-					<span class="ui-messages-${item.severity}-icon"></span>
-					<span class="ui-messages-${item.severity}-summary"><a id="gMsgNo${status.index}" href="javascript:void" 
-						onclick="PrimeFaces.focus(null, 'form:center');" >${item.facesMessage.summary}</a></span>
-				</div>
+			<ui:repeat var="severity" value="${messagesHelper.severitiesGlobalMessages}" varStatus="severityStatus">
+				<p:outputPanel layout="block" styleClass="ui-messages-${messagesHelper.getCssFriendlySeverity(severity)} ui-corner-all" rendered="${messagesHelper.hasMultipleGlobalMessages(severity)}">
+					<span class="ui-messages-${messagesHelper.getCssFriendlySeverity(severity)}-icon"></span>
+					<ul>
+						<ui:repeat var="item" value="${messagesHelper.getGlobalMessages(severity)}" varStatus="status">
+							<li><span class="ui-messages-${item.severity}-summary"><a id="${messagesHelper.getCssFriendlySeverity(severity)}-gMsgNo${status.index}" href="javascript:void" 
+							onclick="PrimeFaces.focus(null, 'form:center');" >${item.facesMessage.summary}</a></span></li>
+						</ui:repeat>
+					</ul>
+					<script type="text/javascript">
+						$(function() {
+							setTimeout(function() {
+								APP.focusTo('${messagesHelper.getCssFriendlySeverity(severity)}-gMsgNo0');
+							}, 400);
+						});
+					</script>
+				</p:outputPanel>
+				<p:outputPanel layout="block" styleClass="ui-messages-${messagesHelper.getCssFriendlySeverity(severity)} ui-corner-all" rendered="${messagesHelper.hasSingleGlobalMessage(severity)}">
+					<span class="ui-messages-${messagesHelper.getCssFriendlySeverity(severity)}-icon"></span>
+					<span class="ui-messages-${messagesHelper.getCssFriendlySeverity(severity)}-summary"><a id="${messagesHelper.getCssFriendlySeverity(severity)}-gMsgNo00" href="javascript:void" 
+							onclick="PrimeFaces.focus(null, 'form:center');" >${messagesHelper.getSingleGlobalMessage(severity).facesMessage.summary}</a></span>
+					<script type="text/javascript">
+						$(function() {
+							setTimeout(function() {
+								APP.focusTo('${messagesHelper.getCssFriendlySeverity(severity)}-gMsgNo0');
+							}, 400);
+						});
+					</script>
+				</p:outputPanel>
 			</ui:repeat>
-			<p:outputPanel layout="block" rendered="${messagesHelper.hasOnlyGlobalMessages()}">
-				<script type="text/javascript">
-					$(function() {
-						setTimeout(function() {
-							APP.focusTo('gMsgNo0');
-						}, 400);
-					});
-				</script>
-			</p:outputPanel>
 			
-			<p:outputPanel layout="block" styleClass="ui-messages-${messagesHelper.maxSeverity} ui-corner-all" rendered="${messagesHelper.hasNonGlobalMessages()}">
-				<span class="ui-messages-${messagesHelper.maxSeverity}-icon"></span>
-				<span class="ui-messages-${messagesHelper.maxSeverity}-summary">
+			<p:outputPanel layout="block" styleClass="ui-messages-${messagesHelper.maxSeverityNonGlobalMessages} ui-corner-all" rendered="${messagesHelper.hasNonGlobalMessages()}">
+				<span class="ui-messages-${messagesHelper.maxSeverityNonGlobalMessages}-icon"></span>
+				<span class="ui-messages-${messagesHelper.maxSeverityNonGlobalMessages}-summary">
 					<a id="errorPresent" href="javascript:void" onclick="APP.focusTo('errorMsgNo0'); return false;">
 						<h:outputText value="${messagesHelper.nonGlobalMessagesIntro}" />
 					</a>
@@ -48,7 +66,7 @@
 					$(function() {
 						setTimeout(function() {
 							APP.focusTo('errorPresent');
-						}, 400);
+						}, 500);
 					});
 				</script>
 			</p:outputPanel>

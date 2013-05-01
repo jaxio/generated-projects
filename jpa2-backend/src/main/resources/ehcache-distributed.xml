@@ -116,5 +116,7 @@
 
 		com.jaxio.domain.Role
 
+		com.jaxio.domain.SavedSearch
+
 	-->
 </ehcache>

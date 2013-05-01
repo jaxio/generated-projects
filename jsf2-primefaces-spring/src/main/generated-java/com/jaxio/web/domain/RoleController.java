@@ -7,68 +7,58 @@
  */
 package com.jaxio.web.domain;
 
-import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Role;
+import com.jaxio.domain.Role_;
 import com.jaxio.repository.RoleRepository;
 import com.jaxio.web.conversation.Conversation;
 import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationFactory;
+import com.jaxio.web.domain.support.GenericController;
+import com.jaxio.web.permission.RolePermission;
 
 /**
  * Stateless controller for Role conversation start. Provides also auto-complete support. 
  */
 @Named
 @Singleton
-public class RoleController implements ConversationFactory {
+public class RoleController extends GenericController<Role, Integer> implements ConversationFactory {
     public final static String editUri = "/domain/roleEdit.faces";
     public final static String selectUri = "/domain/roleSelect.faces";
-    private RoleRepository roleRepository;
 
     @Inject
-    public void setRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
+    public RoleController(RoleRepository roleRepository, RolePermission rolePermission) {
+        super(roleRepository, rolePermission);
     }
 
-    // --------------------------------
-    // ConversationFactoryImpl
-    // --------------------------------
+    // -------------------
+    // ConversationFactory
+    // -------------------
 
     @Override
     public boolean canCreateConversation(HttpServletRequest request) {
-        return selectUri.equals(request.getServletPath());
+        return selectUri.equals(request.getServletPath()) || editUri.equals(request.getServletPath());
     }
 
     @Override
     public Conversation createConversation(HttpServletRequest request) {
         String uri = request.getServletPath();
         if (selectUri.equals(uri)) {
-            Conversation conversation = Conversation.newInstance(request);
-            ConversationContext<Role> ctx = newSearchContext();
-            ctx.setLabelWithKey("role");
-            conversation.setNextContext(ctx);
-            return conversation;
+            return Conversation.newConversation(request, newSearchContext("role"));
+        } else if (editUri.equals(uri)) {
+            return Conversation.newConversation(request, newEditContext("role", new Role()));
+        } else {
+            throw new IllegalStateException("Unexpected conversation creation demand");
         }
-
-        throw new IllegalStateException("Unexpected conversation creation demand");
     }
 
-    // --------------------------------
-    // Autocomplete support
-    // --------------------------------
-
-    /**
-     * This method is used from primefaces autocomplete components.
-     */
-    public List<Role> complete(String value) {
-        SearchParameters sp = new SearchParameters().anywhere().searchPattern(value);
-        // order by business key
-        sp.orderBy("roleName");
-        return roleRepository.find(sp);
+    @Override
+    protected void defaultOrder(SearchParameters searchParameters) {
+        searchParameters.orderBy(Role_.roleName);
     }
 
     // --------------------------------
@@ -79,20 +69,10 @@ public class RoleController implements ConversationFactory {
      * Helper to construct a new ConversationContext to edit an Role.
      * @param role the entity to edit.
      */
-    public static ConversationContext<Role> newEditContext(final Role role) {
+    public ConversationContext<Role> newEditContext(final Role role) {
         ConversationContext<Role> ctx = new ConversationContext<Role>();
         ctx.setEntity(role); // used by GenericEditForm.init()
-        ctx.setViewUri(editUri);
-        return ctx;
-    }
-
-    /**
-     * Helper to construct a new ConversationContext to edit an Role.
-     * @param id the id of the entity to edit.
-     */
-    public static ConversationContext<Role> newEditContext(final Integer id) {
-        ConversationContext<Role> ctx = new ConversationContext<Role>();
-        ctx.setEntityId(id); // used by GenericEditForm.init()
+        ctx.setIsNewEntity(!role.isIdSet());
         ctx.setViewUri(editUri);
         return ctx;
     }
@@ -100,9 +80,8 @@ public class RoleController implements ConversationFactory {
     /**
      * Helper to construct a new ConversationContext for search/selection.
      */
-    public static ConversationContext<Role> newSearchContext() {
+    public ConversationContext<Role> newSearchContext() {
         ConversationContext<Role> ctx = new ConversationContext<Role>();
-        ctx.setUseConversationEntityManager(false);
         ctx.setViewUri(selectUri);
         return ctx;
     }

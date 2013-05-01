@@ -19,11 +19,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.SingularAttribute;
 
 @Named
 @Singleton
@@ -35,6 +35,7 @@ public class ByPatternUtil {
     /**
      * Lookup entities having at least one String attribute matching the passed sp's pattern
      */
+    @SuppressWarnings("unchecked")
     public <T> Predicate byPattern(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder, final SearchParameters sp, final Class<T> type) {
         if (!sp.hasSearchPattern()) {
             return null;
@@ -50,14 +51,10 @@ public class ByPatternUtil {
             }
 
             if (attr.getJavaType() == String.class) {
-                predicates.add(JpaUtil.stringPredicate(root.get(attribute(entity, attr)), pattern, sp, builder));
+                predicates.add(JpaUtil.stringPredicate((Expression<String>) root.get(JpaUtil.attribute(entity, attr)), pattern, sp, builder));
             }
         }
 
         return JpaUtil.orPredicate(builder, predicates);
-    }
-
-    private static <T> SingularAttribute<T, String> attribute(EntityType<T> entity, Attribute<T, ?> attr) {
-        return entity.getDeclaredSingularAttribute(attr.getName(), String.class);
     }
 }

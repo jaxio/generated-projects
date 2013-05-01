@@ -15,9 +15,9 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-<app:edit bean="#{documentEditForm}" title="${msg.document}">
+<app:edit bean="#{documentEditForm}" title="#{msg.document}">
 	<ui:define name="form">
-		<app:outputLabel for="documentBinary" value="${msg.document_documentBinary}" />
+		<app:outputLabel for="documentBinary" value="#{msg.document_documentBinary}" />
 		<p:outputPanel id="documentBinaryOP">
 			<p:fileUpload id="documentBinary"
 				fileUploadListener="#{documentController.getUploadHandler(documentEditForm.document).handleFileUpload}"
@@ -32,9 +32,9 @@
 		</p:outputPanel>
 
 		<app:autoComplete id="account" value="#{documentEditForm.selectedAccount}" required="true" 
-			label="${msg.document_account}" hasinverse="true"
-			controller="#{accountController}" printer="#{accountPrinter}" converter="#{accountJsfConverter}">
-			<app:iconView actionBean="#{documentEditForm}" action="viewAccount" title="${msg.document_account}" rendered="${not empty documentEditForm.document.account}" />
+			label="#{msg.document_account}" controller="#{accountController}" 
+			printer="#{accountPrinter}" converter="#{accountJsfConverter}">
+			<app:iconView actionBean="#{documentEditForm}" action="viewAccount" title="#{msg.document_account}" rendered="#{not empty documentEditForm.document.account and accountPermission.canView(documentEditForm.document.account)}" />
 		</app:autoComplete>
 	</ui:define>
 </app:edit>

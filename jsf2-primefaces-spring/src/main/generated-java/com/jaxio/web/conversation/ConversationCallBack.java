@@ -26,7 +26,7 @@ public class ConversationCallBack<T> implements Serializable {
     public ConversationCallBack() {
     }
 
-    final public String ok(T entity) {
+    public final String ok(T entity) {
         incrementPopContextOnNextPauseCounter();
         onOk(entity);
         return nextView();
@@ -40,7 +40,7 @@ public class ConversationCallBack<T> implements Serializable {
     protected void onOk(T entity) {
     }
 
-    final public String selected(T entity) {
+    public final String selected(T entity) {
         incrementPopContextOnNextPauseCounter();
         onSelected(entity);
         return nextView();
@@ -52,7 +52,7 @@ public class ConversationCallBack<T> implements Serializable {
     protected void onSelected(T entity) {
     }
 
-    final public String selected(List<T> entities) {
+    public final String selected(List<T> entities) {
         incrementPopContextOnNextPauseCounter();
         onSelected(entities);
         return nextView();
@@ -64,7 +64,7 @@ public class ConversationCallBack<T> implements Serializable {
     protected void onSelected(List<T> entity) {
     }
 
-    final public String saved(T entity) {
+    public final String saved(T entity) {
         incrementPopContextOnNextPauseCounter();
         onSaved(entity);
         return nextView();
@@ -76,7 +76,7 @@ public class ConversationCallBack<T> implements Serializable {
     protected void onSaved(T entity) {
     }
 
-    final public String notSaved(T entity) {
+    public final String notSaved(T entity) {
         incrementPopContextOnNextPauseCounter();
         onNotSaved(entity);
         return nextView();
@@ -88,7 +88,7 @@ public class ConversationCallBack<T> implements Serializable {
     protected void onNotSaved(T entity) {
     }
 
-    final public String deleted(T entity) {
+    public final String deleted(T entity) {
         incrementPopContextOnNextPauseCounter();
         onDeleted(entity);
         return nextView();
@@ -100,7 +100,7 @@ public class ConversationCallBack<T> implements Serializable {
     protected void onDeleted(T entity) {
     }
 
-    final public String back() {
+    public final String back() {
         incrementPopContextOnNextPauseCounter();
         onBack();
         return nextView();
@@ -114,11 +114,11 @@ public class ConversationCallBack<T> implements Serializable {
 
     // Context utils
 
-    private final void incrementPopContextOnNextPauseCounter() {
+    private void incrementPopContextOnNextPauseCounter() {
         getCurrentConversation().incrementPopContextOnNextPauseCounter();
     }
 
-    private final String nextView() {
+    private String nextView() {
         return getCurrentConversation().nextView();
     }
 }

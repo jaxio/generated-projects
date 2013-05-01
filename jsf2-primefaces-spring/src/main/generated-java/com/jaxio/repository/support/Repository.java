@@ -46,8 +46,29 @@ public interface Repository<T extends Identifiable<PK>, PK extends Serializable>
     T getById(PK id);
 
     /**
-     * Get an entity based on the passed example. If the example has a primary key set, it will be used. Otherwise
-     * if the example has unique field set, it will be used to lookup the entity.
+     * Get an entity by its id.
+     * The passed {@link EntityGraphLoader} is applied to the entity before it is returned.
+     *
+     * @param id the primaryKey
+     * @param entityGraphLoader
+     * @return the entity found.
+     */
+    T getById(PK id, EntityGraphLoader<T> entityGraphLoader);
+
+    /**
+     * Merge the state of the given entity into the
+     * current persistence context without flushing the persistence context.
+     * The passed {@link EntityGraphLoader} is applied to the entity before it is returned.
+     *
+     * @param entity the entity to merge.
+     * @param entityGraphLoader
+     * @return the merged entity.
+     */
+    T mergeWithoutFlush(T entity, EntityGraphLoader<T> entityGraphLoader);
+
+    /**
+     * Get an entity based on the passed example. If the example has a primary key set, it will be used.
+     * Otherwise if the example has unique field set, it will be used to lookup the entity.
      *
      * @param example
      * @return the matching entity or null if none could be found.
@@ -62,15 +83,22 @@ public interface Repository<T extends Identifiable<PK>, PK extends Serializable>
     void refresh(T entity);
 
     /**
-     * Save or update the passed entity.
+     * Save or update the passed entity. 
+     * Use it with conversation and extended persistence context.
      *
      * @param entity the entity to save or update.
      */
     void save(T entity);
 
     /**
-     * Merge the state of the given entity into the
-     * current persistence context.
+     * Persist the passed entity.
+     *
+     * @param entity to be inserted.
+     */
+    void persist(T entity);
+
+    /**
+     * Merge the state of the given entity into the persistence context.
      *
      * @param entity the entity to merge.
      */
@@ -177,4 +205,9 @@ public interface Repository<T extends Identifiable<PK>, PK extends Serializable>
      * @return the number of entities that {@link #find(Identifiable, SearchParameters)} would return.
      */
     int findCount(T example, SearchParameters searchParameters);
+
+    /**
+     * Return the optimistic version value, if any.
+     */
+    Comparable<Object> getVersion(T entity);
 }

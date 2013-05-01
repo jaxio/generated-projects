@@ -20,9 +20,6 @@ public abstract class Book_ {
     public static volatile SingularAttribute<Book, Integer> numberOfPages;
     public static volatile SingularAttribute<Book, Integer> version;
 
-    // Technical attributes for query by example
-    public static volatile SingularAttribute<Book, String> accountId;
-
     // Many to one
     public static volatile SingularAttribute<Book, Account> account;
 }

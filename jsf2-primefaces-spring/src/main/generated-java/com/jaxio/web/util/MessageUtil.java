@@ -77,10 +77,6 @@ public class MessageUtil {
         addFacesMessageUsingKey(SEVERITY_INFO, summaryKey, printer.print(entity));
     }
 
-    public void infoText(String summaryText) {
-        addFacesMessageUsingText(SEVERITY_INFO, summaryText);
-    }
-
     public FacesMessage newInfo(String summaryKey, Object... args) {
         return newFacesMessageUsingKey(SEVERITY_INFO, summaryKey, args);
     }
@@ -91,10 +87,6 @@ public class MessageUtil {
         addFacesMessageUsingKey(SEVERITY_WARN, summaryKey, args);
     }
 
-    public void warningText(String summaryText) {
-        addFacesMessageUsingText(SEVERITY_WARN, summaryText);
-    }
-
     public FacesMessage newWarning(String summaryKey, Object... args) {
         return newFacesMessageUsingKey(SEVERITY_WARN, summaryKey, args);
     }
@@ -103,10 +95,6 @@ public class MessageUtil {
 
     public void error(String summaryKey, Object... args) {
         addFacesMessageUsingKey(SEVERITY_ERROR, summaryKey, args);
-    }
-
-    public void errorText(String summaryText) {
-        addFacesMessageUsingText(SEVERITY_ERROR, summaryText);
     }
 
     public FacesMessage newError(String summaryKey, Object... args) {
@@ -156,10 +144,6 @@ public class MessageUtil {
 
     private void addFacesMessageUsingKey(Severity severity, String summaryKey, Object[] args) {
         addFacesMessage(newFacesMessageUsingKey(severity, summaryKey, args));
-    }
-
-    private void addFacesMessageUsingText(Severity severity, String text) {
-        addFacesMessage(newFacesMessageUsingText(severity, text));
     }
 
     private FacesMessage newFacesMessageUsingKey(Severity severity, String summaryKey, Object[] args) {

@@ -38,7 +38,7 @@ import javax.faces.event.PhaseListener;
  */
 public class MultiPageMessagesSupport implements PhaseListener {
 
-    private static final long serialVersionUID = 1250469273857785274L;
+    private static final long serialVersionUID = 1L;
     private static final String sessionToken = "MULTI_PAGE_MESSAGES_SUPPORT";
 
     public PhaseId getPhaseId() {
@@ -54,10 +54,8 @@ public class MultiPageMessagesSupport implements PhaseListener {
         FacesContext facesContext = event.getFacesContext();
         this.saveMessages(facesContext);
 
-        if (PhaseId.RENDER_RESPONSE.equals(event.getPhaseId())) {
-            if (!facesContext.getResponseComplete()) {
-                this.restoreMessages(facesContext);
-            }
+        if (PhaseId.RENDER_RESPONSE.equals(event.getPhaseId()) && !facesContext.getResponseComplete()) {
+            this.restoreMessages(facesContext);
         }
     }
 

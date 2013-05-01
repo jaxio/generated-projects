@@ -15,41 +15,32 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search data="#{documentLazyDataModel}" searchForm="#{documentSearchForm}" title="${msg.document}">
+	<app:search data="#{documentLazyDataModel}" searchForm="#{documentSearchForm}" permission="#{documentPermission}" title="#{msg.document}" savedSearch="true">
 		<ui:define name="filters">
-			<app:multiAutoComplete id="accountSelector" value="#{documentSearchForm.accountSelector.selected}" label="${msg.document_account}" 
+			<app:multiAutoComplete id="accountSelector" value="#{documentSearchForm.accountSelector.selected}" label="#{msg.document_account}" 
 				controller="#{accountController}" converter="#{accountJsfConverter}" printer="#{accountPrinter}"/>
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">
-        		<p:ajax event="rowSelect" listener="#{documentLazyDataModel.onRowSelect}" />
-        	</c:if>
+				<p:ajax event="rowSelect" listener="#{documentLazyDataModel.onRowSelect}" />
+			</c:if>
 			<c:if test="#{multiCheckboxSelection}">
-				<p:column selectionMode="multiple" style="width:18px"/>			
-        	</c:if>
-			<p:column id="document_account" headerText="${msg.document_account}" sortBy="#{item.account.username}">
+				<p:column selectionMode="multiple" style="width:18px" rendered="#{documentPermission.canSelect()}" />
+			</c:if>
+			<p:column id="document_account" headerText="#{msg.document_account}" sortBy="#{item.account.username}">
 				<h:outputText value="#{accountPrinter.print(item.account)}" />
 			</p:column>
-			<p:column id="document_documentContentType" headerText="${msg.document_documentContentType}" sortBy="#{item.documentContentType}">
+			<p:column id="document_documentContentType" headerText="#{msg.document_documentContentType}" sortBy="#{item.documentContentType}">
 				<h:outputText value="#{item.documentContentType}" />
 			</p:column>
-			<p:column id="document_documentBinary" headerText="${msg.document_documentBinary}" sortBy="#{item.documentBinary}">
+			<p:column id="document_documentBinary" headerText="#{msg.document_documentBinary}" sortBy="#{item.documentBinary}">
 				<h:commandLink rendered="#{not empty item.documentFileName}" value="#{item.documentFileName}"><p:fileDownload value="#{documentController.getStreamedContent(item)}"/></h:commandLink>
 			</p:column>
-			<p:column id="open" headerText="${msg.actions}" styleClass="actions-column" resizable="false">
-				<app:iconSelect actionBean="#{documentLazyDataModel}" action="select" process="@this" rendered="#{sub and not multiCheckboxSelection}" title="${documentPrinter.print(item)}" />
-				<app:iconEdit actionBean="#{documentLazyDataModel}" action="edit" process="@this" rendered="#{not sub}" title="${documentPrinter.print(item)}" />
-				<app:iconView actionBean="#{documentLazyDataModel}" action="view" process="@this" title="${documentPrinter.print(item)}" />
-				<p:commandLink update=":form:askForDeleteItemDialogContent" 
-								process="@this"
-								immediate="true" 
-								oncomplete="askForDeleteItemDialog.show(); APP.focusTo('form:askForDeleteItemDialogNo');"
-								styleClass="ui-button"
-								rendered="#{not sub}"
-								title="${documentPrinter.print(item)}">  
-					<f:setPropertyActionListener value="#{item}" target="#{documentLazyDataModel.selectedRow}" />
-					<div class="ui-button ui-icon iconDelete"/>
-				</p:commandLink>  						
+			<p:column id="open" headerText="#{msg.actions}" styleClass="actions-column" resizable="false">
+				<app:iconSelect actionBean="#{documentLazyDataModel}" action="select" rendered="#{sub and not multiCheckboxSelection}" title="#{documentPrinter.print(item)}" />
+				<app:iconEdit actionBean="#{documentLazyDataModel}" action="edit" rendered="#{not sub and documentPermission.canEdit(item)}" title="#{documentPrinter.print(item)}" />
+				<app:iconView actionBean="#{documentLazyDataModel}" action="view" rendered="#{documentPermission.canView(item)}" title="#{documentPrinter.print(item)}" />
+				<app:iconDelete rendered="#{not sub and documentPermission.canDelete(item)}" title="#{documentPrinter.print(item)}" />
 			</p:column>
 		</ui:define>
 	</app:search>

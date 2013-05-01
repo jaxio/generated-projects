@@ -10,7 +10,7 @@ package com.jaxio.domain;
 import java.io.*;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.fest.assertions.Assertions.assertThat;
 import org.junit.Test;
 
 import com.jaxio.util.*;
@@ -64,15 +64,15 @@ public class AccountTest {
     @Test
     public void newInstanceHasNoPrimaryKey() {
         Account model = new Account();
-        assertFalse(model.isIdSet());
+        assertThat(model.isIdSet()).isFalse();
     }
 
     @Test
     public void isIdSetReturnsTrue() {
         Account model = new Account();
-        model.setId(ValueGenerator.getUniqueString(32));
-        assertNotNull(model.getId());
-        assertTrue(model.isIdSet());
+        model.setId(ValueGenerator.getUniqueString(36));
+        assertThat(model.getId()).isNotNull();
+        assertThat(model.isIdSet()).isTrue();
     }
 
     // test columns methods
@@ -92,17 +92,13 @@ public class AccountTest {
         many.setHomeAddress(one);
 
         // make sure it is propagated properly
-        assertNotNull(many.getAddressId());
-        assertEquals(one, many.getHomeAddress());
-        assertSame(many.getAddressId(), one.getId());
+        assertThat(many.getHomeAddress()).isEqualTo(one);
+
         // now set it to back to null
         many.setHomeAddress(null);
 
         // make sure null is propagated properly
-        assertNull(many.getHomeAddress());
-
-        // make sure it is propagated on fk column as well
-        assertNull(many.getAddressId());
+        assertThat(many.getHomeAddress()).isNull();
     }
 
     //-------------------------------------------------------------
@@ -122,15 +118,15 @@ public class AccountTest {
         one.addBook(many);
 
         // make sure it is propagated
-        assertTrue(one.getBooks().contains(many));
-        assertTrue(one.equals(many.getAccount()));
+        assertThat(one.getBooks()).contains(many);
+        assertThat(one).isEqualTo(many.getAccount());
 
         // now set it to null
         one.removeBook(many);
 
         // make sure null is propagated
-        assertFalse(one.getBooks().contains(many));
-        assertNull(many.getAccount());
+        assertThat(one.getBooks().contains(many)).isFalse();
+        assertThat(many.getAccount()).isNull();
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -146,15 +142,15 @@ public class AccountTest {
         one.addDocument(many);
 
         // make sure it is propagated
-        assertTrue(one.getDocuments().contains(many));
-        assertTrue(one.equals(many.getAccount()));
+        assertThat(one.getDocuments()).contains(many);
+        assertThat(one).isEqualTo(many.getAccount());
 
         // now set it to null
         one.removeDocument(many);
 
         // make sure null is propagated
-        assertFalse(one.getDocuments().contains(many));
-        assertNull(many.getAccount());
+        assertThat(one.getDocuments().contains(many)).isFalse();
+        assertThat(many.getAccount()).isNull();
     }
 
     //-------------------------------------------------------------
@@ -173,18 +169,18 @@ public class AccountTest {
         many1.addRole(many2);
 
         // check it is propagated
-        assertTrue(many1.getRoles().contains(many2));
+        assertThat(many1.getRoles()).contains(many2);
         // now let's remove it
         many1.removeRole(many2);
 
         // check it is propagated
-        assertFalse(many1.getRoles().contains(many2));
+        assertThat(many1.getRoles().contains(many2)).isFalse();
     }
 
     @Test
     public void toStringNotNull() {
         Account model = new Account();
-        assertNotNull(model.toString());
+        assertThat(model.toString()).isNotNull();
     }
 
     @Test
@@ -194,8 +190,8 @@ public class AccountTest {
         String username = ValueGenerator.getUniqueString(100);
         model1.setUsername(username);
         model2.setUsername(username);
-        assertTrue(model1.equals(model2));
-        assertTrue(model2.equals(model1));
-        assertTrue(model1.hashCode() == model2.hashCode());
+        assertThat(model1).isEqualTo(model2);
+        assertThat(model2).isEqualTo(model1);
+        assertThat(model1.hashCode()).isEqualTo(model2.hashCode());
     }
 }

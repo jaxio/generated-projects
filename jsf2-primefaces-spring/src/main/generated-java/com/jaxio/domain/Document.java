@@ -37,6 +37,7 @@ import org.hibernate.annotations.ParamDef;
 import org.hibernate.validator.constraints.NotEmpty;
 import com.google.common.base.Objects;
 import com.jaxio.domain.Account;
+import com.jaxio.domain.Document_;
 import com.jaxio.domain.IdentifiableHashBuilder;
 
 @Entity
@@ -55,32 +56,17 @@ public class Document implements Identifiable<String>, Serializable {
     private byte[] documentBinary;
     private Integer version;
 
-    // Technical attributes for query by example
-    private String accountId; // not null
-
     // Many to one
     private Account account; // not null (accountId)
-
-    // ---------------------------
-    // Constructors
-    // ---------------------------
-
-    public Document() {
-    }
-
-    public Document(String primaryKey) {
-        setId(primaryKey);
-    }
 
     // -------------------------------
     // Getter & Setter
     // -------------------------------
-
     // -- [id] ------------------------
 
-    @Column(name = "ID", length = 32)
-    @GeneratedValue(generator = "strategy-uuid")
-    @GenericGenerator(name = "strategy-uuid", strategy = "uuid")
+    @Column(name = "ID", length = 36)
+    @GeneratedValue(generator = "strategy-uuid2")
+    @GenericGenerator(name = "strategy-uuid2", strategy = "uuid2")
     @Id
     public String getId() {
         return id;
@@ -93,17 +79,6 @@ public class Document implements Identifiable<String>, Serializable {
     @Transient
     public boolean isIdSet() {
         return id != null && !id.isEmpty();
-    }
-
-    // -- [accountId] ------------------------
-
-    @Column(name = "ACCOUNT_ID", nullable = false, length = 32, insertable = false, updatable = false)
-    public String getAccountId() {
-        return accountId;
-    }
-
-    private void setAccountId(String accountId) {
-        this.accountId = accountId;
     }
 
     // -- [documentContentType] ------------------------
@@ -166,7 +141,7 @@ public class Document implements Identifiable<String>, Serializable {
         try {
             setDocumentBinary(FileUtils.readFileToByteArray(localFile));
         } catch (Exception e) {
-            throw new RuntimeException("Could not read from file", e);
+            throw new IllegalStateException("Could not read from file", e);
         }
     }
 
@@ -234,13 +209,6 @@ public class Document implements Identifiable<String>, Serializable {
      */
     public void setAccount(Account account) {
         this.account = account;
-
-        // We set the foreign key property so it can be used by our JPA search by Example facility.
-        if (account != null) {
-            setAccountId(account.getId());
-        } else {
-            setAccountId(null);
-        }
     }
 
     /**
@@ -271,13 +239,12 @@ public class Document implements Identifiable<String>, Serializable {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add("id", getId()) //
-                .add("accountId", getAccountId()) //
-                .add("documentContentType", getDocumentContentType()) //
-                .add("documentSize", getDocumentSize()) //
-                .add("documentFileName", getDocumentFileName()) //
-                .add("documentBinary", getDocumentBinary()) //
-                .add("version", getVersion()) //
+                .add(Document_.id.getName(), getId()) //
+                .add(Document_.documentContentType.getName(), getDocumentContentType()) //
+                .add(Document_.documentSize.getName(), getDocumentSize()) //
+                .add(Document_.documentFileName.getName(), getDocumentFileName()) //
+                .add(Document_.documentBinary.getName(), getDocumentBinary()) //
+                .add(Document_.version.getName(), getVersion()) //
                 .toString();
     }
 }

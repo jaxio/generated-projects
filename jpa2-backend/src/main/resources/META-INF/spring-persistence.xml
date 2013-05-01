@@ -22,5 +22,6 @@
         <class>com.jaxio.domain.Legacy</class>
         <class>com.jaxio.domain.more.MoreTypesDemo</class>
         <class>com.jaxio.domain.Role</class>
+        <class>com.jaxio.domain.SavedSearch</class>
 	</persistence-unit>
 </persistence>

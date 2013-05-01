@@ -7,79 +7,22 @@
  */
 package com.jaxio.web.domain;
 
-import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
-import java.util.Arrays;
-import javax.faces.convert.Converter;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.springframework.context.annotation.Scope;
 import com.jaxio.domain.Document;
 import com.jaxio.repository.DocumentRepository;
-import com.jaxio.repository.support.Repository;
-import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.converter.DocumentJsfConverter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
-import com.jaxio.web.domain.support.GenericSearchForm;
+import com.jaxio.web.faces.Conversation;
 
-/**
- * Provides server-side pagination for search.
- * TODO: dependencies wiring after deserialization (get inspiration from http://jira.springframework.org/browse/SWF-1224 )
- */
 @Named
-@Scope("conversation")
+@Conversation
 public class DocumentLazyDataModel extends GenericLazyDataModel<Document, String, DocumentSearchForm> {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    transient private DocumentRepository documentRepository;
-    @Inject
-    transient private DocumentJsfConverter documentConverter;
-    @Inject
-    transient private DocumentSearchForm documentSearchForm;
-
-    private Document[] selectedRows;
-
-    @Override
-    protected Repository<Document, String> getRepository() {
-        return documentRepository;
-    }
-
-    @Override
-    protected Converter getConverter() {
-        return documentConverter;
-    }
-
-    @Override
-    protected GenericSearchForm<Document, DocumentSearchForm> getSearchForm() {
-        return documentSearchForm;
-    }
-
-    @Override
-    protected ConversationContext<Document> getSelectedContext(Document selected) {
-        if (selected.isIdSet()) {
-            // just the id matters as we want to reload it in the conversation entity manager.
-            return DocumentController.newEditContext(selected.getId());
-        } else {
-            return DocumentController.newEditContext(selected); // fresh entity (creation)
-        }
-    }
-
-    // -----------------------------------
-    // Multi selection support
-    // -----------------------------------
-
-    public void setSelectedRows(Document[] selectedRows) {
-        this.selectedRows = selectedRows;
-    }
-
-    public Document[] getSelectedRows() {
-        return selectedRows;
-    }
-
-    public String multiSelect() {
-        return getCurrentConversation() //
-                .<ConversationContext<Document>> getCurrentContext() //
-                .getCallBack() //
-                .selected(Arrays.asList(selectedRows));
+    public DocumentLazyDataModel(DocumentRepository documentRepository, DocumentJsfConverter documentConverter, DocumentController documentController,
+            DocumentSearchForm documentSearchForm) {
+        super(documentRepository, documentConverter, documentController, documentSearchForm);
     }
 }

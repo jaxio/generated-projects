@@ -86,7 +86,7 @@ public class ValueGenerator {
      */
     public static String getUniqueString(int maxLength) {
         if (maxLength == 1) {
-            return "" + getUniqueChar();
+            return String.valueOf(getUniqueChar());
         }
 
         if (maxLength < NUM_CHARS) {

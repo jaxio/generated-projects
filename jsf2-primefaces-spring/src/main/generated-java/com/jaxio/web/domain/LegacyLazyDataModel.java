@@ -7,80 +7,23 @@
  */
 package com.jaxio.web.domain;
 
-import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
-import java.util.Arrays;
-import javax.faces.convert.Converter;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.springframework.context.annotation.Scope;
 import com.jaxio.domain.Legacy;
 import com.jaxio.domain.LegacyPk;
 import com.jaxio.repository.LegacyRepository;
-import com.jaxio.repository.support.Repository;
-import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.converter.LegacyJsfConverter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
-import com.jaxio.web.domain.support.GenericSearchForm;
+import com.jaxio.web.faces.Conversation;
 
-/**
- * Provides server-side pagination for search.
- * TODO: dependencies wiring after deserialization (get inspiration from http://jira.springframework.org/browse/SWF-1224 )
- */
 @Named
-@Scope("conversation")
+@Conversation
 public class LegacyLazyDataModel extends GenericLazyDataModel<Legacy, LegacyPk, LegacySearchForm> {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    transient private LegacyRepository legacyRepository;
-    @Inject
-    transient private LegacyJsfConverter legacyConverter;
-    @Inject
-    transient private LegacySearchForm legacySearchForm;
-
-    private Legacy[] selectedRows;
-
-    @Override
-    protected Repository<Legacy, LegacyPk> getRepository() {
-        return legacyRepository;
-    }
-
-    @Override
-    protected Converter getConverter() {
-        return legacyConverter;
-    }
-
-    @Override
-    protected GenericSearchForm<Legacy, LegacySearchForm> getSearchForm() {
-        return legacySearchForm;
-    }
-
-    @Override
-    protected ConversationContext<Legacy> getSelectedContext(Legacy selected) {
-        if (selected.isIdSet()) {
-            // just the id matters as we want to reload it in the conversation entity manager.
-            return LegacyController.newEditContext(selected.getId());
-        } else {
-            return LegacyController.newEditContext(selected); // fresh entity (creation)
-        }
-    }
-
-    // -----------------------------------
-    // Multi selection support
-    // -----------------------------------
-
-    public void setSelectedRows(Legacy[] selectedRows) {
-        this.selectedRows = selectedRows;
-    }
-
-    public Legacy[] getSelectedRows() {
-        return selectedRows;
-    }
-
-    public String multiSelect() {
-        return getCurrentConversation() //
-                .<ConversationContext<Legacy>> getCurrentContext() //
-                .getCallBack() //
-                .selected(Arrays.asList(selectedRows));
+    public LegacyLazyDataModel(LegacyRepository legacyRepository, LegacyJsfConverter legacyConverter, LegacyController legacyController,
+            LegacySearchForm legacySearchForm) {
+        super(legacyRepository, legacyConverter, legacyController, legacySearchForm);
     }
 }

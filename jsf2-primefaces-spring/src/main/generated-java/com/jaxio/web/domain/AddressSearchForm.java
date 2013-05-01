@@ -7,22 +7,28 @@
  */
 package com.jaxio.web.domain;
 
+import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
+import static com.jaxio.domain.Address_.city;
+import static com.jaxio.domain.Address_.streetName;
 import javax.inject.Named;
-import org.springframework.context.annotation.Scope;
+import com.jaxio.dao.support.PropertySelector;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Address;
 import com.jaxio.web.domain.support.GenericSearchForm;
+import com.jaxio.web.faces.Conversation;
 
 /**
  * View Helper to find/select {@link Address}.
  * It exposes a {@link Address} instance so it can be used in search by Example query.
  */
 @Named
-@Scope("conversation")
-public class AddressSearchForm extends GenericSearchForm<Address, AddressSearchForm> {
+@Conversation
+public class AddressSearchForm extends GenericSearchForm<Address, Integer, AddressSearchForm> {
     private static final long serialVersionUID = 1L;
 
     private Address address = new Address();
+    private PropertySelector<Address, String> streetNameSelector = newPropertySelector(streetName);
+    private PropertySelector<Address, String> citySelector = newPropertySelector(city);
 
     public Address getAddress() {
         return address;
@@ -33,8 +39,21 @@ public class AddressSearchForm extends GenericSearchForm<Address, AddressSearchF
         return address;
     }
 
+    // Selectors for property
+    public PropertySelector<Address, String> getStreetNameSelector() {
+        return streetNameSelector;
+    }
+
+    public PropertySelector<Address, String> getCitySelector() {
+        return citySelector;
+    }
+
     public SearchParameters toSearchParameters() {
-        return new SearchParameters().anywhere();
+        return new SearchParameters() //
+                .anywhere() //
+                .property(streetNameSelector) //
+                .property(citySelector) //
+        ;
     }
 
     @Override
@@ -45,5 +64,7 @@ public class AddressSearchForm extends GenericSearchForm<Address, AddressSearchF
     @Override
     public void resetWithOther(AddressSearchForm other) {
         this.address = other.getAddress();
+        this.streetNameSelector = other.getStreetNameSelector();
+        this.citySelector = other.getCitySelector();
     }
 }

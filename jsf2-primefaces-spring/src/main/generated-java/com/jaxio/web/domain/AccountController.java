@@ -7,68 +7,58 @@
  */
 package com.jaxio.web.domain;
 
-import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Account;
+import com.jaxio.domain.Account_;
 import com.jaxio.repository.AccountRepository;
 import com.jaxio.web.conversation.Conversation;
 import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationFactory;
+import com.jaxio.web.domain.support.GenericController;
+import com.jaxio.web.permission.AccountPermission;
 
 /**
  * Stateless controller for Account conversation start. Provides also auto-complete support. 
  */
 @Named
 @Singleton
-public class AccountController implements ConversationFactory {
+public class AccountController extends GenericController<Account, String> implements ConversationFactory {
     public final static String editUri = "/domain/accountEdit.faces";
     public final static String selectUri = "/domain/accountSelect.faces";
-    private AccountRepository accountRepository;
 
     @Inject
-    public void setAccountRepository(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
+    public AccountController(AccountRepository accountRepository, AccountPermission accountPermission) {
+        super(accountRepository, accountPermission);
     }
 
-    // --------------------------------
-    // ConversationFactoryImpl
-    // --------------------------------
+    // -------------------
+    // ConversationFactory
+    // -------------------
 
     @Override
     public boolean canCreateConversation(HttpServletRequest request) {
-        return selectUri.equals(request.getServletPath());
+        return selectUri.equals(request.getServletPath()) || editUri.equals(request.getServletPath());
     }
 
     @Override
     public Conversation createConversation(HttpServletRequest request) {
         String uri = request.getServletPath();
         if (selectUri.equals(uri)) {
-            Conversation conversation = Conversation.newInstance(request);
-            ConversationContext<Account> ctx = newSearchContext();
-            ctx.setLabelWithKey("account");
-            conversation.setNextContext(ctx);
-            return conversation;
+            return Conversation.newConversation(request, newSearchContext("account"));
+        } else if (editUri.equals(uri)) {
+            return Conversation.newConversation(request, newEditContext("account", new Account()));
+        } else {
+            throw new IllegalStateException("Unexpected conversation creation demand");
         }
-
-        throw new IllegalStateException("Unexpected conversation creation demand");
     }
 
-    // --------------------------------
-    // Autocomplete support
-    // --------------------------------
-
-    /**
-     * This method is used from primefaces autocomplete components.
-     */
-    public List<Account> complete(String value) {
-        SearchParameters sp = new SearchParameters().anywhere().searchPattern(value);
-        // order by business key
-        sp.orderBy("username");
-        return accountRepository.find(sp);
+    @Override
+    protected void defaultOrder(SearchParameters searchParameters) {
+        searchParameters.orderBy(Account_.username);
     }
 
     // --------------------------------
@@ -79,32 +69,19 @@ public class AccountController implements ConversationFactory {
      * Helper to construct a new ConversationContext to edit an Account.
      * @param account the entity to edit.
      */
-    public static ConversationContext<Account> newEditContext(final Account account) {
+    public ConversationContext<Account> newEditContext(final Account account) {
         ConversationContext<Account> ctx = new ConversationContext<Account>();
         ctx.setEntity(account); // used by GenericEditForm.init()
+        ctx.setIsNewEntity(!account.isIdSet());
         ctx.setViewUri(editUri);
-        ctx.addSourceIgnoringUseConversationEntityManager("form:homeAddress");
-        return ctx;
-    }
-
-    /**
-     * Helper to construct a new ConversationContext to edit an Account.
-     * @param id the id of the entity to edit.
-     */
-    public static ConversationContext<Account> newEditContext(final String id) {
-        ConversationContext<Account> ctx = new ConversationContext<Account>();
-        ctx.setEntityId(id); // used by GenericEditForm.init()
-        ctx.setViewUri(editUri);
-        ctx.addSourceIgnoringUseConversationEntityManager("form:homeAddress");
         return ctx;
     }
 
     /**
      * Helper to construct a new ConversationContext for search/selection.
      */
-    public static ConversationContext<Account> newSearchContext() {
+    public ConversationContext<Account> newSearchContext() {
         ConversationContext<Account> ctx = new ConversationContext<Account>();
-        ctx.setUseConversationEntityManager(false);
         ctx.setViewUri(selectUri);
         return ctx;
     }

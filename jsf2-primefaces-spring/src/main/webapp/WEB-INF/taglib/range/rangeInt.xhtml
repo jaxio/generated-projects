@@ -2,11 +2,11 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" 
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:h="http://java.sun.com/jsf/html">
-	<h:outputLabel for="${id}" value="${label} :" />
-	<h:panelGrid columns="4" id="${id}" styleClass="aria-role-presentation">
-		<h:outputLabel for="${id}RangeFrom" value="${msg.range_from}" />
-		<p:inputText id="${id}RangeFrom" value="#{value.from}" converter="javax.faces.Integer"/>
-		<h:outputLabel for="${id}RangeTo" value="${msg.range_to}" />
-		<p:inputText id="${id}RangeTo" value="#{value.to}" converter="javax.faces.Integer"/>
+	<h:outputLabel for="#{id}" value="#{label}" />
+	<h:panelGrid columns="4" id="#{id}" styleClass="aria-role-presentation">
+		<h:outputLabel for="#{id}RangeFrom" value="#{msg.range_from}" />
+		<p:inputText id="#{id}RangeFrom" value="#{value.from}" converter="javax.faces.Integer"/>
+		<h:outputLabel for="#{id}RangeTo" value="#{msg.range_to}" />
+		<p:inputText id="#{id}RangeTo" value="#{value.to}" converter="javax.faces.Integer"/>
 	</h:panelGrid>
 </ui:composition>

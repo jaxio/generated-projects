@@ -50,17 +50,23 @@ public class ConversationFilter implements Filter {
         LogContext.setSessionId(request.getSession().getId());
 
         String cid = request.getParameter("_cid_");
+        String ccid = request.getParameter("_ccid_");
 
         if (cid != null) {
             // -----------------------------
             // RESUME existing conversation
             // -----------------------------
             try {
-                conversationManager.resumeConversation(cid, request);
+                conversationManager.resumeConversation(cid, ccid, request);
                 if (log.isDebugEnabled()) {
                     log.debug("Conv. " + cid + " resumed. Nb ctx: " + getCurrentConversation().getConversationContextesCount() + ". Uri: "
                             + request.getRequestURI());
                 }
+
+                // non cacheable see http://stackoverflow.com/questions/49547/making-sure-a-web-page-is-not-cached-across-all-browsers
+                response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+                response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+                response.setDateHeader("Expires", 0); // Proxies.
             } catch (UnexpectedConversationException uue) {
                 log.error(uue.getMessage());
                 response.sendRedirect(request.getContextPath() + uue.getRedirectUrl());
@@ -70,28 +76,20 @@ public class ConversationFilter implements Filter {
             try {
                 filterChain.doFilter(request, response);
             } finally {
-                conversationManager.pauseCurrentConversation();
+                conversationManager.pauseCurrentConversation(request);
             }
         } else if (!request.getRequestURI().contains("/javax.faces.resource/") && "true".equals(request.getParameter("_ncid_"))) {
             // -----------------------------
             // CREATE new conversation
             // -----------------------------
-
-            // Limitation (per user) on the number of simultaneous conversations.
-            if (conversationManager.isMaxConversationsReached(request.getSession())) {
-                response.sendRedirect(request.getContextPath() + "/error/limit.faces");
-                return;
-            } else {
-                // CREATE a new conversation
-                try {
-                    Conversation conversation = conversationManager.createConversation(request);
-                    response.sendRedirect(request.getContextPath() + conversation.nextUrl());
-                } catch (UnexpectedConversationException uue) {
-                    log.error(uue.getMessage());
-                    response.sendRedirect(request.getContextPath() + uue.getRedirectUrl());
-                }
-                return;
+            try {
+                Conversation conversation = conversationManager.createConversation(request);
+                response.sendRedirect(request.getContextPath() + conversation.nextUrl());
+            } catch (UnexpectedConversationException uue) {
+                log.error(uue.getMessage());
+                response.sendRedirect(request.getContextPath() + uue.getRedirectUrl());
             }
+            return;
         } else {
             // -----------------------------
             // Not related to conversations

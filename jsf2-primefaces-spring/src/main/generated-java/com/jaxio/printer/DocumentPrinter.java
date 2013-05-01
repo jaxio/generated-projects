@@ -7,8 +7,6 @@
  */
 package com.jaxio.printer;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -37,18 +35,8 @@ public class DocumentPrinter extends DiscoverablePrinter<Document> {
             return "";
         }
         StringBuilder ret = new StringBuilder(256);
-        if (!isBlank(document.getDocumentContentType())) {
-            if (ret.length() != 0) {
-                ret.append('/');
-            }
-            ret.append(document.getDocumentContentType().trim());
-        }
-        if (!isBlank(document.getDocumentFileName())) {
-            if (ret.length() != 0) {
-                ret.append('/');
-            }
-            ret.append(document.getDocumentFileName().trim());
-        }
+        appendIfNotEmpty(ret, document.getDocumentContentType());
+        appendIfNotEmpty(ret, document.getDocumentFileName());
         return ret.toString();
     }
 }

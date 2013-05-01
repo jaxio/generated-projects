@@ -7,22 +7,27 @@
  */
 package com.jaxio.web.domain;
 
+import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
+import static com.jaxio.domain.Legacy_.extraInfo;
 import javax.inject.Named;
-import org.springframework.context.annotation.Scope;
+import com.jaxio.dao.support.PropertySelector;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Legacy;
+import com.jaxio.domain.LegacyPk;
 import com.jaxio.web.domain.support.GenericSearchForm;
+import com.jaxio.web.faces.Conversation;
 
 /**
  * View Helper to find/select {@link Legacy}.
  * It exposes a {@link Legacy} instance so it can be used in search by Example query.
  */
 @Named
-@Scope("conversation")
-public class LegacySearchForm extends GenericSearchForm<Legacy, LegacySearchForm> {
+@Conversation
+public class LegacySearchForm extends GenericSearchForm<Legacy, LegacyPk, LegacySearchForm> {
     private static final long serialVersionUID = 1L;
 
     private Legacy legacy = new Legacy();
+    private PropertySelector<Legacy, String> extraInfoSelector = newPropertySelector(extraInfo);
 
     public Legacy getLegacy() {
         return legacy;
@@ -33,8 +38,16 @@ public class LegacySearchForm extends GenericSearchForm<Legacy, LegacySearchForm
         return legacy;
     }
 
+    // Selectors for property
+    public PropertySelector<Legacy, String> getExtraInfoSelector() {
+        return extraInfoSelector;
+    }
+
     public SearchParameters toSearchParameters() {
-        return new SearchParameters().anywhere();
+        return new SearchParameters() //
+                .anywhere() //
+                .property(extraInfoSelector) //
+        ;
     }
 
     @Override
@@ -45,5 +58,6 @@ public class LegacySearchForm extends GenericSearchForm<Legacy, LegacySearchForm
     @Override
     public void resetWithOther(LegacySearchForm other) {
         this.legacy = other.getLegacy();
+        this.extraInfoSelector = other.getExtraInfoSelector();
     }
 }

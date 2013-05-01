@@ -105,14 +105,6 @@ APP.menu.call = function(idToClick) {
 	jQuery(PrimeFaces.escapeClientId(idToClick)).click();	
 	return false;
 };
-APP.menu.openLocation = function() {
-	window.location.href=window.location.href.substring(0, window.location.href.indexOf('?')); /* go to 'open' page...*/
-	return;
-};
-APP.menu.newLocation = function() {
-	window.location.href=window.location.href.substring(0, window.location.href.indexOf('?'))+'?create=true'; /* go to 'new' page...*/
-	return;
-};
 APP.menu.cancel = function() {
 	return APP.menu.call('form:cancel');
 };

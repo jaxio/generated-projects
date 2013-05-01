@@ -10,6 +10,7 @@ package com.jaxio.dao.support;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -150,8 +151,8 @@ public class NamedQueryUtil {
         }
 
         // add parameters for the named query
-        for (String paramName : sp.getNamedQueryParameters().keySet()) {
-            query.setParameter(paramName, sp.getNamedQueryParameter(paramName));
+        for (Entry<String, Object> entrySet : sp.getNamedQueryParameters().entrySet()) {
+            query.setParameter(entrySet.getKey(), entrySet.getValue());
         }
     }
 
@@ -165,9 +166,8 @@ public class NamedQueryUtil {
 
     private Query recreateQuery(Query current, String newSqlString) {
         Query result = entityManager.createQuery(newSqlString);
-        Map<String, Object> hints = current.getHints();
-        for (String hintName : hints.keySet()) {
-            result.setHint(hintName, hints.get(hintName));
+        for (Entry<String, Object> hint : current.getHints().entrySet()) {
+            result.setHint(hint.getKey(), hint.getValue());
         }
         return result;
     }

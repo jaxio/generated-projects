@@ -10,10 +10,8 @@ package com.jaxio.web.conversation;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.jaxio.util.ResourcesUtil;
 
@@ -34,35 +32,53 @@ public class ConversationContext<T> implements Serializable {
      *  Stores variables such as 'readonly', 'sub', etc.
      */
     private Map<String, Object> vars = new HashMap<String, Object>();
-
-    /**
-     * Stores jsf component id that require special treatment: process the request as if useConversationEntityManager was false.
-     * Typical use case is for autoComplete component that should perform query outside of the conversation entity manager.
-     */
-    private Set<String> sourcesIgnoringUseConversationEntityManager = new HashSet<String>();
-
+    private String id; // context id
     private String conversationId;
     private ConversationCallBack<T> callBack = new ConversationCallBack<T>();
     private String label = "(todo label)"; // Up to the developer to call setLabel or setLabelWithKey
     private String viewUri;
-    private boolean useConversationEntityManager = true;
+    private boolean isNewEntity;
 
     /**
-     * Use this method if the passed entity is either new (not persisted yet) or persistent that is, already present in the conversation's entity manager.
+     * Set this conversation context id.
+     */
+    protected void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    protected void setConversationId(String conversationId) {
+        this.conversationId = conversationId;
+    }
+
+    /**
+     * Set the entity that will be used by the XxxForm.
      */
     public void setEntity(T entity) {
-        setVar("entity", entity);
-    }
-
-    @SuppressWarnings("unchecked")
-    public T getEntityAndRemove() {
-        return (T) vars.remove("entity");
+        setVar("_entity", entity);
     }
 
     /**
-     * Use this method if you want the entity to be loaded afterward, using the conversation's entityManager.
-     * Our classical usage is as follow: when selecting an entity for edition/view from a search view, we use this method
-     * as the entity manager used in the search view is not kept by the conversation.
+     * Returns the original entity that was passed to this context.
+     */
+    @SuppressWarnings("unchecked")
+    public T getEntity() {
+        return (T) vars.get("_entity");
+    }
+
+    public void setIsNewEntity(boolean isNewEntity) {
+        this.isNewEntity = isNewEntity;
+    }
+
+    public boolean isNewEntity() {
+        return isNewEntity;
+    }
+
+    /**
+     * Use this method if you want the entity to be loaded afterward.
      */
     public void setEntityId(Serializable entityId) {
         setVar("entityId", entityId);
@@ -71,34 +87,6 @@ public class ConversationContext<T> implements Serializable {
     @SuppressWarnings("unchecked")
     public <PK> PK getEntityIdAndRemove() {
         return (PK) vars.remove("entityId");
-    }
-
-    public void setUseConversationEntityManager(boolean useConversationEntityManager) {
-        this.useConversationEntityManager = useConversationEntityManager;
-    }
-
-    /**
-     * Whether this conversation context needs the conversation's entity manager to be bind or not.
-     * If true, then the entity manager of the conversation is binded when this context is active.
-     */
-    public boolean useConversationEntityManager() {
-        return useConversationEntityManager;
-    }
-
-    /**
-     * Consider the useConversationEntityManager as false when the passed componentId is a javax.faces.source.
-     * @param componentId
-     */
-    public void addSourceIgnoringUseConversationEntityManager(String componentId) {
-        sourcesIgnoringUseConversationEntityManager.add(componentId);
-    }
-
-    public boolean ignoreUseConversationEntityManager(String componentId) {
-        return sourcesIgnoringUseConversationEntityManager.contains(componentId);
-    }
-
-    protected void setConversationId(String conversationId) {
-        this.conversationId = conversationId;
     }
 
     /**
@@ -173,7 +161,7 @@ public class ConversationContext<T> implements Serializable {
      */
     public String getUrl() {
         checkViewUriAndConversationId();
-        return viewUri + "?_cid_=" + conversationId;
+        return viewUri + "?_cid_=" + conversationId + "&_ccid_=" + getId();
     }
 
     /**
@@ -181,7 +169,7 @@ public class ConversationContext<T> implements Serializable {
      */
     public String view() {
         checkViewUriAndConversationId();
-        return viewUri + "?faces-redirect=true&_cid_=" + conversationId;
+        return viewUri + "?faces-redirect=true&_cid_=" + conversationId + "&_ccid_=" + getId();
     }
 
     private void checkViewUriAndConversationId() {

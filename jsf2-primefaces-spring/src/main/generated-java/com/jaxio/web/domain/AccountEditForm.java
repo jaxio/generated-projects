@@ -14,30 +14,62 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.omnifaces.util.Faces;
 import org.primefaces.event.SelectEvent;
-import org.springframework.context.annotation.Scope;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Address;
 import com.jaxio.domain.Book;
 import com.jaxio.domain.Document;
 import com.jaxio.domain.Role;
 import com.jaxio.repository.AccountRepository;
+import com.jaxio.repository.support.EntityGraphLoader;
 import com.jaxio.web.conversation.ConversationCallBack;
 import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.domain.AddressController;
+import com.jaxio.web.domain.BookController;
+import com.jaxio.web.domain.DocumentController;
+import com.jaxio.web.domain.RoleController;
 import com.jaxio.web.domain.support.GenericEditForm;
 import com.jaxio.web.domain.support.SelectableListDataModel;
+import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.permission.AddressPermission;
+import com.jaxio.web.permission.BookPermission;
+import com.jaxio.web.permission.DocumentPermission;
+import com.jaxio.web.permission.RolePermission;
 import com.jaxio.web.util.TabBean;
 
 /**
  * View Helper/Controller to edit {@link Account}.
  */
 @Named
-@Scope("conversation")
+@Conversation
 public class AccountEditForm extends GenericEditForm<Account, String> {
     private TabBean tabBean = new TabBean();
     private SelectableListDataModel<Book> books;
     private SelectableListDataModel<Document> documents;
     private SelectableListDataModel<Role> roles;
+
+    // used to preload lazy associations transactionally
+    private EntityGraphLoader<Account> entityGraphLoader = new EntityGraphLoader<Account>() {
+        @Override
+        public void loadGraph(Account account) {
+            if (account.getHomeAddress() != null) {
+                account.getHomeAddress().toString();
+            }
+            if (account.getBooks() != null) {
+                account.getBooks().size();
+            }
+            if (account.getDocuments() != null) {
+                account.getDocuments().size();
+            }
+            if (account.getRoles() != null) {
+                account.getRoles().size();
+            }
+        }
+    };
+
+    @Override
+    protected EntityGraphLoader<Account> getEntityGraphLoader() {
+        return entityGraphLoader;
+    }
 
     @Inject
     public void setAccountRepository(AccountRepository accountRepository) {
@@ -51,47 +83,13 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     @PostConstruct
     protected void init() {
         super.init();
-
-        // _HACK_ Attention: you must realize that associations below (when lazy) are fetched from the view, non transactionnally.
-
-        if (books == null) {
-            books = new SelectableListDataModel<Book>(getAccount().getBooks());
-        }
-
-        if (documents == null) {
-            documents = new SelectableListDataModel<Document>(getAccount().getDocuments());
-        }
-
-        if (roles == null) {
-            roles = new SelectableListDataModel<Role>(getAccount().getRoles());
-        }
+        books = new SelectableListDataModel<Book>(getAccount().getBooks());
+        documents = new SelectableListDataModel<Document>(getAccount().getDocuments());
+        roles = new SelectableListDataModel<Role>(getAccount().getRoles());
     }
 
     public Account getAccount() {
         return getEntity();
-    }
-
-    // --------------------------------------------------
-    // Support for auto-complete and callback many to one 
-    // --------------------------------------------------
-
-    public void setSelectedHomeAddress(Address address) {
-        // detach the currently set target if present
-        //  1) to prevent any potential modification to go to the db
-        //  2) to reduce session size        	
-        if (getAccount().getHomeAddress() != null) {
-            getCurrentConversation().getEntityManager().detach(getAccount().getHomeAddress());
-        }
-
-        if (address != null) {
-            getAccount().setHomeAddress(getCurrentConversation().getEntityManager().merge(address));
-        } else {
-            getAccount().setHomeAddress(null);
-        }
-    }
-
-    public Address getSelectedHomeAddress() {
-        return getAccount().getHomeAddress();
     }
 
     /**
@@ -101,14 +99,23 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         return tabBean;
     }
 
+    /**
+     * Used in dataTable.
+     */
     public SelectableListDataModel<Book> getBooks() {
         return books;
     }
 
+    /**
+     * Used in dataTable.
+     */
     public SelectableListDataModel<Document> getDocuments() {
         return documents;
     }
 
+    /**
+     * Used in dataTable.
+     */
     public SelectableListDataModel<Role> getRoles() {
         return roles;
     }
@@ -116,39 +123,55 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     // --------------------------------------------
     // Actions for homeAddress association
     // --------------------------------------------
+    @Inject
+    private AddressController addressController;
+
+    @Inject
+    private AddressPermission addressPermission;
 
     public String viewHomeAddress() {
-        ConversationContext<Address> ctx = AddressController.newEditContext(getAccount().getHomeAddress());
-        ctx.setLabelWithKey("account_homeAddress");
-        getCurrentConversation().setNextContextSubReadOnly(ctx);
-        return ctx.view();
+        return addressController.editSubReadOnlyView("account_homeAddress", getAccount().getHomeAddress());
     }
 
+    /**
+     * Helper for the autoComplete component used for the Account's homeAddress property.
+     */
+    public Address getSelectedHomeAddress() {
+        return getAccount().getHomeAddress();
+    }
+
+    /**
+     * Helper for the autoComplete component used for the Account's homeAddress property.
+     * Handles ajax autoComplete event and regular page postback.
+     */
+    public void setSelectedHomeAddress(Address address) {
+        if (addressController.shouldReplace(getAccount().getHomeAddress(), address)) {
+            getAccount().setHomeAddress(address);
+        }
+    }
+
+    /**
+     * Action to navigate to the Address select page in order to select a new Address
+     * to be set on this Account's homeAddress property.
+     */
     public String selectHomeAddress() {
-        ConversationContext<Address> ctx = AddressController.newSearchContext();
-        ctx.setLabelWithKey("account_homeAddress");
-        ctx.setCallBack(selectHomeAddressCallBack);
-        getCurrentConversation().setNextContextSub(ctx);
-        return ctx.view();
+        return addressController.selectSubView("account_homeAddress", selectHomeAddressCallBack);
     }
 
     protected ConversationCallBack<Address> selectHomeAddressCallBack = new ConversationCallBack<Address>() {
         private static final long serialVersionUID = 1L;
 
-        // will be invoked from the AccountLazyDataModel
+        // will be invoked from the AddressLazyDataModel
         @Override
         protected void onSelected(Address address) {
-            setSelectedHomeAddress(address);
+            checkPermission(addressPermission.canSelect(address));
+            getAccount().setHomeAddress(address);
             messageUtil.infoEntity("status_selected_ok", getAccount().getHomeAddress());
         }
     };
 
     public String addHomeAddress() {
-        ConversationContext<Address> ctx = AddressController.newEditContext(new Address());
-        ctx.setLabelWithKey("account_homeAddress");
-        ctx.setCallBack(addHomeAddressCallBack);
-        getCurrentConversation().setNextContextSub(ctx);
-        return ctx.view();
+        return addressController.editSubView("account_homeAddress", new Address(), addHomeAddressCallBack);
     }
 
     protected ConversationCallBack<Address> addHomeAddressCallBack = new ConversationCallBack<Address>() {
@@ -156,36 +179,40 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
 
         @Override
         protected void onOk(Address address) {
-            // detach the currently set target if present
-            if (getAccount().getHomeAddress() != null) {
-                getCurrentConversation().getEntityManager().detach(getAccount().getHomeAddress());
-            }
-
+            checkPermission(addressPermission.canCreate());
             getAccount().setHomeAddress(address);
             messageUtil.infoEntity("status_created_ok", address);
         }
     };
 
     public String editHomeAddress() {
-        ConversationContext<Address> ctx = AddressController.newEditContext(getAccount().getHomeAddress());
-        ctx.setLabelWithKey("account_homeAddress");
-        getCurrentConversation().setNextContextSub(ctx);
-        return ctx.view();
+        return addressController.editSubView("account_homeAddress", getAccount().getHomeAddress(), editHomeAddressCallBack);
     }
+
+    protected ConversationCallBack<Address> editHomeAddressCallBack = new ConversationCallBack<Address>() {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        protected void onOk(Address address) {
+            getAccount().setHomeAddress(address);
+            messageUtil.infoEntity("status_edited_ok", address);
+        }
+    };
 
     // --------------------------------------------
     // Actions for book association
     // --------------------------------------------
+    @Inject
+    private BookController bookController;
+
+    @Inject
+    private BookPermission bookPermission;
 
     /**
      * Action with implicit navigation to edit the selected book.
      */
     public String editBook() {
-        ConversationContext<Book> ctx = BookController.newEditContext(books.getSelectedRow());
-        ctx.setLabelWithKey("account_books");
-        ctx.setCallBack(editBookCallBack);
-        getCurrentConversation().setNextContextSub(ctx);
-        return ctx.view();
+        return bookController.editSubView("account_books", books.getSelectedRow(), editBookCallBack);
     }
 
     protected ConversationCallBack<Book> editBookCallBack = new ConversationCallBack<Book>() {
@@ -193,15 +220,15 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
 
         @Override
         protected void onOk(Book book) {
+            Book previousBook = books.getSelectedRow(); // yes, it is preserved...
+            getAccount().removeBook(previousBook);
+            getAccount().addBook(book);
             messageUtil.infoEntity("status_edited_ok", book);
         }
     };
 
     public String viewBook() {
-        ConversationContext<Book> ctx = BookController.newEditContext(books.getSelectedRow());
-        ctx.setLabelWithKey("account_books");
-        getCurrentConversation().setNextContextSubReadOnly(ctx);
-        return ctx.view();
+        return bookController.editSubReadOnlyView("account_books", books.getSelectedRow());
     }
 
     /**
@@ -212,16 +239,16 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     }
 
     public void removeBook() {
+        checkPermission(bookPermission.canDelete(books.getSelectedRow()));
         getAccount().removeBook(books.getSelectedRow());
         messageUtil.infoEntity("status_removed_ok", books.getSelectedRow());
     }
 
     public String addBook() {
+        checkPermission(bookPermission.canCreate());
         Book book = new Book();
         book.setAccount(getAccount()); // for display
-        ConversationContext<Book> ctx = BookController.newEditContext(book);
-        ctx.setLabelWithKey("account_books");
-        ctx.setCallBack(addBookCallBack);
+        ConversationContext<Book> ctx = bookController.newEditContext("account_books", book, addBookCallBack);
         getCurrentConversation().setNextContextSub(ctx);
         return ctx.view();
     }
@@ -239,16 +266,17 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     // --------------------------------------------
     // Actions for document association
     // --------------------------------------------
+    @Inject
+    private DocumentController documentController;
+
+    @Inject
+    private DocumentPermission documentPermission;
 
     /**
      * Action with implicit navigation to edit the selected document.
      */
     public String editDocument() {
-        ConversationContext<Document> ctx = DocumentController.newEditContext(documents.getSelectedRow());
-        ctx.setLabelWithKey("account_documents");
-        ctx.setCallBack(editDocumentCallBack);
-        getCurrentConversation().setNextContextSub(ctx);
-        return ctx.view();
+        return documentController.editSubView("account_documents", documents.getSelectedRow(), editDocumentCallBack);
     }
 
     protected ConversationCallBack<Document> editDocumentCallBack = new ConversationCallBack<Document>() {
@@ -256,15 +284,15 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
 
         @Override
         protected void onOk(Document document) {
+            Document previousDocument = documents.getSelectedRow(); // yes, it is preserved...
+            getAccount().removeDocument(previousDocument);
+            getAccount().addDocument(document);
             messageUtil.infoEntity("status_edited_ok", document);
         }
     };
 
     public String viewDocument() {
-        ConversationContext<Document> ctx = DocumentController.newEditContext(documents.getSelectedRow());
-        ctx.setLabelWithKey("account_documents");
-        getCurrentConversation().setNextContextSubReadOnly(ctx);
-        return ctx.view();
+        return documentController.editSubReadOnlyView("account_documents", documents.getSelectedRow());
     }
 
     /**
@@ -275,16 +303,16 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     }
 
     public void removeDocument() {
+        checkPermission(documentPermission.canDelete(documents.getSelectedRow()));
         getAccount().removeDocument(documents.getSelectedRow());
         messageUtil.infoEntity("status_removed_ok", documents.getSelectedRow());
     }
 
     public String addDocument() {
+        checkPermission(documentPermission.canCreate());
         Document document = new Document();
         document.setAccount(getAccount()); // for display
-        ConversationContext<Document> ctx = DocumentController.newEditContext(document);
-        ctx.setLabelWithKey("account_documents");
-        ctx.setCallBack(addDocumentCallBack);
+        ConversationContext<Document> ctx = documentController.newEditContext("account_documents", document, addDocumentCallBack);
         getCurrentConversation().setNextContextSub(ctx);
         return ctx.view();
     }
@@ -302,13 +330,14 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     // --------------------------------------------
     // Actions for role association
     // --------------------------------------------
+    @Inject
+    private RoleController roleController;
+
+    @Inject
+    private RolePermission rolePermission;
+
     public String selectRole() {
-        ConversationContext<Role> ctx = RoleController.newSearchContext();
-        ctx.setLabelWithKey("account_roles");
-        ctx.setCallBack(selectRoleCallBack);
-        ctx.setVar("multiCheckboxSelection", true);
-        getCurrentConversation().setNextContextSub(ctx);
-        return ctx.view();
+        return roleController.multiSelectSubView("account_roles", selectRoleCallBack);
     }
 
     protected ConversationCallBack<Role> selectRoleCallBack = new ConversationCallBack<Role>() {
@@ -317,11 +346,9 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
         @Override
         protected void onSelected(List<Role> roles) {
             for (Role role : roles) {
-                Role mergedRole = getCurrentConversation().getEntityManager().merge(role);
-                if (!getAccount().containsRole(mergedRole)) {
-                    getAccount().addRole(mergedRole);
-                    messageUtil.infoEntity("status_added_existing_ok", mergedRole);
-                }
+                getAccount().removeRole(role);
+                getAccount().addRole(role);
+                messageUtil.infoEntity("status_added_existing_ok", role);
             }
         }
     };
@@ -330,11 +357,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
      * Action with implicit navigation to edit the selected role.
      */
     public String editRole() {
-        ConversationContext<Role> ctx = RoleController.newEditContext(roles.getSelectedRow());
-        ctx.setLabelWithKey("account_roles");
-        ctx.setCallBack(editRoleCallBack);
-        getCurrentConversation().setNextContextSub(ctx);
-        return ctx.view();
+        return roleController.editSubView("account_roles", roles.getSelectedRow(), editRoleCallBack);
     }
 
     protected ConversationCallBack<Role> editRoleCallBack = new ConversationCallBack<Role>() {
@@ -342,15 +365,15 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
 
         @Override
         protected void onOk(Role role) {
+            Role previousRole = roles.getSelectedRow(); // yes, it is preserved...
+            getAccount().removeRole(previousRole);
+            getAccount().addRole(role);
             messageUtil.infoEntity("status_edited_ok", role);
         }
     };
 
     public String viewRole() {
-        ConversationContext<Role> ctx = RoleController.newEditContext(roles.getSelectedRow());
-        ctx.setLabelWithKey("account_roles");
-        getCurrentConversation().setNextContextSubReadOnly(ctx);
-        return ctx.view();
+        return roleController.editSubReadOnlyView("account_roles", roles.getSelectedRow());
     }
 
     /**
@@ -361,18 +384,14 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     }
 
     public void removeRole() {
+        checkPermission(rolePermission.canDelete(roles.getSelectedRow()));
         getAccount().removeRole(roles.getSelectedRow());
-        // let's detach it for 2 reasons: 
-        //  1) to prevent any potential modification to go to the db
-        //  2) reduce session size	
-        getCurrentConversation().getEntityManager().detach(roles.getSelectedRow());
         messageUtil.infoEntity("status_removed_ok", roles.getSelectedRow());
     }
 
     public String addRole() {
-        ConversationContext<Role> ctx = RoleController.newEditContext(new Role());
-        ctx.setLabelWithKey("account_roles");
-        ctx.setCallBack(addRoleCallBack);
+        checkPermission(rolePermission.canCreate());
+        ConversationContext<Role> ctx = roleController.newEditContext("account_roles", new Role(), addRoleCallBack);
         getCurrentConversation().setNextContextSub(ctx);
         return ctx.view();
     }

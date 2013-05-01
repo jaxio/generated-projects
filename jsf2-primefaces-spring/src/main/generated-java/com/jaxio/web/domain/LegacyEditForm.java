@@ -9,17 +9,17 @@ package com.jaxio.web.domain;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.springframework.context.annotation.Scope;
 import com.jaxio.domain.Legacy;
 import com.jaxio.domain.LegacyPk;
 import com.jaxio.repository.LegacyRepository;
 import com.jaxio.web.domain.support.GenericEditForm;
+import com.jaxio.web.faces.Conversation;
 
 /**
  * View Helper/Controller to edit {@link Legacy}.
  */
 @Named
-@Scope("conversation")
+@Conversation
 public class LegacyEditForm extends GenericEditForm<Legacy, LegacyPk> {
 
     @Inject

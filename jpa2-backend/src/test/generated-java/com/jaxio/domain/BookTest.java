@@ -10,7 +10,7 @@ package com.jaxio.domain;
 import java.io.*;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.fest.assertions.Assertions.assertThat;
 import org.junit.Test;
 
 import com.jaxio.util.*;
@@ -46,15 +46,15 @@ public class BookTest {
     @Test
     public void newInstanceHasNoPrimaryKey() {
         Book model = new Book();
-        assertFalse(model.isIdSet());
+        assertThat(model.isIdSet()).isFalse();
     }
 
     @Test
     public void isIdSetReturnsTrue() {
         Book model = new Book();
         model.setId(ValueGenerator.getUniqueInteger());
-        assertNotNull(model.getId());
-        assertTrue(model.isIdSet());
+        assertThat(model.getId()).isNotNull();
+        assertThat(model.isIdSet()).isTrue();
     }
 
     // test columns methods
@@ -70,27 +70,23 @@ public class BookTest {
         // init
         Account one = new Account();
 
-        one.setId(ValueGenerator.getUniqueString(32));
+        one.setId(ValueGenerator.getUniqueString(36));
         many.setAccount(one);
 
         // make sure it is propagated properly
-        assertNotNull(many.getAccountId());
-        assertEquals(one, many.getAccount());
-        assertSame(many.getAccountId(), one.getId());
+        assertThat(many.getAccount()).isEqualTo(one);
+
         // now set it to back to null
         many.setAccount(null);
 
         // make sure null is propagated properly
-        assertNull(many.getAccount());
-
-        // make sure it is propagated on fk column as well
-        assertNull(many.getAccountId());
+        assertThat(many.getAccount()).isNull();
     }
 
     @Test
     public void toStringNotNull() {
         Book model = new Book();
-        assertNotNull(model.toString());
+        assertThat(model.toString()).isNotNull();
     }
 
     @Test
@@ -110,10 +106,10 @@ public class BookTest {
 
         model1.setVersion(1);
         model2.setVersion(1);
-        assertTrue(model1.isIdSet());
-        assertTrue(model2.isIdSet());
-        assertTrue(model1.hashCode() == model2.hashCode());
-        assertTrue(model1.equals(model2));
-        assertTrue(model2.equals(model1));
+        assertThat(model1.isIdSet()).isTrue();
+        assertThat(model2.isIdSet()).isTrue();
+        assertThat(model1.hashCode()).isEqualTo(model2.hashCode());
+        assertThat(model1).isEqualTo(model2);
+        assertThat(model2).isEqualTo(model1);
     }
 }
