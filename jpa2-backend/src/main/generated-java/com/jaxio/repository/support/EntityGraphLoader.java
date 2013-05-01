@@ -8,7 +8,7 @@
 package com.jaxio.repository.support;
 
 /**
- * The EntityGraphLoader is used to load within a read-only transaction associations that 
+ * The EntityGraphLoader is used to load within a single read-only transaction all the desired associations that 
  * are normally lazily loaded.
  */
 public interface EntityGraphLoader<E> {

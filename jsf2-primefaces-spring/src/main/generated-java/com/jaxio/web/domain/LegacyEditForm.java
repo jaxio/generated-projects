@@ -21,7 +21,6 @@ import com.jaxio.web.faces.Conversation;
 @Named
 @Conversation
 public class LegacyEditForm extends GenericEditForm<Legacy, LegacyPk> {
-
     @Inject
     public void setLegacyRepository(LegacyRepository legacyRepository) {
         setRepository(legacyRepository);

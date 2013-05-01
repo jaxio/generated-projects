@@ -20,7 +20,6 @@ import com.jaxio.web.faces.Conversation;
 @Named
 @Conversation
 public class RoleEditForm extends GenericEditForm<Role, Integer> {
-
     @Inject
     public void setRoleRepository(RoleRepository roleRepository) {
         setRepository(roleRepository);

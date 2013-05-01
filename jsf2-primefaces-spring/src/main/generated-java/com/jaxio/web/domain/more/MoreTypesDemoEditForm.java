@@ -20,7 +20,6 @@ import com.jaxio.web.faces.Conversation;
 @Named
 @Conversation
 public class MoreTypesDemoEditForm extends GenericEditForm<MoreTypesDemo, Integer> {
-
     @Inject
     public void setMoreTypesDemoRepository(MoreTypesDemoRepository moreTypesDemoRepository) {
         setRepository(moreTypesDemoRepository);

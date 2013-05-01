@@ -10,12 +10,8 @@ package com.jaxio.web.domain;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.servlet.http.HttpServletRequest;
 import com.jaxio.domain.Address;
 import com.jaxio.repository.AddressRepository;
-import com.jaxio.web.conversation.Conversation;
-import com.jaxio.web.conversation.ConversationContext;
-import com.jaxio.web.conversation.ConversationFactory;
 import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.AddressPermission;
 
@@ -24,58 +20,12 @@ import com.jaxio.web.permission.AddressPermission;
  */
 @Named
 @Singleton
-public class AddressController extends GenericController<Address, Integer> implements ConversationFactory {
+public class AddressController extends GenericController<Address, Integer> {
     public final static String editUri = "/domain/addressEdit.faces";
     public final static String selectUri = "/domain/addressSelect.faces";
 
     @Inject
     public AddressController(AddressRepository addressRepository, AddressPermission addressPermission) {
-        super(addressRepository, addressPermission);
-    }
-
-    // -------------------
-    // ConversationFactory
-    // -------------------
-
-    @Override
-    public boolean canCreateConversation(HttpServletRequest request) {
-        return selectUri.equals(request.getServletPath()) || editUri.equals(request.getServletPath());
-    }
-
-    @Override
-    public Conversation createConversation(HttpServletRequest request) {
-        String uri = request.getServletPath();
-        if (selectUri.equals(uri)) {
-            return Conversation.newConversation(request, newSearchContext("address"));
-        } else if (editUri.equals(uri)) {
-            return Conversation.newConversation(request, newEditContext("address", new Address()));
-        } else {
-            throw new IllegalStateException("Unexpected conversation creation demand");
-        }
-    }
-
-    // --------------------------------
-    // Helper 
-    // --------------------------------    
-
-    /**
-     * Helper to construct a new ConversationContext to edit an Address.
-     * @param address the entity to edit.
-     */
-    public ConversationContext<Address> newEditContext(final Address address) {
-        ConversationContext<Address> ctx = new ConversationContext<Address>();
-        ctx.setEntity(address); // used by GenericEditForm.init()
-        ctx.setIsNewEntity(!address.isIdSet());
-        ctx.setViewUri(editUri);
-        return ctx;
-    }
-
-    /**
-     * Helper to construct a new ConversationContext for search/selection.
-     */
-    public ConversationContext<Address> newSearchContext() {
-        ConversationContext<Address> ctx = new ConversationContext<Address>();
-        ctx.setViewUri(selectUri);
-        return ctx;
+        super(addressRepository, addressPermission, selectUri, editUri);
     }
 }

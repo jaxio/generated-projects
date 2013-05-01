@@ -10,14 +10,10 @@ package com.jaxio.web.domain;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.servlet.http.HttpServletRequest;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Account_;
 import com.jaxio.repository.AccountRepository;
-import com.jaxio.web.conversation.Conversation;
-import com.jaxio.web.conversation.ConversationContext;
-import com.jaxio.web.conversation.ConversationFactory;
 import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.AccountPermission;
 
@@ -26,63 +22,17 @@ import com.jaxio.web.permission.AccountPermission;
  */
 @Named
 @Singleton
-public class AccountController extends GenericController<Account, String> implements ConversationFactory {
+public class AccountController extends GenericController<Account, String> {
     public final static String editUri = "/domain/accountEdit.faces";
     public final static String selectUri = "/domain/accountSelect.faces";
 
     @Inject
     public AccountController(AccountRepository accountRepository, AccountPermission accountPermission) {
-        super(accountRepository, accountPermission);
-    }
-
-    // -------------------
-    // ConversationFactory
-    // -------------------
-
-    @Override
-    public boolean canCreateConversation(HttpServletRequest request) {
-        return selectUri.equals(request.getServletPath()) || editUri.equals(request.getServletPath());
-    }
-
-    @Override
-    public Conversation createConversation(HttpServletRequest request) {
-        String uri = request.getServletPath();
-        if (selectUri.equals(uri)) {
-            return Conversation.newConversation(request, newSearchContext("account"));
-        } else if (editUri.equals(uri)) {
-            return Conversation.newConversation(request, newEditContext("account", new Account()));
-        } else {
-            throw new IllegalStateException("Unexpected conversation creation demand");
-        }
+        super(accountRepository, accountPermission, selectUri, editUri);
     }
 
     @Override
     protected void defaultOrder(SearchParameters searchParameters) {
         searchParameters.orderBy(Account_.username);
-    }
-
-    // --------------------------------
-    // Helper 
-    // --------------------------------    
-
-    /**
-     * Helper to construct a new ConversationContext to edit an Account.
-     * @param account the entity to edit.
-     */
-    public ConversationContext<Account> newEditContext(final Account account) {
-        ConversationContext<Account> ctx = new ConversationContext<Account>();
-        ctx.setEntity(account); // used by GenericEditForm.init()
-        ctx.setIsNewEntity(!account.isIdSet());
-        ctx.setViewUri(editUri);
-        return ctx;
-    }
-
-    /**
-     * Helper to construct a new ConversationContext for search/selection.
-     */
-    public ConversationContext<Account> newSearchContext() {
-        ConversationContext<Account> ctx = new ConversationContext<Account>();
-        ctx.setViewUri(selectUri);
-        return ctx;
     }
 }

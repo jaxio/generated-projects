@@ -62,11 +62,6 @@ public class ConversationFilter implements Filter {
                     log.debug("Conv. " + cid + " resumed. Nb ctx: " + getCurrentConversation().getConversationContextesCount() + ". Uri: "
                             + request.getRequestURI());
                 }
-
-                // non cacheable see http://stackoverflow.com/questions/49547/making-sure-a-web-page-is-not-cached-across-all-browsers
-                response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-                response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
-                response.setDateHeader("Expires", 0); // Proxies.
             } catch (UnexpectedConversationException uue) {
                 log.error(uue.getMessage());
                 response.sendRedirect(request.getContextPath() + uue.getRedirectUrl());

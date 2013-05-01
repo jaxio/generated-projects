@@ -79,6 +79,15 @@
 		<filter-name>conversationFilter</filter-name>
 		<servlet-name>facesServlet</servlet-name>
 	</filter-mapping>
+    <filter>
+        <filter-name>noPageCacheFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>noPageCacheFilter</filter-name>
+        <servlet-name>facesServlet</servlet-name>
+    </filter-mapping>
+
 	<!-- JSF 2 IMPLEMENTATION -->
 	<!-- Use JSF view templates saved as *.xhtml, for use with Facelets -->
 	<context-param>

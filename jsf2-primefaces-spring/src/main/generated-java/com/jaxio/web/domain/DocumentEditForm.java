@@ -12,8 +12,8 @@ import javax.inject.Named;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Document;
 import com.jaxio.repository.DocumentRepository;
-import com.jaxio.repository.support.EntityGraphLoader;
 import com.jaxio.web.domain.AccountController;
+import com.jaxio.web.domain.DocumentGraphLoader;
 import com.jaxio.web.domain.support.GenericEditForm;
 import com.jaxio.web.faces.Conversation;
 
@@ -23,25 +23,14 @@ import com.jaxio.web.faces.Conversation;
 @Named
 @Conversation
 public class DocumentEditForm extends GenericEditForm<Document, String> {
-
-    // used to preload lazy associations transactionally
-    private EntityGraphLoader<Document> entityGraphLoader = new EntityGraphLoader<Document>() {
-        @Override
-        public void loadGraph(Document document) {
-            if (document.getAccount() != null) {
-                document.getAccount().toString();
-            }
-        }
-    };
-
-    @Override
-    protected EntityGraphLoader<Document> getEntityGraphLoader() {
-        return entityGraphLoader;
-    }
-
     @Inject
     public void setDocumentRepository(DocumentRepository documentRepository) {
         setRepository(documentRepository);
+    }
+
+    @Inject
+    public void setDocumentGraphLoader(DocumentGraphLoader documentGraphLoader) {
+        setEntityGraphLoader(documentGraphLoader);
     }
 
     public Document getDocument() {

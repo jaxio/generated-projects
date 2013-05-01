@@ -12,8 +12,8 @@ import javax.inject.Named;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Book;
 import com.jaxio.repository.BookRepository;
-import com.jaxio.repository.support.EntityGraphLoader;
 import com.jaxio.web.domain.AccountController;
+import com.jaxio.web.domain.BookGraphLoader;
 import com.jaxio.web.domain.support.GenericEditForm;
 import com.jaxio.web.faces.Conversation;
 
@@ -23,25 +23,14 @@ import com.jaxio.web.faces.Conversation;
 @Named
 @Conversation
 public class BookEditForm extends GenericEditForm<Book, Integer> {
-
-    // used to preload lazy associations transactionally
-    private EntityGraphLoader<Book> entityGraphLoader = new EntityGraphLoader<Book>() {
-        @Override
-        public void loadGraph(Book book) {
-            if (book.getAccount() != null) {
-                book.getAccount().toString();
-            }
-        }
-    };
-
-    @Override
-    protected EntityGraphLoader<Book> getEntityGraphLoader() {
-        return entityGraphLoader;
-    }
-
     @Inject
     public void setBookRepository(BookRepository bookRepository) {
         setRepository(bookRepository);
+    }
+
+    @Inject
+    public void setBookGraphLoader(BookGraphLoader bookGraphLoader) {
+        setEntityGraphLoader(bookGraphLoader);
     }
 
     public Book getBook() {

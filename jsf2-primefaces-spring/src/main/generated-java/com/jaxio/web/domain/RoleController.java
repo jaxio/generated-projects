@@ -10,14 +10,10 @@ package com.jaxio.web.domain;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.servlet.http.HttpServletRequest;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Role;
 import com.jaxio.domain.Role_;
 import com.jaxio.repository.RoleRepository;
-import com.jaxio.web.conversation.Conversation;
-import com.jaxio.web.conversation.ConversationContext;
-import com.jaxio.web.conversation.ConversationFactory;
 import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.RolePermission;
 
@@ -26,63 +22,17 @@ import com.jaxio.web.permission.RolePermission;
  */
 @Named
 @Singleton
-public class RoleController extends GenericController<Role, Integer> implements ConversationFactory {
+public class RoleController extends GenericController<Role, Integer> {
     public final static String editUri = "/domain/roleEdit.faces";
     public final static String selectUri = "/domain/roleSelect.faces";
 
     @Inject
     public RoleController(RoleRepository roleRepository, RolePermission rolePermission) {
-        super(roleRepository, rolePermission);
-    }
-
-    // -------------------
-    // ConversationFactory
-    // -------------------
-
-    @Override
-    public boolean canCreateConversation(HttpServletRequest request) {
-        return selectUri.equals(request.getServletPath()) || editUri.equals(request.getServletPath());
-    }
-
-    @Override
-    public Conversation createConversation(HttpServletRequest request) {
-        String uri = request.getServletPath();
-        if (selectUri.equals(uri)) {
-            return Conversation.newConversation(request, newSearchContext("role"));
-        } else if (editUri.equals(uri)) {
-            return Conversation.newConversation(request, newEditContext("role", new Role()));
-        } else {
-            throw new IllegalStateException("Unexpected conversation creation demand");
-        }
+        super(roleRepository, rolePermission, selectUri, editUri);
     }
 
     @Override
     protected void defaultOrder(SearchParameters searchParameters) {
         searchParameters.orderBy(Role_.roleName);
-    }
-
-    // --------------------------------
-    // Helper 
-    // --------------------------------    
-
-    /**
-     * Helper to construct a new ConversationContext to edit an Role.
-     * @param role the entity to edit.
-     */
-    public ConversationContext<Role> newEditContext(final Role role) {
-        ConversationContext<Role> ctx = new ConversationContext<Role>();
-        ctx.setEntity(role); // used by GenericEditForm.init()
-        ctx.setIsNewEntity(!role.isIdSet());
-        ctx.setViewUri(editUri);
-        return ctx;
-    }
-
-    /**
-     * Helper to construct a new ConversationContext for search/selection.
-     */
-    public ConversationContext<Role> newSearchContext() {
-        ConversationContext<Role> ctx = new ConversationContext<Role>();
-        ctx.setViewUri(selectUri);
-        return ctx;
     }
 }

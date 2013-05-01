@@ -7,7 +7,6 @@
  */
 package com.jaxio.web.domain;
 
-import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -20,9 +19,8 @@ import com.jaxio.domain.Book;
 import com.jaxio.domain.Document;
 import com.jaxio.domain.Role;
 import com.jaxio.repository.AccountRepository;
-import com.jaxio.repository.support.EntityGraphLoader;
 import com.jaxio.web.conversation.ConversationCallBack;
-import com.jaxio.web.conversation.ConversationContext;
+import com.jaxio.web.domain.AccountGraphLoader;
 import com.jaxio.web.domain.AddressController;
 import com.jaxio.web.domain.BookController;
 import com.jaxio.web.domain.DocumentController;
@@ -47,33 +45,14 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     private SelectableListDataModel<Document> documents;
     private SelectableListDataModel<Role> roles;
 
-    // used to preload lazy associations transactionally
-    private EntityGraphLoader<Account> entityGraphLoader = new EntityGraphLoader<Account>() {
-        @Override
-        public void loadGraph(Account account) {
-            if (account.getHomeAddress() != null) {
-                account.getHomeAddress().toString();
-            }
-            if (account.getBooks() != null) {
-                account.getBooks().size();
-            }
-            if (account.getDocuments() != null) {
-                account.getDocuments().size();
-            }
-            if (account.getRoles() != null) {
-                account.getRoles().size();
-            }
-        }
-    };
-
-    @Override
-    protected EntityGraphLoader<Account> getEntityGraphLoader() {
-        return entityGraphLoader;
-    }
-
     @Inject
     public void setAccountRepository(AccountRepository accountRepository) {
         setRepository(accountRepository);
+    }
+
+    @Inject
+    public void setAccountGraphLoader(AccountGraphLoader accountGraphLoader) {
+        setEntityGraphLoader(accountGraphLoader);
     }
 
     /**
@@ -171,7 +150,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     };
 
     public String addHomeAddress() {
-        return addressController.editSubView("account_homeAddress", new Address(), addHomeAddressCallBack);
+        return addressController.createSubView("account_homeAddress", addHomeAddressCallBack);
     }
 
     protected ConversationCallBack<Address> addHomeAddressCallBack = new ConversationCallBack<Address>() {
@@ -245,12 +224,9 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     }
 
     public String addBook() {
-        checkPermission(bookPermission.canCreate());
         Book book = new Book();
         book.setAccount(getAccount()); // for display
-        ConversationContext<Book> ctx = bookController.newEditContext("account_books", book, addBookCallBack);
-        getCurrentConversation().setNextContextSub(ctx);
-        return ctx.view();
+        return bookController.createSubView("account_books", book, addBookCallBack);
     }
 
     protected ConversationCallBack<Book> addBookCallBack = new ConversationCallBack<Book>() {
@@ -309,12 +285,9 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     }
 
     public String addDocument() {
-        checkPermission(documentPermission.canCreate());
         Document document = new Document();
         document.setAccount(getAccount()); // for display
-        ConversationContext<Document> ctx = documentController.newEditContext("account_documents", document, addDocumentCallBack);
-        getCurrentConversation().setNextContextSub(ctx);
-        return ctx.view();
+        return documentController.createSubView("account_documents", document, addDocumentCallBack);
     }
 
     protected ConversationCallBack<Document> addDocumentCallBack = new ConversationCallBack<Document>() {
@@ -390,10 +363,7 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     }
 
     public String addRole() {
-        checkPermission(rolePermission.canCreate());
-        ConversationContext<Role> ctx = roleController.newEditContext("account_roles", new Role(), addRoleCallBack);
-        getCurrentConversation().setNextContextSub(ctx);
-        return ctx.view();
+        return roleController.createSubView("account_roles", addRoleCallBack);
     }
 
     protected ConversationCallBack<Role> addRoleCallBack = new ConversationCallBack<Role>() {

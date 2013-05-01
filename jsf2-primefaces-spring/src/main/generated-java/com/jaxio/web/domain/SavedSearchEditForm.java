@@ -12,9 +12,9 @@ import javax.inject.Named;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.SavedSearch;
 import com.jaxio.repository.SavedSearchRepository;
-import com.jaxio.repository.support.EntityGraphLoader;
 import com.jaxio.web.conversation.ConversationCallBack;
 import com.jaxio.web.domain.AccountController;
+import com.jaxio.web.domain.SavedSearchGraphLoader;
 import com.jaxio.web.domain.support.GenericEditForm;
 import com.jaxio.web.faces.Conversation;
 import com.jaxio.web.permission.AccountPermission;
@@ -25,25 +25,14 @@ import com.jaxio.web.permission.AccountPermission;
 @Named
 @Conversation
 public class SavedSearchEditForm extends GenericEditForm<SavedSearch, Integer> {
-
-    // used to preload lazy associations transactionally
-    private EntityGraphLoader<SavedSearch> entityGraphLoader = new EntityGraphLoader<SavedSearch>() {
-        @Override
-        public void loadGraph(SavedSearch savedSearch) {
-            if (savedSearch.getAccount() != null) {
-                savedSearch.getAccount().toString();
-            }
-        }
-    };
-
-    @Override
-    protected EntityGraphLoader<SavedSearch> getEntityGraphLoader() {
-        return entityGraphLoader;
-    }
-
     @Inject
     public void setSavedSearchRepository(SavedSearchRepository savedSearchRepository) {
         setRepository(savedSearchRepository);
+    }
+
+    @Inject
+    public void setSavedSearchGraphLoader(SavedSearchGraphLoader savedSearchGraphLoader) {
+        setEntityGraphLoader(savedSearchGraphLoader);
     }
 
     public SavedSearch getSavedSearch() {
@@ -101,7 +90,7 @@ public class SavedSearchEditForm extends GenericEditForm<SavedSearch, Integer> {
     };
 
     public String addAccount() {
-        return accountController.editSubView("savedSearch_account", new Account(), addAccountCallBack);
+        return accountController.createSubView("savedSearch_account", addAccountCallBack);
     }
 
     protected ConversationCallBack<Account> addAccountCallBack = new ConversationCallBack<Account>() {

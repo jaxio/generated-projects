@@ -23,7 +23,7 @@
 		Main entry point for spring configuration
 	]]></description>
 
-	<context:annotation-config />
+<context:annotation-config />
 	<import resource="applicationContext.xml" />
 
 	<!-- context -->

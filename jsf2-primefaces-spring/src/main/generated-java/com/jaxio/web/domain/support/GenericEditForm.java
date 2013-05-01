@@ -32,13 +32,18 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
     protected MessageUtil messageUtil;
 
     protected Repository<E, PK> repository;
+    protected EntityGraphLoader<E> entityGraphLoader;
 
     protected void setRepository(Repository<E, PK> repository) {
         this.repository = repository;
     }
 
+    protected void setEntityGraphLoader(EntityGraphLoader<E> entityGraphLoader) {
+        this.entityGraphLoader = entityGraphLoader;
+    }
+
     protected EntityGraphLoader<E> getEntityGraphLoader() {
-        return null;
+        return entityGraphLoader;
     }
 
     /**

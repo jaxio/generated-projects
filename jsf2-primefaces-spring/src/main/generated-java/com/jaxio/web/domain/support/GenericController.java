@@ -18,6 +18,7 @@ import java.util.Set;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -27,14 +28,19 @@ import com.jaxio.domain.Identifiable;
 import com.jaxio.printer.TypeAwarePrinter;
 import com.jaxio.repository.support.Repository;
 import com.jaxio.web.util.MessageUtil;
+import com.jaxio.web.conversation.Conversation;
 import com.jaxio.web.conversation.ConversationCallBack;
 import com.jaxio.web.conversation.ConversationContext;
+import com.jaxio.web.conversation.ConversationFactory;
 import com.jaxio.web.permission.support.GenericPermission;
 
 /**
  * Base controller for JPA entities.
  */
-public abstract class GenericController<E extends Identifiable<PK>, PK extends Serializable> {
+public abstract class GenericController<E extends Identifiable<PK>, PK extends Serializable> implements ConversationFactory {
+
+    private String selectUri;
+    private String editUri;
 
     @Inject
     protected JpaUniqueUtil jpaUniqueUtil;
@@ -45,9 +51,42 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
     protected Repository<E, PK> repository;
     protected GenericPermission<E> permission;
 
-    public GenericController(Repository<E, PK> repository, GenericPermission<E> permission) {
+    public GenericController(Repository<E, PK> repository, GenericPermission<E> permission, String selectUri, String editUri) {
         this.repository = repository;
         this.permission = permission;
+        this.selectUri = selectUri;
+        this.editUri = editUri;
+    }
+
+    public String getEditUri() {
+        return editUri;
+    }
+
+    public String getSelectUri() {
+        return selectUri;
+    }
+
+    // -------------------
+    // ConversationFactory
+    // -------------------
+
+    @Override
+    public boolean canCreateConversation(HttpServletRequest request) {
+        return getSelectUri().equals(request.getServletPath()) || getEditUri().equals(request.getServletPath());
+    }
+
+    @Override
+    public Conversation createConversation(HttpServletRequest request) {
+        String uri = request.getServletPath();
+        E e = repository.getNew();
+
+        if (getSelectUri().equals(uri)) {
+            return Conversation.newConversation(request, newSearchContext(e.getClass().getSimpleName()));
+        } else if (getEditUri().equals(uri)) {
+            return Conversation.newConversation(request, newEditContext(e.getClass().getSimpleName(), e));
+        } else {
+            throw new IllegalStateException("Unexpected conversation creation demand");
+        }
     }
 
     public List<E> complete(String value) {
@@ -155,6 +194,17 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
         return ctx.view();
     }
 
+    public String createSubView(String labelKey, ConversationCallBack<E> createCallBack) {
+        return createSubView(labelKey, repository.getNew(), createCallBack);
+    }
+
+    public String createSubView(String labelKey, E e, ConversationCallBack<E> createCallBack) {
+        checkPermission(permission.canCreate());
+        ConversationContext<E> ctx = newEditContext(labelKey, e, createCallBack);
+        getCurrentConversation().setNextContextSub(ctx);
+        return ctx.view();
+    }
+
     public String selectSubView(String labelKey, ConversationCallBack<E> selectCallBack) {
         checkPermission(permission.canSelect());
         ConversationContext<E> ctx = newSearchContext(labelKey, selectCallBack);
@@ -176,7 +226,17 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
         }
     }
 
-    public abstract ConversationContext<E> newEditContext(final E e);
+    /**
+     * Helper to construct a new ConversationContext to edit an entity.
+     * @param e the entity to edit.
+     */
+    public ConversationContext<E> newEditContext(final E e) {
+        ConversationContext<E> ctx = new ConversationContext<E>();
+        ctx.setEntity(e); // used by GenericEditForm.init()
+        ctx.setIsNewEntity(!e.isIdSet());
+        ctx.setViewUri(getEditUri());
+        return ctx;
+    }
 
     public ConversationContext<E> newEditContext(String labelKey, final E e) {
         ConversationContext<E> ctx = newEditContext(e);
@@ -190,7 +250,14 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
         return ctx;
     }
 
-    public abstract ConversationContext<E> newSearchContext();
+    /**
+     * Helper to construct a new ConversationContext for search/selection.
+     */
+    public ConversationContext<E> newSearchContext() {
+        ConversationContext<E> ctx = new ConversationContext<E>();
+        ctx.setViewUri(getSelectUri());
+        return ctx;
+    }
 
     public ConversationContext<E> newSearchContext(String labelKey) {
         ConversationContext<E> ctx = newSearchContext();

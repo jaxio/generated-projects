@@ -20,7 +20,6 @@ import com.jaxio.web.faces.Conversation;
 @Named
 @Conversation
 public class AddressEditForm extends GenericEditForm<Address, Integer> {
-
     @Inject
     public void setAddressRepository(AddressRepository addressRepository) {
         setRepository(addressRepository);

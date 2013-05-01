@@ -10,12 +10,8 @@ package com.jaxio.web.domain;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.servlet.http.HttpServletRequest;
 import com.jaxio.domain.SavedSearch;
 import com.jaxio.repository.SavedSearchRepository;
-import com.jaxio.web.conversation.Conversation;
-import com.jaxio.web.conversation.ConversationContext;
-import com.jaxio.web.conversation.ConversationFactory;
 import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.SavedSearchPermission;
 
@@ -24,58 +20,12 @@ import com.jaxio.web.permission.SavedSearchPermission;
  */
 @Named
 @Singleton
-public class SavedSearchController extends GenericController<SavedSearch, Integer> implements ConversationFactory {
+public class SavedSearchController extends GenericController<SavedSearch, Integer> {
     public final static String editUri = "/domain/savedSearchEdit.faces";
     public final static String selectUri = "/domain/savedSearchSelect.faces";
 
     @Inject
     public SavedSearchController(SavedSearchRepository savedSearchRepository, SavedSearchPermission savedSearchPermission) {
-        super(savedSearchRepository, savedSearchPermission);
-    }
-
-    // -------------------
-    // ConversationFactory
-    // -------------------
-
-    @Override
-    public boolean canCreateConversation(HttpServletRequest request) {
-        return selectUri.equals(request.getServletPath()) || editUri.equals(request.getServletPath());
-    }
-
-    @Override
-    public Conversation createConversation(HttpServletRequest request) {
-        String uri = request.getServletPath();
-        if (selectUri.equals(uri)) {
-            return Conversation.newConversation(request, newSearchContext("savedSearch"));
-        } else if (editUri.equals(uri)) {
-            return Conversation.newConversation(request, newEditContext("savedSearch", new SavedSearch()));
-        } else {
-            throw new IllegalStateException("Unexpected conversation creation demand");
-        }
-    }
-
-    // --------------------------------
-    // Helper 
-    // --------------------------------    
-
-    /**
-     * Helper to construct a new ConversationContext to edit an SavedSearch.
-     * @param savedSearch the entity to edit.
-     */
-    public ConversationContext<SavedSearch> newEditContext(final SavedSearch savedSearch) {
-        ConversationContext<SavedSearch> ctx = new ConversationContext<SavedSearch>();
-        ctx.setEntity(savedSearch); // used by GenericEditForm.init()
-        ctx.setIsNewEntity(!savedSearch.isIdSet());
-        ctx.setViewUri(editUri);
-        return ctx;
-    }
-
-    /**
-     * Helper to construct a new ConversationContext for search/selection.
-     */
-    public ConversationContext<SavedSearch> newSearchContext() {
-        ConversationContext<SavedSearch> ctx = new ConversationContext<SavedSearch>();
-        ctx.setViewUri(selectUri);
-        return ctx;
+        super(savedSearchRepository, savedSearchPermission, selectUri, editUri);
     }
 }
