@@ -22,8 +22,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-import org.apache.log4j.Logger;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Basic tests for Role
@@ -44,14 +48,6 @@ public class RoleTest {
         model.setId(ValueGenerator.getUniqueInteger());
         assertThat(model.getId()).isNotNull();
         assertThat(model.isIdSet()).isTrue();
-    }
-
-    // test columns methods
-
-    @Test
-    public void toStringNotNull() {
-        Role model = new Role();
-        assertThat(model.toString()).isNotNull();
     }
 
     @Test

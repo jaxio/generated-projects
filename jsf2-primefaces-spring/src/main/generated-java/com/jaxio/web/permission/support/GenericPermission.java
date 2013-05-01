@@ -20,7 +20,7 @@ public abstract class GenericPermission<E extends Identifiable<? extends Seriali
     }
 
     public boolean canView(E e) {
-        return canView();
+        return e == null ? false : canView();
     }
 
     public boolean canEdit() {
@@ -28,7 +28,7 @@ public abstract class GenericPermission<E extends Identifiable<? extends Seriali
     }
 
     public boolean canEdit(E e) {
-        return canEdit();
+        return e == null ? false : canEdit();
     }
 
     public boolean canDelete() {
@@ -40,7 +40,7 @@ public abstract class GenericPermission<E extends Identifiable<? extends Seriali
     }
 
     public boolean canSearch() {
-        return true;
+        return canView();
     }
 
     public boolean canSearch(E e) {
@@ -48,10 +48,18 @@ public abstract class GenericPermission<E extends Identifiable<? extends Seriali
     }
 
     public boolean canSelect() {
-        return true;
+        return canSearch();
     }
 
     public boolean canSelect(E e) {
         return canSelect();
+    }
+
+    public boolean canUse() {
+        return canView() || canSelect() || canDelete() || canEdit();
+    }
+
+    public boolean canUse(E e) {
+        return canView(e) || canSelect(e) || canDelete(e) || canEdit(e);
     }
 }

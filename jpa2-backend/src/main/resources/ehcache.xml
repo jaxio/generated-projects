@@ -70,9 +70,9 @@
 
 		# database related
 		com.jaxio.domain.Account
-		com.jaxio.domain.Book.books
-		com.jaxio.domain.Document.documents
-		com.jaxio.domain.Account.roles
+		com.jaxio.domain.Book.coolBooks
+		com.jaxio.domain.Document.edocs
+		com.jaxio.domain.Account.securityRoles
 
 		com.jaxio.domain.Address
 

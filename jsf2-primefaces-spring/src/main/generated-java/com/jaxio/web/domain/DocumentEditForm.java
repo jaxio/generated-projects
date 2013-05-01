@@ -7,60 +7,63 @@
  */
 package com.jaxio.web.domain;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Document;
 import com.jaxio.repository.DocumentRepository;
 import com.jaxio.web.domain.AccountController;
 import com.jaxio.web.domain.DocumentGraphLoader;
 import com.jaxio.web.domain.support.GenericEditForm;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.domain.support.GenericToOneAssociation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
  * View Helper/Controller to edit {@link Document}.
  */
 @Named
-@Conversation
+@ConversationContextScoped
 public class DocumentEditForm extends GenericEditForm<Document, String> {
     @Inject
-    public void setDocumentRepository(DocumentRepository documentRepository) {
-        setRepository(documentRepository);
-    }
+    protected AccountController accountController;
+    protected GenericToOneAssociation<Account, String> owner;
 
     @Inject
-    public void setDocumentGraphLoader(DocumentGraphLoader documentGraphLoader) {
-        setEntityGraphLoader(documentGraphLoader);
+    public DocumentEditForm(DocumentRepository documentRepository, DocumentGraphLoader documentGraphLoader) {
+        super(documentRepository, documentGraphLoader);
     }
 
+    /**
+     * The entity to edit/view.
+     */
     public Document getDocument() {
         return getEntity();
     }
 
-    // --------------------------------------------
-    // Actions for account association
-    // --------------------------------------------
-    @Inject
-    private AccountController accountController;
+    @PostConstruct
+    void setupOwnersActions() {
+        owner = new GenericToOneAssociation<Account, String>("document_owner", accountController) {
+            @Override
+            protected Account get() {
+                return getDocument().getOwner();
+            }
 
-    public String viewAccount() {
-        return accountController.editSubReadOnlyView("document_account", getDocument().getAccount());
+            @Override
+            protected void set(Account account) {
+                getDocument().setOwner(account);
+            }
+
+            @NotNull
+            @Override
+            public Account getSelected() {
+                return super.getSelected();
+            }
+        };
     }
 
-    /**
-     * Helper for the autoComplete component used for the Document's account property.
-     */
-    public Account getSelectedAccount() {
-        return getDocument().getAccount();
-    }
-
-    /**
-     * Helper for the autoComplete component used for the Document's account property.
-     * Handles ajax autoComplete event and regular page postback.
-     */
-    public void setSelectedAccount(Account account) {
-        if (accountController.shouldReplace(getDocument().getAccount(), account)) {
-            getDocument().setAccount(account);
-        }
+    public GenericToOneAssociation<Account, String> getOwner() {
+        return owner;
     }
 }

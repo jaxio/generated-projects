@@ -8,25 +8,25 @@
 package com.jaxio.web.domain;
 
 import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
-import static com.jaxio.domain.Role_.roleName;
 import javax.inject.Named;
 import com.jaxio.dao.support.PropertySelector;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Role;
+import com.jaxio.domain.Role_;
 import com.jaxio.web.domain.support.GenericSearchForm;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
- * View Helper to find/select {@link Role}.
+ * View Helper to search {@link Role}.
  * It exposes a {@link Role} instance so it can be used in search by Example query.
  */
 @Named
-@Conversation
+@ConversationContextScoped
 public class RoleSearchForm extends GenericSearchForm<Role, Integer, RoleSearchForm> {
     private static final long serialVersionUID = 1L;
 
-    private Role role = new Role();
-    private PropertySelector<Role, String> roleNameSelector = newPropertySelector(roleName);
+    protected Role role = new Role();
+    protected PropertySelector<Role, String> roleNameSelector = newPropertySelector(Role_.roleName);
 
     public Role getRole() {
         return role;
@@ -34,19 +34,7 @@ public class RoleSearchForm extends GenericSearchForm<Role, Integer, RoleSearchF
 
     @Override
     protected Role getEntity() {
-        return role;
-    }
-
-    // Selectors for property
-    public PropertySelector<Role, String> getRoleNameSelector() {
-        return roleNameSelector;
-    }
-
-    public SearchParameters toSearchParameters() {
-        return new SearchParameters() //
-                .anywhere() //
-                .property(roleNameSelector) //
-        ;
+        return getRole();
     }
 
     @Override
@@ -55,8 +43,23 @@ public class RoleSearchForm extends GenericSearchForm<Role, Integer, RoleSearchF
     }
 
     @Override
+    public SearchParameters toSearchParameters() {
+        return new SearchParameters() //
+                .anywhere() //
+                .term(term) //
+                .property(roleNameSelector) //
+        ;
+    }
+
+    @Override
     public void resetWithOther(RoleSearchForm other) {
         this.role = other.getRole();
+        this.term = other.getTerm();
         this.roleNameSelector = other.getRoleNameSelector();
+    }
+
+    // Property selectors
+    public PropertySelector<Role, String> getRoleNameSelector() {
+        return roleNameSelector;
     }
 }

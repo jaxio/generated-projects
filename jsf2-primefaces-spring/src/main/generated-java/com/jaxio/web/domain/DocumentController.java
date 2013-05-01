@@ -7,25 +7,22 @@
  */
 package com.jaxio.web.domain;
 
-import java.io.ByteArrayInputStream;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 import com.jaxio.domain.Document;
 import com.jaxio.repository.DocumentRepository;
 import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.DocumentPermission;
 
 /**
- * Stateless controller for Document conversation start. Provides also auto-complete support. 
+ * Stateless controller for {@link Document} conversation start. 
  */
 @Named
 @Singleton
 public class DocumentController extends GenericController<Document, String> {
-    public final static String editUri = "/domain/documentEdit.faces";
-    public final static String selectUri = "/domain/documentSelect.faces";
+    private static final String editUri = "/domain/documentEdit.faces";
+    private static final String selectUri = "/domain/documentSelect.faces";
 
     @Inject
     public DocumentController(DocumentRepository documentRepository, DocumentPermission documentPermission) {
@@ -33,18 +30,11 @@ public class DocumentController extends GenericController<Document, String> {
     }
 
     // --------------------------------
-    // Upload/Download support 
-    // --------------------------------    
+    // Upload support 
+    // --------------------------------
 
-    public DocumentUploadHandler getUploadHandler(Document document) {
-        return new DocumentUploadHandler(document);
+    public DocumentFileUpload getDocumentFileUpload(Document document) {
+        return new DocumentFileUpload(document);
     }
 
-    /**
-     * Primefaces support for documentBinary file download
-     */
-    public StreamedContent getStreamedContent(Document document) {
-        return new DefaultStreamedContent(new ByteArrayInputStream(document.getDocumentBinary()), document.getDocumentContentType(), document
-                .getDocumentFileName());
-    }
 }

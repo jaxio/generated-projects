@@ -16,17 +16,23 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.Size;
-import org.apache.log4j.Logger;
+import javax.xml.bind.annotation.XmlTransient;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 import com.jaxio.domain.Address_;
 import com.jaxio.domain.IdentifiableHashBuilder;
 
 @Entity
 @Table(name = "ADDRESS")
+@Indexed
 public class Address implements Identifiable<Integer>, Serializable {
     private static final long serialVersionUID = 1L;
-    private static final Logger log = Logger.getLogger(Address.class);
+    private static final Logger log = LoggerFactory.getLogger(Address.class);
 
     // Raw attributes
     private Integer id; // pk
@@ -34,11 +40,9 @@ public class Address implements Identifiable<Integer>, Serializable {
     private String city; // not null
     private Integer version;
 
-    // -------------------------------
-    // Getter & Setter
-    // -------------------------------
     // -- [id] ------------------------
 
+    @Override
     @Column(name = "ID", precision = 10)
     @GeneratedValue
     @Id
@@ -46,11 +50,19 @@ public class Address implements Identifiable<Integer>, Serializable {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    public Address id(Integer id) {
+        setId(id);
+        return this;
+    }
+
+    @Override
     @Transient
+    @XmlTransient
     public boolean isIdSet() {
         return id != null;
     }
@@ -67,17 +79,28 @@ public class Address implements Identifiable<Integer>, Serializable {
         this.streetName = streetName;
     }
 
+    public Address streetName(String streetName) {
+        setStreetName(streetName);
+        return this;
+    }
+
     // -- [city] ------------------------
 
     @Size(max = 100)
     @NotEmpty
     @Column(name = "CITY", nullable = false, length = 100)
+    @Field(analyzer = @Analyzer(definition = "custom"))
     public String getCity() {
         return city;
     }
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public Address city(String city) {
+        setCity(city);
+        return this;
     }
 
     // -- [version] ------------------------
@@ -92,6 +115,11 @@ public class Address implements Identifiable<Integer>, Serializable {
         this.version = version;
     }
 
+    public Address version(Integer version) {
+        setVersion(version);
+        return this;
+    }
+
     /**
      * Set the default values.
      */
@@ -99,7 +127,7 @@ public class Address implements Identifiable<Integer>, Serializable {
     }
 
     /**
-     * equals implementation using a business key.
+     * Equals implementation using a business key.
      */
     @Override
     public boolean equals(Object other) {

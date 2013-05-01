@@ -24,11 +24,13 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.apache.log4j.Logger;
+import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.IdentifiableHashBuilder;
@@ -40,7 +42,7 @@ import com.jaxio.domain.SavedSearch_;
 @Filter(name = "mySavedSearchFilter")
 public class SavedSearch implements Identifiable<Integer>, Serializable {
     private static final long serialVersionUID = 1L;
-    private static final Logger log = Logger.getLogger(SavedSearch.class);
+    private static final Logger log = LoggerFactory.getLogger(SavedSearch.class);
 
     // Raw attributes
     private Integer id; // pk
@@ -51,11 +53,9 @@ public class SavedSearch implements Identifiable<Integer>, Serializable {
     // Many to one
     private Account account; // not null (accountId)
 
-    // -------------------------------
-    // Getter & Setter
-    // -------------------------------
     // -- [id] ------------------------
 
+    @Override
     @Column(name = "ID", precision = 10)
     @GeneratedValue
     @Id
@@ -63,11 +63,19 @@ public class SavedSearch implements Identifiable<Integer>, Serializable {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    public SavedSearch id(Integer id) {
+        setId(id);
+        return this;
+    }
+
+    @Override
     @Transient
+    @XmlTransient
     public boolean isIdSet() {
         return id != null;
     }
@@ -85,6 +93,11 @@ public class SavedSearch implements Identifiable<Integer>, Serializable {
         this.name = name;
     }
 
+    public SavedSearch name(String name) {
+        setName(name);
+        return this;
+    }
+
     // -- [formClassname] ------------------------
 
     @Size(max = 256)
@@ -96,6 +109,11 @@ public class SavedSearch implements Identifiable<Integer>, Serializable {
 
     public void setFormClassname(String formClassname) {
         this.formClassname = formClassname;
+    }
+
+    public SavedSearch formClassname(String formClassname) {
+        setFormClassname(formClassname);
+        return this;
     }
 
     // -- [formContent] ------------------------
@@ -111,9 +129,14 @@ public class SavedSearch implements Identifiable<Integer>, Serializable {
         this.formContent = formContent;
     }
 
-    // --------------------------------------------------------------------
+    public SavedSearch formContent(byte[] formContent) {
+        setFormContent(formContent);
+        return this;
+    }
+
+    // -----------------------------------------------------------------
     // Many to One support
-    // --------------------------------------------------------------------
+    // -----------------------------------------------------------------
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // many-to-one: SavedSearch.accountId ==> Account.id
@@ -127,12 +150,17 @@ public class SavedSearch implements Identifiable<Integer>, Serializable {
     }
 
     /**
-     * Set the account without adding this SavedSearch instance on the passed account
+     * Set the {@link #account} without adding this SavedSearch instance on the passed {@link #account}
      * If you want to preserve referential integrity we recommend to use
      * instead the corresponding adder method provided by {@link Account}
      */
     public void setAccount(Account account) {
         this.account = account;
+    }
+
+    public SavedSearch account(Account account) {
+        setAccount(account);
+        return this;
     }
 
     /**
@@ -142,7 +170,7 @@ public class SavedSearch implements Identifiable<Integer>, Serializable {
     }
 
     /**
-     * equals implementation using a business key.
+     * Equals implementation using a business key.
      */
     @Override
     public boolean equals(Object other) {

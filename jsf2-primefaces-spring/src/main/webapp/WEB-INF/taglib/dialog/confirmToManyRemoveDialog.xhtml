@@ -1,0 +1,17 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:app="http://springfuse.jaxio.com/app">
+<p:confirmDialog widgetVar="#{widgetVar}" header="#{msg.menu_remove}?" message="#{msg.dialog_remove_confirm}">
+	<h:panelGrid id="#{widgetVar}Content" columns="1" cellpadding="4" style="margin:0 auto;">
+		<app:print value="#{toManyAction.model.selectedRow}" />
+	</h:panelGrid>
+	<p:commandButton id="#{widgetVar}Yes" action="#{toManyAction.remove()}"
+		ajax="true" update="#{update}" oncomplete="#{widgetVar}.hide()"
+		immediate="true" process="@this" value="#{msg.yes}" title="#{msg.dialog_delete_confirm} #{msg.yes}" icon="ui-icon-check" />
+	<p:commandButton id="#{widgetVar}No" value="#{msg.no}" title="#{msg.dialog_remove_confirm} #{msg.no}"
+		onclick="#{widgetVar}.hide(); return false;" icon="ui-icon-cancel"/>
+</p:confirmDialog>
+</ui:composition>

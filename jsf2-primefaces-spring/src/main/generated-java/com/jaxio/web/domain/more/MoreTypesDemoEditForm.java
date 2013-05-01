@@ -12,19 +12,23 @@ import javax.inject.Named;
 import com.jaxio.domain.more.MoreTypesDemo;
 import com.jaxio.repository.more.MoreTypesDemoRepository;
 import com.jaxio.web.domain.support.GenericEditForm;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
  * View Helper/Controller to edit {@link MoreTypesDemo}.
  */
 @Named
-@Conversation
+@ConversationContextScoped
 public class MoreTypesDemoEditForm extends GenericEditForm<MoreTypesDemo, Integer> {
+
     @Inject
-    public void setMoreTypesDemoRepository(MoreTypesDemoRepository moreTypesDemoRepository) {
-        setRepository(moreTypesDemoRepository);
+    public MoreTypesDemoEditForm(MoreTypesDemoRepository moreTypesDemoRepository) {
+        super(moreTypesDemoRepository);
     }
 
+    /**
+     * The entity to edit/view.
+     */
     public MoreTypesDemo getMoreTypesDemo() {
         return getEntity();
     }

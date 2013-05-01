@@ -7,68 +7,49 @@
  */
 package com.jaxio.web.domain;
 
-import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.omnifaces.util.Faces;
-import org.primefaces.event.SelectEvent;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Address;
 import com.jaxio.domain.Book;
 import com.jaxio.domain.Document;
 import com.jaxio.domain.Role;
 import com.jaxio.repository.AccountRepository;
-import com.jaxio.web.conversation.ConversationCallBack;
 import com.jaxio.web.domain.AccountGraphLoader;
 import com.jaxio.web.domain.AddressController;
 import com.jaxio.web.domain.BookController;
 import com.jaxio.web.domain.DocumentController;
 import com.jaxio.web.domain.RoleController;
 import com.jaxio.web.domain.support.GenericEditForm;
-import com.jaxio.web.domain.support.SelectableListDataModel;
-import com.jaxio.web.faces.Conversation;
-import com.jaxio.web.permission.AddressPermission;
-import com.jaxio.web.permission.BookPermission;
-import com.jaxio.web.permission.DocumentPermission;
-import com.jaxio.web.permission.RolePermission;
+import com.jaxio.web.domain.support.GenericToManyAssociation;
+import com.jaxio.web.domain.support.GenericToOneAssociation;
+import com.jaxio.web.faces.ConversationContextScoped;
 import com.jaxio.web.util.TabBean;
 
 /**
  * View Helper/Controller to edit {@link Account}.
  */
 @Named
-@Conversation
+@ConversationContextScoped
 public class AccountEditForm extends GenericEditForm<Account, String> {
-    private TabBean tabBean = new TabBean();
-    private SelectableListDataModel<Book> books;
-    private SelectableListDataModel<Document> documents;
-    private SelectableListDataModel<Role> roles;
+    @Inject
+    protected AddressController addressController;
+    protected GenericToOneAssociation<Address, Integer> homeAddress;
+    @Inject
+    protected BookController bookController;
+    protected GenericToManyAssociation<Book, Integer> coolBooks;
+    @Inject
+    protected DocumentController documentController;
+    protected GenericToManyAssociation<Document, String> edocs;
+    @Inject
+    protected RoleController roleController;
+    protected GenericToManyAssociation<Role, Integer> securityRoles;
+    protected TabBean tabBean = new TabBean();
 
     @Inject
-    public void setAccountRepository(AccountRepository accountRepository) {
-        setRepository(accountRepository);
-    }
-
-    @Inject
-    public void setAccountGraphLoader(AccountGraphLoader accountGraphLoader) {
-        setEntityGraphLoader(accountGraphLoader);
-    }
-
-    /**
-     * Prepare the x-to-many list data models.
-     */
-    @Override
-    @PostConstruct
-    protected void init() {
-        super.init();
-        books = new SelectableListDataModel<Book>(getAccount().getBooks());
-        documents = new SelectableListDataModel<Document>(getAccount().getDocuments());
-        roles = new SelectableListDataModel<Role>(getAccount().getRoles());
-    }
-
-    public Account getAccount() {
-        return getEntity();
+    public AccountEditForm(AccountRepository accountRepository, AccountGraphLoader accountGraphLoader) {
+        super(accountRepository, accountGraphLoader);
     }
 
     /**
@@ -79,300 +60,96 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     }
 
     /**
-     * Used in dataTable.
+     * The entity to edit/view.
      */
-    public SelectableListDataModel<Book> getBooks() {
-        return books;
+    public Account getAccount() {
+        return getEntity();
     }
 
-    /**
-     * Used in dataTable.
-     */
-    public SelectableListDataModel<Document> getDocuments() {
-        return documents;
-    }
-
-    /**
-     * Used in dataTable.
-     */
-    public SelectableListDataModel<Role> getRoles() {
-        return roles;
-    }
-
-    // --------------------------------------------
-    // Actions for homeAddress association
-    // --------------------------------------------
-    @Inject
-    private AddressController addressController;
-
-    @Inject
-    private AddressPermission addressPermission;
-
-    public String viewHomeAddress() {
-        return addressController.editSubReadOnlyView("account_homeAddress", getAccount().getHomeAddress());
-    }
-
-    /**
-     * Helper for the autoComplete component used for the Account's homeAddress property.
-     */
-    public Address getSelectedHomeAddress() {
-        return getAccount().getHomeAddress();
-    }
-
-    /**
-     * Helper for the autoComplete component used for the Account's homeAddress property.
-     * Handles ajax autoComplete event and regular page postback.
-     */
-    public void setSelectedHomeAddress(Address address) {
-        if (addressController.shouldReplace(getAccount().getHomeAddress(), address)) {
-            getAccount().setHomeAddress(address);
-        }
-    }
-
-    /**
-     * Action to navigate to the Address select page in order to select a new Address
-     * to be set on this Account's homeAddress property.
-     */
-    public String selectHomeAddress() {
-        return addressController.selectSubView("account_homeAddress", selectHomeAddressCallBack);
-    }
-
-    protected ConversationCallBack<Address> selectHomeAddressCallBack = new ConversationCallBack<Address>() {
-        private static final long serialVersionUID = 1L;
-
-        // will be invoked from the AddressLazyDataModel
-        @Override
-        protected void onSelected(Address address) {
-            checkPermission(addressPermission.canSelect(address));
-            getAccount().setHomeAddress(address);
-            messageUtil.infoEntity("status_selected_ok", getAccount().getHomeAddress());
-        }
-    };
-
-    public String addHomeAddress() {
-        return addressController.createSubView("account_homeAddress", addHomeAddressCallBack);
-    }
-
-    protected ConversationCallBack<Address> addHomeAddressCallBack = new ConversationCallBack<Address>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onOk(Address address) {
-            checkPermission(addressPermission.canCreate());
-            getAccount().setHomeAddress(address);
-            messageUtil.infoEntity("status_created_ok", address);
-        }
-    };
-
-    public String editHomeAddress() {
-        return addressController.editSubView("account_homeAddress", getAccount().getHomeAddress(), editHomeAddressCallBack);
-    }
-
-    protected ConversationCallBack<Address> editHomeAddressCallBack = new ConversationCallBack<Address>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onOk(Address address) {
-            getAccount().setHomeAddress(address);
-            messageUtil.infoEntity("status_edited_ok", address);
-        }
-    };
-
-    // --------------------------------------------
-    // Actions for book association
-    // --------------------------------------------
-    @Inject
-    private BookController bookController;
-
-    @Inject
-    private BookPermission bookPermission;
-
-    /**
-     * Action with implicit navigation to edit the selected book.
-     */
-    public String editBook() {
-        return bookController.editSubView("account_books", books.getSelectedRow(), editBookCallBack);
-    }
-
-    protected ConversationCallBack<Book> editBookCallBack = new ConversationCallBack<Book>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onOk(Book book) {
-            Book previousBook = books.getSelectedRow(); // yes, it is preserved...
-            getAccount().removeBook(previousBook);
-            getAccount().addBook(book);
-            messageUtil.infoEntity("status_edited_ok", book);
-        }
-    };
-
-    public String viewBook() {
-        return bookController.editSubReadOnlyView("account_books", books.getSelectedRow());
-    }
-
-    /**
-     * This listener force the navigation to the edit or view page of the target @{link Book}.
-     */
-    public void onBookRowSelect(SelectEvent event) {
-        Faces.navigate(context().isReadOnly() ? viewBook() : editBook());
-    }
-
-    public void removeBook() {
-        checkPermission(bookPermission.canDelete(books.getSelectedRow()));
-        getAccount().removeBook(books.getSelectedRow());
-        messageUtil.infoEntity("status_removed_ok", books.getSelectedRow());
-    }
-
-    public String addBook() {
-        Book book = new Book();
-        book.setAccount(getAccount()); // for display
-        return bookController.createSubView("account_books", book, addBookCallBack);
-    }
-
-    protected ConversationCallBack<Book> addBookCallBack = new ConversationCallBack<Book>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onOk(Book book) {
-            getAccount().addBook(book);
-            messageUtil.infoEntity("status_added_new_ok", book);
-        }
-    };
-
-    // --------------------------------------------
-    // Actions for document association
-    // --------------------------------------------
-    @Inject
-    private DocumentController documentController;
-
-    @Inject
-    private DocumentPermission documentPermission;
-
-    /**
-     * Action with implicit navigation to edit the selected document.
-     */
-    public String editDocument() {
-        return documentController.editSubView("account_documents", documents.getSelectedRow(), editDocumentCallBack);
-    }
-
-    protected ConversationCallBack<Document> editDocumentCallBack = new ConversationCallBack<Document>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onOk(Document document) {
-            Document previousDocument = documents.getSelectedRow(); // yes, it is preserved...
-            getAccount().removeDocument(previousDocument);
-            getAccount().addDocument(document);
-            messageUtil.infoEntity("status_edited_ok", document);
-        }
-    };
-
-    public String viewDocument() {
-        return documentController.editSubReadOnlyView("account_documents", documents.getSelectedRow());
-    }
-
-    /**
-     * This listener force the navigation to the edit or view page of the target @{link Document}.
-     */
-    public void onDocumentRowSelect(SelectEvent event) {
-        Faces.navigate(context().isReadOnly() ? viewDocument() : editDocument());
-    }
-
-    public void removeDocument() {
-        checkPermission(documentPermission.canDelete(documents.getSelectedRow()));
-        getAccount().removeDocument(documents.getSelectedRow());
-        messageUtil.infoEntity("status_removed_ok", documents.getSelectedRow());
-    }
-
-    public String addDocument() {
-        Document document = new Document();
-        document.setAccount(getAccount()); // for display
-        return documentController.createSubView("account_documents", document, addDocumentCallBack);
-    }
-
-    protected ConversationCallBack<Document> addDocumentCallBack = new ConversationCallBack<Document>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onOk(Document document) {
-            getAccount().addDocument(document);
-            messageUtil.infoEntity("status_added_new_ok", document);
-        }
-    };
-
-    // --------------------------------------------
-    // Actions for role association
-    // --------------------------------------------
-    @Inject
-    private RoleController roleController;
-
-    @Inject
-    private RolePermission rolePermission;
-
-    public String selectRole() {
-        return roleController.multiSelectSubView("account_roles", selectRoleCallBack);
-    }
-
-    protected ConversationCallBack<Role> selectRoleCallBack = new ConversationCallBack<Role>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onSelected(List<Role> roles) {
-            for (Role role : roles) {
-                getAccount().removeRole(role);
-                getAccount().addRole(role);
-                messageUtil.infoEntity("status_added_existing_ok", role);
+    @PostConstruct
+    void setupHomeAddressesActions() {
+        homeAddress = new GenericToOneAssociation<Address, Integer>("account_homeAddress", addressController) {
+            @Override
+            protected Address get() {
+                return getAccount().getHomeAddress();
             }
-        }
-    };
 
-    /**
-     * Action with implicit navigation to edit the selected role.
-     */
-    public String editRole() {
-        return roleController.editSubView("account_roles", roles.getSelectedRow(), editRoleCallBack);
+            @Override
+            protected void set(Address address) {
+                getAccount().setHomeAddress(address);
+            }
+        };
     }
 
-    protected ConversationCallBack<Role> editRoleCallBack = new ConversationCallBack<Role>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onOk(Role role) {
-            Role previousRole = roles.getSelectedRow(); // yes, it is preserved...
-            getAccount().removeRole(previousRole);
-            getAccount().addRole(role);
-            messageUtil.infoEntity("status_edited_ok", role);
-        }
-    };
-
-    public String viewRole() {
-        return roleController.editSubReadOnlyView("account_roles", roles.getSelectedRow());
+    public GenericToOneAssociation<Address, Integer> getHomeAddress() {
+        return homeAddress;
     }
 
-    /**
-     * This listener force the navigation to the edit or view page of the target @{link Role}.
-     */
-    public void onRoleRowSelect(SelectEvent event) {
-        Faces.navigate(context().isReadOnly() ? viewRole() : editRole());
+    @PostConstruct
+    void setupCoolBooksActions() {
+        coolBooks = new GenericToManyAssociation<Book, Integer>(getAccount().getCoolBooks(), "account_coolBooks", bookController) {
+            @Override
+            protected void remove(Book book) {
+                getAccount().removeBook(book);
+            }
+
+            @Override
+            protected void add(Book book) {
+                getAccount().addBook(book);
+            }
+
+            @Override
+            protected void onCreate(Book book) {
+                book.setOwner(getAccount()); // for display
+            }
+        };
     }
 
-    public void removeRole() {
-        checkPermission(rolePermission.canDelete(roles.getSelectedRow()));
-        getAccount().removeRole(roles.getSelectedRow());
-        messageUtil.infoEntity("status_removed_ok", roles.getSelectedRow());
+    public GenericToManyAssociation<Book, Integer> getCoolBooks() {
+        return coolBooks;
     }
 
-    public String addRole() {
-        return roleController.createSubView("account_roles", addRoleCallBack);
+    @PostConstruct
+    void setupEdocsActions() {
+        edocs = new GenericToManyAssociation<Document, String>(getAccount().getEdocs(), "account_edocs", documentController) {
+            @Override
+            protected void remove(Document document) {
+                getAccount().removeEdoc(document);
+            }
+
+            @Override
+            protected void add(Document document) {
+                getAccount().addEdoc(document);
+            }
+
+            @Override
+            protected void onCreate(Document edoc) {
+                edoc.setOwner(getAccount()); // for display
+            }
+        };
     }
 
-    protected ConversationCallBack<Role> addRoleCallBack = new ConversationCallBack<Role>() {
-        private static final long serialVersionUID = 1L;
+    public GenericToManyAssociation<Document, String> getEdocs() {
+        return edocs;
+    }
 
-        @Override
-        protected void onOk(Role role) {
-            getAccount().addRole(role);
-            messageUtil.infoEntity("status_added_new_ok", role);
-        }
-    };
+    @PostConstruct
+    void setupSecurityRolesActions() {
+        securityRoles = new GenericToManyAssociation<Role, Integer>(getAccount().getSecurityRoles(), "account_securityRoles", roleController) {
+            @Override
+            protected void remove(Role role) {
+                getAccount().removeSecurityRole(role);
+            }
+
+            @Override
+            protected void add(Role role) {
+                // add the object only to the securityRole side of the relation 
+                getAccount().getSecurityRoles().add(role);
+            }
+        };
+    }
+
+    public GenericToManyAssociation<Role, Integer> getSecurityRoles() {
+        return securityRoles;
+    }
 }

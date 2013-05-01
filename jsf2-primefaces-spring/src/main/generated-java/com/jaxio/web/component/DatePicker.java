@@ -110,7 +110,7 @@ public class DatePicker extends UIInput implements NamingContainer {
     }
 
     /**
-     * Construct submitted value as 'yyyy-MM-dd', 'yyyy-MM-dd HH:mm' or 'HH:mm' The returned string is used by getConvertedValue...
+     * Construct submitted value as <code>yyyy-MM-dd</code>, <code>yyyy-MM-dd HH:mm</code> or <code>HH:mm</code> The returned string is used by getConvertedValue...
      */
     @Override
     public Object getSubmittedValue() {

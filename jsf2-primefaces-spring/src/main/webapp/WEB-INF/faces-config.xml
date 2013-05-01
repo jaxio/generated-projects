@@ -10,25 +10,26 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_1.xsd"
     version="2.1">
-    <application>
-		<resource-handler>com.jaxio.web.util.PrimeResourceHandlerWithCache</resource-handler>
+	<application>
+		<resource-handler>com.jaxio.web.util.CachedPrimeResourceHandler</resource-handler>
 		<locale-config>
 			<default-locale>fr</default-locale>
 			<supported-locale>en</supported-locale>
 			<supported-locale>fr</supported-locale>
 		</locale-config>
 		<el-resolver>com.jaxio.web.conversation.ConversationAwareElResolver</el-resolver>
-        <message-bundle>com.jaxio.web.util.MessageBundle</message-bundle>
+		<message-bundle>com.jaxio.web.util.MessageBundle</message-bundle>
 		<resource-bundle>
 			<base-name>com.jaxio.web.util.MessageBundle</base-name>
 			<var>msg</var>
 		</resource-bundle>
 	</application>
-    <factory>
-        <exception-handler-factory>com.jaxio.web.conversation.ConversationAwareExceptionHandlerFactory</exception-handler-factory>
+	<factory>
+		<exception-handler-factory>com.jaxio.web.conversation.ConversationAwareExceptionHandlerFactory</exception-handler-factory>
 	</factory>	
 	<lifecycle>
-        <phase-listener>com.jaxio.web.util.MultiPageMessagesSupport</phase-listener>    
-        <phase-listener>com.jaxio.web.util.LogPhaseListener</phase-listener>    
+		<phase-listener>com.jaxio.web.faces.LogPhaseListener</phase-listener>
+		<phase-listener>com.jaxio.web.faces.MultiPageMessagesListener</phase-listener>
+		<phase-listener>com.jaxio.web.faces.ExceptionInRenderPhaseListener</phase-listener>
 	</lifecycle>
 </faces-config>

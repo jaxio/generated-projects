@@ -4,12 +4,12 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:app="http://springfuse.jaxio.com/app">
-	<app:outputLabel for="#{id}" value="#{label}" required="#{empty required ? false : required}" rendered="#{empty rendered ? true : rendered}" />
-	<h:panelGroup rendered="#{not readonly and empty rendered ? true : rendered}">
-		<p:inputText id="#{id}" label="#{label}" value="#{value}" size="#{size lt 50 ? size : 50}" maxlength="#{empty maxlength ? 99999 : maxlength}">
+	<app:outputLabel for="#{id}" value="#{label}" required="#{required}" rendered="#{rendered}" />
+	<h:panelGroup rendered="#{(empty readonly or not readonly) and (empty rendered or rendered)}">
+		<p:inputText id="#{id}" label="#{resourcesUtil.getProperty(label)}" value="#{value}" size="#{size lt 50 ? size : 50}" maxlength="#{empty maxlength ? 99999 : maxlength}">
 			<f:validateBean binding="#{lenientBeanValidator}"/>
 			<ui:insert/>
 		</p:inputText>
 	</h:panelGroup>
-	<h:outputText value="#{value}" rendered="#{readonly and empty rendered ? true : rendered}" />
+	<h:outputText value="#{value}" rendered="#{readonly and (empty rendered or rendered)}" />
 </ui:composition>

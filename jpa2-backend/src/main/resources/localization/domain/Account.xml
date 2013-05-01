@@ -38,11 +38,11 @@
 	<entry key="account_homeAddress">Home Address</entry>
 
 	<!-- one-to-many -->
-	<entry key="account_books">Book</entry>
-	<entry key="account_documents">Document</entry>
+	<entry key="account_coolBooks">Cool Books</entry>
+	<entry key="account_edocs">Edocs</entry>
 
 	<!-- many-to-many -->
-	<entry key="account_roles">Role</entry>
+	<entry key="account_securityRoles">Security Roles</entry>
 
 	<!-- uniques -->
 	<entry key="account_username_already_exists">Username already exists</entry>

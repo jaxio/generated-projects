@@ -15,12 +15,14 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search data="#{bookLazyDataModel}" searchForm="#{bookSearchForm}" permission="#{bookPermission}" title="#{msg.book}" savedSearch="true">
+	<app:search data="#{bookLazyDataModel}" searchForm="#{bookSearchForm}" permission="#{bookPermission}" title="book" savedSearch="true">
 		<ui:define name="filters">
-			<app:multiAutoComplete id="accountSelector" value="#{bookSearchForm.accountSelector.selected}" label="#{msg.book_account}" 
-				controller="#{accountController}" converter="#{accountJsfConverter}" printer="#{accountPrinter}"/>
-			<app:inputMultiAutoComplete id="title" value="#{bookSearchForm.titleSelector}" label="#{msg.book_title}" controller="#{bookController}" action="completeProperty" property="title" />
-			<app:rangeInt id="numberOfPages" value="#{bookSearchForm.numberOfPagesRange}" label="#{msg.book_numberOfPages}"/>
+			<app:input id="fullTextQuery" value="#{bookSearchForm.term}" label="search_full_text" />
+			<app:inputMultiAutoComplete id="title" value="#{bookSearchForm.titleSelector}" label="book_title" controller="#{bookController}" completeMethod="completePropertyFullText" property="title" />
+			<app:rangeInt id="numberOfPages" value="#{bookSearchForm.numberOfPagesRange}" label="book_numberOfPages"/>
+
+			<app:multiAutoComplete id="ownerSelector" value="#{bookSearchForm.ownerSelector.selected}" label="book_owner" 
+				controller="#{accountController}" completeMethod="completeFullText" converter="#{accountJsfConverter}" />
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">
@@ -29,9 +31,6 @@
 			<c:if test="#{multiCheckboxSelection}">
 				<p:column selectionMode="multiple" style="width:18px" rendered="#{bookPermission.canSelect()}" />
 			</c:if>
-			<p:column id="book_account" headerText="#{msg.book_account}" sortBy="#{item.account.username}">
-				<h:outputText value="#{accountPrinter.print(item.account)}" />
-			</p:column>
 			<p:column id="book_title" headerText="#{msg.book_title}" sortBy="#{item.title}">
 				<h:outputText value="#{item.title}" />
 			</p:column>
@@ -39,10 +38,10 @@
 				<h:outputText value="#{item.numberOfPages}" />
 			</p:column>
 			<p:column id="open" headerText="#{msg.actions}" styleClass="actions-column" resizable="false">
-				<app:iconSelect actionBean="#{bookLazyDataModel}" action="select" rendered="#{sub and not multiCheckboxSelection}" title="#{bookPrinter.print(item)}" />
-				<app:iconEdit actionBean="#{bookLazyDataModel}" action="edit" rendered="#{not sub and bookPermission.canEdit(item)}" title="#{bookPrinter.print(item)}" />
-				<app:iconView actionBean="#{bookLazyDataModel}" action="view" rendered="#{bookPermission.canView(item)}" title="#{bookPrinter.print(item)}" />
-				<app:iconDelete rendered="#{not sub and bookPermission.canDelete(item)}" title="#{bookPrinter.print(item)}" />
+				<app:iconSelect actionBean="#{bookLazyDataModel}" rendered="#{sub}" title="#{printer.print(item)}" />
+				<app:iconEdit actionBean="#{bookLazyDataModel}" rendered="#{not sub and bookPermission.canEdit(item)}" title="#{printer.print(item)}" />
+				<app:iconView actionBean="#{bookLazyDataModel}" rendered="#{bookPermission.canView(item)}" title="#{printer.print(item)}" />
+				<app:iconDelete rendered="#{not sub and bookPermission.canDelete(item)}" title="#{printer.print(item)}" />
 			</p:column>
 		</ui:define>
 	</app:search>

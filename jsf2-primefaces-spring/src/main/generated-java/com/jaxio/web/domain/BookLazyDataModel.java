@@ -9,14 +9,18 @@ package com.jaxio.web.domain;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.model.LazyDataModel;
 import com.jaxio.domain.Book;
 import com.jaxio.repository.BookRepository;
 import com.jaxio.web.converter.BookJsfConverter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
+/**
+ * Provide PrimeFaces {@link LazyDataModel} for {@link Book}
+ */
 @Named
-@Conversation
+@ConversationContextScoped
 public class BookLazyDataModel extends GenericLazyDataModel<Book, Integer, BookSearchForm> {
     private static final long serialVersionUID = 1L;
 

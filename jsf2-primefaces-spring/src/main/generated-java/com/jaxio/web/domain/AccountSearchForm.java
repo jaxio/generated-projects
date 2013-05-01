@@ -10,47 +10,38 @@ package com.jaxio.web.domain;
 import static com.jaxio.dao.support.EntitySelector.newEntitySelector;
 import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
 import static com.jaxio.dao.support.Ranges.RangeDate.newRangeDate;
-import static com.jaxio.domain.Account_.birthDate;
-import static com.jaxio.domain.Account_.civility;
-import static com.jaxio.domain.Account_.description;
-import static com.jaxio.domain.Account_.email;
-import static com.jaxio.domain.Account_.firstName;
-import static com.jaxio.domain.Account_.homeAddress;
-import static com.jaxio.domain.Account_.isEnabled;
-import static com.jaxio.domain.Account_.lastName;
-import static com.jaxio.domain.Account_.password;
-import static com.jaxio.domain.Account_.username;
 import javax.inject.Named;
 import com.jaxio.dao.support.EntitySelector;
 import com.jaxio.dao.support.PropertySelector;
 import com.jaxio.dao.support.Ranges.RangeDate;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Account;
+import com.jaxio.domain.Account_;
 import com.jaxio.domain.Address;
 import com.jaxio.domain.Civility;
 import com.jaxio.web.domain.support.GenericSearchForm;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
- * View Helper to find/select {@link Account}.
+ * View Helper to search {@link Account}.
  * It exposes a {@link Account} instance so it can be used in search by Example query.
  */
 @Named
-@Conversation
+@ConversationContextScoped
 public class AccountSearchForm extends GenericSearchForm<Account, String, AccountSearchForm> {
     private static final long serialVersionUID = 1L;
 
-    private Account account = new Account();
-    private RangeDate<Account> birthDateRange = newRangeDate(birthDate);
-    private PropertySelector<Account, String> usernameSelector = newPropertySelector(username);
-    private PropertySelector<Account, String> passwordSelector = newPropertySelector(password);
-    private PropertySelector<Account, String> emailSelector = newPropertySelector(email);
-    private PropertySelector<Account, Boolean> isEnabledSelector = newPropertySelector(isEnabled);
-    private PropertySelector<Account, Civility> civilitySelector = newPropertySelector(civility);
-    private PropertySelector<Account, String> firstNameSelector = newPropertySelector(firstName);
-    private PropertySelector<Account, String> lastNameSelector = newPropertySelector(lastName);
-    private PropertySelector<Account, String> descriptionSelector = newPropertySelector(description);
-    private EntitySelector<Account, Address, Integer> homeAddressSelector = newEntitySelector(homeAddress);
+    protected Account account = new Account();
+    protected RangeDate<Account> birthDateRange = newRangeDate(Account_.birthDate);
+    protected PropertySelector<Account, String> usernameSelector = newPropertySelector(Account_.username);
+    protected PropertySelector<Account, String> passwordSelector = newPropertySelector(Account_.password);
+    protected PropertySelector<Account, String> emailSelector = newPropertySelector(Account_.email);
+    protected PropertySelector<Account, Boolean> isEnabledSelector = newPropertySelector(Account_.isEnabled);
+    protected PropertySelector<Account, Civility> civilitySelector = newPropertySelector(Account_.civility);
+    protected PropertySelector<Account, String> firstNameSelector = newPropertySelector(Account_.firstName);
+    protected PropertySelector<Account, String> lastNameSelector = newPropertySelector(Account_.lastName);
+    protected PropertySelector<Account, String> descriptionSelector = newPropertySelector(Account_.description);
+    protected EntitySelector<Account, Address, Integer> homeAddressSelector = newEntitySelector(Account_.homeAddress);
 
     public Account getAccount() {
         return account;
@@ -58,15 +49,55 @@ public class AccountSearchForm extends GenericSearchForm<Account, String, Accoun
 
     @Override
     protected Account getEntity() {
-        return account;
+        return getAccount();
     }
 
-    // Ranges, used from the view.
+    @Override
+    public AccountSearchForm newInstance() {
+        return new AccountSearchForm();
+    }
+
+    @Override
+    public SearchParameters toSearchParameters() {
+        return new SearchParameters() //
+                .anywhere() //
+                .leftJoin(Account_.homeAddress) //
+                .term(term) //
+                .range(birthDateRange) //
+                .property(usernameSelector) //
+                .property(passwordSelector) //
+                .property(emailSelector) //
+                .property(isEnabledSelector) //
+                .property(civilitySelector) //
+                .property(firstNameSelector) //
+                .property(lastNameSelector) //
+                .property(descriptionSelector) //
+                .entity(homeAddressSelector) //
+        ;
+    }
+
+    @Override
+    public void resetWithOther(AccountSearchForm other) {
+        this.account = other.getAccount();
+        this.term = other.getTerm();
+        this.birthDateRange = other.getBirthDateRange();
+        this.usernameSelector = other.getUsernameSelector();
+        this.passwordSelector = other.getPasswordSelector();
+        this.emailSelector = other.getEmailSelector();
+        this.isEnabledSelector = other.getIsEnabledSelector();
+        this.civilitySelector = other.getCivilitySelector();
+        this.firstNameSelector = other.getFirstNameSelector();
+        this.lastNameSelector = other.getLastNameSelector();
+        this.descriptionSelector = other.getDescriptionSelector();
+        this.homeAddressSelector = other.getHomeAddressSelector();
+    }
+
+    // Ranges
     public RangeDate<Account> getBirthDateRange() {
         return birthDateRange;
     }
 
-    // Selectors for property
+    // Property selectors
     public PropertySelector<Account, String> getUsernameSelector() {
         return usernameSelector;
     }
@@ -99,45 +130,8 @@ public class AccountSearchForm extends GenericSearchForm<Account, String, Accoun
         return descriptionSelector;
     }
 
-    // Selectors for x-to-one associations
+    // Relation selectors
     public EntitySelector<Account, Address, Integer> getHomeAddressSelector() {
         return homeAddressSelector;
-    }
-
-    public SearchParameters toSearchParameters() {
-        return new SearchParameters() //
-                .anywhere() //
-                .leftJoin(homeAddress) //
-                .range(birthDateRange) //
-                .property(usernameSelector) //
-                .property(passwordSelector) //
-                .property(emailSelector) //
-                .property(isEnabledSelector) //
-                .property(civilitySelector) //
-                .property(firstNameSelector) //
-                .property(lastNameSelector) //
-                .property(descriptionSelector) //
-                .entity(homeAddressSelector) //
-        ;
-    }
-
-    @Override
-    public AccountSearchForm newInstance() {
-        return new AccountSearchForm();
-    }
-
-    @Override
-    public void resetWithOther(AccountSearchForm other) {
-        this.account = other.getAccount();
-        this.birthDateRange = other.getBirthDateRange();
-        this.usernameSelector = other.getUsernameSelector();
-        this.passwordSelector = other.getPasswordSelector();
-        this.emailSelector = other.getEmailSelector();
-        this.isEnabledSelector = other.getIsEnabledSelector();
-        this.civilitySelector = other.getCivilitySelector();
-        this.firstNameSelector = other.getFirstNameSelector();
-        this.lastNameSelector = other.getLastNameSelector();
-        this.descriptionSelector = other.getDescriptionSelector();
-        this.homeAddressSelector = other.getHomeAddressSelector();
     }
 }

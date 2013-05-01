@@ -18,32 +18,10 @@
 			http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
 			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
 			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
-
 	<description><![CDATA[
-		Main entry point for spring configuration
+		Main entry point for web spring configuration
 	]]></description>
-
-<context:annotation-config />
-	<import resource="applicationContext.xml" />
-
-	<!-- context -->
+	
+	<context:annotation-config />
 	<context:component-scan base-package="com.jaxio.web"/>
-
-	<bean class="org.springframework.beans.factory.config.CustomScopeConfigurer" lazy-init="false">
-	    <property name="scopes">
-	        <map>
-	            <entry key="conversation">
-	                <bean class="com.jaxio.web.faces.ConversationScope" />
-	            </entry>
-                <entry key="view">
-                    <bean class="com.jaxio.web.faces.ViewScope" />
-                </entry>
-	        </map>
-	    </property>
-	</bean>
-
-	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
-       <property name="cookieName" value="locale" />
-       <property name="defaultLocale" value="fr" />
-    </bean>  
 </beans>

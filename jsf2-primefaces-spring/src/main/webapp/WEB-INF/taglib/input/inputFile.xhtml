@@ -3,17 +3,18 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:app="http://springfuse.jaxio.com/app"	
-	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:outputLabel for="#{id}" value="#{label}" required="#{empty required ? false : required}" rendered="#{empty rendered ? true : rendered}" />
-	<h:panelGroup rendered="#{not readonly and empty rendered ? true : rendered}">
-		<appcc:datePicker id="#{id}" label="#{label}" value="#{value}">
-			<f:convertDateTime pattern="yyyy-MM-dd" />
-			<f:validateBean binding="#{lenientBeanValidator}"/>
-			<ui:insert/>
-		</appcc:datePicker>
-	</h:panelGroup>
-	<h:outputText value="#{value}" rendered="#{readonly and empty rendered ? true : rendered}">
-		<f:convertDateTime pattern="yyyy-MM-dd" />
-	</h:outputText>
+	xmlns:app="http://springfuse.jaxio.com/app">
+		<app:outputLabel for="#{id}" value="#{label}" required="#{required}" rendered="#{rendered}" />
+		<h:panelGroup id="#{id}OP" rendered="#{(empty readonly or not readonly) and (empty rendered or rendered)}">
+			<p:fileUpload id="#{id}"
+				fileUploadListener="#{fileupload[action]}"
+				auto="true"
+				update="#{id}OP"
+				sizeLimit="10000000"
+				allowTypes="/(\.|\/)(gif|jpg|jpeg|png|txt|doc|docx|rtf|ppt|pptx|pdf|key|xls|xlsx|number|pages)$/"
+				rendered="#{!readonly}" />
+			<h:commandLink
+    			rendered="#{not empty object[filename]}"
+    			value="#{object[filename]}" disabled="#{not object.idSet}"><p:fileDownload value="#{stream}" /></h:commandLink>
+		</h:panelGroup>
 </ui:composition>

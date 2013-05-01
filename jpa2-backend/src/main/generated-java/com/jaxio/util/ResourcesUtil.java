@@ -52,15 +52,7 @@ public class ResourcesUtil {
      * Return the property value for the contextual locale.
      * If no value is found, the passed key is returned.
      */
-    public String getProperty(String key) {
-        return getProperty(key, null);
-    }
-
-    /**
-     * Return the property value for the contextual locale.
-     * If no value is found, the passed key is returned.
-     */
-    public String getProperty(String key, Object[] args) {
+    public String getProperty(String key, Object... args) {
         if (key == null) {
             return "";
         }
@@ -78,14 +70,13 @@ public class ResourcesUtil {
             return "";
         }
 
-        if (count == 0) {
+        switch (count) {
+        case 0:
             return getProperty(key + "_0");
-        }
-
-        if (count == 1) {
+        case 1:
             return getProperty(key + "_1");
+        default:
+            return getProperty(key + "_n", count);
         }
-
-        return getProperty(key + "_n", new Object[] { count });
     }
 }

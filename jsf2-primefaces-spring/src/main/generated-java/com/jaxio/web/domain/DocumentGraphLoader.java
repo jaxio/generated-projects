@@ -7,22 +7,31 @@
  */
 package com.jaxio.web.domain;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import com.jaxio.domain.Document;
+import com.jaxio.repository.DocumentRepository;
 import com.jaxio.repository.support.EntityGraphLoader;
 
 /**
- * Preloads the associations required by the view layer. 
+ * Preloads the {@link Document} associations required by the view layer.
  */
 @Named
 @Singleton
-public class DocumentGraphLoader implements EntityGraphLoader<Document> {
+public class DocumentGraphLoader extends EntityGraphLoader<Document, String> {
+    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
+    protected DocumentGraphLoader() {
+        super();
+    }
+
+    @Inject
+    public DocumentGraphLoader(DocumentRepository documentRepository) {
+        super(documentRepository);
+    }
 
     @Override
     public void loadGraph(Document document) {
-        if (document.getAccount() != null) {
-            document.getAccount().toString(); // force load
-        }
+        loadSingular(document.getOwner());
     }
 }

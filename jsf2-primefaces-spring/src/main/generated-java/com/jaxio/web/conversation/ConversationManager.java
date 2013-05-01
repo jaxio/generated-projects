@@ -7,8 +7,8 @@
  */
 package com.jaxio.web.conversation;
 
-import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.newTreeMap;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static com.jaxio.web.conversation.ConversationHolder.setCurrentConversation;
 
 import java.util.Collection;
@@ -23,8 +23,10 @@ import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import org.omnifaces.util.Faces;
 import org.primefaces.component.menuitem.MenuItem;
 import org.primefaces.model.DefaultMenuModel;
 import org.primefaces.model.MenuModel;
@@ -40,12 +42,10 @@ import org.springframework.context.ApplicationContextAware;
 public class ConversationManager implements ApplicationContextAware {
     private static final String CONVERSATION_MAP = "conversationMap";
     private static ConversationManager instance;
-    private static final Logger log = Logger.getLogger(ConversationManager.class);
+    private static final Logger log = LoggerFactory.getLogger(ConversationManager.class);
 
     private ApplicationContext applicationContext;
-    private Collection<ConversationFactory> conversationFactories;
     private Collection<ConversationListener> conversationListeners;
-    private Map<String, ConversationFactory> conversationFactoryByUri = newHashMap();
     private int maxConversations = 5;
 
     /**
@@ -92,32 +92,26 @@ public class ConversationManager implements ApplicationContextAware {
     // Manage conversation lifecycle
     // --------------------------------------
 
-    /**
-     * Creates a new {@link Conversation}, calls the {@link ConversationListener#conversationCreated} but does NOT bound the newly created conversation to
-     * the current thread. Note that when this method is invoked from the {@link ConversationFilter}, no {@link FacesContext} is present yet.
-     * Before creating the conversation, when the max number of conversations for the current user is reached, it first evicts a conversation using FIFO policy.
-     */
-    public Conversation createConversation(HttpServletRequest request) throws UnexpectedConversationException {
-        ConversationFactory conversationFactory = getConversationFactory(request);
-        if (conversationFactory == null) {
-            throw new UnexpectedConversationException("No conversation factory found", request.getRequestURI(), "/home.faces");
-        }
+    public Conversation beginConversation(ConversationContext<?> ctx) {
+        HttpSession session = Faces.getSession();
+        Map<String, Conversation> conversationMap = conversationMap(session);
 
-        Map<String, Conversation> conversationMap = conversationMap(request.getSession());
+        handleMaxConversationsReached(session, conversationMap);
 
-        if (isMaxConversationsReached(request.getSession())) {
-            // FIFO conversation eviction
-            String keyToEvict = conversationMap.keySet().iterator().next();
-            if (log.isInfoEnabled()) {
-                log.info("Max number of conversations (" + maxConversations + ") reached. Evicting conversation " + keyToEvict + " using fifo policy");
-            }
-            conversationMap.remove(keyToEvict); // TODO: special treatment for evicted conversation?
-        }
-
-        Conversation conversation = conversationFactory.createConversation(request);
+        Conversation conversation = Conversation.newConversation(session, ctx);
         conversationMap.put(conversation.getId(), conversation);
         conversationCreated(conversation);
+        conversation.pushNextContextIfNeeded();
         return conversation;
+    }
+
+    private void handleMaxConversationsReached(HttpSession session, Map<String, Conversation> conversationMap) {
+        if (isMaxConversationsReached(session)) {
+            // FIFO conversation eviction
+            String keyToEvict = conversationMap.keySet().iterator().next();
+            log.info("Max number of conversations ({}) reached. Evicting conversation {} using fifo policy", maxConversations, keyToEvict);
+            conversationMap.remove(keyToEvict); // TODO: special treatment for evicted conversation?
+        }
     }
 
     /**
@@ -187,9 +181,7 @@ public class ConversationManager implements ApplicationContextAware {
 
     private Conversation endCurrentConversationCommon() {
         Conversation conversation = getCurrentConversation();
-        if (log.isInfoEnabled()) {
-            log.info("Ending conversation " + conversation.getId());
-        }
+        log.info("Ending conversation {}", conversation.getId());
         conversationEnding(conversation);
         setCurrentConversation(null);
         return conversation;
@@ -216,7 +208,9 @@ public class ConversationManager implements ApplicationContextAware {
             if (currentConversation != null && currentConversation.getId().equals(conversation.getId())) {
                 htmlMenuItem.setDisabled(true);
             }
-            model.addMenuItem(htmlMenuItem);
+            if (isNotBlank(conversation.getLabel())) {
+                model.addMenuItem(htmlMenuItem);
+            }
         }
         return model;
     }
@@ -240,16 +234,18 @@ public class ConversationManager implements ApplicationContextAware {
         int i = 0;
         while (iterator.hasNext()) {
             ConversationContext<?> ctx = iterator.next();
-            menuItem = new MenuItem();
-            menuItem.setValue(ctx.getLabel());
-            if (i == beforeLastIndex && beforeLastIndex > 0) {
-                // calls back button action
-                menuItem.setOnclick("APP.menu.back()");
-            } else {
-                menuItem.setDisabled(true);
-            }
+            if (isNotBlank(ctx.getLabel())) {
+                menuItem = new MenuItem();
+                menuItem.setValue(ctx.getLabel());
+                if (i == beforeLastIndex && beforeLastIndex > 0) {
+                    // calls back button action
+                    menuItem.setOnclick("APP.menu.back()");
+                } else {
+                    menuItem.setDisabled(true);
+                }
 
-            model.addMenuItem(menuItem);
+                model.addMenuItem(menuItem);
+            }
             i++;
         }
         return model;
@@ -298,30 +294,6 @@ public class ConversationManager implements ApplicationContextAware {
 
     private Map<String, Object> sessionMap() {
         return FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-    }
-
-    private Collection<ConversationFactory> getConversationFactories() {
-        if (conversationFactories == null) {
-            conversationFactories = applicationContext.getBeansOfType(ConversationFactory.class).values();
-        }
-        return conversationFactories;
-    }
-
-    private ConversationFactory getConversationFactory(HttpServletRequest request) {
-        String uri = request.getServletPath();
-        ConversationFactory result = conversationFactoryByUri.get(uri);
-
-        if (result == null) {
-            for (ConversationFactory cf : getConversationFactories()) {
-                if (cf.canCreateConversation(request)) {
-                    conversationFactoryByUri.put(uri, cf);
-                    result = cf;
-                    break;
-                }
-            }
-        }
-
-        return result;
     }
 
     // --------------------------------------------

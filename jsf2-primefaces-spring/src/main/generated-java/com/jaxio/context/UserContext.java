@@ -8,9 +8,9 @@
 package com.jaxio.context;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.emptyList;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -94,7 +94,7 @@ public class UserContext {
             return toStringList(auth.getAuthorities());
         }
 
-        return Collections.emptyList();
+        return emptyList();
     }
 
     /**

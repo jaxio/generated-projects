@@ -15,10 +15,11 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search data="#{addressLazyDataModel}" searchForm="#{addressSearchForm}" permission="#{addressPermission}" title="#{msg.address}" savedSearch="true">
+	<app:search data="#{addressLazyDataModel}" searchForm="#{addressSearchForm}" permission="#{addressPermission}" title="address" savedSearch="true">
 		<ui:define name="filters">
-			<app:inputMultiAutoComplete id="streetName" value="#{addressSearchForm.streetNameSelector}" label="#{msg.address_streetName}" controller="#{addressController}" action="completeProperty" property="streetName" />
-			<app:inputMultiAutoComplete id="city" value="#{addressSearchForm.citySelector}" label="#{msg.address_city}" controller="#{addressController}" action="completeProperty" property="city" />
+			<app:input id="fullTextQuery" value="#{addressSearchForm.term}" label="search_full_text" />
+			<app:inputMultiAutoComplete id="streetName" value="#{addressSearchForm.streetNameSelector}" label="address_streetName" controller="#{addressController}" completeMethod="completeProperty" property="streetName" />
+			<app:inputMultiAutoComplete id="city" value="#{addressSearchForm.citySelector}" label="address_city" controller="#{addressController}" completeMethod="completePropertyFullText" property="city" />
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">
@@ -34,10 +35,10 @@
 				<h:outputText value="#{item.city}" />
 			</p:column>
 			<p:column id="open" headerText="#{msg.actions}" styleClass="actions-column" resizable="false">
-				<app:iconSelect actionBean="#{addressLazyDataModel}" action="select" rendered="#{sub and not multiCheckboxSelection}" title="#{addressPrinter.print(item)}" />
-				<app:iconEdit actionBean="#{addressLazyDataModel}" action="edit" rendered="#{not sub and addressPermission.canEdit(item)}" title="#{addressPrinter.print(item)}" />
-				<app:iconView actionBean="#{addressLazyDataModel}" action="view" rendered="#{addressPermission.canView(item)}" title="#{addressPrinter.print(item)}" />
-				<app:iconDelete rendered="#{not sub and addressPermission.canDelete(item)}" title="#{addressPrinter.print(item)}" />
+				<app:iconSelect actionBean="#{addressLazyDataModel}" rendered="#{sub}" title="#{printer.print(item)}" />
+				<app:iconEdit actionBean="#{addressLazyDataModel}" rendered="#{not sub and addressPermission.canEdit(item)}" title="#{printer.print(item)}" />
+				<app:iconView actionBean="#{addressLazyDataModel}" rendered="#{addressPermission.canView(item)}" title="#{printer.print(item)}" />
+				<app:iconDelete rendered="#{not sub and addressPermission.canDelete(item)}" title="#{printer.print(item)}" />
 			</p:column>
 		</ui:define>
 	</app:search>

@@ -7,6 +7,8 @@
  */
 package com.jaxio.dao.support;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.jaxio.dao.support.JpaUtil.buildJpaOrders;
 import static com.jaxio.dao.support.ByEntitySelectorUtil.byEntitySelectors;
 import static com.jaxio.dao.support.ByPropertySelectorUtil.byPropertySelectors;
@@ -29,8 +31,8 @@ import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.apache.commons.lang.Validate;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jaxio.domain.Identifiable;
 
@@ -45,36 +47,23 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
     private ByPatternUtil byPatternUtil;
     @Inject
     private NamedQueryUtil namedQueryUtil;
+    @Inject
+    private ByFullTextUtil byFullTextUtil;
     @PersistenceContext
     private EntityManager entityManager;
-
     private Class<E> type;
     private Logger log;
+    private List<SingularAttribute<?, ?>> indexedAttributes;
     private String cacheRegion;
-
-    protected EntityManager getEntityManager() {
-        return entityManager;
-    }
-
-    protected ByExampleUtil getByExampleUtil() {
-        return byExampleUtil;
-    }
-
-    protected ByPatternUtil getByPatternUtil() {
-        return byPatternUtil;
-    }
-
-    protected NamedQueryUtil getNamedQueryUtil() {
-        return namedQueryUtil;
-    }
 
     /**
      * This constructor needs the real type of the generic type E so it can be passed to the {@link EntityManager}.
      */
-    public GenericDao(Class<E> type) {
+    public GenericDao(Class<E> type, SingularAttribute<?, ?>... indexedAttributes) {
         this.type = type;
-        this.log = Logger.getLogger(getClass());
+        this.log = LoggerFactory.getLogger(getClass());
         this.cacheRegion = type.getCanonicalName();
+        this.indexedAttributes = newArrayList(indexedAttributes);
     }
 
     /**
@@ -100,7 +89,7 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
         E entityFound = getEntityManager().find(type, id);
 
         if (entityFound == null) {
-            log.warn("get returned null with pk=" + id);
+            log.warn("get returned null with pk={}", id);
         }
 
         return entityFound;
@@ -167,9 +156,7 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
 
         // execution
         List<E> entities = typedQuery.getResultList();
-        if (log.isDebugEnabled()) {
-            log.debug("Returned " + entities.size() + " elements");
-        }
+        log.debug("Returned {} elements", entities.size());
 
         return entities;
     }
@@ -182,7 +169,8 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
      * @return the number of entities matching the search.
      */
     public int findCount(E entity, SearchParameters sp) {
-        Validate.notNull(entity, "The entity cannot be null");
+        checkNotNull(entity, "The entity cannot be null");
+        checkNotNull(sp, "The searchParameters cannot be null");
 
         if (sp.hasNamedQuery()) {
             return getNamedQueryUtil().numberByNamedQuery(sp).intValue();
@@ -253,22 +241,23 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
 
     protected <R> Predicate getPredicate(Root<E> root, CriteriaQuery<R> query, CriteriaBuilder builder, E entity, SearchParameters sp) {
         return JpaUtil.andPredicate(builder, //
+                byFullTextUtil.byFullText(root, query, builder, sp, entity, indexedAttributes), //
                 byRanges(root, query, builder, sp.getRanges(), type), //
                 byPropertySelectors(root, builder, sp, sp.getProperties()), //
                 byEntitySelectors(root, builder, sp.getEntities()), //
-                getByExamplePredicate(root, entity, sp, builder), //
+                byExample(root, entity, sp, builder), //
                 byPatternUtil.byPattern(root, query, builder, sp, type), //
-                getExtraPredicate(root, query, builder, entity, sp));
+                byExtraPredicate(root, query, builder, entity, sp));
     }
 
-    protected Predicate getByExamplePredicate(Root<E> root, E entity, SearchParameters sp, CriteriaBuilder builder) {
+    protected Predicate byExample(Root<E> root, E entity, SearchParameters sp, CriteriaBuilder builder) {
         return byExampleUtil.byExampleOnEntity(root, entity, sp, builder);
     }
 
     /**
      * You may override this method to add a Predicate to the default find method.
      */
-    protected <R> Predicate getExtraPredicate(Root<E> root, CriteriaQuery<R> query, CriteriaBuilder builder, E entity, SearchParameters sp) {
+    protected <R> Predicate byExtraPredicate(Root<E> root, CriteriaQuery<R> query, CriteriaBuilder builder, E entity, SearchParameters sp) {
         return null;
     }
 
@@ -280,7 +269,7 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
      * @param entity the entity to be saved or updated.
      */
     public void save(E entity) {
-        Validate.notNull(entity, "The entity to save cannot be null element");
+        checkNotNull(entity, "The entity to save cannot be null");
 
         // creation with auto generated id
         if (!entity.isIdSet()) {
@@ -327,9 +316,25 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
             if (entityRef != null) {
                 getEntityManager().remove(entityRef);
             } else {
-                log.warn("Attempt to delete an instance that is not present in the database: " + entity.toString());
+                log.warn("Attempt to delete an instance that is not present in the database: {}", entity);
             }
         }
+    }
+
+    protected EntityManager getEntityManager() {
+        return entityManager;
+    }
+
+    protected ByExampleUtil getByExampleUtil() {
+        return byExampleUtil;
+    }
+
+    protected ByPatternUtil getByPatternUtil() {
+        return byPatternUtil;
+    }
+
+    protected NamedQueryUtil getNamedQueryUtil() {
+        return namedQueryUtil;
     }
 
     // -----------------
@@ -345,9 +350,14 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
         if (!entityType.hasVersionAttribute()) {
             return null;
         }
-        // _HACK_ too bad that JPA does not provide this entityType.getVersion();
-        // read: http://stackoverflow.com/questions/13265094/generic-way-to-get-jpa-entity-version
+        return (Comparable<Object>) JpaUtil.getValue(entity, gerVersionAttribute(entityType));
+    }
 
+    /**
+     * _HACK_ too bad that JPA does not provide this entityType.getVersion();
+     * @see http://stackoverflow.com/questions/13265094/generic-way-to-get-jpa-entity-version
+     */
+    private SingularAttribute<? super E, ?> gerVersionAttribute(EntityType<E> entityType) {
         SingularAttribute<? super E, ?> version = null;
         for (SingularAttribute<? super E, ?> sa : entityType.getSingularAttributes()) {
             if (sa.isVersion()) {
@@ -355,8 +365,7 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
                 break;
             }
         }
-
-        return (Comparable<Object>) JpaUtil.getValue(entity, version);
+        return version;
     }
 
     // -----------------
@@ -376,12 +385,5 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
                 typedQuery.setHint("org.hibernate.cacheRegion", cacheRegion);
             }
         }
-    }
-
-    // -----------------
-    // Hibernate Search
-    // -----------------
-    protected String[] getIndexedFields() {
-        return new String[0];
     }
 }

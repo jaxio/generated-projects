@@ -7,6 +7,10 @@
  */
 package com.jaxio.service;
 
+import static com.jaxio.service.EnvironmentService.Environment.Development;
+import static com.jaxio.service.EnvironmentService.Environment.Integration;
+import static com.jaxio.service.EnvironmentService.Environment.Production;
+import static com.jaxio.service.EnvironmentService.Environment.toEnvironment;
 import static org.apache.commons.lang.StringUtils.trimToEmpty;
 
 import javax.inject.Named;
@@ -15,14 +19,38 @@ import org.springframework.beans.factory.annotation.Value;
 
 @Named
 public class EnvironmentService {
-    @Value("${env_name:developement}")
+    @Value("${env_name:development}")
     private String environmentName;
 
-    public boolean isDevelopment() {
-        return "developement".equalsIgnoreCase(trimToEmpty(environmentName));
+    public enum Environment {
+        Development, Integration, Production;
+        boolean is(String value) {
+            return name().equalsIgnoreCase(trimToEmpty(value));
+        }
+
+        public static Environment toEnvironment(String value) {
+            for (Environment environment : values()) {
+                if (environment.is(value)) {
+                    return environment;
+                }
+            }
+            return Development;
+        }
     }
 
-    public String getEnvironmentName() {
-        return this.environmentName;
+    public boolean isDevelopment() {
+        return Development.is(environmentName);
+    }
+
+    public boolean isIntegration() {
+        return Integration.is(environmentName);
+    }
+
+    public boolean isProduction() {
+        return Production.is(environmentName);
+    }
+
+    public Environment getEnvironment() {
+        return toEnvironment(environmentName);
     }
 }

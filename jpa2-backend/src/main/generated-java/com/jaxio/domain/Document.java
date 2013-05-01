@@ -10,8 +10,6 @@ package com.jaxio.domain;
 import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -28,13 +26,18 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.ParamDef;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.TikaBridge;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Document_;
@@ -44,26 +47,25 @@ import com.jaxio.domain.IdentifiableHashBuilder;
 @Table(name = "DOCUMENT")
 @FilterDef(name = "myDocumentFilter", defaultCondition = "ACCOUNT_ID = :currentAccountId ", parameters = @ParamDef(name = "currentAccountId", type = "org.hibernate.type.StringType"))
 @Filter(name = "myDocumentFilter")
+@Indexed
 public class Document implements Identifiable<String>, Serializable {
     private static final long serialVersionUID = 1L;
-    private static final Logger log = Logger.getLogger(Document.class);
+    private static final Logger log = LoggerFactory.getLogger(Document.class);
 
     // Raw attributes
     private String id; // pk
+    private byte[] documentBinary;
+    private String documentFileName; // not null
     private String documentContentType; // not null
     private Integer documentSize; // not null
-    private String documentFileName; // not null
-    private byte[] documentBinary;
     private Integer version;
 
     // Many to one
-    private Account account; // not null (accountId)
+    private Account owner; // not null (accountId)
 
-    // -------------------------------
-    // Getter & Setter
-    // -------------------------------
     // -- [id] ------------------------
 
+    @Override
     @Column(name = "ID", length = 36)
     @GeneratedValue(generator = "strategy-uuid2")
     @GenericGenerator(name = "strategy-uuid2", strategy = "uuid2")
@@ -72,13 +74,60 @@ public class Document implements Identifiable<String>, Serializable {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    public Document id(String id) {
+        setId(id);
+        return this;
+    }
+
+    @Override
     @Transient
+    @XmlTransient
     public boolean isIdSet() {
         return id != null && !id.isEmpty();
+    }
+
+    // -- [documentBinary] ------------------------
+
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "DOCUMENT_BINARY")
+    @Lob
+    @Field(store = Store.YES, analyzer = @Analyzer(definition = "custom"))
+    @TikaBridge
+    public byte[] getDocumentBinary() {
+        return documentBinary;
+    }
+
+    public void setDocumentBinary(byte[] documentBinary) {
+        this.documentBinary = documentBinary;
+    }
+
+    public Document documentBinary(byte[] documentBinary) {
+        setDocumentBinary(documentBinary);
+        return this;
+    }
+
+    // -- [documentFileName] ------------------------
+
+    @Size(max = 100)
+    @NotEmpty
+    @Column(name = "DOCUMENT_FILE_NAME", nullable = false, length = 100)
+    @Field(analyzer = @Analyzer(definition = "custom"))
+    public String getDocumentFileName() {
+        return documentFileName;
+    }
+
+    public void setDocumentFileName(String documentFileName) {
+        this.documentFileName = documentFileName;
+    }
+
+    public Document documentFileName(String documentFileName) {
+        setDocumentFileName(documentFileName);
+        return this;
     }
 
     // -- [documentContentType] ------------------------
@@ -94,6 +143,11 @@ public class Document implements Identifiable<String>, Serializable {
         this.documentContentType = documentContentType;
     }
 
+    public Document documentContentType(String documentContentType) {
+        setDocumentContentType(documentContentType);
+        return this;
+    }
+
     // -- [documentSize] ------------------------
 
     @NotNull
@@ -106,74 +160,9 @@ public class Document implements Identifiable<String>, Serializable {
         this.documentSize = documentSize;
     }
 
-    // -- [documentFileName] ------------------------
-
-    @Size(max = 100)
-    @NotEmpty
-    @Column(name = "DOCUMENT_FILE_NAME", nullable = false, length = 100)
-    public String getDocumentFileName() {
-        return documentFileName;
-    }
-
-    public void setDocumentFileName(String documentFileName) {
-        this.documentFileName = documentFileName;
-    }
-
-    // -- [documentBinary] ------------------------
-
-    @Basic(fetch = FetchType.LAZY)
-    @Column(name = "DOCUMENT_BINARY")
-    @Lob
-    public byte[] getDocumentBinary() {
-        return documentBinary;
-    }
-
-    public void setDocumentBinary(byte[] documentBinary) {
-        this.documentBinary = documentBinary;
-    }
-
-    /**
-     * Helper method to convert the passed file to a byte[] and set it using {@link #setDocumentBinary(byte[])}
-     * @param localFile to read the content from
-     * @see #setDocumentBinary(byte[])
-     */
-    public void setDocumentBinaryFromFile(File localFile) {
-        try {
-            setDocumentBinary(FileUtils.readFileToByteArray(localFile));
-        } catch (Exception e) {
-            throw new IllegalStateException("Could not read from file", e);
-        }
-    }
-
-    /**
-     * Helper method to copy documentBinary byte array to the passed target file.
-     *
-     * @return the passed targetFile as a convenience.
-     * @throws IllegalStateException when no binary is set
-     * @see #getDocumentBinary()
-     */
-    @Transient
-    @XmlTransient
-    public File getDocumentBinaryToFile(File targetFile) throws IOException {
-        if (getDocumentBinary() != null) {
-            throw new IllegalStateException("Empty binary");
-        }
-
-        FileUtils.writeByteArrayToFile(targetFile, getDocumentBinary());
-        return targetFile;
-    }
-
-    /**
-     * Helper method to copy documentBinary byte array to a temporary file.
-     *
-     * @throws IllegalStateException when no binary is set
-     * @return a temporary file holding a copy of the documentBinary byte array
-     * @see #getDocumentBinary()
-     */
-    @Transient
-    @XmlTransient
-    public File getDocumentBinaryToTempFile() throws IOException {
-        return getDocumentBinaryToFile(File.createTempFile("documentBinary", "file"));
+    public Document documentSize(Integer documentSize) {
+        setDocumentSize(documentSize);
+        return this;
     }
 
     // -- [version] ------------------------
@@ -188,9 +177,14 @@ public class Document implements Identifiable<String>, Serializable {
         this.version = version;
     }
 
-    // --------------------------------------------------------------------
+    public Document version(Integer version) {
+        setVersion(version);
+        return this;
+    }
+
+    // -----------------------------------------------------------------
     // Many to One support
-    // --------------------------------------------------------------------
+    // -----------------------------------------------------------------
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // many-to-one: Document.accountId ==> Account.id
@@ -198,17 +192,22 @@ public class Document implements Identifiable<String>, Serializable {
 
     @JoinColumn(name = "ACCOUNT_ID", nullable = false)
     @ManyToOne(cascade = { PERSIST, MERGE }, fetch = LAZY)
-    public Account getAccount() {
-        return account;
+    public Account getOwner() {
+        return owner;
     }
 
     /**
-     * Set the account without adding this Document instance on the passed account
+     * Set the {@link #owner} without adding this Document instance on the passed {@link #owner}
      * If you want to preserve referential integrity we recommend to use
      * instead the corresponding adder method provided by {@link Account}
      */
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setOwner(Account owner) {
+        this.owner = owner;
+    }
+
+    public Document owner(Account owner) {
+        setOwner(owner);
+        return this;
     }
 
     /**
@@ -218,7 +217,7 @@ public class Document implements Identifiable<String>, Serializable {
     }
 
     /**
-     * equals implementation using a business key.
+     * Equals implementation using a business key.
      */
     @Override
     public boolean equals(Object other) {
@@ -240,10 +239,10 @@ public class Document implements Identifiable<String>, Serializable {
     public String toString() {
         return Objects.toStringHelper(this) //
                 .add(Document_.id.getName(), getId()) //
+                .add(Document_.documentBinary.getName(), getDocumentBinary()) //
+                .add(Document_.documentFileName.getName(), getDocumentFileName()) //
                 .add(Document_.documentContentType.getName(), getDocumentContentType()) //
                 .add(Document_.documentSize.getName(), getDocumentSize()) //
-                .add(Document_.documentFileName.getName(), getDocumentFileName()) //
-                .add(Document_.documentBinary.getName(), getDocumentBinary()) //
                 .add(Document_.version.getName(), getVersion()) //
                 .toString();
     }

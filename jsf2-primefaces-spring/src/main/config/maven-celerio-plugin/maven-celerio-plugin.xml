@@ -27,62 +27,80 @@
 			<!-- <dateMapping columnJdbcType="DATE" mappedType="M_JODA_LOCALDATE"/> -->
 		</dateMappings>
 
-        <!-- default configuration for fetch type / cascades / 2d level cache--> 
-        <defaultEntityCacheConfig usage="NONE" />
-        
-        <defaultManyToOneConfig fetch="LAZY">
-            <cascades>
-                <cascade type="PERSIST"/>
-                <cascade type="MERGE"/>
-            </cascades>
-            <cacheConfig usage="NONE" />
-        </defaultManyToOneConfig>
-        
-        <defaultOneToManyConfig orphanRemoval="true">
-            <cascades>
-                <cascade type="ALL"/>
-            </cascades>
-            <cacheConfig usage="NONE" />
-        </defaultOneToManyConfig>
-        
-        <defaultOneToOneConfig fetch="LAZY">
-            <cascades>
-                <cascade type="NONE"/>
-            </cascades>
-            <cacheConfig usage="NONE" />
-        </defaultOneToOneConfig>
-        
-        <defaultInverseOneToOneConfig fetch="LAZY">
-            <cascades>
-                <cascade type="ALL"/>
-            </cascades>
-            <cacheConfig usage="NONE" />        
-        </defaultInverseOneToOneConfig>
-        
-        <defaultManyToManyConfig>
-            <cascades>
-                <cascade type="PERSIST"/>
-                <cascade type="MERGE"/>
-            </cascades>
-            <cacheConfig usage="NONE" />        
-        </defaultManyToManyConfig>
-        
-        <defaultInverseManyToManyConfig>
-            <cascades>
-                <cascade type="ALL"/>
-            </cascades>
-            <cacheConfig usage="NONE" />
-        </defaultInverseManyToManyConfig>
-        
-		<conventions identifiableProperty="id" />
+		<!-- default configuration for fetch type / cascades / 2d level cache -->
+		<defaultEntityCacheConfig usage="NONE" />
+
+		<defaultManyToOneConfig fetch="LAZY">
+			<cascades>
+				<cascade type="PERSIST" />
+				<cascade type="MERGE" />
+			</cascades>
+			<cacheConfig usage="NONE" />
+			<associationAction create="true" edit="true" view="true" select="true" autoComplete="true" remove="false" />
+		</defaultManyToOneConfig>
+
+		<defaultOneToManyConfig orphanRemoval="true">
+			<cascades>
+				<cascade type="ALL" />
+			</cascades>
+			<cacheConfig usage="NONE" />
+			<associationAction create="true" edit="true" view="true" select="true" autoComplete="true" remove="true" />
+		</defaultOneToManyConfig>
+
+		<defaultOneToOneConfig fetch="LAZY">
+			<cascades>
+				<cascade type="NONE" />
+			</cascades>
+			<cacheConfig usage="NONE" />
+			<associationAction create="true" edit="true" view="true" select="true" autoComplete="true" remove="false" />
+		</defaultOneToOneConfig>
+
+		<defaultInverseOneToOneConfig fetch="LAZY">
+			<cascades>
+				<cascade type="ALL" />
+			</cascades>
+			<cacheConfig usage="NONE" />
+			<associationAction create="false" edit="false" view="true" select="false" autoComplete="false" remove="false" />
+		</defaultInverseOneToOneConfig>
+
+		<defaultManyToManyConfig>
+			<cascades>
+				<cascade type="PERSIST" />
+				<cascade type="MERGE" />
+			</cascades>
+			<cacheConfig usage="NONE" />
+			<associationAction create="true" edit="true" view="true" select="true" autoComplete="false" remove="true" />
+		</defaultManyToManyConfig>
+
+		<defaultInverseManyToManyConfig>
+			<cascades>
+				<cascade type="ALL" />
+			</cascades>
+			<cacheConfig usage="NONE" />
+			<associationAction create="false" edit="true" view="true" select="false" autoComplete="false" remove="false" />
+		</defaultInverseManyToManyConfig>
+
+		<conventions identifiableProperty="id">
+			<!-- <fieldNaming regexp="^.{3}_" replace="" /> -->
+		</conventions>
 	</configuration>
 
 	<entityConfigs>
 		<!-- Account demonstrates misc column configurations -->
 		<entityConfig tableName="ACCOUNT">
 			<columnConfigs>
-				<columnConfig columnName="login" min="4" fieldName="username" searchResult="true" />
-				<columnConfig columnName="email" searchResult="true" />
+				<columnConfig columnName="login" min="4" fieldName="username" searchResult="true">
+					<indexedField />
+				</columnConfig>
+				<columnConfig columnName="email" searchResult="true">
+					<indexedField />
+				</columnConfig>
+				<columnConfig columnName="first_name">
+					<indexedField />
+				</columnConfig>
+				<columnConfig columnName="last_name">
+					<indexedField />
+				</columnConfig>
 				<columnConfig columnName="is_enabled" searchResult="true" />
 				<columnConfig columnName="civility" sharedEnumName="Civility" />
 				<columnConfig columnName="address_id" searchResult="true">
@@ -94,27 +112,57 @@
 		<!-- Book demonstrates one-to-many relation -->
 		<entityConfig tableName="BOOK">
 			<columnConfigs>
-				<columnConfig columnName="account_id" associationDirection="BIDIRECTIONAL" />
+				<columnConfig columnName="title">
+					<indexedField />
+				</columnConfig>
+				<columnConfig columnName="account_id" associationDirection="BIDIRECTIONAL">
+					<manyToOneConfig var="owner" />
+					<oneToManyConfig var="coolBooks" elementVar="book" />
+				</columnConfig>
 			</columnConfigs>
 		</entityConfig>
 
 		<!-- Document demonstrates one-to-many relation and upload/download -->
 		<entityConfig tableName="DOCUMENT">
 			<columnConfigs>
-				<columnConfig columnName="account_id" associationDirection="BIDIRECTIONAL" />
+				<columnConfig columnName="account_id" associationDirection="BIDIRECTIONAL">
+					<manyToOneConfig var="owner" />
+					<oneToManyConfig var="edocs" elementVar="edoc" />
+				</columnConfig>
+				<columnConfig columnName="document_binary">
+					<indexedField />
+				</columnConfig>
+				<columnConfig columnName="document_file_name">
+					<indexedField />
+				</columnConfig>
 			</columnConfigs>
 		</entityConfig>
 
 		<!-- Role demonstrates many-to-many relation and spring-security integration -->
 		<entityConfig tableName="ROLE">
 			<columnConfigs>
-				<columnConfig columnName="role_name" messageKey="true" />
+				<columnConfig columnName="role_name" messageKey="true">
+					<indexedField />
+				</columnConfig>
+			</columnConfigs>
+		</entityConfig>
+
+		<entityConfig tableName="ADDRESS">
+			<columnConfigs>
+				<columnConfig columnName="city">
+					<indexedField />
+				</columnConfig>
 			</columnConfigs>
 		</entityConfig>
 
 		<entityConfig tableName="ACCOUNT_ROLE" associationDirection="UNIDIRECTIONAL">
 			<columnConfigs>
-				<columnConfig columnName="role_id" inverse="true" />
+				<columnConfig columnName="account_id">
+					<!-- <manyToManyConfig var="accounts" elementVar="account" /> -->
+				</columnConfig>
+				<columnConfig columnName="role_id" inverse="true">
+					<manyToManyConfig var="securityRoles" elementVar="securityRole" />
+				</columnConfig>
 			</columnConfigs>
 		</entityConfig>
 

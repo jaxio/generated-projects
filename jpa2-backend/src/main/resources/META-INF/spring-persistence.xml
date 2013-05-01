@@ -23,5 +23,8 @@
         <class>com.jaxio.domain.more.MoreTypesDemo</class>
         <class>com.jaxio.domain.Role</class>
         <class>com.jaxio.domain.SavedSearch</class>
+		<properties>
+			<property name="hibernate.search.model_mapping" value="com.jaxio.search.SearchMappingFactory" />
+		</properties>
 	</persistence-unit>
 </persistence>

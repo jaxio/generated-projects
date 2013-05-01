@@ -30,7 +30,8 @@ import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jaxio.domain.Identifiable;
 
@@ -40,7 +41,7 @@ import com.jaxio.domain.Identifiable;
 @Named
 @Singleton
 public class ByExampleUtil {
-    private static final Logger log = Logger.getLogger(ByExampleUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(ByExampleUtil.class);
 
     @PersistenceContext
     private EntityManager em;

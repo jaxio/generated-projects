@@ -11,29 +11,28 @@
 				value="#{msg.back}" icon="ui-icon-arrowreturnthick-1-w"/>
 		</p:toolbarGroup>
 		<p:toolbarGroup rendered="#{not sub and not readonly}">
-			<p:commandButton id="close" oncomplete="askForSaveDialog.show(); APP.focusAskForSaveDialog();" 
+			<p:commandButton id="close" oncomplete="askForSaveDialog.show(); APP.focusAskForSaveDialog();"
 				ajax="true" immediate="true" process="@this"
 				icon="ui-icon-close"
 				value="#{msg.menu_close}"
-				title="#{msg.menu_close} #{title}"/>
+				title="#{msg.menu_close} #{resourcesUtil.getProperty(title)}"/>
 			<p:commandButton id="delete" icon="ui-icon-trash"
 				onclick="askForDeleteDialog.show(); APP.focusAskForDeleteDialog();"
 				value="#{msg.menu_delete_and_close}"
-				title="#{msg.menu_delete_and_close} #{title}"
+				title="#{msg.menu_delete_and_close} #{resourcesUtil.getProperty(title)}"
 				disabled="#{empty bean.entity.id}" />
 			<p:separator />
 		</p:toolbarGroup>
 	</ui:define>
 	<ui:define name="content">
-		<p:breadCrumb model="#{conversationManager.breadCrumbMenuModel}" rendered="#{conversationManager.renderBreadCrumb}" />	
+		<p:breadCrumb model="#{conversationManager.breadCrumbMenuModel}" rendered="#{conversationManager.renderBreadCrumb}" />
 		<p:fieldset id="fieldset">
-			<input type="hidden" name="_cid_" value="#{conversationManager.currentConversation.id}"/>
-			<input type="hidden" name="_ccid_" value="#{conversationManager.currentConversation.currentContext.id}"/>
+			<input type="hidden" name="_cid" value="#{conversationManager.currentConversation.cid}"/>
 			<f:validateBean disabled="true">
 				<h:panelGrid columns="2" styleClass="aria-role-presentation">
 					<ui:insert name="form" />
 				</h:panelGrid>
-				<app:saveButton title="#{title}" bean="#{bean}"/>
+				<app:saveButton title="#{resourcesUtil.getProperty(title)}" bean="#{bean}"/>
 			</f:validateBean>
 		</p:fieldset>
 		<ui:insert name="tabs" />
@@ -41,9 +40,9 @@
 	<ui:define name="dialogs">
 		<ui:insert name="custom-dialogs" />
 		<p:confirmDialog widgetVar="askForDeleteDialog" header="#{msg.menu_delete}?" message="#{msg.dialog_delete_confirm}">
-	        <h:panelGrid id="askForDeleteDialogContent" columns="1" cellpadding="4" style="margin:0 auto;">  
-	            <h:outputText value="#{typeAwarePrinter.print(bean.entity)}" style="font-weight:bold" />  
-	        </h:panelGrid>
+			<h:panelGrid id="askForDeleteDialogContent" columns="1" cellpadding="4" style="margin:0 auto;">
+				<h:outputText value="#{printer.print(bean.entity)}" style="font-weight:bold" />
+			</h:panelGrid>
 			<p:commandButton id="askForDeleteDialogYes" action="#{bean.deleteAndClose()}" ajax="false" immediate="true" process="@none" value="#{msg.yes}" title="#{msg.dialog_delete_confirm} #{msg.yes}" icon="ui-icon-check" />
 			<p:commandButton id="askForDeleteDialogNo" value="#{msg.no}" title="#{msg.dialog_delete_confirm} #{msg.no}" onclick="askForDeleteDialog.hide(); APP.focusTo('form:delete'); return false;" icon="ui-icon-cancel"/>
 		</p:confirmDialog>
@@ -57,6 +56,6 @@
 				value="#{msg.no}"
 				title="#{msg.dialog_ask_for_save} #{msg.no}"
 				icon="ui-icon-cancel" immediate="true" process="@none" />
-		</p:confirmDialog>		
-	</ui:define>	
-</ui:composition >
+		</p:confirmDialog>
+	</ui:define>
+</ui:composition>

@@ -7,11 +7,9 @@
  */
 package com.jaxio.printer;
 
+import java.util.Locale;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import java.util.Locale;
-
 import com.jaxio.domain.SavedSearch;
 import com.jaxio.printer.DiscoverablePrinter;
 
@@ -34,7 +32,7 @@ public class SavedSearchPrinter extends DiscoverablePrinter<SavedSearch> {
         if (savedSearch == null) {
             return "";
         }
-        StringBuilder ret = new StringBuilder(256);
+        StringBuilder ret = new StringBuilder();
         appendIfNotEmpty(ret, savedSearch.getName());
         return ret.toString();
     }

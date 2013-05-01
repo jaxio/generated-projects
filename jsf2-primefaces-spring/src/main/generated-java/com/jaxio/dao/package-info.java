@@ -6,7 +6,7 @@
  * Template pack-backend-jpa:src/main/java/project/dao/package-info.p.vm.java
  */
 /**
- * Database access object, or Repository.
+ * Database access object
  * @see http://en.wikipedia.org/wiki/Data_access_object
  */
 package com.jaxio.dao;

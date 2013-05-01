@@ -12,7 +12,7 @@
 		<packs>
 			<pack name="pack-backend-jpa" enable="true"/>
 			<pack name="pack-jsf2-spring-conversation" enable="true" />
-			<pack name="pack-selenium-primefaces" enable="false" />
+			<pack name="pack-selenium-primefaces" enable="true" />
 			<!-- The optional 'pack-custom' defined below is the local folder where you can create your own Celerio templates. -->
 			<!-- All templates present in this folder will be executed by Celerio. -->
 			<pack name="pack-custom" path="src/main/celerio" enable="false" />

@@ -15,7 +15,8 @@ import com.jaxio.repository.SavedSearchRepository;
 import com.jaxio.web.converter.GenericJsfConverter;
 
 /**
- * JSF Converter for {@link SavedSearch}.
+ * JSF converter for {@link SavedSearch}.
+ * @see GenericJsfConverter
  */
 @Named
 @Singleton

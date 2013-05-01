@@ -15,7 +15,8 @@ import com.jaxio.repository.BookRepository;
 import com.jaxio.web.converter.GenericJsfConverter;
 
 /**
- * JSF Converter for {@link Book}.
+ * JSF converter for {@link Book}.
+ * @see GenericJsfConverter
  */
 @Named
 @Singleton

@@ -4,8 +4,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:app="http://springfuse.jaxio.com/app">
-	<app:outputLabel for="#{id}" value="#{label}" required="#{empty required ? false : required}" rendered="#{empty rendered ? true : rendered}" />
-	<p:selectOneMenu id="#{id}" value="#{value}" label="#{label}" rendered="#{not readonly}" disabled="#{empty disabled ? false : disabled}"
+	<app:outputLabel for="#{id}" value="#{label}" required="#{required}" rendered="#{rendered}" />
+	<p:selectOneMenu id="#{id}" value="#{value}" label="#{resourcesUtil.getProperty(label)}" rendered="#{not readonly}" disabled="#{empty disabled ? false : disabled}"
 		layout="#{items.list.size() lt 4 ? 'lineDirection' : 'pageDirection'}">
 		<f:selectItems value="#{values}" />
 		<f:validateBean binding="#{lenientBeanValidator}" />

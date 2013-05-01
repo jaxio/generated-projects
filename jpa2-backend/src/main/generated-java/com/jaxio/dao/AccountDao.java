@@ -7,6 +7,10 @@
  */
 package com.jaxio.dao;
 
+import static com.jaxio.domain.Account_.email;
+import static com.jaxio.domain.Account_.firstName;
+import static com.jaxio.domain.Account_.lastName;
+import static com.jaxio.domain.Account_.username;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import com.jaxio.dao.AccountDao;
@@ -21,6 +25,6 @@ import com.jaxio.domain.Account;
 @Singleton
 public class AccountDao extends GenericDao<Account, String> {
     public AccountDao() {
-        super(Account.class);
+        super(Account.class, username, email, firstName, lastName);
     }
 }

@@ -7,11 +7,9 @@
  */
 package com.jaxio.printer;
 
+import java.util.Locale;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import java.util.Locale;
-
 import com.jaxio.domain.Address;
 import com.jaxio.printer.DiscoverablePrinter;
 
@@ -34,7 +32,7 @@ public class AddressPrinter extends DiscoverablePrinter<Address> {
         if (address == null) {
             return "";
         }
-        StringBuilder ret = new StringBuilder(256);
+        StringBuilder ret = new StringBuilder();
         appendIfNotEmpty(ret, address.getCity());
         return ret.toString();
     }

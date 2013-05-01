@@ -16,16 +16,17 @@ import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.SavedSearchPermission;
 
 /**
- * Stateless controller for SavedSearch conversation start. Provides also auto-complete support. 
+ * Stateless controller for {@link SavedSearch} conversation start. 
  */
 @Named
 @Singleton
 public class SavedSearchController extends GenericController<SavedSearch, Integer> {
-    public final static String editUri = "/domain/savedSearchEdit.faces";
-    public final static String selectUri = "/domain/savedSearchSelect.faces";
+    private static final String editUri = "/domain/savedSearchEdit.faces";
+    private static final String selectUri = "/domain/savedSearchSelect.faces";
 
     @Inject
     public SavedSearchController(SavedSearchRepository savedSearchRepository, SavedSearchPermission savedSearchPermission) {
         super(savedSearchRepository, savedSearchPermission, selectUri, editUri);
     }
+
 }

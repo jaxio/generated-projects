@@ -10,9 +10,6 @@ package com.jaxio.web.domain;
 import static com.jaxio.dao.support.EntitySelector.newEntitySelector;
 import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
 import static com.jaxio.dao.support.Ranges.RangeInteger.newRangeInteger;
-import static com.jaxio.domain.Book_.account;
-import static com.jaxio.domain.Book_.numberOfPages;
-import static com.jaxio.domain.Book_.title;
 import javax.inject.Named;
 import com.jaxio.dao.support.EntitySelector;
 import com.jaxio.dao.support.PropertySelector;
@@ -20,23 +17,24 @@ import com.jaxio.dao.support.Ranges.RangeInteger;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Book;
+import com.jaxio.domain.Book_;
 import com.jaxio.web.domain.support.GenericSearchForm;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
- * View Helper to find/select {@link Book}.
+ * View Helper to search {@link Book}.
  * It exposes a {@link Book} instance so it can be used in search by Example query.
  */
 @Named
-@Conversation
+@ConversationContextScoped
 public class BookSearchForm extends GenericSearchForm<Book, Integer, BookSearchForm> {
     private static final long serialVersionUID = 1L;
 
-    private Book book = new Book();
-    private RangeInteger<Book> numberOfPagesRange = newRangeInteger(numberOfPages);
-    private PropertySelector<Book, String> titleSelector = newPropertySelector(title);
-    private PropertySelector<Book, Integer> numberOfPagesSelector = newPropertySelector(numberOfPages);
-    private EntitySelector<Book, Account, String> accountSelector = newEntitySelector(account);
+    protected Book book = new Book();
+    protected RangeInteger<Book> numberOfPagesRange = newRangeInteger(Book_.numberOfPages);
+    protected PropertySelector<Book, String> titleSelector = newPropertySelector(Book_.title);
+    protected PropertySelector<Book, Integer> numberOfPagesSelector = newPropertySelector(Book_.numberOfPages);
+    protected EntitySelector<Book, Account, String> ownerSelector = newEntitySelector(Book_.owner);
 
     public Book getBook() {
         return book;
@@ -44,37 +42,7 @@ public class BookSearchForm extends GenericSearchForm<Book, Integer, BookSearchF
 
     @Override
     protected Book getEntity() {
-        return book;
-    }
-
-    // Ranges, used from the view.
-    public RangeInteger<Book> getNumberOfPagesRange() {
-        return numberOfPagesRange;
-    }
-
-    // Selectors for property
-    public PropertySelector<Book, String> getTitleSelector() {
-        return titleSelector;
-    }
-
-    public PropertySelector<Book, Integer> getNumberOfPagesSelector() {
-        return numberOfPagesSelector;
-    }
-
-    // Selectors for x-to-one associations
-    public EntitySelector<Book, Account, String> getAccountSelector() {
-        return accountSelector;
-    }
-
-    public SearchParameters toSearchParameters() {
-        return new SearchParameters() //
-                .anywhere() //
-                .leftJoin(account) //
-                .range(numberOfPagesRange) //
-                .property(titleSelector) //
-                .property(numberOfPagesSelector) //
-                .entity(accountSelector) //
-        ;
+        return getBook();
     }
 
     @Override
@@ -83,11 +51,43 @@ public class BookSearchForm extends GenericSearchForm<Book, Integer, BookSearchF
     }
 
     @Override
+    public SearchParameters toSearchParameters() {
+        return new SearchParameters() //
+                .anywhere() //
+                .term(term) //
+                .range(numberOfPagesRange) //
+                .property(titleSelector) //
+                .property(numberOfPagesSelector) //
+                .entity(ownerSelector) //
+        ;
+    }
+
+    @Override
     public void resetWithOther(BookSearchForm other) {
         this.book = other.getBook();
+        this.term = other.getTerm();
         this.numberOfPagesRange = other.getNumberOfPagesRange();
         this.titleSelector = other.getTitleSelector();
         this.numberOfPagesSelector = other.getNumberOfPagesSelector();
-        this.accountSelector = other.getAccountSelector();
+        this.ownerSelector = other.getOwnerSelector();
+    }
+
+    // Ranges
+    public RangeInteger<Book> getNumberOfPagesRange() {
+        return numberOfPagesRange;
+    }
+
+    // Property selectors
+    public PropertySelector<Book, String> getTitleSelector() {
+        return titleSelector;
+    }
+
+    public PropertySelector<Book, Integer> getNumberOfPagesSelector() {
+        return numberOfPagesSelector;
+    }
+
+    // Relation selectors
+    public EntitySelector<Book, Account, String> getOwnerSelector() {
+        return ownerSelector;
     }
 }

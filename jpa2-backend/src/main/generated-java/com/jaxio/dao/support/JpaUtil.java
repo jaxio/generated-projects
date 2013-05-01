@@ -195,7 +195,11 @@ public class JpaUtil {
 
     public static <T> Object getValue(T example, Attribute<? super T, ?> attr) {
         try {
-            return ReflectionUtils.invokeMethod((Method) attr.getJavaMember(), example);
+            if (attr.getJavaMember() instanceof Method) {
+                return ReflectionUtils.invokeMethod((Method) attr.getJavaMember(), example);
+            } else {
+                return ReflectionUtils.getField((Field) attr.getJavaMember(), example);
+            }
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
@@ -221,5 +225,21 @@ public class JpaUtil {
             }
         }
         return false;
+    }
+
+    public static String[] toNames(SingularAttribute<?, ?>... attributes) {
+        List<String> ret = newArrayList();
+        for (SingularAttribute<?, ?> attribute : attributes) {
+            ret.add(attribute.getName());
+        }
+        return ret.toArray(new String[ret.size()]);
+    }
+
+    public static List<String> toNamesList(List<SingularAttribute<?, ?>> attributes) {
+        List<String> ret = newArrayList();
+        for (SingularAttribute<?, ?> attribute : attributes) {
+            ret.add(attribute.getName());
+        }
+        return ret;
     }
 }

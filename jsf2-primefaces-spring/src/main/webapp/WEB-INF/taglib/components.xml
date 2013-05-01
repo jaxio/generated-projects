@@ -1,49 +1,50 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<facelet-taglib xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facelettaglibrary_2_0.xsd" version="2.0">
+<facelet-taglib xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facelettaglibrary_2_0.xsd" version="2.0">
 	<namespace>http://springfuse.jaxio.com/app</namespace>
 	<!-- Auto complete -->
-    <tag>
-        <tag-name>autoComplete</tag-name>
-        <source>autocomplete/autoComplete.xhtml</source>        
-        <attribute>
-            <description>Unique identifier in for the underlying auto-complete component. This id is also used to build the label id etc.</description>
-            <name>id</name>
-            <required>true</required>
-        </attribute>
-        <attribute>
-            <description>Label to display.</description>
-            <name>label</name>
-            <required>true</required>
-        </attribute>
-        <attribute>
-            <description>Value of the component.</description>
-            <name>value</name>
-            <required>true</required>
-        </attribute>        
-    </tag>
-    <tag>
-        <tag-name>multiAutoComplete</tag-name>
-        <source>autocomplete/multiAutoComplete.xhtml</source>        
-        <attribute>
-            <description>Unique identifier in for the underlying auto-complete component. This id is also used to build the label id etc.</description>
-            <name>id</name>
-            <required>true</required>
-        </attribute>
-        <attribute>
-            <description>Label to display.</description>
-            <name>label</name>
-            <required>true</required>
-        </attribute>
-        <attribute>
-            <description>Value of the component.</description>
-            <name>value</name>
-            <required>true</required>
-        </attribute>        
-    </tag>
-    <tag>
-    	<tag-name>inputMultiAutoComplete</tag-name>
-        <source>autocomplete/inputMultiAutoComplete.xhtml</source>        
-    </tag>
+	<tag>
+		<tag-name>autoComplete</tag-name>
+		<source>autocomplete/autoComplete.xhtml</source>
+		<attribute>
+			<description>Unique identifier in for the underlying auto-complete component. This id is also used to build the label id etc.</description>
+			<name>id</name>
+			<required>true</required>
+		</attribute>
+		<attribute>
+			<description>Label to display.</description>
+			<name>label</name>
+			<required>true</required>
+		</attribute>
+		<attribute>
+			<description>Value of the component.</description>
+			<name>value</name>
+			<required>true</required>
+		</attribute>
+	</tag>
+	<tag>
+		<tag-name>multiAutoComplete</tag-name>
+		<source>autocomplete/multiAutoComplete.xhtml</source>
+		<attribute>
+			<description>Unique identifier in for the underlying auto-complete component. This id is also used to build the label id etc.</description>
+			<name>id</name>
+			<required>true</required>
+		</attribute>
+		<attribute>
+			<description>Label to display.</description>
+			<name>label</name>
+			<required>true</required>
+		</attribute>
+		<attribute>
+			<description>Value of the component.</description>
+			<name>value</name>
+			<required>true</required>
+		</attribute>
+	</tag>
+	<tag>
+		<tag-name>inputMultiAutoComplete</tag-name>
+		<source>autocomplete/inputMultiAutoComplete.xhtml</source>
+	</tag>
 	<!-- Panels -->
 	<tag>
 		<tag-name>edit</tag-name>
@@ -57,6 +58,11 @@
 	<tag>
 		<tag-name>saveButton</tag-name>
 		<source>button/saveButton.xhtml</source>
+	</tag>
+	<!-- Dialogs -->
+	<tag>
+		<tag-name>confirmToManyRemoveDialog</tag-name>
+		<source>dialog/confirmToManyRemoveDialog.xhtml</source>
 	</tag>
 	<!-- Icons -->
 	<tag>
@@ -72,6 +78,10 @@
 		<source>icon/iconDelete.xhtml</source>
 	</tag>
 	<tag>
+		<tag-name>iconRemove</tag-name>
+		<source>icon/iconRemove.xhtml</source>
+	</tag>
+	<tag>
 		<tag-name>iconEdit</tag-name>
 		<source>icon/iconEdit.xhtml</source>
 	</tag>
@@ -82,6 +92,10 @@
 	<tag>
 		<tag-name>iconSelect</tag-name>
 		<source>icon/iconSelect.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>iconMultiSelect</tag-name>
+		<source>icon/iconMultiSelect.xhtml</source>
 	</tag>
 	<!-- tag used in edit form -->
 	<tag>
@@ -140,40 +154,48 @@
 		<tag-name>inputLocalDateTimeAria</tag-name>
 		<source>input/inputLocalDateTimeAria.xhtml</source>
 	</tag>
+	<tag>
+		<tag-name>inputFile</tag-name>
+		<source>input/inputFile.xhtml</source>
+	</tag>
 	<!-- Output -->
 	<tag>
 		<tag-name>audit</tag-name>
 		<source>output/audit.xhtml</source>
 	</tag>
-    <tag>
-        <tag-name>conversationDebug</tag-name>
-        <source>output/conversationDebug.xhtml</source>
-    </tag>
-    <tag>
-        <tag-name>outputLabel</tag-name>
-        <source>output/outputLabel.xhtml</source>
-    </tag>
-    <tag>
-        <tag-name>print</tag-name>
-        <source>output/print.xhtml</source>
-    </tag>
+	<tag>
+		<tag-name>conversationDebug</tag-name>
+		<source>output/conversationDebug.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>outputLabel</tag-name>
+		<source>output/outputLabel.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>outputFile</tag-name>
+		<source>output/outputFile.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>print</tag-name>
+		<source>output/print.xhtml</source>
+	</tag>
 	<!-- Select -->
-    <tag>
-        <tag-name>selectManyBoolean</tag-name>
-        <source>select/selectManyBoolean.xhtml</source>
-    </tag>
-    <tag>
-        <tag-name>selectManyBooleanAria</tag-name>
-        <source>select/selectManyBooleanAria.xhtml</source>
-    </tag>
-    <tag>
-        <tag-name>selectManyEnum</tag-name>
-        <source>select/selectManyEnum.xhtml</source>
-    </tag>
-    <tag>
-        <tag-name>selectManyEnumAria</tag-name>
-        <source>select/selectManyEnumAria.xhtml</source>
-    </tag>
+	<tag>
+		<tag-name>selectManyBoolean</tag-name>
+		<source>select/selectManyBoolean.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>selectManyBooleanAria</tag-name>
+		<source>select/selectManyBooleanAria.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>selectManyEnum</tag-name>
+		<source>select/selectManyEnum.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>selectManyEnumAria</tag-name>
+		<source>select/selectManyEnumAria.xhtml</source>
+	</tag>
 	<tag>
 		<tag-name>selectOneRadio</tag-name>
 		<source>select/selectOneRadio.xhtml</source>
@@ -183,14 +205,14 @@
 		<source>select/selectOneMenu.xhtml</source>
 	</tag>
 	<!-- Ranges -->
-    <tag>
-        <tag-name>rangeDate</tag-name>
-        <source>range/rangeDate.xhtml</source>
-    </tag>
-    <tag>
-        <tag-name>rangeDateAria</tag-name>
-        <source>range/rangeDateAria.xhtml</source>
-    </tag>
+	<tag>
+		<tag-name>rangeDate</tag-name>
+		<source>range/rangeDate.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>rangeDateAria</tag-name>
+		<source>range/rangeDateAria.xhtml</source>
+	</tag>
 	<tag>
 		<tag-name>rangeDateTime</tag-name>
 		<source>range/rangeDateTime.xhtml</source>

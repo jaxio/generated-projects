@@ -17,8 +17,6 @@ import com.jaxio.util.*;
 import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -34,13 +32,18 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.ParamDef;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.TikaBridge;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.jaxio.domain.Account;
 
 /**
@@ -64,65 +67,58 @@ public class DocumentTest {
         assertThat(model.isIdSet()).isTrue();
     }
 
-    // test columns methods
-
     //-------------------------------------------------------------
     // Many to One:  Document.accountId ==> Account.id
     //-------------------------------------------------------------
 
     @Test
-    public void manyToOne_setAccount() {
+    public void manyToOne_setOwner() {
         Document many = new Document();
 
         // init
         Account one = new Account();
 
         one.setId(ValueGenerator.getUniqueString(36));
-        many.setAccount(one);
+        many.setOwner(one);
 
         // make sure it is propagated properly
-        assertThat(many.getAccount()).isEqualTo(one);
+        assertThat(many.getOwner()).isEqualTo(one);
 
         // now set it to back to null
-        many.setAccount(null);
+        many.setOwner(null);
 
         // make sure null is propagated properly
-        assertThat(many.getAccount()).isNull();
+        assertThat(many.getOwner()).isNull();
     }
 
-    @Test
-    public void toStringNotNull() {
-        Document model = new Document();
-        assertThat(model.toString()).isNotNull();
-    }
+    /*
+     public void equalsUsingPk() {
+     Document model1 = new Document();
+     Document model2 = new Document();
 
-    @Test
-    public void equalsUsingPk() {
-        Document model1 = new Document();
-        Document model2 = new Document();
+     String id = ValueGenerator.getUniqueString(36);
+     model1.setId(id);
+     model2.setId(id);
 
-        String id = ValueGenerator.getUniqueString(36);
-        model1.setId(id);
-        model2.setId(id);
+     model1.setDocumentBinary("d".getBytes());
+     model2.setDocumentBinary("d".getBytes());
 
-        model1.setDocumentContentType("a");
-        model2.setDocumentContentType("a");
+     model1.setDocumentFileName("a");
+     model2.setDocumentFileName("a");
 
-        model1.setDocumentSize(1);
-        model2.setDocumentSize(1);
+     model1.setDocumentContentType("a");
+     model2.setDocumentContentType("a");
 
-        model1.setDocumentFileName("a");
-        model2.setDocumentFileName("a");
+     model1.setDocumentSize(1);
+     model2.setDocumentSize(1);
 
-        model1.setDocumentBinary("d".getBytes());
-        model2.setDocumentBinary("d".getBytes());
-
-        model1.setVersion(1);
-        model2.setVersion(1);
-        assertThat(model1.isIdSet()).isTrue();
-        assertThat(model2.isIdSet()).isTrue();
-        assertThat(model1.hashCode()).isEqualTo(model2.hashCode());
-        assertThat(model1).isEqualTo(model2);
-        assertThat(model2).isEqualTo(model1);
-    }
+     model1.setVersion(1);
+     model2.setVersion(1);
+     assertThat(model1.isIdSet()).isTrue();
+     assertThat(model2.isIdSet()).isTrue();
+     assertThat(model1.hashCode()).isEqualTo(model2.hashCode());
+     assertThat(model1).isEqualTo(model2);
+     assertThat(model2).isEqualTo(model1);
+     }
+     */
 }

@@ -1,16 +1,17 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" 
 	xmlns:ui="http://java.sun.com/jsf/facelets" 
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html">
-	<h:outputLabel for="#{id}" value="#{label}" />
-	<h:panelGrid columns="4" id="#{id}" styleClass="aria-role-presentation">
+	<app:outputLabel for="#{id}" value="#{label}" required="#{required}" rendered="#{rendered}" />
+	<h:panelGrid columns="4" id="#{id}" styleClass="aria-role-presentation" rendered="#{empty rendered ? true : rendered}">
 		<label for="form:#{id}RangeFrom_input">#{msg.date_range_from}</label>
-		<p:calendar id="#{id}RangeFrom" value="#{value.from}" pattern="yyyy-MM-dd HH:mm">
+		<p:calendar id="#{id}RangeFrom" value="#{value.from}" pattern="yyyy-MM-dd HH:mm" showButtonPanel="true" navigator="true">
 			<f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
 		</p:calendar>
 		<label for="form:#{id}RangeTo_input">#{msg.date_range_to}</label>
-		<p:calendar id="#{id}RangeTo" value="#{value.to}" pattern="yyyy-MM-dd HH:mm">
+		<p:calendar id="#{id}RangeTo" value="#{value.to}" pattern="yyyy-MM-dd HH:mm" showButtonPanel="true" navigator="true">
 			<f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
 		</p:calendar>
 	</h:panelGrid>

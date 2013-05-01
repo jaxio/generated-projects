@@ -19,7 +19,8 @@ import javax.persistence.Parameter;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jaxio.context.UserContext;
 
@@ -29,7 +30,7 @@ import com.jaxio.context.UserContext;
 @Named
 @Singleton
 public class NamedQueryUtil {
-    private static final Logger log = Logger.getLogger(NamedQueryUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(NamedQueryUtil.class);
 
     private static final String NAMED_PARAMETER_CURRENT_USER_ID = "currentUserId";
     private static final String NAMED_PARAMETER_NOW = "now";
@@ -70,9 +71,7 @@ public class NamedQueryUtil {
                 first = false;
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("appending: [" + orderClausis.toString() + "] to " + queryString);
-            }
+            log.debug("appending: [{}] to {}", orderClausis, queryString);
 
             query = recreateQuery(query, queryString + " " + orderClausis.toString());
         }
@@ -92,8 +91,8 @@ public class NamedQueryUtil {
         @SuppressWarnings("unchecked")
         List<T> result = (List<T>) query.getResultList();
 
-        if (result != null && log.isDebugEnabled()) {
-            log.debug(sp.getNamedQuery() + " returned a List of size: " + result.size());
+        if (result != null) {
+            log.debug("{} returned a List of size: {}", sp.getNamedQuery(), result.size());
         }
 
         return result;
@@ -123,17 +122,15 @@ public class NamedQueryUtil {
 
         setQueryParameters(query, sp);
 
-        if (log.isDebugEnabled()) {
-            log.debug("objectNamedQuery " + sp.toString());
-        }
+        log.debug("objectNamedQuery : {}", sp.toString());
 
         // execute
         Object result = query.getSingleResult();
 
         if (log.isDebugEnabled()) {
-            log.debug(sp.getNamedQuery() + " returned a " + (result == null ? "null" : result.getClass()) + " object");
+            log.debug("{} returned a {} object", sp.getNamedQuery(), result == null ? "null" : result.getClass());
             if (result instanceof Number) {
-                log.debug(sp.getNamedQuery() + " returned a number with value : " + result);
+                log.debug("{} returned a number with value : {}", sp.getNamedQuery(), result);
             }
         }
 

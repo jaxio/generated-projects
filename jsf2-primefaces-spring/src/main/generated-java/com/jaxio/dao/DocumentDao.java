@@ -7,6 +7,8 @@
  */
 package com.jaxio.dao;
 
+import static com.jaxio.domain.Document_.documentBinary;
+import static com.jaxio.domain.Document_.documentFileName;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import com.jaxio.dao.DocumentDao;
@@ -21,6 +23,6 @@ import com.jaxio.domain.Document;
 @Singleton
 public class DocumentDao extends GenericDao<Document, String> {
     public DocumentDao() {
-        super(Document.class);
+        super(Document.class, documentBinary, documentFileName);
     }
 }

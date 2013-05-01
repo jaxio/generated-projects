@@ -7,18 +7,60 @@
  */
 package com.jaxio.repository;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
+import com.jaxio.dao.BookDao;
 import com.jaxio.domain.Book;
-import com.jaxio.repository.support.Repository;
+import com.jaxio.repository.support.GenericRepository;
 
 /**
- * The BookRepository is a data-centric service for the {@link Book} entity.
- * It provides the expected methods to get/delete a {@link Book} instance
- * plus some methods to perform searches.
- * <p>
- * Search logic is driven by 2 kinds of parameters: a {@link Book} instance used
- * as a properties holder against which the search will be performed and a {@link SearchParameters}
- * instance from where you can control your search options including the usage
- * of named queries.
+ * Note: you may use multiple DAO from this layer.
  */
-public interface BookRepository extends Repository<Book, Integer> {
+@Named
+@Singleton
+public class BookRepository extends GenericRepository<Book, Integer> {
+
+    private static final Logger log = LoggerFactory.getLogger(BookRepository.class);
+
+    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
+    protected BookRepository() {
+        super();
+    }
+
+    @Inject
+    public BookRepository(BookDao bookDao) {
+        super(bookDao);
+    }
+
+    @Override
+    public Book getNew() {
+        return new Book();
+    }
+
+    @Override
+    public Book getNewWithDefaults() {
+        Book result = getNew();
+        result.initDefaultValues();
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public void delete(Book book) {
+        if (book == null) {
+            log.debug("Skipping deletion for null model!");
+            return;
+        }
+
+        // remove the reference from the associated owner
+        if (book.getOwner() != null) {
+            book.getOwner().removeBook(book);
+        }
+
+        super.delete(book);
+    }
 }

@@ -7,11 +7,9 @@
  */
 package com.jaxio.printer;
 
+import java.util.Locale;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import java.util.Locale;
-
 import com.jaxio.domain.Account;
 import com.jaxio.printer.DiscoverablePrinter;
 
@@ -34,7 +32,7 @@ public class AccountPrinter extends DiscoverablePrinter<Account> {
         if (account == null) {
             return "";
         }
-        StringBuilder ret = new StringBuilder(256);
+        StringBuilder ret = new StringBuilder();
         appendIfNotEmpty(ret, account.getUsername());
         appendIfNotEmpty(ret, account.getFirstName());
         appendIfNotEmpty(ret, account.getLastName());

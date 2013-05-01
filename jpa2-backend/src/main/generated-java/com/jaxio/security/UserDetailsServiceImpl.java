@@ -17,7 +17,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -37,7 +38,7 @@ import com.jaxio.repository.AccountRepository;
 @Singleton
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private static final Logger log = Logger.getLogger(UserDetailsServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
     private AccountRepository accountRepository;
 
@@ -62,16 +63,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("Empty username");
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Security verification for user '" + username + "'");
-        }
+        log.debug("Security verification for user '{}'", username);
 
         Account account = accountRepository.getByUsername(username);
 
         if (account == null) {
-            if (log.isInfoEnabled()) {
-                log.info("User " + username + " could not be found");
-            }
+            log.info("User {} could not be found", username);
             throw new UsernameNotFoundException("user " + username + " could not be found");
         }
 

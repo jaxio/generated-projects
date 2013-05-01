@@ -7,11 +7,9 @@
  */
 package com.jaxio.printer.more;
 
+import java.util.Locale;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import java.util.Locale;
-
 import com.jaxio.domain.more.MoreTypesDemo;
 import com.jaxio.printer.DiscoverablePrinter;
 
@@ -34,7 +32,7 @@ public class MoreTypesDemoPrinter extends DiscoverablePrinter<MoreTypesDemo> {
         if (moreTypesDemo == null) {
             return "";
         }
-        StringBuilder ret = new StringBuilder(256);
+        StringBuilder ret = new StringBuilder();
         appendIfNotEmpty(ret, moreTypesDemo.getNumberInt());
         appendIfNotEmpty(ret, moreTypesDemo.getNumberLong());
         appendIfNotEmpty(ret, moreTypesDemo.getNumberDouble());

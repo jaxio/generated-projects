@@ -36,7 +36,7 @@ import com.jaxio.web.util.MessageUtil;
  */
 @Named
 @Singleton
-@SuppressWarnings( { "rawtypes", "unchecked" })
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class SavedSearchService {
     @Inject
     private SavedSearchRepository savedSearchRepository;
@@ -49,7 +49,6 @@ public class SavedSearchService {
         if (StringUtils.isNotBlank(searchForm.getSearchFormName())) {
             searchForm.resetWithOther(load(searchForm));
         }
-        // silently ignore it
     }
 
     public void onChange(SelectEvent selectEvent) {

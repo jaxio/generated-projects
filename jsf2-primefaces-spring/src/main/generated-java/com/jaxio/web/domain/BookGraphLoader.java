@@ -7,22 +7,31 @@
  */
 package com.jaxio.web.domain;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import com.jaxio.domain.Book;
+import com.jaxio.repository.BookRepository;
 import com.jaxio.repository.support.EntityGraphLoader;
 
 /**
- * Preloads the associations required by the view layer. 
+ * Preloads the {@link Book} associations required by the view layer.
  */
 @Named
 @Singleton
-public class BookGraphLoader implements EntityGraphLoader<Book> {
+public class BookGraphLoader extends EntityGraphLoader<Book, Integer> {
+    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
+    protected BookGraphLoader() {
+        super();
+    }
+
+    @Inject
+    public BookGraphLoader(BookRepository bookRepository) {
+        super(bookRepository);
+    }
 
     @Override
     public void loadGraph(Book book) {
-        if (book.getAccount() != null) {
-            book.getAccount().toString(); // force load
-        }
+        loadSingular(book.getOwner());
     }
 }

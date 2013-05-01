@@ -7,8 +7,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -19,13 +20,12 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 public class LocaleResolverRequestFilter extends OncePerRequestFilter {
+    private static final Logger log = LoggerFactory.getLogger(LocaleResolverRequestFilter.class);
 
     /** Well-known name for the LocaleResolver object in the bean factory for this namespace. */
     public static final String LOCALE_RESOLVER_BEAN_NAME = "localeResolver";
 
     private LocaleResolver localeResolver;
-
-    protected final Log logger = LogFactory.getLog(getClass());
 
     @Override
     protected void initFilterBean() throws ServletException {
@@ -46,9 +46,7 @@ public class LocaleResolverRequestFilter extends OncePerRequestFilter {
     private void initLocaleResolver(ApplicationContext context) {
         try {
             this.localeResolver = context.getBean(LOCALE_RESOLVER_BEAN_NAME, LocaleResolver.class);
-            if (logger.isDebugEnabled()) {
-                logger.debug("Using LocaleResolver [" + this.localeResolver + "]");
-            }
+            log.debug("Using LocaleResolver {}", this.localeResolver);
         } catch (NoSuchBeanDefinitionException ex) {
             useDefaultLocaleResolver();
         }
@@ -57,9 +55,7 @@ public class LocaleResolverRequestFilter extends OncePerRequestFilter {
     private void useDefaultLocaleResolver() {
         // We need to use the default, retrieve locale from request.
         this.localeResolver = new AcceptHeaderLocaleResolver();
-        if (logger.isDebugEnabled()) {
-            logger.debug("Unable to locate LocaleResolver with name '" + LOCALE_RESOLVER_BEAN_NAME + "': using default [" + this.localeResolver + "]");
-        }
+        log.debug("Unable to locate LocaleResolver with name '{}': using default {}", LOCALE_RESOLVER_BEAN_NAME, this.localeResolver);
     }
 
     @Override

@@ -29,8 +29,7 @@ public class LegacyPkTest {
 
     @Test
     public void compositePrimaryKeycode_test2() {
-        LegacyPk cpk = new LegacyPk();
-        cpk.setCode(ValueGenerator.getUniqueString(8));
+        LegacyPk cpk = new LegacyPk().code(ValueGenerator.getUniqueString(8));
 
         assertThat(cpk.isCodeSet()).isTrue();
         assertThat(cpk.getCode()).isNotNull();
@@ -47,8 +46,7 @@ public class LegacyPkTest {
 
     @Test
     public void compositePrimaryKeydept_test2() {
-        LegacyPk cpk = new LegacyPk();
-        cpk.setDept(ValueGenerator.getUniqueInteger());
+        LegacyPk cpk = new LegacyPk().dept(ValueGenerator.getUniqueInteger());
 
         assertThat(cpk.isDeptSet()).isTrue();
         assertThat(cpk.getDept()).isNotNull();
@@ -65,8 +63,7 @@ public class LegacyPkTest {
 
     @Test
     public void compositePrimaryKeyname_test2() {
-        LegacyPk cpk = new LegacyPk();
-        cpk.setName(ValueGenerator.getUniqueString(16));
+        LegacyPk cpk = new LegacyPk().name(ValueGenerator.getUniqueString(16));
 
         assertThat(cpk.isNameSet()).isTrue();
         assertThat(cpk.getName()).isNotNull();

@@ -7,20 +7,68 @@
  */
 package com.jaxio.repository;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
+import com.jaxio.dao.RoleDao;
 import com.jaxio.domain.Role;
-import com.jaxio.repository.support.Repository;
+import com.jaxio.repository.support.GenericRepository;
 
 /**
- * The RoleRepository is a data-centric service for the {@link Role} entity.
- * It provides the expected methods to get/delete a {@link Role} instance
- * plus some methods to perform searches.
- * <p>
- * Search logic is driven by 2 kinds of parameters: a {@link Role} instance used
- * as a properties holder against which the search will be performed and a {@link SearchParameters}
- * instance from where you can control your search options including the usage
- * of named queries.
+ * Note: you may use multiple DAO from this layer.
  */
-public interface RoleRepository extends Repository<Role, Integer> {
+@Named
+@Singleton
+public class RoleRepository extends GenericRepository<Role, Integer> {
+
+    @SuppressWarnings("unused")
+    private static final Logger log = LoggerFactory.getLogger(RoleRepository.class);
+
+    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
+    protected RoleRepository() {
+        super();
+    }
+
+    @Inject
+    public RoleRepository(RoleDao roleDao) {
+        super(roleDao);
+    }
+
+    @Override
+    public Role getNew() {
+        return new Role();
+    }
+
+    @Override
+    public Role getNewWithDefaults() {
+        Role result = getNew();
+        result.initDefaultValues();
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Role get(Role model) {
+        if (model == null) {
+            return null;
+        }
+
+        if (model.isIdSet()) {
+            return super.get(model);
+        }
+        if (isBlank(model.getRoleName())) {
+            Role result = getByRoleName(model.getRoleName());
+            if (result != null) {
+                return result;
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Return the persistent instance of {@link Role} with the given unique property value roleName,
@@ -29,12 +77,18 @@ public interface RoleRepository extends Repository<Role, Integer> {
      * @param roleName the unique value
      * @return the corresponding {@link Role} persistent instance or null
      */
-    Role getByRoleName(String roleName);
+    @Transactional(readOnly = true)
+    public Role getByRoleName(String roleName) {
+        return findUniqueOrNone(new Role().roleName(roleName));
+    }
 
     /**
      * Delete a {@link Role} using the unique column roleName
      *
      * @param roleName the unique value
      */
-    void deleteByRoleName(String roleName);
+    @Transactional
+    public void deleteByRoleName(String roleName) {
+        delete(getByRoleName(roleName));
+    }
 }

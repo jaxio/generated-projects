@@ -7,18 +7,44 @@
  */
 package com.jaxio.repository;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.jaxio.dao.SavedSearchDao;
 import com.jaxio.domain.SavedSearch;
-import com.jaxio.repository.support.Repository;
+import com.jaxio.repository.support.GenericRepository;
 
 /**
- * The SavedSearchRepository is a data-centric service for the {@link SavedSearch} entity.
- * It provides the expected methods to get/delete a {@link SavedSearch} instance
- * plus some methods to perform searches.
- * <p>
- * Search logic is driven by 2 kinds of parameters: a {@link SavedSearch} instance used
- * as a properties holder against which the search will be performed and a {@link SearchParameters}
- * instance from where you can control your search options including the usage
- * of named queries.
+ * Note: you may use multiple DAO from this layer.
  */
-public interface SavedSearchRepository extends Repository<SavedSearch, Integer> {
+@Named
+@Singleton
+public class SavedSearchRepository extends GenericRepository<SavedSearch, Integer> {
+
+    @SuppressWarnings("unused")
+    private static final Logger log = LoggerFactory.getLogger(SavedSearchRepository.class);
+
+    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
+    protected SavedSearchRepository() {
+        super();
+    }
+
+    @Inject
+    public SavedSearchRepository(SavedSearchDao savedSearchDao) {
+        super(savedSearchDao);
+    }
+
+    @Override
+    public SavedSearch getNew() {
+        return new SavedSearch();
+    }
+
+    @Override
+    public SavedSearch getNewWithDefaults() {
+        SavedSearch result = getNew();
+        result.initDefaultValues();
+        return result;
+    }
 }

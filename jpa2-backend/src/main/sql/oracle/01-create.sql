@@ -33,7 +33,7 @@ CREATE TABLE ACCOUNT (
     login                    varchar2(100) not null,
     password                 varchar2(100) not null,
     email                    varchar2(100) not null,
-    is_enabled               number(1,0),
+    is_enabled               number(1,0) not null,
     civility                 char(2),
     first_name               varchar2(100),
     last_name                varchar2(100),
@@ -69,11 +69,11 @@ CREATE TABLE ACCOUNT_ROLE (
 CREATE TABLE DOCUMENT (
     id                          char(36)        not null,
     account_id                  char(36)        not null,
-    document_content_type       varchar2(100)   not null,
-    document_size               number(10)    not null,
-    document_file_name          varchar2(100)   not null,
     document_binary             blob,
-    version                     number(10)    default 0,
+    document_file_name          varchar2(100)   not null,
+    document_content_type       varchar2(100)   not null,
+    document_size               number(10)      not null,
+    version                     number(10)      default 0,
     constraint document_fk_1 foreign key (account_id) references ACCOUNT,
     primary key (id)
 );
@@ -179,14 +179,16 @@ INSERT INTO ACCOUNT (id, login, password, email, is_enabled, address_id) VALUES 
 INSERT INTO ACCOUNT (id, login, password, email, is_enabled, address_id) VALUES ('00000000000000000000000000000000049', 'user49',  'user49',  'user49@example.com', 1, 3);
 INSERT INTO ACCOUNT (id, login, password, email, is_enabled, address_id) VALUES ('00000000000000000000000000000000050', 'user50',  'user50',  'user50@example.com', 1, 3);
 INSERT INTO ACCOUNT (id, login, password, email, is_enabled, address_id) VALUES ('00000000000000000000000000000000051', 'disabled',  'disabled',  'disabled@example.com', 0, 3);
-INSERT INTO ACCOUNT (id, login, password, email, civility, address_id) VALUES ('00000000000000000000000000000000052', 'homer',  'homer',  'homer@example.com', 'MR', 3);
-INSERT INTO ACCOUNT (id, login, password, email, civility, address_id) VALUES ('00000000000000000000000000000000053', 'maggy',  'maggy',  'maggy@example.com', 'MS', 3);
+INSERT INTO ACCOUNT (id, login, password, email, is_enabled, civility, address_id) VALUES ('00000000000000000000000000000000052', 'homer',  'homer',  'homer@example.com', 1, 'MR', 3);
+INSERT INTO ACCOUNT (id, login, password, email, is_enabled, civility, address_id) VALUES ('00000000000000000000000000000000053', 'maggy',  'maggy',  'maggy@example.com', 1, 'MS', 3);
 
 INSERT INTO ROLE (id, role_name) VALUES (1, 'ROLE_ADMIN');
 INSERT INTO ROLE (id, role_name) VALUES (2, 'ROLE_USER');
+INSERT INTO ROLE (id, role_name) VALUES (3, 'ROLE_MONITORING');
 
 INSERT INTO ACCOUNT_ROLE (account_id, role_id) VALUES ('00000000000000000000000000000000001', 1);
 INSERT INTO ACCOUNT_ROLE (account_id, role_id) VALUES ('00000000000000000000000000000000001', 2);
+INSERT INTO ACCOUNT_ROLE (account_id, role_id) VALUES ('00000000000000000000000000000000001', 3);
 INSERT INTO ACCOUNT_ROLE (account_id, role_id) VALUES ('00000000000000000000000000000000002', 2);
 INSERT INTO ACCOUNT_ROLE (account_id, role_id) VALUES ('00000000000000000000000000000000003', 2);
 

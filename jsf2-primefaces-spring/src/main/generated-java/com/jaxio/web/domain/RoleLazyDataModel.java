@@ -9,17 +9,20 @@ package com.jaxio.web.domain;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import com.jaxio.dao.support.OrderBy;
+import org.primefaces.model.LazyDataModel;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Role;
 import com.jaxio.domain.Role_;
 import com.jaxio.repository.RoleRepository;
 import com.jaxio.web.converter.RoleJsfConverter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
+/**
+ * Provide PrimeFaces {@link LazyDataModel} for {@link Role}
+ */
 @Named
-@Conversation
+@ConversationContextScoped
 public class RoleLazyDataModel extends GenericLazyDataModel<Role, Integer, RoleSearchForm> {
     private static final long serialVersionUID = 1L;
 
@@ -30,6 +33,6 @@ public class RoleLazyDataModel extends GenericLazyDataModel<Role, Integer, RoleS
 
     @Override
     protected void defaultOrder(SearchParameters sp) {
-        sp.addOrderBy(new OrderBy(Role_.roleName));
+        sp.orderBy(Role_.roleName);
     }
 }

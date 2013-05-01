@@ -8,26 +8,26 @@
 package com.jaxio.web.domain;
 
 import static com.jaxio.dao.support.EntitySelector.newEntitySelector;
-import static com.jaxio.domain.Document_.account;
 import javax.inject.Named;
 import com.jaxio.dao.support.EntitySelector;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Document;
+import com.jaxio.domain.Document_;
 import com.jaxio.web.domain.support.GenericSearchForm;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
- * View Helper to find/select {@link Document}.
+ * View Helper to search {@link Document}.
  * It exposes a {@link Document} instance so it can be used in search by Example query.
  */
 @Named
-@Conversation
+@ConversationContextScoped
 public class DocumentSearchForm extends GenericSearchForm<Document, String, DocumentSearchForm> {
     private static final long serialVersionUID = 1L;
 
-    private Document document = new Document();
-    private EntitySelector<Document, Account, String> accountSelector = newEntitySelector(account);
+    protected Document document = new Document();
+    protected EntitySelector<Document, Account, String> ownerSelector = newEntitySelector(Document_.owner);
 
     public Document getDocument() {
         return document;
@@ -35,20 +35,7 @@ public class DocumentSearchForm extends GenericSearchForm<Document, String, Docu
 
     @Override
     protected Document getEntity() {
-        return document;
-    }
-
-    // Selectors for x-to-one associations
-    public EntitySelector<Document, Account, String> getAccountSelector() {
-        return accountSelector;
-    }
-
-    public SearchParameters toSearchParameters() {
-        return new SearchParameters() //
-                .anywhere() //
-                .leftJoin(account) //
-                .entity(accountSelector) //
-        ;
+        return getDocument();
     }
 
     @Override
@@ -57,8 +44,23 @@ public class DocumentSearchForm extends GenericSearchForm<Document, String, Docu
     }
 
     @Override
+    public SearchParameters toSearchParameters() {
+        return new SearchParameters() //
+                .anywhere() //
+                .term(term) //
+                .entity(ownerSelector) //
+        ;
+    }
+
+    @Override
     public void resetWithOther(DocumentSearchForm other) {
         this.document = other.getDocument();
-        this.accountSelector = other.getAccountSelector();
+        this.term = other.getTerm();
+        this.ownerSelector = other.getOwnerSelector();
+    }
+
+    // Relation selectors
+    public EntitySelector<Document, Account, String> getOwnerSelector() {
+        return ownerSelector;
     }
 }

@@ -9,14 +9,18 @@ package com.jaxio.web.domain.more;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.model.LazyDataModel;
 import com.jaxio.domain.more.MoreTypesDemo;
 import com.jaxio.repository.more.MoreTypesDemoRepository;
 import com.jaxio.web.converter.more.MoreTypesDemoJsfConverter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
+/**
+ * Provide PrimeFaces {@link LazyDataModel} for {@link MoreTypesDemo}
+ */
 @Named
-@Conversation
+@ConversationContextScoped
 public class MoreTypesDemoLazyDataModel extends GenericLazyDataModel<MoreTypesDemo, Integer, MoreTypesDemoSearchForm> {
     private static final long serialVersionUID = 1L;
 

@@ -15,19 +15,17 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-<app:edit bean="#{savedSearchEditForm}" title="#{msg.savedSearch}">
+<app:edit bean="#{savedSearchEditForm}" title="savedSearch">
 	<ui:define name="form">
-		<app:input id="name" value="#{savedSearchEditForm.savedSearch.name}" size="128" label="#{msg.savedSearch_name}" required="true" />
-		<app:inputTextArea id="formClassname" value="#{savedSearchEditForm.savedSearch.formClassname}" label="#{msg.savedSearch_formClassname}" required="true" />
-		<app:input id="formContent" value="#{savedSearchEditForm.savedSearch.formContent}" label="#{msg.savedSearch_formContent}" />
-
-		<app:autoComplete id="account" value="#{savedSearchEditForm.selectedAccount}" required="true" 
-			label="#{msg.savedSearch_account}" controller="#{accountController}" 
-			printer="#{accountPrinter}" converter="#{accountJsfConverter}">
-			<app:iconSearch actionBean="#{savedSearchEditForm}" action="selectAccount" title="#{msg.savedSearch_account}" rendered="#{not readonly and accountPermission.canSearch()}" />
-			<app:iconAdd actionBean="#{savedSearchEditForm}" action="addAccount" title="#{msg.savedSearch_account}" rendered="#{not readonly and accountPermission.canCreate()}" />
-			<app:iconEdit actionBean="#{savedSearchEditForm}" action="editAccount" title="#{msg.savedSearch_account}" rendered="#{not readonly and not empty savedSearchEditForm.savedSearch.account and accountPermission.canEdit(savedSearchEditForm.savedSearch.account)}" />
-			<app:iconView actionBean="#{savedSearchEditForm}" action="viewAccount" title="#{msg.savedSearch_account}" rendered="#{not empty savedSearchEditForm.savedSearch.account and accountPermission.canView(savedSearchEditForm.savedSearch.account)}" />
+		<app:input id="name" value="#{savedSearchEditForm.savedSearch.name}" size="128" label="savedSearch_name" required="true" />
+		<app:inputTextArea id="formClassname" value="#{savedSearchEditForm.savedSearch.formClassname}" label="savedSearch_formClassname" required="true" />
+		<app:input id="formContent" value="#{savedSearchEditForm.savedSearch.formContent}" label="savedSearch_formContent" />
+		<app:autoComplete id="account" value="#{savedSearchEditForm.account.selected}" required="true"
+			label="savedSearch_account" controller="#{accountController}" completeMethod="completeFullText" converter="#{accountJsfConverter}">
+			<app:iconSearch id="selectAccount" actionBean="#{savedSearchEditForm.account}" title="savedSearch_account" rendered="#{not readonly and accountPermission.canSearch()}" />
+			<app:iconAdd id="addAccount" actionBean="#{savedSearchEditForm.account}" title="savedSearch_account" rendered="#{not readonly and accountPermission.canCreate()}" />
+			<app:iconEdit actionBean="#{savedSearchEditForm.account}" title="savedSearch_account" rendered="#{not readonly and accountPermission.canEdit(savedSearchEditForm.savedSearch.account)}" />
+			<app:iconView actionBean="#{savedSearchEditForm.account}" title="savedSearch_account" rendered="#{accountPermission.canView(savedSearchEditForm.savedSearch.account)}" />
 		</app:autoComplete>
 	</ui:define>
 </app:edit>

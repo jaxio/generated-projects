@@ -32,20 +32,20 @@
 	<composite:implementation>
 		<div id="#{cc.clientId}:div">
 			<a id="#{cc.clientId}"  onfocus="APP.focusTo('#{cc.clientId}:day')" style="display: none"/>
-			<h:selectOneMenu id="day" title="${msg.day} ${cc.attrs.label}" disabled="#{cc.attrs.disabled}">
-				<f:selectItem itemLabel="${msg.day}" noSelectionOption="true" />			
+			<h:selectOneMenu id="day" title="${msg.day} ${resourcesUtil.getProperty(cc.attrs.label)}" disabled="#{cc.attrs.disabled}">
+				<f:selectItem itemLabel="${msg.day}" noSelectionOption="true" />
 				<f:selectItems value="#{datePickerHelper.getDays(cc.clientId, cc.attrs.showDayOfWeek)}" />
 				<f:ajax event="change" />
 			</h:selectOneMenu>
 
-			<h:selectOneMenu id="month" title="${msg.month} ${cc.attrs.label}" disabled="#{cc.attrs.disabled}">
-				<f:selectItem itemLabel="${msg.month}" noSelectionOption="true" />			
+			<h:selectOneMenu id="month" title="${msg.month} ${resourcesUtil.getProperty(cc.attrs.label)}" disabled="#{cc.attrs.disabled}">
+				<f:selectItem itemLabel="${msg.month}" noSelectionOption="true" />
 				<f:selectItems value="#{datePickerHelper.getMonths()}" />
 				<f:ajax event="change" render="day" />
 			</h:selectOneMenu>
 
-			<h:selectOneMenu id="year" title="${msg.year} ${cc.attrs.label}" disabled="#{cc.attrs.disabled}">
-				<f:selectItem itemLabel="${msg.year}" noSelectionOption="true" />			
+			<h:selectOneMenu id="year" title="${msg.year} ${resourcesUtil.getProperty(cc.attrs.label)}" disabled="#{cc.attrs.disabled}">
+				<f:selectItem itemLabel="${msg.year}" noSelectionOption="true" />
 				<f:selectItems
 					value="#{datePickerHelper.getYears(cc.attrs.yearMin, cc.attrs.yearMax)}" />
 				<f:ajax event="change" render="day" />
@@ -53,12 +53,12 @@
 
 			<h:outputText value=" : " rendered="#{cc.attrs.timeRendered}"/>
 
-			<h:selectOneMenu id="hour" title="${msg.hour} ${cc.attrs.label}" rendered="#{cc.attrs.timeRendered}" disabled="#{cc.attrs.disabled}">
+			<h:selectOneMenu id="hour" title="${msg.hour} ${resourcesUtil.getProperty(cc.attrs.label)}" rendered="#{cc.attrs.timeRendered}" disabled="#{cc.attrs.disabled}">
 				<f:selectItem itemLabel="${msg.hour}" noSelectionOption="true" />
 				<f:selectItems value="#{datePickerHelper.getHours()}" />
 			</h:selectOneMenu>
 
-			<h:selectOneMenu id="minute" title="${msg.minute} ${cc.attrs.label}" rendered="#{cc.attrs.timeRendered}" disabled="#{cc.attrs.disabled}">
+			<h:selectOneMenu id="minute" title="${msg.minute} ${resourcesUtil.getProperty(cc.attrs.label)}" rendered="#{cc.attrs.timeRendered}" disabled="#{cc.attrs.disabled}">
 				<f:selectItem itemLabel="${msg.minute}" noSelectionOption="true" />
 				<f:selectItems value="#{datePickerHelper.getMinutes()}" />
 			</h:selectOneMenu>

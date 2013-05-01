@@ -7,6 +7,7 @@
  */
 package com.jaxio.dao.support;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.fest.assertions.Assertions.assertThat;
 
 import javax.inject.Inject;
@@ -15,7 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Account_;
@@ -24,7 +24,6 @@ import com.jaxio.repository.RoleRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:spring/applicationContext-test.xml" })
-@Transactional
 public class SearchUsingManyToManyIT {
     @Inject
     private AccountRepository accountRepository;
@@ -52,13 +51,11 @@ public class SearchUsingManyToManyIT {
         verifySize(account, sp().useORInManyToMany().useDistinct().orderBy(Account_.email), 3);
         verifySize(account, sp().useORInManyToMany().useDistinct().leftJoin(Account_.homeAddress), 3);
         verifySize(account, sp().useORInManyToMany().useDistinct().leftJoin(Account_.homeAddress).orderBy("homeAddress.city"), 3);
-
     }
 
     private Account buildAccount() {
         Account account = new Account();
-        account.addRole(roleRepository.getByRoleName("ROLE_ADMIN"));
-        account.addRole(roleRepository.getByRoleName("ROLE_USER"));
+        account.setSecurityRoles(newArrayList(roleRepository.getByRoleName("ROLE_ADMIN"), roleRepository.getByRoleName("ROLE_USER")));
         return account;
     }
 

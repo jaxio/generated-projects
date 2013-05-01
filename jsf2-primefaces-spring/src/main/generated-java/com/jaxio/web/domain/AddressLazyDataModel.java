@@ -9,14 +9,18 @@ package com.jaxio.web.domain;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.model.LazyDataModel;
 import com.jaxio.domain.Address;
 import com.jaxio.repository.AddressRepository;
 import com.jaxio.web.converter.AddressJsfConverter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
+/**
+ * Provide PrimeFaces {@link LazyDataModel} for {@link Address}
+ */
 @Named
-@Conversation
+@ConversationContextScoped
 public class AddressLazyDataModel extends GenericLazyDataModel<Address, Integer, AddressSearchForm> {
     private static final long serialVersionUID = 1L;
 

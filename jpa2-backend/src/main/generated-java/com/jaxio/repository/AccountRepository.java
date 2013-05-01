@@ -7,20 +7,74 @@
  */
 package com.jaxio.repository;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
+import com.jaxio.dao.AccountDao;
 import com.jaxio.domain.Account;
-import com.jaxio.repository.support.Repository;
+import com.jaxio.repository.support.GenericRepository;
 
 /**
- * The AccountRepository is a data-centric service for the {@link Account} entity.
- * It provides the expected methods to get/delete a {@link Account} instance
- * plus some methods to perform searches.
- * <p>
- * Search logic is driven by 2 kinds of parameters: a {@link Account} instance used
- * as a properties holder against which the search will be performed and a {@link SearchParameters}
- * instance from where you can control your search options including the usage
- * of named queries.
+ * Note: you may use multiple DAO from this layer.
  */
-public interface AccountRepository extends Repository<Account, String> {
+@Named
+@Singleton
+public class AccountRepository extends GenericRepository<Account, String> {
+
+    @SuppressWarnings("unused")
+    private static final Logger log = LoggerFactory.getLogger(AccountRepository.class);
+
+    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
+    protected AccountRepository() {
+        super();
+    }
+
+    @Inject
+    public AccountRepository(AccountDao accountDao) {
+        super(accountDao);
+    }
+
+    @Override
+    public Account getNew() {
+        return new Account();
+    }
+
+    @Override
+    public Account getNewWithDefaults() {
+        Account result = getNew();
+        result.initDefaultValues();
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Account get(Account model) {
+        if (model == null) {
+            return null;
+        }
+
+        if (model.isIdSet()) {
+            return super.get(model);
+        }
+        if (isBlank(model.getUsername())) {
+            Account result = getByUsername(model.getUsername());
+            if (result != null) {
+                return result;
+            }
+        }
+        if (isBlank(model.getEmail())) {
+            Account result = getByEmail(model.getEmail());
+            if (result != null) {
+                return result;
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Return the persistent instance of {@link Account} with the given unique property value username,
@@ -29,14 +83,20 @@ public interface AccountRepository extends Repository<Account, String> {
      * @param username the unique value
      * @return the corresponding {@link Account} persistent instance or null
      */
-    Account getByUsername(String username);
+    @Transactional(readOnly = true)
+    public Account getByUsername(String username) {
+        return findUniqueOrNone(new Account().username(username));
+    }
 
     /**
      * Delete a {@link Account} using the unique column username
      *
      * @param username the unique value
      */
-    void deleteByUsername(String username);
+    @Transactional
+    public void deleteByUsername(String username) {
+        delete(getByUsername(username));
+    }
 
     /**
      * Return the persistent instance of {@link Account} with the given unique property value email,
@@ -45,12 +105,18 @@ public interface AccountRepository extends Repository<Account, String> {
      * @param email the unique value
      * @return the corresponding {@link Account} persistent instance or null
      */
-    Account getByEmail(String email);
+    @Transactional(readOnly = true)
+    public Account getByEmail(String email) {
+        return findUniqueOrNone(new Account().email(email));
+    }
 
     /**
      * Delete a {@link Account} using the unique column email
      *
      * @param email the unique value
      */
-    void deleteByEmail(String email);
+    @Transactional
+    public void deleteByEmail(String email) {
+        delete(getByEmail(email));
+    }
 }

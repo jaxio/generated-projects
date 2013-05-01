@@ -7,10 +7,11 @@
  */
 package com.jaxio.web.conversation;
 
+import javax.faces.lifecycle.Lifecycle;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Interface to be implemented if you wish to listen to the lifecycle of {@link Conversation conversations}.
+ * Interface to be implemented if you wish to listen to the {@link Lifecycle} of {@link Conversation conversations}.
  */
 public interface ConversationListener {
 

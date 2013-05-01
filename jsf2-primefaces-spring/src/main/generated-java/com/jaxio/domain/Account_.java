@@ -41,9 +41,9 @@ public abstract class Account_ {
     public static volatile SingularAttribute<Account, Address> homeAddress;
 
     // One to many
-    public static volatile ListAttribute<Account, Book> books;
-    public static volatile ListAttribute<Account, Document> documents;
+    public static volatile ListAttribute<Account, Book> coolBooks;
+    public static volatile ListAttribute<Account, Document> edocs;
 
     // Many to many
-    public static volatile ListAttribute<Account, Role> roles;
+    public static volatile ListAttribute<Account, Role> securityRoles;
 }

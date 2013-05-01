@@ -16,16 +16,17 @@ import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.AddressPermission;
 
 /**
- * Stateless controller for Address conversation start. Provides also auto-complete support. 
+ * Stateless controller for {@link Address} conversation start. 
  */
 @Named
 @Singleton
 public class AddressController extends GenericController<Address, Integer> {
-    public final static String editUri = "/domain/addressEdit.faces";
-    public final static String selectUri = "/domain/addressSelect.faces";
+    private static final String editUri = "/domain/addressEdit.faces";
+    private static final String selectUri = "/domain/addressSelect.faces";
 
     @Inject
     public AddressController(AddressRepository addressRepository, AddressPermission addressPermission) {
         super(addressRepository, addressPermission, selectUri, editUri);
     }
+
 }

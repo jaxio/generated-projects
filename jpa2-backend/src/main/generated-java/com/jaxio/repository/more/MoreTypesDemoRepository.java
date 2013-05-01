@@ -7,18 +7,44 @@
  */
 package com.jaxio.repository.more;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.jaxio.dao.more.MoreTypesDemoDao;
 import com.jaxio.domain.more.MoreTypesDemo;
-import com.jaxio.repository.support.Repository;
+import com.jaxio.repository.support.GenericRepository;
 
 /**
- * The MoreTypesDemoRepository is a data-centric service for the {@link MoreTypesDemo} entity.
- * It provides the expected methods to get/delete a {@link MoreTypesDemo} instance
- * plus some methods to perform searches.
- * <p>
- * Search logic is driven by 2 kinds of parameters: a {@link MoreTypesDemo} instance used
- * as a properties holder against which the search will be performed and a {@link SearchParameters}
- * instance from where you can control your search options including the usage
- * of named queries.
+ * Note: you may use multiple DAO from this layer.
  */
-public interface MoreTypesDemoRepository extends Repository<MoreTypesDemo, Integer> {
+@Named
+@Singleton
+public class MoreTypesDemoRepository extends GenericRepository<MoreTypesDemo, Integer> {
+
+    @SuppressWarnings("unused")
+    private static final Logger log = LoggerFactory.getLogger(MoreTypesDemoRepository.class);
+
+    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
+    protected MoreTypesDemoRepository() {
+        super();
+    }
+
+    @Inject
+    public MoreTypesDemoRepository(MoreTypesDemoDao moreTypesDemoDao) {
+        super(moreTypesDemoDao);
+    }
+
+    @Override
+    public MoreTypesDemo getNew() {
+        return new MoreTypesDemo();
+    }
+
+    @Override
+    public MoreTypesDemo getNewWithDefaults() {
+        MoreTypesDemo result = getNew();
+        result.initDefaultValues();
+        return result;
+    }
 }

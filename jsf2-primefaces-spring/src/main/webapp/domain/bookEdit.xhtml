@@ -15,15 +15,13 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-<app:edit bean="#{bookEditForm}" title="#{msg.book}">
+<app:edit bean="#{bookEditForm}" title="book">
 	<ui:define name="form">
-		<app:input id="title" value="#{bookEditForm.book.title}" size="100" label="#{msg.book_title}" required="true" />
-		<app:input id="numberOfPages" value="#{bookEditForm.book.numberOfPages}" label="#{msg.book_numberOfPages}" required="true" />
-
-		<app:autoComplete id="account" value="#{bookEditForm.selectedAccount}" required="false" 
-			label="#{msg.book_account}" controller="#{accountController}" 
-			printer="#{accountPrinter}" converter="#{accountJsfConverter}">
-			<app:iconView actionBean="#{bookEditForm}" action="viewAccount" title="#{msg.book_account}" rendered="#{not empty bookEditForm.book.account and accountPermission.canView(bookEditForm.book.account)}" />
+		<app:input id="title" value="#{bookEditForm.book.title}" size="100" label="book_title" required="true" />
+		<app:input id="numberOfPages" value="#{bookEditForm.book.numberOfPages}" label="book_numberOfPages" required="true" />
+		<app:autoComplete id="owner" value="#{bookEditForm.owner.selected}" required="false"
+			label="book_owner" controller="#{accountController}" completeMethod="completeFullText" converter="#{accountJsfConverter}">
+			<app:iconView actionBean="#{bookEditForm.owner}" title="book_owner" rendered="#{accountPermission.canView(bookEditForm.book.owner)}" />
 		</app:autoComplete>
 	</ui:define>
 </app:edit>

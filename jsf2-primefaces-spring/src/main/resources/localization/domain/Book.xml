@@ -20,7 +20,7 @@
 	<entry key="book_version">Version</entry>
 
 	<!-- x-to-one -->
-	<entry key="book_account">Account</entry>
+	<entry key="book_owner">Owner</entry>
 
 	<!-- uniques -->
 	<entry key="book_composite_unique_constraint_error">A composite unique constraint has failed on Book</entry>

@@ -7,11 +7,9 @@
  */
 package com.jaxio.printer;
 
+import java.util.Locale;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import java.util.Locale;
-
 import com.jaxio.domain.Book;
 import com.jaxio.printer.DiscoverablePrinter;
 
@@ -34,7 +32,7 @@ public class BookPrinter extends DiscoverablePrinter<Book> {
         if (book == null) {
             return "";
         }
-        StringBuilder ret = new StringBuilder(256);
+        StringBuilder ret = new StringBuilder();
         appendIfNotEmpty(ret, book.getTitle());
         return ret.toString();
     }

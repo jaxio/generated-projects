@@ -18,13 +18,13 @@ import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.RolePermission;
 
 /**
- * Stateless controller for Role conversation start. Provides also auto-complete support. 
+ * Stateless controller for {@link Role} conversation start. 
  */
 @Named
 @Singleton
 public class RoleController extends GenericController<Role, Integer> {
-    public final static String editUri = "/domain/roleEdit.faces";
-    public final static String selectUri = "/domain/roleSelect.faces";
+    private static final String editUri = "/domain/roleEdit.faces";
+    private static final String selectUri = "/domain/roleSelect.faces";
 
     @Inject
     public RoleController(RoleRepository roleRepository, RolePermission rolePermission) {
@@ -32,7 +32,9 @@ public class RoleController extends GenericController<Role, Integer> {
     }
 
     @Override
-    protected void defaultOrder(SearchParameters searchParameters) {
+    protected SearchParameters defaultOrder(SearchParameters searchParameters) {
         searchParameters.orderBy(Role_.roleName);
+        return searchParameters;
     }
+
 }

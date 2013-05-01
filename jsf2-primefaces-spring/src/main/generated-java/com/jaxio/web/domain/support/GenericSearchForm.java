@@ -9,9 +9,11 @@ package com.jaxio.web.domain.support;
 
 import java.io.Serializable;
 import javax.inject.Inject;
+import javax.annotation.PostConstruct;
 
 import com.jaxio.domain.Identifiable;
 import com.jaxio.dao.support.SearchParameters;
+import com.jaxio.web.conversation.Conversation;
 import com.jaxio.web.conversation.ConversationManager;
 
 /**
@@ -24,12 +26,24 @@ public abstract class GenericSearchForm<E extends Identifiable<PK>, PK extends S
     @Inject
     private transient ConversationManager conversationManager;
 
+    @SuppressWarnings("unchecked")
+    @PostConstruct
+    public void init() {
+        Conversation currentConversation = conversationManager.getCurrentConversation();
+        if (currentConversation != null && currentConversation.getBean(getPrefilledFormName()) != null) {
+            resetWithOther((F) currentConversation.getBean(getPrefilledFormName()));
+        }
+    }
+
+    public String getPrefilledFormName() {
+        return "_" + this.getClass().getName() + "_prefilled_";
+    }
+
     /**
      * Return the entity example used in this search form.
      */
     protected abstract E getEntity();
 
-    /// saved search form
     protected String searchFormName;
 
     public String getSearchFormName() {
@@ -38,6 +52,16 @@ public abstract class GenericSearchForm<E extends Identifiable<PK>, PK extends S
 
     public void setSearchFormName(String searchFormName) {
         this.searchFormName = searchFormName;
+    }
+
+    protected String term;
+
+    public String getTerm() {
+        return term;
+    }
+
+    public void setTerm(String term) {
+        this.term = term;
     }
 
     /**

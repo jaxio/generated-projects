@@ -8,7 +8,7 @@
 					oncomplete="askForDeleteItemDialog.show(); APP.focusTo('form:askForDeleteItemDialogNo');"
 					styleClass="ui-button"
 					rendered="#{rendered}"
-					title="#{title}">
+					title="#{resourcesUtil.getProperty(title)}">
 		<f:setPropertyActionListener value="#{item}" target="#{data.selectedRow}" />
 		<div class="ui-button ui-icon iconDelete"/>
 	</p:commandLink>

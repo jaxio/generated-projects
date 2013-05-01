@@ -15,26 +15,14 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-<app:edit bean="#{documentEditForm}" title="#{msg.document}">
+<app:edit bean="#{documentEditForm}" title="document">
 	<ui:define name="form">
-		<app:outputLabel for="documentBinary" value="#{msg.document_documentBinary}" />
-		<p:outputPanel id="documentBinaryOP">
-			<p:fileUpload id="documentBinary"
-				fileUploadListener="#{documentController.getUploadHandler(documentEditForm.document).handleFileUpload}"
-				auto="true"
-				update="documentBinaryOP"
-				sizeLimit="2000000"
-				allowTypes="/(\.|\/)(gif|jpe?g|png|txt|doc|ppt|pdf|key|xls|number|pages)$/"
-				rendered="#{!readonly}" />
-			<h:commandLink
-				rendered="#{not empty documentEditForm.document.documentFileName}"
-				value="#{documentEditForm.document.documentFileName}"><p:fileDownload value="#{documentController.getStreamedContent(documentEditForm.document)}"/></h:commandLink>
-		</p:outputPanel>
-
-		<app:autoComplete id="account" value="#{documentEditForm.selectedAccount}" required="true" 
-			label="#{msg.document_account}" controller="#{accountController}" 
-			printer="#{accountPrinter}" converter="#{accountJsfConverter}">
-			<app:iconView actionBean="#{documentEditForm}" action="viewAccount" title="#{msg.document_account}" rendered="#{not empty documentEditForm.document.account and accountPermission.canView(documentEditForm.document.account)}" />
+		<app:inputFile id="documentBinary" label="document_documentBinary" object="#{documentEditForm.document}" filename="documentFileName"
+			fileupload="#{documentController.getDocumentFileUpload(documentEditForm.document)}" action="onDocumentBinaryFileUpload"
+			stream="#{documentFileDownload.getDocumentBinaryStream(documentEditForm.document)}" />
+		<app:autoComplete id="owner" value="#{documentEditForm.owner.selected}" required="true"
+			label="document_owner" controller="#{accountController}" completeMethod="completeFullText" converter="#{accountJsfConverter}">
+			<app:iconView actionBean="#{documentEditForm.owner}" title="document_owner" rendered="#{accountPermission.canView(documentEditForm.document.owner)}" />
 		</app:autoComplete>
 	</ui:define>
 </app:edit>

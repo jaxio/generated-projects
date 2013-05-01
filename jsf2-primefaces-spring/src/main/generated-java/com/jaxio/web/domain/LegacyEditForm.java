@@ -13,19 +13,23 @@ import com.jaxio.domain.Legacy;
 import com.jaxio.domain.LegacyPk;
 import com.jaxio.repository.LegacyRepository;
 import com.jaxio.web.domain.support.GenericEditForm;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
  * View Helper/Controller to edit {@link Legacy}.
  */
 @Named
-@Conversation
+@ConversationContextScoped
 public class LegacyEditForm extends GenericEditForm<Legacy, LegacyPk> {
+
     @Inject
-    public void setLegacyRepository(LegacyRepository legacyRepository) {
-        setRepository(legacyRepository);
+    public LegacyEditForm(LegacyRepository legacyRepository) {
+        super(legacyRepository);
     }
 
+    /**
+     * The entity to edit/view.
+     */
     public Legacy getLegacy() {
         return getEntity();
     }

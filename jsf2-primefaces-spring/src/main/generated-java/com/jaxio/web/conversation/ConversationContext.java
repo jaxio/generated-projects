@@ -7,16 +7,20 @@
  */
 package com.jaxio.web.conversation;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+
+import static com.jaxio.web.conversation.ConversationUtil.cidParamNameValue;
+
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.jaxio.util.ResourcesUtil;
 
 /**
- * Context holding variables and 'conversation' scoped beans so they can be accessed from the view.
+ * Context holding variables and 'conversationContext' scoped beans so they can be accessed from the view.
  * Note that you can change the view of the context. This allows you to navigate from page to page
  * using the same context.
  */
@@ -24,26 +28,38 @@ public class ConversationContext<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     *  Stores 'conversation' scope beans.
+     *  Stores 'conversationContext' scope beans.
      */
-    private Map<String, Object> beans = new HashMap<String, Object>();
+    private Map<String, Object> beans = newHashMap();
 
     /**
-     *  Stores variables such as 'readonly', 'sub', etc.
+     *  Stores variables such as <code>readonly</code>, <code>sub</code>, etc.
      */
-    private Map<String, Object> vars = new HashMap<String, Object>();
+    private Map<String, Object> vars = newHashMap();
     private String id; // context id
     private String conversationId;
     private ConversationCallBack<T> callBack = new ConversationCallBack<T>();
-    private String label = "(todo label)"; // Up to the developer to call setLabel or setLabelWithKey
+    private String label = ""; // Up to the developer to call setLabel or setLabelKey
     private String viewUri;
     private boolean isNewEntity;
+
+    public ConversationContext() {
+    }
+
+    public ConversationContext(String viewUri) {
+        this.viewUri = viewUri;
+    }
 
     /**
      * Set this conversation context id.
      */
     protected void setId(String id) {
         this.id = id;
+    }
+
+    public ConversationContext<T> id(String id) {
+        setId(id);
+        return this;
     }
 
     public String getId() {
@@ -54,11 +70,21 @@ public class ConversationContext<T> implements Serializable {
         this.conversationId = conversationId;
     }
 
+    public ConversationContext<T> conversationId(String conversationId) {
+        setConversationId(conversationId);
+        return this;
+    }
+
     /**
      * Set the entity that will be used by the XxxForm.
      */
     public void setEntity(T entity) {
         setVar("_entity", entity);
+    }
+
+    public ConversationContext<T> entity(T entity) {
+        setEntity(entity);
+        return this;
     }
 
     /**
@@ -73,6 +99,15 @@ public class ConversationContext<T> implements Serializable {
         this.isNewEntity = isNewEntity;
     }
 
+    public ConversationContext<T> isNewEntity(boolean isNewEntity) {
+        setIsNewEntity(isNewEntity);
+        return this;
+    }
+
+    public ConversationContext<T> newEntity() {
+        return isNewEntity(true);
+    }
+
     public boolean isNewEntity() {
         return isNewEntity;
     }
@@ -84,6 +119,11 @@ public class ConversationContext<T> implements Serializable {
         setVar("entityId", entityId);
     }
 
+    public ConversationContext<T> entityId(Serializable entityId) {
+        setEntityId(entityId);
+        return this;
+    }
+
     @SuppressWarnings("unchecked")
     public <PK> PK getEntityIdAndRemove() {
         return (PK) vars.remove("entityId");
@@ -93,8 +133,13 @@ public class ConversationContext<T> implements Serializable {
      * Sets the label displayed in the conversation menu.
      * @param labelKey the resource property key.
      */
-    public void setLabelWithKey(String labelKey) {
+    public void setLabelKey(String labelKey) {
         this.label = ResourcesUtil.getInstance().getProperty(labelKey);
+    }
+
+    public ConversationContext<T> labelKey(String labelKey) {
+        setLabelKey(labelKey);
+        return this;
     }
 
     /**
@@ -103,6 +148,11 @@ public class ConversationContext<T> implements Serializable {
      */
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public ConversationContext<T> label(String label) {
+        setLabel(label);
+        return this;
     }
 
     public String getLabel() {
@@ -116,6 +166,11 @@ public class ConversationContext<T> implements Serializable {
         this.viewUri = viewUri;
     }
 
+    public ConversationContext<T> viewUri(String viewUri) {
+        setViewUri(viewUri);
+        return this;
+    }
+
     /**
      * The viewUri attached to this context.
      */
@@ -124,25 +179,43 @@ public class ConversationContext<T> implements Serializable {
     }
 
     /**
-     * Sets the 'sub' variable. 'sub' is used in the xhtml view to render certain menus/buttons.
+     * Sets the <code>sub</code> variable. This variable is used in the xhtml view to render certain menus/buttons.
      */
     public void setSub(boolean sub) {
         setVar("sub", sub);
     }
 
+    public ConversationContext<T> sub(boolean sub) {
+        setSub(sub);
+        return this;
+    }
+
+    public ConversationContext<T> sub() {
+        return sub(true);
+    }
+
     public boolean isSub() {
-        return getVar("sub") != null ? (Boolean) getVar("sub") : false;
+        return getVar("sub", Boolean.class) != null ? getVar("sub", Boolean.class) : false;
     }
 
     /**
-     * Sets the 'readonly' variable.
+     * Sets the <code>readonly</code> variable.
      */
     public void setReadonly(boolean readonly) {
         setVar("readonly", readonly);
     }
 
+    public ConversationContext<T> readonly(boolean readonly) {
+        setReadonly(readonly);
+        return this;
+    }
+
+    public ConversationContext<T> readonly() {
+        return readonly(true);
+    }
+
     public boolean isReadOnly() {
-        return getVar("readonly") != null ? (Boolean) getVar("readonly") : false;
+        return getVar("readonly", Boolean.class) != null ? getVar("readonly", Boolean.class) : false;
     }
 
     /**
@@ -150,6 +223,11 @@ public class ConversationContext<T> implements Serializable {
      */
     public void setCallBack(ConversationCallBack<T> callBack) {
         this.callBack = callBack;
+    }
+
+    public ConversationContext<T> callBack(ConversationCallBack<T> callBack) {
+        setCallBack(callBack);
+        return this;
     }
 
     public ConversationCallBack<T> getCallBack() {
@@ -161,7 +239,7 @@ public class ConversationContext<T> implements Serializable {
      */
     public String getUrl() {
         checkViewUriAndConversationId();
-        return viewUri + "?_cid_=" + conversationId + "&_ccid_=" + getId();
+        return viewUri + "?" + cidParamNameValue(conversationId, getId());
     }
 
     /**
@@ -169,7 +247,7 @@ public class ConversationContext<T> implements Serializable {
      */
     public String view() {
         checkViewUriAndConversationId();
-        return viewUri + "?faces-redirect=true&_cid_=" + conversationId + "&_ccid_=" + getId();
+        return viewUri + "?faces-redirect=true&" + cidParamNameValue(conversationId, getId());
     }
 
     private void checkViewUriAndConversationId() {
@@ -188,14 +266,15 @@ public class ConversationContext<T> implements Serializable {
 
     /**
      * Add a conversation scoped bean spring bean to this context. A bean is added either 'automatically' or manually.
-     * In the latter case, it is autowired afteward (see ConversationScope).
+     * In the latter case, it is autowired afterward. (see {@link ConversationScope}).
      */
     public void addBean(String name, Object bean) {
         beans.put(name, bean);
     }
 
-    public Object getBean(String name) {
-        return beans.get(name);
+    @SuppressWarnings("unchecked")
+    public <E> E getBean(String name, Class<E> expectedType) {
+        return (E) beans.get(name);
     }
 
     public void setVar(String name, Object var) {
@@ -207,19 +286,19 @@ public class ConversationContext<T> implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public <E> E getVar(String name, Class<E> type) {
+    public <E> E getVar(String name, Class<E> expectedType) {
         return (E) vars.get(name);
     }
 
-    // ------------------------------------------
-    // For debug/training purposes: see 
-    // ------------------------------------------
+    // ---------------------------
+    // For debug/training purposes 
+    // ---------------------------
 
-    public List<Map.Entry<String, Object>> getBeanEntries() {
-        return new ArrayList<Map.Entry<String, Object>>(beans.entrySet());
+    public List<Entry<String, Object>> getBeanEntries() {
+        return newArrayList(beans.entrySet());
     }
 
-    public List<Map.Entry<String, Object>> getVarEntries() {
-        return new ArrayList<Map.Entry<String, Object>>(vars.entrySet());
+    public List<Entry<String, Object>> getVarEntries() {
+        return newArrayList(vars.entrySet());
     }
 }

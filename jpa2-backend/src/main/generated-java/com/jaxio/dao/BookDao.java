@@ -7,6 +7,7 @@
  */
 package com.jaxio.dao;
 
+import static com.jaxio.domain.Book_.title;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import com.jaxio.dao.BookDao;
@@ -21,6 +22,6 @@ import com.jaxio.domain.Book;
 @Singleton
 public class BookDao extends GenericDao<Book, Integer> {
     public BookDao() {
-        super(Book.class);
+        super(Book.class, title);
     }
 }

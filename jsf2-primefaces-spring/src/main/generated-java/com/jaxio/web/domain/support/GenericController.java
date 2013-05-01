@@ -9,112 +9,188 @@ package com.jaxio.web.domain.support;
 
 import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.WordUtils;
 
 import com.jaxio.dao.support.JpaUniqueUtil;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Identifiable;
 import com.jaxio.printer.TypeAwarePrinter;
-import com.jaxio.repository.support.Repository;
+import com.jaxio.repository.support.GenericRepository;
 import com.jaxio.web.util.MessageUtil;
-import com.jaxio.web.conversation.Conversation;
+import com.jaxio.util.ResourcesUtil;
 import com.jaxio.web.conversation.ConversationCallBack;
 import com.jaxio.web.conversation.ConversationContext;
-import com.jaxio.web.conversation.ConversationFactory;
+import com.jaxio.web.conversation.ConversationManager;
 import com.jaxio.web.permission.support.GenericPermission;
+import com.jaxio.context.UserContext;
 
 /**
- * Base controller for JPA entities.
+ * Base controller for JPA entities providing helper methods to:
+ * <ul>
+ *  <li>start conversations</li>
+ *  <li>create conversation context</li>
+ *  <li>support autoComplete component</li>
+ *  <li>perform actions</li>
+ *  <li>support excel export</li>
+ * </ul>
  */
-public abstract class GenericController<E extends Identifiable<PK>, PK extends Serializable> implements ConversationFactory {
-
+public abstract class GenericController<E extends Identifiable<PK>, PK extends Serializable> {
+    private static final String PERMISSION_DENIED = "/error/accessdenied";
     private String selectUri;
     private String editUri;
 
+    @Inject
+    protected ConversationManager conversationManager;
     @Inject
     protected JpaUniqueUtil jpaUniqueUtil;
     @Inject
     protected MessageUtil messageUtil;
     @Inject
     protected TypeAwarePrinter printer;
-    protected Repository<E, PK> repository;
+    protected GenericRepository<E, PK> repository;
     protected GenericPermission<E> permission;
 
-    public GenericController(Repository<E, PK> repository, GenericPermission<E> permission, String selectUri, String editUri) {
+    public GenericController(GenericRepository<E, PK> repository, GenericPermission<E> permission, String selectUri, String editUri) {
         this.repository = repository;
         this.permission = permission;
         this.selectUri = selectUri;
         this.editUri = editUri;
     }
 
-    public String getEditUri() {
-        return editUri;
+    public GenericRepository<E, PK> getRepository() {
+        return repository;
     }
 
-    public String getSelectUri() {
-        return selectUri;
+    public GenericPermission<E> getPermission() {
+        return permission;
     }
 
-    // -------------------
-    // ConversationFactory
-    // -------------------
-
-    @Override
-    public boolean canCreateConversation(HttpServletRequest request) {
-        return getSelectUri().equals(request.getServletPath()) || getEditUri().equals(request.getServletPath());
+    public MessageUtil getMessageUtil() {
+        return messageUtil;
     }
 
-    @Override
-    public Conversation createConversation(HttpServletRequest request) {
-        String uri = request.getServletPath();
-        E e = repository.getNew();
+    // ----------------------------------------
+    // START CONVERSATION PROGRAMATICALY  
+    // ----------------------------------------
 
-        if (getSelectUri().equals(uri)) {
-            return Conversation.newConversation(request, newSearchContext(e.getClass().getSimpleName()));
-        } else if (getEditUri().equals(uri)) {
-            return Conversation.newConversation(request, newEditContext(e.getClass().getSimpleName(), e));
-        } else {
-            throw new IllegalStateException("Unexpected conversation creation demand");
+    /**
+     * Start a new {@link Conversation} that allows the user to search an existing entity.
+     * @return the implicit first view for the newly created conversation.
+     */
+    public String beginSearch() {
+        if (!permission.canSearch()) {
+            return PERMISSION_DENIED;
         }
+        return beginConversation(newSearchContext());
     }
 
+    /**
+     * Start a new {@link Conversation} that allows the user to create a new entity.
+     * @return the implicit first view for the newly created conversation.
+     */
+    public String beginCreate() {
+        if (!permission.canCreate()) {
+            return PERMISSION_DENIED;
+        }
+        return beginConversation(newEditContext(repository.getNewWithDefaults()));
+    }
+
+    /**
+     * Start a new {@link Conversation} using the passed ctx as the first conversation context.
+     * @return the implicit first view for the newly created conversation.
+     */
+    public String beginConversation(ConversationContext<E> ctx) {
+        return conversationManager.beginConversation(ctx).nextView();
+    }
+
+    // ----------------------------------------
+    // AUTO COMPLETE SUPPORT  
+    // ----------------------------------------
+
+    /**
+     * Auto-complete support. This method is used by primefaces autoComplete component.
+     */
     public List<E> complete(String value) {
         return repository.find(completeSearchParameters(value));
+    }
+
+    public List<E> completeFullText(String value) {
+        return repository.find(completeFullTextSearchParameters(value));
+    }
+
+    /**
+     * A simple auto-complete that returns exactly the input. It is used in search forms with PropertySelector. 
+     */
+    public List<String> completeSame(String value) {
+        return newArrayList(value);
+    }
+
+    public List<String> completePropertyFullText(String term) throws Exception {
+        String property = parameter("property", String.class);
+        Set<String> ret = newHashSet(term);
+        for (E object : repository.find(searchParameters().termOn(term, property))) {
+            ret.add((String) PropertyUtils.getProperty(object, property));
+        }
+        return newArrayList(ret);
+    }
+
+    public List<String> completeProperty(String value) throws Exception {
+        String property = parameter("property", String.class);
+        E template = repository.getNew();
+        PropertyUtils.setProperty(template, property, value);
+        Set<String> ret = newHashSet(value);
+        for (E object : repository.find(template, searchParameters())) {
+            ret.add((String) PropertyUtils.getProperty(object, property));
+        }
+        return newArrayList(ret);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T parameter(String propertyName, Class<T> expectedType) {
+        return (T) UIComponent.getCurrentComponent(FacesContext.getCurrentInstance()).getAttributes().get(propertyName);
+    }
+
+    protected SearchParameters completeSearchParameters(String value) {
+        return searchParameters().searchPattern(value);
+    }
+
+    protected SearchParameters searchParameters() {
+        return defaultOrder(new SearchParameters().anywhere());
+    }
+
+    protected SearchParameters completeFullTextSearchParameters(String value) {
+        return searchParameters().term(value);
+    }
+
+    protected SearchParameters defaultOrder(SearchParameters searchParameters) {
+        return searchParameters;
     }
 
     /**
      * Decision helper used when handling ajax autoComplete event and regular page postback.
      */
     public boolean shouldReplace(E currentEntity, E selectedEntity) {
-        if (selectedEntity == null) {
-            if (currentEntity == null) {
-                // trivial case
-                return true;
-            }
-
-            if (currentEntity.isIdSet()) {
-                // user prefer to set the current entity to null.
-                return true;
-            }
-
-            // more tricky case (postback)
-            // current entity is not yet persisted, so the converter has returned null...
-            // therefore we keep the current entity.
+        if (currentEntity == selectedEntity) {
             return false;
         }
 
-        if (currentEntity != null) {
+        if (currentEntity != null && selectedEntity != null && currentEntity.isIdSet() && selectedEntity.isIdSet()) {
             if (selectedEntity.getId().equals(currentEntity.getId())) {
                 Comparable<Object> currentVersion = repository.getVersion(currentEntity);
                 if (currentVersion == null) {
@@ -126,148 +202,237 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
                 Comparable<Object> selectedVersion = repository.getVersion(selectedEntity);
 
                 if (currentVersion.compareTo(selectedVersion) == 0) {
-                    // existing could have been edited and not yet saved, we keep it.
+                    // currentEntity could have been edited and not yet saved, we keep it.
                     return false;
                 } else {
                     // we could have an optimistic locking exception at save time
                     // TODO: what should we do here?
                     return false;
                 }
-            } else {
-                // the selected one is not the same entity. We respect user's choice.
-                return true;
             }
-        } else {
-            // current entity was null, so we certainly accept the selected one
-            return true;
         }
+
+        return true;
     }
 
-    public List<String> completeSame(String value) {
-        return newArrayList(value);
-    }
+    // ----------------------------------------
+    // CREATE IMPLICIT EDIT VIEW  
+    // ----------------------------------------
 
-    public List<String> completeProperty(String value) throws Exception {
-        String property = parameter("property");
-        E template = repository.getNew();
-        PropertyUtils.setProperty(template, property, value);
-        Set<String> ret = newHashSet(value);
-        for (E object : repository.find(template, searchParameters())) {
-            ret.add((String) PropertyUtils.getProperty(object, property));
-        }
-        return newArrayList(ret);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T parameter(String propertyName) {
-        return (T) UIComponent.getCurrentComponent(FacesContext.getCurrentInstance()).getAttributes().get(propertyName);
-    }
-
-    protected SearchParameters completeSearchParameters(String value) {
-        return searchParameters().searchPattern(value);
-    }
-
-    protected SearchParameters searchParameters() {
-        SearchParameters searchParameter = new SearchParameters().anywhere();
-        defaultOrder(searchParameter);
-        return searchParameter;
-    }
-
-    protected void defaultOrder(SearchParameters searchParameters) {
-    }
-
-    // ///////////////////////
-    // Helper
-    // ///////////////////////
-
+    /**
+     * Helper to create a new {@link ConversationContext} to view the passed entity and set it as the current conversation's next context.  
+     * The vars <code>sub</code> <code>readonly</code> are set to true.
+     * The permission {@link GenericPermission#canView()} is checked.
+     * 
+     * @param labelKey label key for breadCrumb and conversation menu.
+     * @param e the entity to view.
+     * @return the implicit view to access this context.
+     */
     public String editSubReadOnlyView(String labelKey, E e) {
-        checkPermission(permission.canView(e));
-        ConversationContext<E> ctx = newEditContext(labelKey, e);
-        getCurrentConversation().setNextContextSubReadOnly(ctx);
-        return ctx.view();
+        if (!permission.canView(e)) {
+            return PERMISSION_DENIED;
+        }
+        ConversationContext<E> ctx = newEditContext(labelKey, e).sub().readonly();
+        return getCurrentConversation().nextContext(ctx).view();
     }
 
+    /**
+     * Helper to create a new {@link ConversationContext} to edit the passed entity and set it as the current conversation's next context.  
+     * The var <code>sub</code> is set to true.
+     * The permission {@link GenericPermission#canEdit()} is checked.
+     * 
+     * @param labelKey label key for breadCrumb and conversation menu.
+     * @param e the entity to edit.
+     * @return the implicit view to access this context.
+     */
     public String editSubView(String labelKey, E e, ConversationCallBack<E> editCallBack) {
-        checkPermission(permission.canEdit(e));
-        ConversationContext<E> ctx = newEditContext(labelKey, e, editCallBack);
-        getCurrentConversation().setNextContextSub(ctx);
-        return ctx.view();
+        if (!permission.canEdit(e)) {
+            return PERMISSION_DENIED;
+        }
+        ConversationContext<E> ctx = newEditContext(labelKey, e, editCallBack).sub();
+        return getCurrentConversation().nextContext(ctx).view();
     }
 
+    /**
+     * Helper to create a new {@link ConversationContext} to create a new entity and set it as the current conversation's next context.  
+     * The var <code>sub</code> is set to true.
+     * 
+     * @param labelKey label key for breadCrumb and conversation menu.
+     * @return the implicit view to access this context.
+     */
     public String createSubView(String labelKey, ConversationCallBack<E> createCallBack) {
-        return createSubView(labelKey, repository.getNew(), createCallBack);
+        return createSubView(labelKey, repository.getNewWithDefaults(), createCallBack);
     }
 
+    /**
+     * Helper to create a new {@link ConversationContext} to edit the passed new entity and set it as the current conversation's next context.  
+     * The var <code>sub</code> is set to true.
+     * The permission {@link GenericPermission#canCreate()} is checked.
+     * 
+     * @param labelKey label key for breadCrumb and conversation menu.
+     * @param e the entity to edit.
+     * @return the implicit view to access this context.
+     */
     public String createSubView(String labelKey, E e, ConversationCallBack<E> createCallBack) {
-        checkPermission(permission.canCreate());
-        ConversationContext<E> ctx = newEditContext(labelKey, e, createCallBack);
-        getCurrentConversation().setNextContextSub(ctx);
-        return ctx.view();
+        if (!permission.canCreate()) {
+            return PERMISSION_DENIED;
+        }
+        ConversationContext<E> ctx = newEditContext(labelKey, e, createCallBack).sub();
+        return getCurrentConversation().nextContext(ctx).view();
     }
+
+    // ----------------------------------------
+    // CREATE IMPLICIT SELECT VIEW  
+    // ----------------------------------------
 
     public String selectSubView(String labelKey, ConversationCallBack<E> selectCallBack) {
-        checkPermission(permission.canSelect());
-        ConversationContext<E> ctx = newSearchContext(labelKey, selectCallBack);
-        getCurrentConversation().setNextContextSub(ctx);
-        return ctx.view();
+        if (!permission.canSelect()) {
+            return PERMISSION_DENIED;
+        }
+        ConversationContext<E> ctx = newSearchContext(labelKey, selectCallBack).sub();
+        return getCurrentConversation().nextContext(ctx).view();
     }
 
     public String multiSelectSubView(String labelKey, ConversationCallBack<E> selectCallBack) {
-        checkPermission(permission.canSelect());
-        ConversationContext<E> ctx = newSearchContext(labelKey, selectCallBack);
+        if (!permission.canSelect()) {
+            return PERMISSION_DENIED;
+        }
+        ConversationContext<E> ctx = newSearchContext(labelKey, selectCallBack).sub();
         ctx.setVar("multiCheckboxSelection", true);
-        getCurrentConversation().setNextContextSub(ctx);
-        return ctx.view();
+        return getCurrentConversation().nextContext(ctx).view();
     }
 
-    protected void checkPermission(boolean check) {
-        if (!check) {
-            throw new IllegalStateException();
-        }
-    }
+    // ----------------------------------------
+    // CREATE EDIT CONVERSATION CONTEXT
+    // ----------------------------------------
 
     /**
-     * Helper to construct a new ConversationContext to edit an entity.
+     * Helper to construct a new {@link ConversationContext} to edit an entity.
      * @param e the entity to edit.
      */
-    public ConversationContext<E> newEditContext(final E e) {
-        ConversationContext<E> ctx = new ConversationContext<E>();
-        ctx.setEntity(e); // used by GenericEditForm.init()
-        ctx.setIsNewEntity(!e.isIdSet());
-        ctx.setViewUri(getEditUri());
-        return ctx;
+    public ConversationContext<E> newEditContext(E e) {
+        return new ConversationContext<E>().entity(e).isNewEntity(!e.isIdSet()).viewUri(editUri);
     }
 
-    public ConversationContext<E> newEditContext(String labelKey, final E e) {
-        ConversationContext<E> ctx = newEditContext(e);
-        ctx.setLabelWithKey(labelKey);
-        return ctx;
+    public ConversationContext<E> newEditContext(String labelKey, E e) {
+        return newEditContext(e).labelKey(labelKey);
     }
 
-    public ConversationContext<E> newEditContext(String labelKey, final E e, ConversationCallBack<E> callBack) {
-        ConversationContext<E> ctx = newEditContext(labelKey, e);
-        ctx.setCallBack(callBack);
-        return ctx;
+    public ConversationContext<E> newEditContext(String labelKey, E e, ConversationCallBack<E> callBack) {
+        return newEditContext(labelKey, e).callBack(callBack);
     }
+
+    // ----------------------------------------
+    // CREATE SEARCH CONVERSATION CONTEXT
+    // ----------------------------------------
 
     /**
-     * Helper to construct a new ConversationContext for search/selection.
+     * Helper to construct a new {@link ConversationContext} for search/selection.
      */
     public ConversationContext<E> newSearchContext() {
-        ConversationContext<E> ctx = new ConversationContext<E>();
-        ctx.setViewUri(getSelectUri());
-        return ctx;
+        return new ConversationContext<E>(selectUri);
     }
 
     public ConversationContext<E> newSearchContext(String labelKey) {
-        ConversationContext<E> ctx = newSearchContext();
-        ctx.setLabelWithKey(labelKey);
-        return ctx;
+        return newSearchContext().labelKey(labelKey);
     }
 
     public ConversationContext<E> newSearchContext(String labelKey, ConversationCallBack<E> callBack) {
-        ConversationContext<E> ctx = newSearchContext(labelKey);
-        ctx.setCallBack(callBack);
-        return ctx;
+        return newSearchContext(labelKey).callBack(callBack);
+    }
+
+    // ----------------------------------------
+    // ACTIONS INVOKED FORM THE VIEW
+    // ----------------------------------------
+
+    public ConversationContext<E> getSelectedContext(E selected) {
+        return newEditContext(editUri, selected);
+    }
+
+    /**
+     * Action to create a new entity.
+     */
+    public String create() {
+        if (!permission.canCreate()) {
+            return PERMISSION_DENIED;
+        }
+        E newEntity = repository.getNewWithDefaults();
+        ConversationContext<E> ctx = getSelectedContext(newEntity).label("Create new " + newEntity.getClass().getSimpleName());
+        return getCurrentConversation().nextContext(ctx).view();
+    }
+
+    /**
+     * Support for {@link GenericLazyDataModel.#edit()} and {@link GenericLazyDataModel.#onRowSelect(org.primefaces.event.SelectEvent)} methods 
+     */
+    protected String edit(E entity) {
+        if (!permission.canEdit(entity)) {
+            return PERMISSION_DENIED;
+        }
+        ConversationContext<E> ctx = getSelectedContext(entity).label("Edit " + printer.print(entity));
+        return getCurrentConversation().nextContext(ctx).view();
+    }
+
+    /**
+     * Support for the {@link GenericLazyDataModel.#edit()} method
+     */
+    public String view(E entity) {
+        if (!permission.canView(entity)) {
+            return PERMISSION_DENIED;
+        }
+        ConversationContext<E> ctx = getSelectedContext(entity).sub().readonly().label("View " + printer.print(entity));
+        return getCurrentConversation().nextContext(ctx).view();
+    }
+
+    protected String select(E entity) {
+        if (!permission.canSelect()) {
+            return PERMISSION_DENIED;
+        }
+        return getCurrentConversation() //
+                .<ConversationContext<E>> getCurrentContext() //
+                .getCallBack() //
+                .selected(entity);
+    }
+
+    // ----------------------------------------
+    // EXCEL RELATED
+    // ----------------------------------------
+
+    @Inject
+    private ExcelExportService excelExportService;
+
+    @Inject
+    private ExcelExportSupport excelExportSupport;
+
+    @Inject
+    private ResourcesUtil resourcesUtil;
+
+    public void onExcel(SearchParameters searchParameters) throws IOException {
+        Map<String, Object> model = newHashMap();
+        model.put("msg", resourcesUtil);
+        model.put("search_date", excelExportSupport.dateToString(new Date()));
+        model.put("search_by", UserContext.getUsername());
+        model.put("searchParameters", searchParameters);
+        model.put("searchParameters", searchParameters);
+        excelObjects(model, searchParameters);
+        excelExportService.export("excel/" + entityName().toLowerCase() + ".xlsx", model, excelOutputname());
+    }
+
+    protected String excelOutputname() {
+        return entityName() + "-" + new SimpleDateFormat("MM-dd-yyyy_HH-mm-ss").format(new Date()) + ".xlsx";
+    }
+
+    private String entityName() {
+        return repository.getNew().getClass().getSimpleName();
+    }
+
+    protected void excelObjects(Map<String, Object> model, SearchParameters searchParameters) {
+        excelExportSupport.convertSearchParametersToMap(model, searchParameters);
+
+        int count = repository.findCount(searchParameters);
+        model.put("search_nb_results", count);
+        if (count > 65535) {
+            searchParameters.maxResults(65535);
+        }
+        model.put(WordUtils.uncapitalize(entityName()), repository.find(searchParameters));
     }
 }

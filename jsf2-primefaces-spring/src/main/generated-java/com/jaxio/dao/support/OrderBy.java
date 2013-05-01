@@ -11,11 +11,9 @@ import java.io.Serializable;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.apache.commons.lang.Validate;
-
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.jaxio.dao.support.OrderByDirection.ASC;
 import static com.jaxio.dao.support.OrderByDirection.DESC;
-import com.jaxio.domain.Identifiable;
 
 /**
  * Holder class for search ordering used by the {@link SearchParameters}.
@@ -27,24 +25,20 @@ public class OrderBy implements Serializable {
     private OrderByDirection direction = ASC;
 
     public OrderBy(String columnOrProperty, OrderByDirection direction) {
-        Validate.notNull(columnOrProperty);
-        Validate.notNull(direction);
-        this.columnOrProperty = columnOrProperty;
-        this.direction = direction;
+        this.columnOrProperty = checkNotNull(columnOrProperty);
+        this.direction = checkNotNull(direction);
     }
 
     public OrderBy(String columnOrProperty) {
         this(columnOrProperty, ASC);
     }
 
-    public OrderBy(SingularAttribute<? extends Identifiable<? extends Serializable>, ? extends Serializable> attribute, OrderByDirection direction) {
-        Validate.notNull(attribute);
-        Validate.notNull(direction);
-        this.columnOrProperty = attribute.getName();
-        this.direction = direction;
+    public OrderBy(SingularAttribute<?, ?> attribute, OrderByDirection direction) {
+        this.columnOrProperty = checkNotNull(attribute).getName();
+        this.direction = checkNotNull(direction);
     }
 
-    public OrderBy(SingularAttribute<? extends Identifiable<? extends Serializable>, ? extends Serializable> attribute) {
+    public OrderBy(SingularAttribute<?, ?> attribute) {
         this(attribute, ASC);
     }
 

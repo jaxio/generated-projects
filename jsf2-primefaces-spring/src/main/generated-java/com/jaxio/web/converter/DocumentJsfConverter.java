@@ -15,7 +15,8 @@ import com.jaxio.repository.DocumentRepository;
 import com.jaxio.web.converter.GenericJsfConverter;
 
 /**
- * JSF Converter for {@link Document}.
+ * JSF converter for {@link Document}.
+ * @see GenericJsfConverter
  */
 @Named
 @Singleton

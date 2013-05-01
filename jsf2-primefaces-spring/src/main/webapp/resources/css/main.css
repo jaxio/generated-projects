@@ -134,11 +134,14 @@ div.searchResult{
 .iconExcel { 
 	background-image: url("#{resource['icons/excel.png']}") !important;
 }
+.iconWarning { 
+	 background-image: url("#{resource['icons/warning.png']}") !important;
+}
 
 /* p:fieldSet */
 .ui-fieldset {
 	text-align: left;
- 	margin:10px 0px;
+	margin:10px 0px;
 	background-color:#f5f5f5;
 }
 
@@ -146,19 +149,17 @@ html body .ui-state-error{
 	color:black;
 	background: #ffeeee ;
 	border: 1px solid #CD0A0A ;
-}	
+}
 
 /* tabs */
 
 div.ui-layout-unit div.ui-tabs{
-	
 	margin-bottom:10px;	
 }
 
 div.ui-tabs ul.ui-widget-header.ui-tabs-nav{
 	padding: 0px 0px 1px 0px;
 }
-
 
 div.ui-tabs ul.ui-widget-header.ui-tabs-nav li a,
 div.ui-tabs ul.ui-widget-header.ui-tabs-nav li.ui-state-active a{
@@ -174,7 +175,6 @@ div.ui-tabs div.ui-tabs-panel{
 	border:#bbb solid 1px;
 	border-top:none;
 }
-
 
 /* p:dataTable*/
 .ui-datatable .ui-datatable-data td,
@@ -226,6 +226,12 @@ div.ui-tabs div.ui-tabs-panel{
 }
 
 /* header */
+.userInfo {
+	float: right;
+}
+.userInfo-username {
+	margin-right: 5px;
+}
 .userInfo-welcome {
 	background: transparent url("#{resource['icons/home.png']}") no-repeat center left;
 	padding: 5px 5px 5px 20px;
@@ -254,13 +260,24 @@ div.ui-tabs div.ui-tabs-panel{
 	margin:50px auto;
 }
 
-.versionEnv {
+.environment {
 	position: fixed;
 	top: 0px;
 	left: 0px;
+	width: 58px;
+	height: 58px; 
 	z-index: 1000;
 }
 
+.Development {
+	background: transparent url("#{resource['icons/environment/development.gif']}") no-repeat center left;
+}
+.Integration {
+	background: transparent url("#{resource['icons/environment/integration.gif']}") no-repeat center left;
+}
+.Production {
+	background: transparent url("#{resource['icons/environment/production.gif']}") no-repeat center left;
+}
 
 div.ui-layout-north td {
 	vertical-align:top;
@@ -275,7 +292,6 @@ div.ui-layout-center div.ui-layout-unit-content{
 	padding-left:15px;
 	padding-right:15px;
 	background-color: transparent;
-	
 }
 
 div.ui-layout-center div.ui-layout-unit-content div.ui-toolbar{
@@ -284,7 +300,6 @@ div.ui-layout-center div.ui-layout-unit-content div.ui-toolbar{
 	border: #bbb solid 1px;
 
 }
-
 
 div.ui-layout-center div.ui-layout-unit-content div.ui-toolbar button.ui-button{
 background: rgb(136,181,202); /* Old browsers */
@@ -295,9 +310,7 @@ background: rgb(136,181,202); /* Old browsers */
 	background: -ms-linear-gradient(top,  rgba(184,212,255,1) 0%,rgba(145,185,201,1) 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  rgba(184,212,255,1) 0%,rgba(145,185,201,1) 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#B8D4FF', endColorstr='#91B9C9',GradientType=0 ); /* IE6-9 */
-
 	border:#eee outset 1px;
-
 	margin:0px 3px;
 	/*background:#88b5ca;*/
 	font-weight:bold;
@@ -313,9 +326,7 @@ div.ui-layout-center div.ui-layout-unit-content div.ui-toolbar button.ui-button:
 	background: -ms-linear-gradient(top,  rgba(255,114,0,1) 0%,rgba(255,151,51,1) 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  rgba(255,114,0,1) 0%,rgba(255,151,51,1) 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff7200', endColorstr='#ff9733',GradientType=0 ); /* IE6-9 */
-
 	border:#eee inset 1px;
-	
 }
 
 .ui-state-highlight .ui-icon {

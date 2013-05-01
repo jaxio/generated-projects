@@ -26,7 +26,7 @@ import org.springframework.format.Printer;
  * @see org.springframework.format.Printer
  * @see DiscoverablePrinter
  */
-@Named
+@Named("printer")
 @SuppressWarnings("rawtypes")
 public class TypeAwarePrinter implements Printer {
     private Map<Class, DiscoverablePrinter<?>> printers = newHashMap();
@@ -41,17 +41,20 @@ public class TypeAwarePrinter implements Printer {
     /**
      * return the string representation using the current {@link Locale}
      */
-    public String print(Object document) {
-        return print(document, LocaleContextHolder.getLocale());
+    public String print(Object object) {
+        return print(object, LocaleContextHolder.getLocale());
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public String print(Object object, Locale locale) {
-        DiscoverablePrinter printer = printers.get(getClassWithoutInitializingProxy(object));
-        if (printer == null) {
-            return object == null ? "" : object.toString();
+        if (object == null) {
+            return "";
         }
-        return printer.print(object, locale);
+
+        // note: getClassWithoutInitializingProxy expects a non null object
+        // _HACK_ as we depend on hibernate here.
+        DiscoverablePrinter printer = printers.get(getClassWithoutInitializingProxy(object));
+        return printer == null ? object.toString() : printer.print(object, locale);
     }
 }

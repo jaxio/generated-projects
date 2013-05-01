@@ -4,7 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html">	
 	<h:outputText value="" />
-	<p:fieldset legend="#{label}">
+	<p:fieldset legend="#{resourcesUtil.getProperty(label)}">
 		<p:selectManyCheckbox id="#{id}" value="#{value.selected}" converter="#{booleanConverter}" rendered="#{not nullAllowed}">
 			<f:selectItem itemLabel="#{msg.boolean_true}" itemValue="#{true}" />
 			<f:selectItem itemLabel="#{msg.boolean_false}" itemValue="#{false}" />

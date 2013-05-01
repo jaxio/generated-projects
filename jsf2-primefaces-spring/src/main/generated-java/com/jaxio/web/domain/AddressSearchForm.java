@@ -8,27 +8,26 @@
 package com.jaxio.web.domain;
 
 import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
-import static com.jaxio.domain.Address_.city;
-import static com.jaxio.domain.Address_.streetName;
 import javax.inject.Named;
 import com.jaxio.dao.support.PropertySelector;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Address;
+import com.jaxio.domain.Address_;
 import com.jaxio.web.domain.support.GenericSearchForm;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
- * View Helper to find/select {@link Address}.
+ * View Helper to search {@link Address}.
  * It exposes a {@link Address} instance so it can be used in search by Example query.
  */
 @Named
-@Conversation
+@ConversationContextScoped
 public class AddressSearchForm extends GenericSearchForm<Address, Integer, AddressSearchForm> {
     private static final long serialVersionUID = 1L;
 
-    private Address address = new Address();
-    private PropertySelector<Address, String> streetNameSelector = newPropertySelector(streetName);
-    private PropertySelector<Address, String> citySelector = newPropertySelector(city);
+    protected Address address = new Address();
+    protected PropertySelector<Address, String> streetNameSelector = newPropertySelector(Address_.streetName);
+    protected PropertySelector<Address, String> citySelector = newPropertySelector(Address_.city);
 
     public Address getAddress() {
         return address;
@@ -36,24 +35,7 @@ public class AddressSearchForm extends GenericSearchForm<Address, Integer, Addre
 
     @Override
     protected Address getEntity() {
-        return address;
-    }
-
-    // Selectors for property
-    public PropertySelector<Address, String> getStreetNameSelector() {
-        return streetNameSelector;
-    }
-
-    public PropertySelector<Address, String> getCitySelector() {
-        return citySelector;
-    }
-
-    public SearchParameters toSearchParameters() {
-        return new SearchParameters() //
-                .anywhere() //
-                .property(streetNameSelector) //
-                .property(citySelector) //
-        ;
+        return getAddress();
     }
 
     @Override
@@ -62,9 +44,29 @@ public class AddressSearchForm extends GenericSearchForm<Address, Integer, Addre
     }
 
     @Override
+    public SearchParameters toSearchParameters() {
+        return new SearchParameters() //
+                .anywhere() //
+                .term(term) //
+                .property(streetNameSelector) //
+                .property(citySelector) //
+        ;
+    }
+
+    @Override
     public void resetWithOther(AddressSearchForm other) {
         this.address = other.getAddress();
+        this.term = other.getTerm();
         this.streetNameSelector = other.getStreetNameSelector();
         this.citySelector = other.getCitySelector();
+    }
+
+    // Property selectors
+    public PropertySelector<Address, String> getStreetNameSelector() {
+        return streetNameSelector;
+    }
+
+    public PropertySelector<Address, String> getCitySelector() {
+        return citySelector;
     }
 }

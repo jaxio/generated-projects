@@ -38,14 +38,19 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.apache.log4j.Logger;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.ParamDef;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.jaxio.domain.Address;
 import com.jaxio.domain.Book;
 import com.jaxio.domain.Civility;
@@ -74,8 +79,6 @@ public class AccountTest {
         assertThat(model.getId()).isNotNull();
         assertThat(model.isIdSet()).isTrue();
     }
-
-    // test columns methods
 
     //-------------------------------------------------------------
     // Many to One:  Account.addressId ==> Address.id
@@ -106,7 +109,7 @@ public class AccountTest {
     //-------------------------------------------------------------
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // book.book <-- account.accounts
+    // book.book <-- account.owners
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     @Test
@@ -118,39 +121,39 @@ public class AccountTest {
         one.addBook(many);
 
         // make sure it is propagated
-        assertThat(one.getBooks()).contains(many);
-        assertThat(one).isEqualTo(many.getAccount());
+        assertThat(one.getCoolBooks()).contains(many);
+        assertThat(one).isEqualTo(many.getOwner());
 
         // now set it to null
         one.removeBook(many);
 
         // make sure null is propagated
-        assertThat(one.getBooks().contains(many)).isFalse();
-        assertThat(many.getAccount()).isNull();
+        assertThat(one.getCoolBooks().contains(many)).isFalse();
+        assertThat(many.getOwner()).isNull();
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // document.document <-- account.accounts
+    // document.edoc <-- account.owners
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     @Test
-    public void oneToMany_addDocument() {
+    public void oneToMany_addEdoc() {
         Account one = new Account();
         Document many = new Document();
 
         // init
-        one.addDocument(many);
+        one.addEdoc(many);
 
         // make sure it is propagated
-        assertThat(one.getDocuments()).contains(many);
-        assertThat(one).isEqualTo(many.getAccount());
+        assertThat(one.getEdocs()).contains(many);
+        assertThat(one).isEqualTo(many.getOwner());
 
         // now set it to null
-        one.removeDocument(many);
+        one.removeEdoc(many);
 
         // make sure null is propagated
-        assertThat(one.getDocuments().contains(many)).isFalse();
-        assertThat(many.getAccount()).isNull();
+        assertThat(one.getEdocs().contains(many)).isFalse();
+        assertThat(many.getOwner()).isNull();
     }
 
     //-------------------------------------------------------------
@@ -161,26 +164,20 @@ public class AccountTest {
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     @Test
-    public void manyToMany_addRole() {
+    public void manyToMany_addSecurityRole() {
         Account many1 = new Account();
         Role many2 = new Role();
 
         // add it
-        many1.addRole(many2);
+        many1.addSecurityRole(many2);
 
         // check it is propagated
-        assertThat(many1.getRoles()).contains(many2);
+        assertThat(many1.getSecurityRoles()).contains(many2);
         // now let's remove it
-        many1.removeRole(many2);
+        many1.removeSecurityRole(many2);
 
         // check it is propagated
-        assertThat(many1.getRoles().contains(many2)).isFalse();
-    }
-
-    @Test
-    public void toStringNotNull() {
-        Account model = new Account();
-        assertThat(model.toString()).isNotNull();
+        assertThat(many1.getSecurityRoles().contains(many2)).isFalse();
     }
 
     @Test

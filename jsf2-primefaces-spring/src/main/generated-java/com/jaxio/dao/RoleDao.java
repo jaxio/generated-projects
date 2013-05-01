@@ -7,6 +7,7 @@
  */
 package com.jaxio.dao;
 
+import static com.jaxio.domain.Role_.roleName;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import com.jaxio.dao.RoleDao;
@@ -21,6 +22,6 @@ import com.jaxio.domain.Role;
 @Singleton
 public class RoleDao extends GenericDao<Role, Integer> {
     public RoleDao() {
-        super(Role.class);
+        super(Role.class, roleName);
     }
 }

@@ -9,15 +9,19 @@ package com.jaxio.web.domain;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.model.LazyDataModel;
 import com.jaxio.domain.Legacy;
 import com.jaxio.domain.LegacyPk;
 import com.jaxio.repository.LegacyRepository;
 import com.jaxio.web.converter.LegacyJsfConverter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
+/**
+ * Provide PrimeFaces {@link LazyDataModel} for {@link Legacy}
+ */
 @Named
-@Conversation
+@ConversationContextScoped
 public class LegacyLazyDataModel extends GenericLazyDataModel<Legacy, LegacyPk, LegacySearchForm> {
     private static final long serialVersionUID = 1L;
 

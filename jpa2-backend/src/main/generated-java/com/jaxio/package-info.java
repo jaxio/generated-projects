@@ -6,6 +6,6 @@
  * Template pack-backend-jpa:src/main/java/project/package-info.p.vm.java
  */
 /**
- * Root package of the generated application
+ * Root package the application
  */
 package com.jaxio;

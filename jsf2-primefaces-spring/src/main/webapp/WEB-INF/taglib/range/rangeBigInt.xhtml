@@ -1,12 +1,13 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" 
 	xmlns:ui="http://java.sun.com/jsf/facelets" 
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:h="http://java.sun.com/jsf/html">
-	<h:outputLabel for="#{id}" value="#{label}" />
-	<h:panelGrid columns="4" id="#{id}" styleClass="aria-role-presentation">
-		<h:outputLabel for="#{id}RangeFrom" value="#{msg.range_from}" />
+	<app:outputLabel for="#{id}" value="#{label}" required="#{required}" rendered="#{rendered}" />
+	<h:panelGrid columns="4" id="#{id}" styleClass="aria-role-presentation" rendered="#{empty rendered ? true : rendered}">
+		<app:outputLabel for="#{id}RangeFrom" value="range_from" />
 		<p:inputText id="#{id}RangeFrom" value="#{value.from}" converter="javax.faces.BigInteger"/>
-		<h:outputLabel for="#{id}RangeTo" value="#{msg.range_to}" />
+		<app:outputLabel for="#{id}RangeTo" value="range_to" />
 		<p:inputText id="#{id}RangeTo" value="#{value.to}" converter="javax.faces.BigInteger"/>
 	</h:panelGrid>
 </ui:composition>

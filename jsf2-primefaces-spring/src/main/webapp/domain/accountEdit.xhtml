@@ -15,29 +15,27 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-<app:edit bean="#{accountEditForm}" title="#{msg.account}">
+<app:edit bean="#{accountEditForm}" title="account">
 	<ui:define name="form">
-		<app:input id="username" value="#{accountEditForm.account.username}" size="100" label="#{msg.account_username}" required="true">
+		<app:input id="username" value="#{accountEditForm.account.username}" size="100" label="account_username" required="true">
 			<f:validateBean binding="#{jpaUniqueValidator}" entity="#{accountEditForm.account}" property="username" />
 		</app:input>
-		<app:inputPassword id="password" value="#{accountEditForm.account.password}" size="100" label="#{msg.account_password}" required="true" />
-		<app:input id="email" value="#{accountEditForm.account.email}" size="100" label="#{msg.account_email}" required="true">
+		<app:inputPassword id="password" value="#{accountEditForm.account.password}" size="100" label="account_password" required="true" />
+		<app:input id="email" value="#{accountEditForm.account.email}" size="100" label="account_email" required="true">
 			<f:validateBean binding="#{jpaUniqueValidator}" entity="#{accountEditForm.account}" property="email" />
 		</app:input>
-		<app:inputBoolean id="isEnabled" value="#{accountEditForm.account.isEnabled}" label="#{msg.account_isEnabled}" />
-		<app:selectOneRadio id="civility" value="#{accountEditForm.account.civility}" values="#{civilityItems.list}" label="#{msg.account_civility}" />
-		<app:input id="firstName" value="#{accountEditForm.account.firstName}" size="100" label="#{msg.account_firstName}" />
-		<app:input id="lastName" value="#{accountEditForm.account.lastName}" size="100" label="#{msg.account_lastName}" />
-		<app:inputDateTime id="birthDate" value="#{accountEditForm.account.birthDate}" label="#{msg.account_birthDate}" />
-		<app:inputTextArea id="description" value="#{accountEditForm.account.description}" label="#{msg.account_description}" />
-
-		<app:autoComplete id="homeAddress" value="#{accountEditForm.selectedHomeAddress}" required="false" 
-			label="#{msg.account_homeAddress}" controller="#{addressController}" 
-			printer="#{addressPrinter}" converter="#{addressJsfConverter}">
-			<app:iconSearch actionBean="#{accountEditForm}" action="selectHomeAddress" title="#{msg.account_homeAddress}" rendered="#{not readonly and addressPermission.canSearch()}" />
-			<app:iconAdd actionBean="#{accountEditForm}" action="addHomeAddress" title="#{msg.account_homeAddress}" rendered="#{not readonly and addressPermission.canCreate()}" />
-			<app:iconEdit actionBean="#{accountEditForm}" action="editHomeAddress" title="#{msg.account_homeAddress}" rendered="#{not readonly and not empty accountEditForm.account.homeAddress and addressPermission.canEdit(accountEditForm.account.homeAddress)}" />
-			<app:iconView actionBean="#{accountEditForm}" action="viewHomeAddress" title="#{msg.account_homeAddress}" rendered="#{not empty accountEditForm.account.homeAddress and addressPermission.canView(accountEditForm.account.homeAddress)}" />
+		<app:inputBoolean id="isEnabled" value="#{accountEditForm.account.isEnabled}" label="account_isEnabled" required="true" />
+		<app:selectOneRadio id="civility" value="#{accountEditForm.account.civility}" values="#{civilityItems.list}" label="account_civility" />
+		<app:input id="firstName" value="#{accountEditForm.account.firstName}" size="100" label="account_firstName" />
+		<app:input id="lastName" value="#{accountEditForm.account.lastName}" size="100" label="account_lastName" />
+		<app:inputDateTime id="birthDate" value="#{accountEditForm.account.birthDate}" label="account_birthDate" />
+		<app:inputTextArea id="description" value="#{accountEditForm.account.description}" label="account_description" />
+		<app:autoComplete id="homeAddress" value="#{accountEditForm.homeAddress.selected}" required="false"
+			label="account_homeAddress" controller="#{addressController}" completeMethod="completeFullText" converter="#{addressJsfConverter}">
+			<app:iconSearch id="selectHomeAddress" actionBean="#{accountEditForm.homeAddress}" title="account_homeAddress" rendered="#{not readonly and addressPermission.canSearch()}" />
+			<app:iconAdd id="addHomeAddress" actionBean="#{accountEditForm.homeAddress}" title="account_homeAddress" rendered="#{not readonly and addressPermission.canCreate()}" />
+			<app:iconEdit actionBean="#{accountEditForm.homeAddress}" title="account_homeAddress" rendered="#{not readonly and addressPermission.canEdit(accountEditForm.account.homeAddress)}" />
+			<app:iconView actionBean="#{accountEditForm.homeAddress}" title="account_homeAddress" rendered="#{addressPermission.canView(accountEditForm.account.homeAddress)}" />
 		</app:autoComplete>
 		<app:audit
 			creationAuthor="#{accountEditForm.account.creationAuthor}"
@@ -49,13 +47,13 @@
 	<ui:define name="tabs">
 		<p:tabView id="tabs" activeIndex="#{accountEditForm.tabBean.activeIndex}">
 			<p:ajax event="tabChange" />
-			<p:tab id="books" title="#{msg.account_books}">
-				<!-- books -->
-				<p:dataTable id="booksList" var="item" value="#{accountEditForm.books}"
-					paginator="#{books.rowCount gt 10}" rowsPerPageTemplate="10,25,50,100" rows="10" paginatorPosition="bottom"
-					selection="#{accountEditForm.books.selectedRow}" selectionMode="single">
-					<p:ajax event="rowSelect" listener="#{accountEditForm.onBookRowSelect}"/>		
-					
+			<p:tab id="coolBooks" title="#{msg.account_coolBooks}" rendered="#{bookPermission.canUse()}">
+				<!-- coolBooks -->
+				<p:dataTable id="coolBooksList" var="item" value="#{accountEditForm.coolBooks.model}"
+					paginator="#{coolBooks.coolBooks.model.rowCount gt 10}" rowsPerPageTemplate="10,25,50,100" rows="10" paginatorPosition="bottom"
+					selection="#{accountEditForm.coolBooks.model.selectedRow}" selectionMode="single" emptyMessage="#{msg.collection_empty}">
+					<p:ajax event="rowSelect" listener="#{accountEditForm.coolBooks.onRowSelectEdit}" disabled="#{readonly}" />
+					<p:ajax event="rowSelect" listener="#{accountEditForm.coolBooks.onRowSelectView}" disabled="#{!readonly}"/>
 					<p:column id="book_title" headerText="#{msg.book_title}">
 						<h:outputText value="#{item.title}" />
 					</p:column>
@@ -64,133 +62,79 @@
 					</p:column>
 					<p:column id="actions" styleClass="actions-column" resizable="false">
 						<f:facet name="header">
-							<app:iconAdd actionBean="#{accountEditForm}" action="addBook" rendered="#{bookPermission.canCreate()}" title="#{msg.account_books}" />
+							<app:iconAdd id="addBook" actionBean="#{accountEditForm.coolBooks}" rendered="#{bookPermission.canCreate()}" title="account_coolBooks" />
 						</f:facet>
-						<app:iconView actionBean="#{accountEditForm}" action="viewBook" rendered="#{bookPermission.canView(item)}" title="#{bookPrinter.print(item)}" >
-							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.books.selectedRow}" />
+						<app:iconView actionBean="#{accountEditForm.coolBooks}" rendered="#{bookPermission.canView(item)}" title="#{printer.print(item)}" >
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.coolBooks.model.selectedRow}" />
 						</app:iconView>
-						<app:iconEdit actionBean="#{accountEditForm}" action="editBook" title="#{bookPrinter.print(item)}" rendered="#{bookPermission.canEdit(item)}">
-							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.books.selectedRow}" />
+						<app:iconEdit actionBean="#{accountEditForm.coolBooks}" title="#{printer.print(item)}" rendered="#{bookPermission.canEdit(item)}">
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.coolBooks.model.selectedRow}" />
 						</app:iconEdit>
- 						<p:commandLink update=":form:askForRemoveBookDialogContent"
- 											process="@this" 
- 											immediate="true" 
- 											disabled="#{readonly}" 											
- 											oncomplete="askForRemoveBookDialog.show(); APP.focusTo('form:askForRemoveBookDialogNo');" 
-											styleClass="ui-button"
-											 rendered="#{bookPermission.canDelete(item)}"
- 											title="Remove #{bookPrinter.print(item)}">  
-							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.books.selectedRow}" />
-							<div class="ui-button ui-icon iconDelete"/>							 
-            			</p:commandLink>
+						<app:iconRemove dialogWidgetVar="askForRemoveBookDialog" title="#{printer.print(item)}" rendered="#{bookPermission.canDelete(item)}">
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.coolBooks.model.selectedRow}" />
+						</app:iconRemove>
 					</p:column>
 				</p:dataTable>
 			</p:tab>
-			<p:tab id="documents" title="#{msg.account_documents}">
-				<!-- documents -->
-				<p:dataTable id="documentsList" var="item" value="#{accountEditForm.documents}"
-					paginator="#{documents.rowCount gt 10}" rowsPerPageTemplate="10,25,50,100" rows="10" paginatorPosition="bottom"
-					selection="#{accountEditForm.documents.selectedRow}" selectionMode="single">
-					<p:ajax event="rowSelect" listener="#{accountEditForm.onDocumentRowSelect}"/>		
-					
-					<p:column id="document_documentContentType" headerText="#{msg.document_documentContentType}">
-						<h:outputText value="#{item.documentContentType}" />
-					</p:column>
+			<p:tab id="edocs" title="#{msg.account_edocs}" rendered="#{documentPermission.canUse()}">
+				<!-- edocs -->
+				<p:dataTable id="edocsList" var="item" value="#{accountEditForm.edocs.model}"
+					paginator="#{edocs.edocs.model.rowCount gt 10}" rowsPerPageTemplate="10,25,50,100" rows="10" paginatorPosition="bottom"
+					selection="#{accountEditForm.edocs.model.selectedRow}" selectionMode="single" emptyMessage="#{msg.collection_empty}">
+					<p:ajax event="rowSelect" listener="#{accountEditForm.edocs.onRowSelectEdit}" disabled="#{readonly}" />
+					<p:ajax event="rowSelect" listener="#{accountEditForm.edocs.onRowSelectView}" disabled="#{!readonly}"/>
 					<p:column id="document_documentBinary" headerText="#{msg.document_documentBinary}" >
-						<h:commandLink value="#{item.documentFileName}" rendered="#{not empty item.documentFileName}"><p:fileDownload value="#{documentController.getStreamedContent(item)}"/></h:commandLink>	
+						<app:outputFile filename="#{item.documentFileName}" stream="#{documentFileDownload.getDocumentBinaryStream(item)}" />	
 					</p:column>
 					<p:column id="actions" styleClass="actions-column" resizable="false">
 						<f:facet name="header">
-							<app:iconAdd actionBean="#{accountEditForm}" action="addDocument" rendered="#{documentPermission.canCreate()}" title="#{msg.account_documents}" />
+							<app:iconAdd id="addEdoc" actionBean="#{accountEditForm.edocs}" rendered="#{documentPermission.canCreate()}" title="account_edocs" />
 						</f:facet>
-						<app:iconView actionBean="#{accountEditForm}" action="viewDocument" rendered="#{documentPermission.canView(item)}" title="#{documentPrinter.print(item)}" >
-							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.documents.selectedRow}" />
+						<app:iconView actionBean="#{accountEditForm.edocs}" rendered="#{documentPermission.canView(item)}" title="#{printer.print(item)}" >
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.edocs.model.selectedRow}" />
 						</app:iconView>
-						<app:iconEdit actionBean="#{accountEditForm}" action="editDocument" title="#{documentPrinter.print(item)}" rendered="#{documentPermission.canEdit(item)}">
-							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.documents.selectedRow}" />
+						<app:iconEdit actionBean="#{accountEditForm.edocs}" title="#{printer.print(item)}" rendered="#{documentPermission.canEdit(item)}">
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.edocs.model.selectedRow}" />
 						</app:iconEdit>
- 						<p:commandLink update=":form:askForRemoveDocumentDialogContent"
- 											process="@this" 
- 											immediate="true" 
- 											disabled="#{readonly}" 											
- 											oncomplete="askForRemoveDocumentDialog.show(); APP.focusTo('form:askForRemoveDocumentDialogNo');" 
-											styleClass="ui-button"
-											 rendered="#{documentPermission.canDelete(item)}"
- 											title="Remove #{documentPrinter.print(item)}">  
-							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.documents.selectedRow}" />
-							<div class="ui-button ui-icon iconDelete"/>							 
-            			</p:commandLink>
+						<app:iconRemove dialogWidgetVar="askForRemoveEdocDialog" title="#{printer.print(item)}" rendered="#{documentPermission.canDelete(item)}">
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.edocs.model.selectedRow}" />
+						</app:iconRemove>
 					</p:column>
 				</p:dataTable>
 			</p:tab>
-			<p:tab id="roles" title="#{msg.account_roles}">
-				<!-- roles -->
-				<p:dataTable id="rolesList" var="item" value="#{accountEditForm.roles}"
-					paginator="#{roles.rowCount gt 10}" rowsPerPageTemplate="10,25,50,100" rows="10" paginatorPosition="bottom"
-					selection="#{accountEditForm.roles.selectedRow}" selectionMode="single">
-					<p:ajax event="rowSelect" listener="#{accountEditForm.onRoleRowSelect}"/>		
-					
+			<p:tab id="securityRoles" title="#{msg.account_securityRoles}" rendered="#{rolePermission.canUse()}">
+				<!-- securityRoles -->
+				<p:dataTable id="securityRolesList" var="item" value="#{accountEditForm.securityRoles.model}"
+					paginator="#{securityRoles.securityRoles.model.rowCount gt 10}" rowsPerPageTemplate="10,25,50,100" rows="10" paginatorPosition="bottom"
+					selection="#{accountEditForm.securityRoles.model.selectedRow}" selectionMode="single" emptyMessage="#{msg.collection_empty}">
+					<p:ajax event="rowSelect" listener="#{accountEditForm.securityRoles.onRowSelectEdit}" disabled="#{readonly}" />
+					<p:ajax event="rowSelect" listener="#{accountEditForm.securityRoles.onRowSelectView}" disabled="#{!readonly}"/>
 					<p:column id="role_roleName" headerText="#{msg.role_roleName}">
 						<h:outputText value="#{item.roleName}" />
 					</p:column>
 					<p:column id="actions" styleClass="actions-column" resizable="false">
 						<f:facet name="header">
-							<app:iconSearch actionBean="#{accountEditForm}" action="selectRole" rendered="#{!readonly and rolePermission.canSelect()}" title="#{msg.account_roles}" />						
-							<app:iconAdd actionBean="#{accountEditForm}" action="addRole" rendered="#{rolePermission.canCreate()}" title="#{msg.account_roles}" />
+							<app:iconSearch id="selectSecurityRole" actionBean="#{accountEditForm.securityRoles}" rendered="#{!readonly and rolePermission.canSelect()}" title="account_securityRoles" />
+							<app:iconAdd id="addSecurityRole" actionBean="#{accountEditForm.securityRoles}" rendered="#{rolePermission.canCreate()}" title="account_securityRoles" />
 						</f:facet>
-						<app:iconView actionBean="#{accountEditForm}" action="viewRole" rendered="#{rolePermission.canView(item)}" title="#{rolePrinter.print(item)}" >
-							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.roles.selectedRow}" />
+						<app:iconView actionBean="#{accountEditForm.securityRoles}" rendered="#{rolePermission.canView(item)}" title="#{printer.print(item)}" >
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.securityRoles.model.selectedRow}" />
 						</app:iconView>
-						<app:iconEdit actionBean="#{accountEditForm}" action="editRole" title="#{rolePrinter.print(item)}" rendered="#{rolePermission.canEdit(item)}">
-							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.roles.selectedRow}" />
+						<app:iconEdit actionBean="#{accountEditForm.securityRoles}" title="#{printer.print(item)}" rendered="#{rolePermission.canEdit(item)}">
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.securityRoles.model.selectedRow}" />
 						</app:iconEdit>
- 						<p:commandLink update=":form:askForRemoveRoleDialogContent"
- 											process="@this" 
- 											immediate="true" 
- 											disabled="#{readonly}" 											
- 											oncomplete="askForRemoveRoleDialog.show(); APP.focusTo('form:askForRemoveRoleDialogNo');" 
-											styleClass="ui-button"
-											 rendered="#{rolePermission.canDelete(item)}"
- 											title="Remove #{rolePrinter.print(item)}">  
-							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.roles.selectedRow}" />
-							<div class="ui-button ui-icon iconDelete"/>							 
-            			</p:commandLink>
+						<app:iconRemove dialogWidgetVar="askForRemoveSecurityRoleDialog" title="#{printer.print(item)}" rendered="#{rolePermission.canDelete(item)}">
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.securityRoles.model.selectedRow}" />
+						</app:iconRemove>
 					</p:column>
 				</p:dataTable>
 			</p:tab>
 		</p:tabView>
 	</ui:define>
 	<ui:define name="custom-dialogs">
-		<p:confirmDialog widgetVar="askForRemoveBookDialog" header="#{msg.menu_remove}?" message="#{msg.dialog_remove_confirm}">
-	        <h:panelGrid id="askForRemoveBookDialogContent" columns="1" cellpadding="4" style="margin:0 auto;">  
-	            <app:print value="#{accountEditForm.books.selectedRow}" />  
-	        </h:panelGrid>
-			<p:commandButton id="askForRemoveBookDialogYes" action="#{accountEditForm.removeBook()}" 
-				ajax="true" update=":form:tabs:booksList :form:messages" oncomplete="askForRemoveBookDialog.hide()" 
-				immediate="true" process="@this" value="#{msg.yes}" title="#{msg.dialog_delete_confirm} #{msg.yes}" icon="ui-icon-check" />
-			<p:commandButton id="askForRemoveBookDialogNo" value="#{msg.no}" title="#{msg.dialog_remove_confirm} #{msg.no}"
-				onclick="askForRemoveBookDialog.hide(); return false;" icon="ui-icon-cancel"/>
-		</p:confirmDialog>
-		<p:confirmDialog widgetVar="askForRemoveDocumentDialog" header="#{msg.menu_remove}?" message="#{msg.dialog_remove_confirm}">
-	        <h:panelGrid id="askForRemoveDocumentDialogContent" columns="1" cellpadding="4" style="margin:0 auto;">  
-	            <app:print value="#{accountEditForm.documents.selectedRow}" />  
-	        </h:panelGrid>
-			<p:commandButton id="askForRemoveDocumentDialogYes" action="#{accountEditForm.removeDocument()}" 
-				ajax="true" update=":form:tabs:documentsList :form:messages" oncomplete="askForRemoveDocumentDialog.hide()" 
-				immediate="true" process="@this" value="#{msg.yes}" title="#{msg.dialog_delete_confirm} #{msg.yes}" icon="ui-icon-check" />
-			<p:commandButton id="askForRemoveDocumentDialogNo" value="#{msg.no}" title="#{msg.dialog_remove_confirm} #{msg.no}"
-				onclick="askForRemoveDocumentDialog.hide(); return false;" icon="ui-icon-cancel"/>
-		</p:confirmDialog>
-		<p:confirmDialog widgetVar="askForRemoveRoleDialog" header="#{msg.menu_remove}?" message="#{msg.dialog_remove_confirm}">
-	        <h:panelGrid id="askForRemoveRoleDialogContent" columns="1" cellpadding="4" style="margin:0 auto;">  
-	            <app:print value="#{accountEditForm.roles.selectedRow}" />  
-	        </h:panelGrid>
-			<p:commandButton id="askForRemoveRoleDialogYes" action="#{accountEditForm.removeRole()}" 
-				ajax="true" update=":form:tabs:rolesList :form:messages" oncomplete="askForRemoveRoleDialog.hide()" 
-				immediate="true" process="@this" value="#{msg.yes}" title="#{msg.dialog_delete_confirm} #{msg.yes}" icon="ui-icon-check" />
-			<p:commandButton id="askForRemoveRoleDialogNo" value="#{msg.no}" title="#{msg.dialog_remove_confirm} #{msg.no}"
-				onclick="askForRemoveRoleDialog.hide(); return false;" icon="ui-icon-cancel"/>
-		</p:confirmDialog>
+		<app:confirmToManyRemoveDialog widgetVar="askForRemoveBookDialog" toManyAction="#{accountEditForm.coolBooks}" update=":form:tabs:coolBooksList :form:messages" />
+		<app:confirmToManyRemoveDialog widgetVar="askForRemoveEdocDialog" toManyAction="#{accountEditForm.edocs}" update=":form:tabs:edocsList :form:messages" />
+		<app:confirmToManyRemoveDialog widgetVar="askForRemoveSecurityRoleDialog" toManyAction="#{accountEditForm.securityRoles}" update=":form:tabs:securityRolesList :form:messages" />
 	</ui:define>
 </app:edit>
 </ui:composition>

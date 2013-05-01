@@ -4,7 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:p="http://primefaces.org/ui"
-    xmlns:c="http://java.sun.com/jsp/jstl/core"	
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	template="/WEB-INF/layouts/main.xhtml">
 	<ui:define name="toolbarChildren">
 		<p:toolbarGroup rendered="#{sub or readonly}">
@@ -15,20 +15,19 @@
 			<p:commandButton id="quit" action="#{searchForm.quit()}" ajax="false" process="@form"
 				icon="ui-icon-closethick"
 				value="#{msg.menu_quit}"
-				title="#{msg.menu_quit} #{title}" />
+				title="#{msg.menu_quit} #{resourcesUtil.getProperty(title)}" />
 			<p:separator />
-			<p:commandButton id="sendNew" action="#{data.sendNew()}" ajax="false" immediate="true" process="@this"
+			<p:commandButton id="create" action="#{data.create()}" ajax="false" immediate="true" process="@this"
 				icon="ui-icon-document"
 				rendered="#{empty bean and permission.canCreate()}"
 				value="#{msg.menu_new}"
-				title="#{msg.menu_new} #{title}" />
+				title="#{msg.menu_new} #{resourcesUtil.getProperty(title)}" />
 		</p:toolbarGroup>
 	</ui:define>
 	<ui:define name="content">
 		<p:breadCrumb model="#{conversationManager.breadCrumbMenuModel}" rendered="#{conversationManager.renderBreadCrumb}" />	
 		<p:fieldset id="filtersFieldset" legend="#{msg.search_criteria}" toggleable="true">
-			<input type="hidden" name="_cid_" value="#{conversationManager.currentConversation.id}"/>
-			<input type="hidden" name="_ccid_" value="#{conversationManager.currentConversation.currentContext.id}"/>
+			<input type="hidden" name="_cid" value="#{conversationManager.currentConversation.cid}"/>
 			<f:validateBean disabled="true">
 				<h:panelGrid columns="4">
 					<ui:insert name="filters" />
@@ -38,8 +37,8 @@
 		<p:commandButton id="search" actionListener="#{data.onSearch()}" process="@form"
 			icon="iconSearch" styleClass="aria-search-button default"
 			update="messages searchResults" value="#{msg.menu_search}"
-			title="#{msg.menu_search} #{title}" />
-		<p:commandButton icon="ui-icon-power" value="#{msg.search_reset}"
+			title="#{msg.menu_search} #{resourcesUtil.getProperty(title)}" />
+		<p:commandButton id="resetSearch" icon="ui-icon-power" value="#{msg.search_reset}"
 			actionListener="#{searchForm.reset()}"
 			update="messages filtersFieldset searchResults searchFormName"/>
 		<p:commandButton id="excel" action="#{data.onExcel()}" process="@form"
@@ -79,21 +78,23 @@
 		<c:if test="#{not multiCheckboxSelection}">
 			<p:dataTable id="searchResults"
 				value="#{data}" var="item" lazy="true"
-				paginator="true" paginatorAlwaysVisible="true"
+				paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom"
 				rowsPerPageTemplate="10,25,50,100" rows="10"
-				selectionMode="single" selection="#{data.selectedRow}">
+				selectionMode="single" selection="#{data.selectedRow}"
+				emptyMessage="#{msg.search_empty}">
 				<ui:insert name="result" />
 			</p:dataTable>
 		</c:if>
 		<c:if test="#{multiCheckboxSelection}">
 			<p:dataTable id="searchResults"
 				value="#{data}" var="item" lazy="true"
-				paginator="true" paginatorAlwaysVisible="true"
+				paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom"
 				rowsPerPageTemplate="10,25,50,100" rows="10"
-				selection="#{data.selectedRows}">
+				selection="#{data.selectedRows}"
+				emptyMessage="#{msg.search_empty}">
 				<ui:insert name="result" />
 				<f:facet name="footer">
-					<app:iconSelect actionBean="#{data}" action="multiSelect" rendered="true" process="@this" />
+					<app:iconMultiSelect actionBean="#{data}" rendered="true" process="@this" />
 				</f:facet>
 			</p:dataTable>
 		</c:if>
@@ -101,11 +102,11 @@
 	</ui:define>
 	<ui:define name="dialogs">
 		<p:confirmDialog widgetVar="askForDeleteItemDialog" header="#{msg.menu_delete}?" message="#{msg.dialog_delete_confirm}">
-	        <h:panelGrid id="askForDeleteItemDialogContent" columns="2" cellpadding="4" style="margin:0 auto;">  
-	            <h:outputText value="#{typeAwarePrinter.print(data.selectedRow)}" style="font-weight:bold" rendered="#{not empty data.selectedRow}"/>  
-	        </h:panelGrid>		
+			<h:panelGrid id="askForDeleteItemDialogContent" columns="2" cellpadding="4" style="margin:0 auto;">  
+				<h:outputText value="#{printer.print(data.selectedRow)}" style="font-weight:bold" rendered="#{not empty data.selectedRow}"/>  
+			</h:panelGrid>
 			<p:commandButton id="askForDeleteItemDialogYes" action="#{data.delete()}" ajax="true" immediate="true" oncomplete="askForDeleteItemDialog.hide();" process="@this" value="#{msg.yes}" title="#{msg.dialog_delete_confirm} #{msg.yes}" icon="ui-icon-check" update=":form:searchResults :form:messages"/>
 			<p:commandButton id="askForDeleteItemDialogNo" value="#{msg.no}" title="#{msg.dialog_delete_confirm} #{msg.no}" onclick="askForDeleteItemDialog.hide(); return false;" icon="ui-icon-cancel"/>
 		</p:confirmDialog>
-	</ui:define>	
+	</ui:define>
 </ui:composition >

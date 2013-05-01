@@ -7,11 +7,9 @@
  */
 package com.jaxio.printer;
 
+import java.util.Locale;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import java.util.Locale;
-
 import com.jaxio.domain.Legacy;
 import com.jaxio.printer.DiscoverablePrinter;
 
@@ -34,7 +32,7 @@ public class LegacyPrinter extends DiscoverablePrinter<Legacy> {
         if (legacy == null) {
             return "";
         }
-        StringBuilder ret = new StringBuilder(256);
+        StringBuilder ret = new StringBuilder();
         appendIfNotEmpty(ret, legacy.getExtraInfo());
         return ret.toString();
     }

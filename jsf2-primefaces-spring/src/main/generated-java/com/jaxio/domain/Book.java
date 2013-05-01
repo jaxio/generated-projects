@@ -22,11 +22,16 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.apache.log4j.Logger;
+import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Book_;
@@ -36,9 +41,10 @@ import com.jaxio.domain.IdentifiableHashBuilder;
 @Table(name = "BOOK")
 @FilterDef(name = "myBookFilter", defaultCondition = "ACCOUNT_ID = :currentAccountId ", parameters = @ParamDef(name = "currentAccountId", type = "org.hibernate.type.StringType"))
 @Filter(name = "myBookFilter")
+@Indexed
 public class Book implements Identifiable<Integer>, Serializable {
     private static final long serialVersionUID = 1L;
-    private static final Logger log = Logger.getLogger(Book.class);
+    private static final Logger log = LoggerFactory.getLogger(Book.class);
 
     // Raw attributes
     private Integer id; // pk
@@ -47,13 +53,11 @@ public class Book implements Identifiable<Integer>, Serializable {
     private Integer version;
 
     // Many to one
-    private Account account; // (accountId)
+    private Account owner; // (accountId)
 
-    // -------------------------------
-    // Getter & Setter
-    // -------------------------------
     // -- [id] ------------------------
 
+    @Override
     @Column(name = "ID", precision = 10)
     @GeneratedValue
     @Id
@@ -61,11 +65,19 @@ public class Book implements Identifiable<Integer>, Serializable {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    public Book id(Integer id) {
+        setId(id);
+        return this;
+    }
+
+    @Override
     @Transient
+    @XmlTransient
     public boolean isIdSet() {
         return id != null;
     }
@@ -75,12 +87,18 @@ public class Book implements Identifiable<Integer>, Serializable {
     @Size(max = 100)
     @NotEmpty
     @Column(name = "TITLE", nullable = false, length = 100)
+    @Field(analyzer = @Analyzer(definition = "custom"))
     public String getTitle() {
         return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Book title(String title) {
+        setTitle(title);
+        return this;
     }
 
     // -- [numberOfPages] ------------------------
@@ -95,6 +113,11 @@ public class Book implements Identifiable<Integer>, Serializable {
         this.numberOfPages = numberOfPages;
     }
 
+    public Book numberOfPages(Integer numberOfPages) {
+        setNumberOfPages(numberOfPages);
+        return this;
+    }
+
     // -- [version] ------------------------
 
     @Column(name = "VERSION", precision = 10)
@@ -107,9 +130,14 @@ public class Book implements Identifiable<Integer>, Serializable {
         this.version = version;
     }
 
-    // --------------------------------------------------------------------
+    public Book version(Integer version) {
+        setVersion(version);
+        return this;
+    }
+
+    // -----------------------------------------------------------------
     // Many to One support
-    // --------------------------------------------------------------------
+    // -----------------------------------------------------------------
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // many-to-one: Book.accountId ==> Account.id
@@ -117,17 +145,22 @@ public class Book implements Identifiable<Integer>, Serializable {
 
     @JoinColumn(name = "ACCOUNT_ID")
     @ManyToOne(cascade = { PERSIST, MERGE }, fetch = LAZY)
-    public Account getAccount() {
-        return account;
+    public Account getOwner() {
+        return owner;
     }
 
     /**
-     * Set the account without adding this Book instance on the passed account
+     * Set the {@link #owner} without adding this Book instance on the passed {@link #owner}
      * If you want to preserve referential integrity we recommend to use
      * instead the corresponding adder method provided by {@link Account}
      */
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setOwner(Account owner) {
+        this.owner = owner;
+    }
+
+    public Book owner(Account owner) {
+        setOwner(owner);
+        return this;
     }
 
     /**
@@ -137,7 +170,7 @@ public class Book implements Identifiable<Integer>, Serializable {
     }
 
     /**
-     * equals implementation using a business key.
+     * Equals implementation using a business key.
      */
     @Override
     public boolean equals(Object other) {

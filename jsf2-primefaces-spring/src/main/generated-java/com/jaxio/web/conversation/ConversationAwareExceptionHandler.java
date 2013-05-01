@@ -15,7 +15,7 @@ import javax.faces.context.ExceptionHandler;
 import javax.faces.context.ExceptionHandlerWrapper;
 import javax.faces.event.ExceptionQueuedEvent;
 
-import org.springframework.dao.DataAccessException;
+import javax.persistence.PersistenceException;
 
 import com.jaxio.web.util.ExceptionUtil;
 import com.jaxio.web.util.MessageUtil;
@@ -42,14 +42,9 @@ public class ConversationAwareExceptionHandler extends ExceptionHandlerWrapper {
         if (unhandledExceptionQueuedEvents.hasNext()) {
             try {
                 Throwable exception = unhandledExceptionQueuedEvents.next().getContext().getException();
-
-                // nice message
                 MessageUtil.getInstance().error(exception);
-
-                if (getCurrentConversation() != null && ExceptionUtil.isCausedBy(exception, DataAccessException.class)) {
-                    // TODO: how do we treat DATA ACCESS EXCEPTION?
-                    // ConversationManager.getInstance().endCurrentConversation();
-                    // fall through, the parent will display the proper view.
+                if (getCurrentConversation() != null && ExceptionUtil.isCausedBy(exception, PersistenceException.class)) {
+                    // TODO: how do we treat PERSISTENCE EXCEPTION?
                 }
             } finally {
                 unhandledExceptionQueuedEvents.remove();

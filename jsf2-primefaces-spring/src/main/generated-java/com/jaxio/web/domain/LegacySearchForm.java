@@ -8,26 +8,26 @@
 package com.jaxio.web.domain;
 
 import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
-import static com.jaxio.domain.Legacy_.extraInfo;
 import javax.inject.Named;
 import com.jaxio.dao.support.PropertySelector;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Legacy;
 import com.jaxio.domain.LegacyPk;
+import com.jaxio.domain.Legacy_;
 import com.jaxio.web.domain.support.GenericSearchForm;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
- * View Helper to find/select {@link Legacy}.
+ * View Helper to search {@link Legacy}.
  * It exposes a {@link Legacy} instance so it can be used in search by Example query.
  */
 @Named
-@Conversation
+@ConversationContextScoped
 public class LegacySearchForm extends GenericSearchForm<Legacy, LegacyPk, LegacySearchForm> {
     private static final long serialVersionUID = 1L;
 
-    private Legacy legacy = new Legacy();
-    private PropertySelector<Legacy, String> extraInfoSelector = newPropertySelector(extraInfo);
+    protected Legacy legacy = new Legacy();
+    protected PropertySelector<Legacy, String> extraInfoSelector = newPropertySelector(Legacy_.extraInfo);
 
     public Legacy getLegacy() {
         return legacy;
@@ -35,19 +35,7 @@ public class LegacySearchForm extends GenericSearchForm<Legacy, LegacyPk, Legacy
 
     @Override
     protected Legacy getEntity() {
-        return legacy;
-    }
-
-    // Selectors for property
-    public PropertySelector<Legacy, String> getExtraInfoSelector() {
-        return extraInfoSelector;
-    }
-
-    public SearchParameters toSearchParameters() {
-        return new SearchParameters() //
-                .anywhere() //
-                .property(extraInfoSelector) //
-        ;
+        return getLegacy();
     }
 
     @Override
@@ -56,8 +44,21 @@ public class LegacySearchForm extends GenericSearchForm<Legacy, LegacyPk, Legacy
     }
 
     @Override
+    public SearchParameters toSearchParameters() {
+        return new SearchParameters() //
+                .anywhere() //
+                .property(extraInfoSelector) //
+        ;
+    }
+
+    @Override
     public void resetWithOther(LegacySearchForm other) {
         this.legacy = other.getLegacy();
         this.extraInfoSelector = other.getExtraInfoSelector();
+    }
+
+    // Property selectors
+    public PropertySelector<Legacy, String> getExtraInfoSelector() {
+        return extraInfoSelector;
     }
 }

@@ -7,19 +7,45 @@
  */
 package com.jaxio.repository;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.jaxio.dao.LegacyDao;
 import com.jaxio.domain.Legacy;
 import com.jaxio.domain.LegacyPk;
-import com.jaxio.repository.support.Repository;
+import com.jaxio.repository.support.GenericRepository;
 
 /**
- * The LegacyRepository is a data-centric service for the {@link Legacy} entity.
- * It provides the expected methods to get/delete a {@link Legacy} instance
- * plus some methods to perform searches.
- * <p>
- * Search logic is driven by 2 kinds of parameters: a {@link Legacy} instance used
- * as a properties holder against which the search will be performed and a {@link SearchParameters}
- * instance from where you can control your search options including the usage
- * of named queries.
+ * Note: you may use multiple DAO from this layer.
  */
-public interface LegacyRepository extends Repository<Legacy, LegacyPk> {
+@Named
+@Singleton
+public class LegacyRepository extends GenericRepository<Legacy, LegacyPk> {
+
+    @SuppressWarnings("unused")
+    private static final Logger log = LoggerFactory.getLogger(LegacyRepository.class);
+
+    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
+    protected LegacyRepository() {
+        super();
+    }
+
+    @Inject
+    public LegacyRepository(LegacyDao legacyDao) {
+        super(legacyDao);
+    }
+
+    @Override
+    public Legacy getNew() {
+        return new Legacy();
+    }
+
+    @Override
+    public Legacy getNewWithDefaults() {
+        Legacy result = getNew();
+        result.initDefaultValues();
+        return result;
+    }
 }

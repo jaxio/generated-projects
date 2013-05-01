@@ -15,18 +15,18 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search data="#{moreTypesDemoLazyDataModel}" searchForm="#{moreTypesDemoSearchForm}" permission="#{moreTypesDemoPermission}" title="#{msg.moreTypesDemo}" savedSearch="true">
+	<app:search data="#{moreTypesDemoLazyDataModel}" searchForm="#{moreTypesDemoSearchForm}" permission="#{moreTypesDemoPermission}" title="moreTypesDemo" savedSearch="true">
 		<ui:define name="filters">
-			<app:rangeInt id="numberInt" value="#{moreTypesDemoSearchForm.numberIntRange}" label="#{msg.moreTypesDemo_numberInt}"/>
-			<app:rangeLong id="numberLong" value="#{moreTypesDemoSearchForm.numberLongRange}" label="#{msg.moreTypesDemo_numberLong}"/>
-			<app:rangeDouble id="numberDouble" value="#{moreTypesDemoSearchForm.numberDoubleRange}" label="#{msg.moreTypesDemo_numberDouble}" />
-			<app:rangeFloat id="numberFloat" value="#{moreTypesDemoSearchForm.numberFloatRange}" label="#{msg.moreTypesDemo_numberFloat}" />
-			<app:rangeBigInt id="numberBigInteger" value="#{moreTypesDemoSearchForm.numberBigIntegerRange}" label="#{msg.moreTypesDemo_numberBigInteger}" />
-			<app:rangeBigDec id="numberBigDecimal" value="#{moreTypesDemoSearchForm.numberBigDecimalRange}" label="#{msg.moreTypesDemo_numberBigDecimal}" />
-			<app:rangeDate id="dateJavaTemporalDate" value="#{moreTypesDemoSearchForm.dateJavaTemporalDateRange}" label="#{msg.moreTypesDemo_dateJavaTemporalDate}" />
-			<app:rangeDateTime id="dateJavaTemporalTimestamp" value="#{moreTypesDemoSearchForm.dateJavaTemporalTimestampRange}" label="#{msg.moreTypesDemo_dateJavaTemporalTimestamp}" />
-			<app:rangeLocalDate id="dateJoda" value="#{moreTypesDemoSearchForm.dateJodaRange}" label="#{msg.moreTypesDemo_dateJoda}" />
-			<app:rangeLocalDateTime id="dateTimeJoda" value="#{moreTypesDemoSearchForm.dateTimeJodaRange}" label="#{msg.moreTypesDemo_dateTimeJoda}" />
+			<app:rangeInt id="numberInt" value="#{moreTypesDemoSearchForm.numberIntRange}" label="moreTypesDemo_numberInt"/>
+			<app:rangeLong id="numberLong" value="#{moreTypesDemoSearchForm.numberLongRange}" label="moreTypesDemo_numberLong"/>
+			<app:rangeDouble id="numberDouble" value="#{moreTypesDemoSearchForm.numberDoubleRange}" label="moreTypesDemo_numberDouble" />
+			<app:rangeFloat id="numberFloat" value="#{moreTypesDemoSearchForm.numberFloatRange}" label="moreTypesDemo_numberFloat" />
+			<app:rangeBigInt id="numberBigInteger" value="#{moreTypesDemoSearchForm.numberBigIntegerRange}" label="moreTypesDemo_numberBigInteger" />
+			<app:rangeBigDec id="numberBigDecimal" value="#{moreTypesDemoSearchForm.numberBigDecimalRange}" label="moreTypesDemo_numberBigDecimal" />
+			<app:rangeDate id="dateJavaTemporalDate" value="#{moreTypesDemoSearchForm.dateJavaTemporalDateRange}" label="moreTypesDemo_dateJavaTemporalDate" />
+			<app:rangeDateTime id="dateJavaTemporalTimestamp" value="#{moreTypesDemoSearchForm.dateJavaTemporalTimestampRange}" label="moreTypesDemo_dateJavaTemporalTimestamp" />
+			<app:rangeLocalDate id="dateJoda" value="#{moreTypesDemoSearchForm.dateJodaRange}" label="moreTypesDemo_dateJoda" />
+			<app:rangeLocalDateTime id="dateTimeJoda" value="#{moreTypesDemoSearchForm.dateTimeJodaRange}" label="moreTypesDemo_dateTimeJoda" />
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">
@@ -54,10 +54,10 @@
 				<h:outputText value="#{item.numberBigDecimal}" />
 			</p:column>
 			<p:column id="open" headerText="#{msg.actions}" styleClass="actions-column" resizable="false">
-				<app:iconSelect actionBean="#{moreTypesDemoLazyDataModel}" action="select" rendered="#{sub and not multiCheckboxSelection}" title="#{moreTypesDemoPrinter.print(item)}" />
-				<app:iconEdit actionBean="#{moreTypesDemoLazyDataModel}" action="edit" rendered="#{not sub and moreTypesDemoPermission.canEdit(item)}" title="#{moreTypesDemoPrinter.print(item)}" />
-				<app:iconView actionBean="#{moreTypesDemoLazyDataModel}" action="view" rendered="#{moreTypesDemoPermission.canView(item)}" title="#{moreTypesDemoPrinter.print(item)}" />
-				<app:iconDelete rendered="#{not sub and moreTypesDemoPermission.canDelete(item)}" title="#{moreTypesDemoPrinter.print(item)}" />
+				<app:iconSelect actionBean="#{moreTypesDemoLazyDataModel}" rendered="#{sub}" title="#{printer.print(item)}" />
+				<app:iconEdit actionBean="#{moreTypesDemoLazyDataModel}" rendered="#{not sub and moreTypesDemoPermission.canEdit(item)}" title="#{printer.print(item)}" />
+				<app:iconView actionBean="#{moreTypesDemoLazyDataModel}" rendered="#{moreTypesDemoPermission.canView(item)}" title="#{printer.print(item)}" />
+				<app:iconDelete rendered="#{not sub and moreTypesDemoPermission.canDelete(item)}" title="#{printer.print(item)}" />
 			</p:column>
 		</ui:define>
 	</app:search>

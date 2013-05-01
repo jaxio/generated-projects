@@ -17,16 +17,17 @@ import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.LegacyPermission;
 
 /**
- * Stateless controller for Legacy conversation start. Provides also auto-complete support. 
+ * Stateless controller for {@link Legacy} conversation start. 
  */
 @Named
 @Singleton
 public class LegacyController extends GenericController<Legacy, LegacyPk> {
-    public final static String editUri = "/domain/legacyEdit.faces";
-    public final static String selectUri = "/domain/legacySelect.faces";
+    private static final String editUri = "/domain/legacyEdit.faces";
+    private static final String selectUri = "/domain/legacySelect.faces";
 
     @Inject
     public LegacyController(LegacyRepository legacyRepository, LegacyPermission legacyPermission) {
         super(legacyRepository, legacyPermission, selectUri, editUri);
     }
+
 }

@@ -8,6 +8,8 @@
 package com.jaxio.web.conversation;
 
 import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
+import static com.jaxio.web.conversation.ConversationUtil.getConversationId;
+import static com.jaxio.web.conversation.ConversationUtil.getConversationContextId;
 
 import java.io.IOException;
 
@@ -22,19 +24,20 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jaxio.context.LogContext;
 import com.jaxio.context.UserContext;
 
 /**
  * Filter responsible for creating/resuming {@link Conversation}.
- * By convention, the conversation id is carried by the _cid_ parameter.
+ * By convention, the conversation id and the context id are carried by the _cid parameter.
  * To create a new conversation, you must request the initial conversation view and pass the _ncid_=value parameter.
  */
 @Named
 public class ConversationFilter implements Filter {
-    private static final Logger log = Logger.getLogger(ConversationFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(ConversationFilter.class);
 
     @Inject
     private ConversationManager conversationManager;
@@ -44,24 +47,22 @@ public class ConversationFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        // set up log context for this thread so these information can be used by log4j
+        // set up log context for this thread so these information can be used by the logging framework
         String username = UserContext.getUsername();
         LogContext.setLogin(username != null ? username : "no username");
         LogContext.setSessionId(request.getSession().getId());
 
-        String cid = request.getParameter("_cid_");
-        String ccid = request.getParameter("_ccid_");
+        String cid = getConversationId(request);
 
         if (cid != null) {
+            String ccid = getConversationContextId(request);
+
             // -----------------------------
             // RESUME existing conversation
             // -----------------------------
             try {
                 conversationManager.resumeConversation(cid, ccid, request);
-                if (log.isDebugEnabled()) {
-                    log.debug("Conv. " + cid + " resumed. Nb ctx: " + getCurrentConversation().getConversationContextesCount() + ". Uri: "
-                            + request.getRequestURI());
-                }
+                log.debug("Conv. {} resumed. Nb ctx: {}", cid, getCurrentConversation().getConversationContextesCount());
             } catch (UnexpectedConversationException uue) {
                 log.error(uue.getMessage());
                 response.sendRedirect(request.getContextPath() + uue.getRedirectUrl());
@@ -74,17 +75,7 @@ public class ConversationFilter implements Filter {
                 conversationManager.pauseCurrentConversation(request);
             }
         } else if (!request.getRequestURI().contains("/javax.faces.resource/") && "true".equals(request.getParameter("_ncid_"))) {
-            // -----------------------------
-            // CREATE new conversation
-            // -----------------------------
-            try {
-                Conversation conversation = conversationManager.createConversation(request);
-                response.sendRedirect(request.getContextPath() + conversation.nextUrl());
-            } catch (UnexpectedConversationException uue) {
-                log.error(uue.getMessage());
-                response.sendRedirect(request.getContextPath() + uue.getRedirectUrl());
-            }
-            return;
+            throw new IllegalArgumentException("This version does not support ncid parameter");
         } else {
             // -----------------------------
             // Not related to conversations

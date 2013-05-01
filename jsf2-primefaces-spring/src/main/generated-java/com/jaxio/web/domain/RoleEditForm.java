@@ -12,19 +12,23 @@ import javax.inject.Named;
 import com.jaxio.domain.Role;
 import com.jaxio.repository.RoleRepository;
 import com.jaxio.web.domain.support.GenericEditForm;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
  * View Helper/Controller to edit {@link Role}.
  */
 @Named
-@Conversation
+@ConversationContextScoped
 public class RoleEditForm extends GenericEditForm<Role, Integer> {
+
     @Inject
-    public void setRoleRepository(RoleRepository roleRepository) {
-        setRepository(roleRepository);
+    public RoleEditForm(RoleRepository roleRepository) {
+        super(roleRepository);
     }
 
+    /**
+     * The entity to edit/view.
+     */
     public Role getRole() {
         return getEntity();
     }

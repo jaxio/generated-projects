@@ -7,7 +7,7 @@
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
 	<c:if test="#{creationAuthor ne null or creationDate ne null or lastModificationAuthor ne null or lastModificationDate ne null}">
-		<app:outputLabel for="audit" value="#{msg.audit}" rendered="#{empty rendered ? true : rendered}" />
+		<app:outputLabel for="audit" value="audit" rendered="#{rendered}" />
 		<h:panelGrid id="audit" rendered="#{empty rendered ? true : rendered}">
 			<h:outputText value="#{msg.creation_author} #{creationAuthor}" rendered="#{not empty creationAuthor}" />
 			<h:outputText value="#{msg.creation_date} #{creationDate}" rendered="#{not empty creationDate}" />

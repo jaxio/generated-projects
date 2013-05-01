@@ -7,17 +7,22 @@
  */
 package com.jaxio.web.domain.support;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
+
 import java.io.Serializable;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.OptimisticLockException;
 
 import com.jaxio.dao.support.JpaUniqueUtil;
 import com.jaxio.domain.Identifiable;
 import com.jaxio.repository.support.EntityGraphLoader;
-import com.jaxio.repository.support.Repository;
+import com.jaxio.repository.support.GenericRepository;
 import com.jaxio.web.util.MessageUtil;
+import com.jaxio.web.conversation.ConversationCallBack;
+import com.jaxio.web.conversation.ConversationContext;
 
 /**
  * Base Edit Form for JPA entities.
@@ -31,24 +36,21 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
     @Inject
     protected MessageUtil messageUtil;
 
-    protected Repository<E, PK> repository;
-    protected EntityGraphLoader<E> entityGraphLoader;
+    protected GenericRepository<E, PK> repository;
+    protected EntityGraphLoader<E, PK> entityGraphLoader;
 
-    protected void setRepository(Repository<E, PK> repository) {
+    public GenericEditForm(GenericRepository<E, PK> repository) {
         this.repository = repository;
     }
 
-    protected void setEntityGraphLoader(EntityGraphLoader<E> entityGraphLoader) {
+    public GenericEditForm(GenericRepository<E, PK> repository, EntityGraphLoader<E, PK> entityGraphLoader) {
+        this.repository = repository;
         this.entityGraphLoader = entityGraphLoader;
     }
 
-    protected EntityGraphLoader<E> getEntityGraphLoader() {
-        return entityGraphLoader;
-    }
-
     /**
-     * Retrieves the entity or entityId parameter from the current ConversationContext and
-     * load the entity from the repository. 
+     * Retrieves the entity var from the current ConversationContext and
+     * depending on the case merge the entity and load its graph. 
      */
     @PostConstruct
     protected void init() {
@@ -61,16 +63,59 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
             entity = context().getEntity();
         } else if (context().isSub()) {
             // entity is persistent and we are in sub mode (not the root edit page of the graph)
-            entity = repository.mergeWithoutFlush(context().getEntity(), getEntityGraphLoader());
+            if (entityGraphLoader != null) {
+                try {
+                    // we load the associations to avoid lazylily access exception.
+                    // note: this is a readonly merge (nothing is flushed)
+                    entity = entityGraphLoader.merge(context().getEntity());
+                } catch (OptimisticLockException e) {
+                    getCurrentConversation().setNextContext(newConcurrentModificationContext());
+                    throw e; // Please see ExceptionInRenderPhaseListener
+                }
+            } else {
+                // we can use the entity as is, it does not have any association
+                // or they are eargly loaded.
+                // TODO: probably a repository.readonlyMerge(context().getEntity()); to be consistent
+                // ==> AGAIN this demonstration IMO that we do not need a separated service...            	    
+                entity = context().getEntity();
+            }
         } else {
             // entity is persistent and we are in the root edit page.
-            // we either come from a main search page or brand new edit conversation
-            entity = repository.getById(context().getEntity().getId(), getEntityGraphLoader());
+            if (entityGraphLoader != null) {
+                entity = entityGraphLoader.getById(context().getEntity().getId());
+            } else {
+                // we can use the entity as is, it does not have any association
+                // or they are eargly loaded.
+                // TODO: probably a repository.readonlyMerge(context().getEntity()); to be consistent
+                // ==> AGAIN this demonstration IMO that we do not need a separated service...                  
+                entity = context().getEntity();
+            }
         }
 
         if (entity == null) {
             throw new IllegalStateException("Could not find any entity, after init! Was it deleted?");
         }
+    }
+
+    protected ConversationCallBack<E> onOptimisticLockCallBack = new ConversationCallBack<E>() {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        protected void onOk(E entity) {
+            ConversationContext<E> context = getCurrentConversation().nextContext();
+            Identifiable<PK> previousEntity = (Identifiable<PK>) context.getEntity();
+            E refreshedEntity = repository.getById(previousEntity.getId());
+            context.setEntity(refreshedEntity);
+            init();
+        }
+    };
+
+    protected ConversationContext<E> newConcurrentModificationContext() {
+        ConversationContext<E> ctx = new ConversationContext<E>();
+        ctx.setEntity(context().getEntity());
+        ctx.setViewUri("/concurrentModificationResolution.faces");
+        ctx.setCallBack(onOptimisticLockCallBack);
+        return ctx;
     }
 
     /**
@@ -101,7 +146,7 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
     }
 
     /**
-     * deleteAndClose action is used form modal dialogs in the main edit page. 
+     * deleteAndClose action is used form modal dialogs in the main edit page.
      */
     public String deleteAndClose() {
         repository.delete(getEntity());
@@ -113,10 +158,16 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
      * Save action. Used from main edit page. Expected to be an ajax request.
      */
     public String saveAndClose() {
-        if (saveAndCloseInternal(getEntity())) {
-            return context().getCallBack().saved(getEntity());
+        try {
+            if (saveAndCloseInternal(getEntity())) {
+                return context().getCallBack().saved(getEntity());
+            }
+
+            return null; // stay on the same page, errors will be displayed.
+        } catch (OptimisticLockException e) {
+            getCurrentConversation().nextContext(newConcurrentModificationContext());
+            return getCurrentConversation().nextView();
         }
-        return null;
     }
 
     protected boolean saveAndCloseInternal(E entity) {
@@ -124,9 +175,7 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
             return false;
         }
 
-        // Note: merge work also on new entity (actually it works better with many to many association)
-        // we replace current entity with the merged one so the callback receive the merged one.
-        entity = repository.merge(entity);
+        entity = saveEntity(entity);
 
         if (context().isNewEntity()) {
             // if for some reason, save is invoked again, no need to persist anymore.
@@ -135,6 +184,14 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
 
         messageUtil.infoEntity("status_saved_ok", entity);
         return true;
+    }
+
+    /**
+     * Note: merge work also on new entity (actually it works better with many to many association)
+     * we replace current entity with the merged one so the callback receive the merged one.
+     */
+    protected E saveEntity(E entity) {
+        return repository.merge(entity);
     }
 
     public boolean validate(E entity) {

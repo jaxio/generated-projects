@@ -23,8 +23,9 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.apache.log4j.Logger;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Basic tests for Legacy
@@ -62,64 +63,30 @@ public class LegacyTest {
         assertThat(model.getId()).isSameAs(pk);
     }
 
-    // test columns methods
+    /*
+     public void equalsUsingPk() {
+     Legacy model1 = new Legacy();
+     Legacy model2 = new Legacy();
 
-    //-------------------------------------------------------------
-    // Composite Pk getter & setter
-    //-------------------------------------------------------------
+     String name = ValueGenerator.getUniqueString(16);
+     model1.setName(name);
+     model2.setName(name);
 
-    @Test
-    public void compositePrimaryKey_setId() {
-        Legacy model = new Legacy();
-        assertThat(model.getId()).isNotNull();
-        assertThat(model.getCode()).isNull();
-        assertThat(model.getDept()).isNull();
-        assertThat(model.getName()).isNull();
-        LegacyPk pk = new LegacyPk();
+     String code = ValueGenerator.getUniqueString(8);
+     model1.setCode(code);
+     model2.setCode(code);
 
-        String code = ValueGenerator.getUniqueString(8);
-        pk.setCode(code);
-        Integer dept = ValueGenerator.getUniqueInteger();
-        pk.setDept(dept);
-        String name = ValueGenerator.getUniqueString(16);
-        pk.setName(name);
+     Integer dept = ValueGenerator.getUniqueInteger();
+     model1.setDept(dept);
+     model2.setDept(dept);
 
-        model.setId(pk);
-
-        assertThat(model.getCode()).isEqualTo(code);
-        assertThat(model.getDept()).isEqualTo(dept);
-        assertThat(model.getName()).isEqualTo(name);
-    }
-
-    @Test
-    public void toStringNotNull() {
-        Legacy model = new Legacy();
-        assertThat(model.toString()).isNotNull();
-    }
-
-    @Test
-    public void equalsUsingPk() {
-        Legacy model1 = new Legacy();
-        Legacy model2 = new Legacy();
-
-        String name = ValueGenerator.getUniqueString(16);
-        model1.setName(name);
-        model2.setName(name);
-
-        String code = ValueGenerator.getUniqueString(8);
-        model1.setCode(code);
-        model2.setCode(code);
-
-        Integer dept = ValueGenerator.getUniqueInteger();
-        model1.setDept(dept);
-        model2.setDept(dept);
-
-        model1.setExtraInfo("a");
-        model2.setExtraInfo("a");
-        assertThat(model1.isIdSet()).isTrue();
-        assertThat(model2.isIdSet()).isTrue();
-        assertThat(model1.hashCode()).isEqualTo(model2.hashCode());
-        assertThat(model1).isEqualTo(model2);
-        assertThat(model2).isEqualTo(model1);
-    }
+     model1.setExtraInfo("a");
+     model2.setExtraInfo("a");
+     assertThat(model1.isIdSet()).isTrue();
+     assertThat(model2.isIdSet()).isTrue();
+     assertThat(model1.hashCode()).isEqualTo(model2.hashCode());
+     assertThat(model1).isEqualTo(model2);
+     assertThat(model2).isEqualTo(model1);
+     }
+     */
 }

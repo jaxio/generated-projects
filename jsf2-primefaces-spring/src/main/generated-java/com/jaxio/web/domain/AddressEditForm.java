@@ -12,19 +12,23 @@ import javax.inject.Named;
 import com.jaxio.domain.Address;
 import com.jaxio.repository.AddressRepository;
 import com.jaxio.web.domain.support.GenericEditForm;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
  * View Helper/Controller to edit {@link Address}.
  */
 @Named
-@Conversation
+@ConversationContextScoped
 public class AddressEditForm extends GenericEditForm<Address, Integer> {
+
     @Inject
-    public void setAddressRepository(AddressRepository addressRepository) {
-        setRepository(addressRepository);
+    public AddressEditForm(AddressRepository addressRepository) {
+        super(addressRepository);
     }
 
+    /**
+     * The entity to edit/view.
+     */
     public Address getAddress() {
         return getEntity();
     }

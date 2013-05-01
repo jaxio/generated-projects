@@ -16,12 +16,12 @@ public abstract class Document_ {
 
     // Raw attributes
     public static volatile SingularAttribute<Document, String> id;
+    public static volatile SingularAttribute<Document, byte[]> documentBinary;
+    public static volatile SingularAttribute<Document, String> documentFileName;
     public static volatile SingularAttribute<Document, String> documentContentType;
     public static volatile SingularAttribute<Document, Integer> documentSize;
-    public static volatile SingularAttribute<Document, String> documentFileName;
-    public static volatile SingularAttribute<Document, byte[]> documentBinary;
     public static volatile SingularAttribute<Document, Integer> version;
 
     // Many to one
-    public static volatile SingularAttribute<Document, Account> account;
+    public static volatile SingularAttribute<Document, Account> owner;
 }

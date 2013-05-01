@@ -7,18 +7,44 @@
  */
 package com.jaxio.repository;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.jaxio.dao.AddressDao;
 import com.jaxio.domain.Address;
-import com.jaxio.repository.support.Repository;
+import com.jaxio.repository.support.GenericRepository;
 
 /**
- * The AddressRepository is a data-centric service for the {@link Address} entity.
- * It provides the expected methods to get/delete a {@link Address} instance
- * plus some methods to perform searches.
- * <p>
- * Search logic is driven by 2 kinds of parameters: a {@link Address} instance used
- * as a properties holder against which the search will be performed and a {@link SearchParameters}
- * instance from where you can control your search options including the usage
- * of named queries.
+ * Note: you may use multiple DAO from this layer.
  */
-public interface AddressRepository extends Repository<Address, Integer> {
+@Named
+@Singleton
+public class AddressRepository extends GenericRepository<Address, Integer> {
+
+    @SuppressWarnings("unused")
+    private static final Logger log = LoggerFactory.getLogger(AddressRepository.class);
+
+    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
+    protected AddressRepository() {
+        super();
+    }
+
+    @Inject
+    public AddressRepository(AddressDao addressDao) {
+        super(addressDao);
+    }
+
+    @Override
+    public Address getNew() {
+        return new Address();
+    }
+
+    @Override
+    public Address getNewWithDefaults() {
+        Address result = getNew();
+        result.initDefaultValues();
+        return result;
+    }
 }

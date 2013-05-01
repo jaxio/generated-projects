@@ -49,14 +49,11 @@ public class SelectableListDataModel<E extends Identifiable<?>> extends ListData
     @SuppressWarnings("unchecked")
     @Override
     public E getRowData(String rowKey) {
-        List<E> items = (List<E>) getWrappedData();
-
-        for (E item : items) {
+        for (E item : (List<E>) getWrappedData()) {
             if (rowKey.equals(String.valueOf(item.hashCode()))) {
                 return item;
             }
         }
-
         return null;
     }
 

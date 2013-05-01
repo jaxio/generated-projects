@@ -33,15 +33,20 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
-import org.apache.log4j.Logger;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.ParamDef;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 import com.jaxio.audit.AuditContextHolder;
 import com.jaxio.domain.Account_;
@@ -55,16 +60,17 @@ import com.jaxio.domain.Role;
 @Table(name = "ACCOUNT")
 @FilterDef(name = "myAccountFilter", defaultCondition = "ID = :currentAccountId ", parameters = @ParamDef(name = "currentAccountId", type = "org.hibernate.type.StringType"))
 @Filter(name = "myAccountFilter")
+@Indexed
 public class Account implements Identifiable<String>, Serializable {
     private static final long serialVersionUID = 1L;
-    private static final Logger log = Logger.getLogger(Account.class);
+    private static final Logger log = LoggerFactory.getLogger(Account.class);
 
     // Raw attributes
     private String id; // pk
     private String username; // unique (not null)
     private String password; // not null
     private String email; // unique (not null)
-    private Boolean isEnabled;
+    private Boolean isEnabled; // not null
     private Civility civility;
     private String firstName;
     private String lastName;
@@ -80,11 +86,11 @@ public class Account implements Identifiable<String>, Serializable {
     private Address homeAddress; // (addressId)
 
     // One to many
-    private List<Book> books = new ArrayList<Book>();
-    private List<Document> documents = new ArrayList<Document>();
+    private List<Book> coolBooks = new ArrayList<Book>();
+    private List<Document> edocs = new ArrayList<Document>();
 
     // Many to many
-    private List<Role> roles = new ArrayList<Role>();
+    private List<Role> securityRoles = new ArrayList<Role>();
 
     // -------------------------------
     // Role names support
@@ -99,18 +105,16 @@ public class Account implements Identifiable<String>, Serializable {
     public List<String> getRoleNames() {
         List<String> roleNames = new ArrayList<String>();
 
-        for (Role role : getRoles()) {
-            roleNames.add(role.getRoleName());
+        for (Role securityRole : getSecurityRoles()) {
+            roleNames.add(securityRole.getRoleName());
         }
 
         return roleNames;
     }
 
-    // -------------------------------
-    // Getter & Setter
-    // -------------------------------
     // -- [id] ------------------------
 
+    @Override
     @Column(name = "ID", length = 36)
     @GeneratedValue(generator = "strategy-uuid2")
     @GenericGenerator(name = "strategy-uuid2", strategy = "uuid2")
@@ -119,11 +123,19 @@ public class Account implements Identifiable<String>, Serializable {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    public Account id(String id) {
+        setId(id);
+        return this;
+    }
+
+    @Override
     @Transient
+    @XmlTransient
     public boolean isIdSet() {
         return id != null && !id.isEmpty();
     }
@@ -133,12 +145,18 @@ public class Account implements Identifiable<String>, Serializable {
     @Size(min = 4, max = 100)
     @NotEmpty
     @Column(name = "LOGIN", nullable = false, unique = true, length = 100)
+    @Field(analyzer = @Analyzer(definition = "custom"))
     public String getUsername() {
         return username;
     }
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Account username(String username) {
+        setUsername(username);
+        return this;
     }
 
     // -- [password] ------------------------
@@ -154,12 +172,18 @@ public class Account implements Identifiable<String>, Serializable {
         this.password = password;
     }
 
+    public Account password(String password) {
+        setPassword(password);
+        return this;
+    }
+
     // -- [email] ------------------------
 
     @Size(max = 100)
     @NotEmpty
     @Email
     @Column(name = "EMAIL", nullable = false, unique = true, length = 100)
+    @Field(analyzer = @Analyzer(definition = "custom"))
     public String getEmail() {
         return email;
     }
@@ -168,15 +192,26 @@ public class Account implements Identifiable<String>, Serializable {
         this.email = email;
     }
 
+    public Account email(String email) {
+        setEmail(email);
+        return this;
+    }
+
     // -- [isEnabled] ------------------------
 
-    @Column(name = "IS_ENABLED", length = 1)
+    @NotNull
+    @Column(name = "IS_ENABLED", nullable = false, length = 1)
     public Boolean getIsEnabled() {
         return isEnabled;
     }
 
     public void setIsEnabled(Boolean isEnabled) {
         this.isEnabled = isEnabled;
+    }
+
+    public Account isEnabled(Boolean isEnabled) {
+        setIsEnabled(isEnabled);
+        return this;
     }
 
     // -- [civility] ------------------------
@@ -191,10 +226,16 @@ public class Account implements Identifiable<String>, Serializable {
         this.civility = civility;
     }
 
+    public Account civility(Civility civility) {
+        setCivility(civility);
+        return this;
+    }
+
     // -- [firstName] ------------------------
 
     @Size(max = 100)
     @Column(name = "FIRST_NAME", length = 100)
+    @Field(analyzer = @Analyzer(definition = "custom"))
     public String getFirstName() {
         return firstName;
     }
@@ -203,16 +244,27 @@ public class Account implements Identifiable<String>, Serializable {
         this.firstName = firstName;
     }
 
+    public Account firstName(String firstName) {
+        setFirstName(firstName);
+        return this;
+    }
+
     // -- [lastName] ------------------------
 
     @Size(max = 100)
     @Column(name = "LAST_NAME", length = 100)
+    @Field(analyzer = @Analyzer(definition = "custom"))
     public String getLastName() {
         return lastName;
     }
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Account lastName(String lastName) {
+        setLastName(lastName);
+        return this;
     }
 
     // -- [birthDate] ------------------------
@@ -227,6 +279,11 @@ public class Account implements Identifiable<String>, Serializable {
         this.birthDate = birthDate;
     }
 
+    public Account birthDate(Date birthDate) {
+        setBirthDate(birthDate);
+        return this;
+    }
+
     // -- [description] ------------------------
 
     @Size(max = 255)
@@ -237,6 +294,11 @@ public class Account implements Identifiable<String>, Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Account description(String description) {
+        setDescription(description);
+        return this;
     }
 
     // -- [creationDate] ------------------------
@@ -251,6 +313,11 @@ public class Account implements Identifiable<String>, Serializable {
         this.creationDate = creationDate;
     }
 
+    public Account creationDate(Date creationDate) {
+        setCreationDate(creationDate);
+        return this;
+    }
+
     // -- [creationAuthor] ------------------------
 
     @Column(name = "CREATION_AUTHOR", length = 200)
@@ -260,6 +327,11 @@ public class Account implements Identifiable<String>, Serializable {
 
     public void setCreationAuthor(String creationAuthor) {
         this.creationAuthor = creationAuthor;
+    }
+
+    public Account creationAuthor(String creationAuthor) {
+        setCreationAuthor(creationAuthor);
+        return this;
     }
 
     // -- [lastModificationDate] ------------------------
@@ -274,6 +346,11 @@ public class Account implements Identifiable<String>, Serializable {
         this.lastModificationDate = lastModificationDate;
     }
 
+    public Account lastModificationDate(Date lastModificationDate) {
+        setLastModificationDate(lastModificationDate);
+        return this;
+    }
+
     // -- [lastModificationAuthor] ------------------------
 
     @Column(name = "LAST_MODIFICATION_AUTHOR", length = 200)
@@ -283,6 +360,11 @@ public class Account implements Identifiable<String>, Serializable {
 
     public void setLastModificationAuthor(String lastModificationAuthor) {
         this.lastModificationAuthor = lastModificationAuthor;
+    }
+
+    public Account lastModificationAuthor(String lastModificationAuthor) {
+        setLastModificationAuthor(lastModificationAuthor);
+        return this;
     }
 
     // -- [version] ------------------------
@@ -297,9 +379,14 @@ public class Account implements Identifiable<String>, Serializable {
         this.version = version;
     }
 
-    // --------------------------------------------------------------------
+    public Account version(Integer version) {
+        setVersion(version);
+        return this;
+    }
+
+    // -----------------------------------------------------------------
     // Many to One support
-    // --------------------------------------------------------------------
+    // -----------------------------------------------------------------
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // many-to-one: Account.addressId ==> Address.id
@@ -312,7 +399,7 @@ public class Account implements Identifiable<String>, Serializable {
     }
 
     /**
-     * Set the homeAddress without adding this Account instance on the passed homeAddress
+     * Set the {@link #homeAddress} without adding this Account instance on the passed {@link #homeAddress}
      * If you want to preserve referential integrity we recommend to use
      * instead the corresponding adder method provided by {@link Address}
      */
@@ -320,17 +407,22 @@ public class Account implements Identifiable<String>, Serializable {
         this.homeAddress = homeAddress;
     }
 
-    // --------------------------------------------------------------------
+    public Account homeAddress(Address homeAddress) {
+        setHomeAddress(homeAddress);
+        return this;
+    }
+
+    // -----------------------------------------------------------------
     // One to Many support
-    // --------------------------------------------------------------------
+    // -----------------------------------------------------------------
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // one to many: account ==> books
+    // one to many: account ==> coolBooks
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    @OneToMany(mappedBy = "account", orphanRemoval = true, cascade = ALL)
-    public List<Book> getBooks() {
-        return books;
+    @OneToMany(mappedBy = "owner", orphanRemoval = true, cascade = ALL)
+    public List<Book> getCoolBooks() {
+        return coolBooks;
     }
 
     /**
@@ -338,142 +430,142 @@ public class Account implements Identifiable<String>, Serializable {
      * It is recommended to use the helper method {@link #addBook(Book)} / {@link #removeBook(Book)}
      * if you want to preserve referential integrity at the object level.
      *
-     * @param books the list to set
+     * @param coolBooks the list to set
      */
-    public void setBooks(List<Book> books) {
-        this.books = books;
+    public void setCoolBooks(List<Book> coolBooks) {
+        this.coolBooks = coolBooks;
     }
 
     /**
-     * Helper method to add the passed {@link Book} to the books list
-     * and set this account on the passed book to preserve referential
+     * Helper method to add the passed {@link Book} to the {@link #coolBooks} list
+     * and set this owner on the passed book to preserve referential
      * integrity at the object level.
      *
      * @param book the to add
-     * @return true if the book could be added to the books list, false otherwise
+     * @return true if the book could be added to the coolBooks list, false otherwise
      */
     public boolean addBook(Book book) {
-        if (getBooks().add(book)) {
-            book.setAccount((Account) this);
+        if (getCoolBooks().add(book)) {
+            book.setOwner(this);
             return true;
         }
         return false;
     }
 
     /**
-     * Helper method to remove the passed {@link Book} from the books list and unset
-     * this account from the passed book to preserve referential integrity at the object level.
+     * Helper method to remove the passed {@link Book} from the {@link #coolBooks} list and unset
+     * this owner from the passed book to preserve referential integrity at the object level.
      *
      * @param book the instance to remove
-     * @return true if the book could be removed from the books list, false otherwise
+     * @return true if the book could be removed from the coolBooks list, false otherwise
      */
     public boolean removeBook(Book book) {
-        if (getBooks().remove(book)) {
-            book.setAccount(null);
+        if (getCoolBooks().remove(book)) {
+            book.setOwner(null);
             return true;
         }
         return false;
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // one to many: account ==> documents
+    // one to many: account ==> edocs
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    @OneToMany(mappedBy = "account", orphanRemoval = true, cascade = ALL)
-    public List<Document> getDocuments() {
-        return documents;
+    @OneToMany(mappedBy = "owner", orphanRemoval = true, cascade = ALL)
+    public List<Document> getEdocs() {
+        return edocs;
     }
 
     /**
      * Set the {@link Document} list.
-     * It is recommended to use the helper method {@link #addDocument(Document)} / {@link #removeDocument(Document)}
+     * It is recommended to use the helper method {@link #addEdoc(Document)} / {@link #removeEdoc(Document)}
      * if you want to preserve referential integrity at the object level.
      *
-     * @param documents the list to set
+     * @param edocs the list to set
      */
-    public void setDocuments(List<Document> documents) {
-        this.documents = documents;
+    public void setEdocs(List<Document> edocs) {
+        this.edocs = edocs;
     }
 
     /**
-     * Helper method to add the passed {@link Document} to the documents list
-     * and set this account on the passed document to preserve referential
+     * Helper method to add the passed {@link Document} to the {@link #edocs} list
+     * and set this owner on the passed edoc to preserve referential
      * integrity at the object level.
      *
-     * @param document the to add
-     * @return true if the document could be added to the documents list, false otherwise
+     * @param edoc the to add
+     * @return true if the edoc could be added to the edocs list, false otherwise
      */
-    public boolean addDocument(Document document) {
-        if (getDocuments().add(document)) {
-            document.setAccount((Account) this);
+    public boolean addEdoc(Document edoc) {
+        if (getEdocs().add(edoc)) {
+            edoc.setOwner(this);
             return true;
         }
         return false;
     }
 
     /**
-     * Helper method to remove the passed {@link Document} from the documents list and unset
-     * this account from the passed document to preserve referential integrity at the object level.
+     * Helper method to remove the passed {@link Document} from the {@link #edocs} list and unset
+     * this owner from the passed edoc to preserve referential integrity at the object level.
      *
-     * @param document the instance to remove
-     * @return true if the document could be removed from the documents list, false otherwise
+     * @param edoc the instance to remove
+     * @return true if the edoc could be removed from the edocs list, false otherwise
      */
-    public boolean removeDocument(Document document) {
-        if (getDocuments().remove(document)) {
-            document.setAccount(null);
+    public boolean removeEdoc(Document edoc) {
+        if (getEdocs().remove(edoc)) {
+            edoc.setOwner(null);
             return true;
         }
         return false;
     }
 
-    // --------------------------------------------------------------------
+    // -----------------------------------------------------------------
     // Many to Many
-    // --------------------------------------------------------------------
+    // -----------------------------------------------------------------
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // many-to-many: account ==> roles
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    // many-to-many: account ==> securityRoles
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
     /**
-     * Returns the roles list.
+     * Returns the {@link #securityRoles} list.
      */
     @JoinTable(name = "ACCOUNT_ROLE", joinColumns = @JoinColumn(name = "ACCOUNT_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
     @ManyToMany(cascade = { PERSIST, MERGE })
-    public List<Role> getRoles() {
-        return roles;
+    public List<Role> getSecurityRoles() {
+        return securityRoles;
     }
 
     /**
-     * Set the roles list.
+     * Set the {@link #securityRoles} list.
      * <p>
-     * It is recommended to use the helper method {@link #addRole(Role)} / {@link #removeRole(Role)}
+     * It is recommended to use the helper method {@link #addSecurityRole(Role)} / {@link #removeSecurityRole(Role)}
      * if you want to preserve referential integrity at the object level.
      *
-     * @param roles the list of Role
+     * @param securityRoles the list of Role
      */
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
+    public void setSecurityRoles(List<Role> securityRoles) {
+        this.securityRoles = securityRoles;
     }
 
     /**
-     * Helper method to add the passed {@link Role} to the roles list.
+     * Helper method to add the passed {@link Role} to the {@link #securityRoles} list.
      */
-    public boolean addRole(Role role) {
-        return getRoles().add(role);
+    public boolean addSecurityRole(Role securityRole) {
+        return getSecurityRoles().add(securityRole);
     }
 
     /**
-     * Helper method to remove the passed {@link Role} from the roles list.
+     * Helper method to remove the passed {@link Role} from the {@link #securityRoles} list.
      */
-    public boolean removeRole(Role role) {
-        return getRoles().remove(role);
+    public boolean removeSecurityRole(Role securityRole) {
+        return getSecurityRoles().remove(securityRole);
     }
 
     /**
-     * Helper method to determine if the passed {@link Role} is present in the roles list.
+     * Helper method to determine if the passed {@link Role} is present in the {@link #securityRoles} list.
      */
-    public boolean containsRole(Role role) {
-        return getRoles() != null && getRoles().contains(role);
+    public boolean containsSecurityRole(Role securityRole) {
+        return getSecurityRoles() != null && getSecurityRoles().contains(securityRole);
     }
 
     /**
@@ -483,7 +575,7 @@ public class Account implements Identifiable<String>, Serializable {
     }
 
     /**
-     * equals implementation using a business key.
+     * Equals implementation using a business key.
      */
     @Override
     public boolean equals(Object other) {

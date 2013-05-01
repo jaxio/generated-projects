@@ -7,11 +7,9 @@
  */
 package com.jaxio.printer;
 
+import java.util.Locale;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import java.util.Locale;
-
 import com.jaxio.domain.Document;
 import com.jaxio.printer.DiscoverablePrinter;
 
@@ -34,8 +32,7 @@ public class DocumentPrinter extends DiscoverablePrinter<Document> {
         if (document == null) {
             return "";
         }
-        StringBuilder ret = new StringBuilder(256);
-        appendIfNotEmpty(ret, document.getDocumentContentType());
+        StringBuilder ret = new StringBuilder();
         appendIfNotEmpty(ret, document.getDocumentFileName());
         return ret.toString();
     }

@@ -6,29 +6,71 @@
  ! Follow us on twitter: @springfuse
  ! Template pack-jsf2-spring-conversation:src/main/webapp/WEB-INF/web.p.vm.xml
 -->
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-	<!-- The master configuration file for this Spring web application -->
-	<!-- Context Configuration locations for Spring XML files -->
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	metadata-complete="true">
+	<!-- Remove classpath scanning (from servlet 3.0) in order to speed jetty startup 
+	metadata-complete="true" above + empty absolute ordering below	-->
+	<absolute-ordering>
+		<!-- Empty absolute ordering is necessary to completely desactivate classpath scanning -->
+	</absolute-ordering>
 	<context-param>
+		<!-- The master configuration file for this Spring web application -->
+		<!-- Context Configuration locations for Spring XML files -->
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
-			classpath*:spring/applicationContext-web.xml
+			classpath:net/bull/javamelody/monitoring-spring-datasource.xml
+			classpath:spring/applicationContext.xml
+			classpath:spring/applicationContext-web.xml
 			WEB-INF/applicationContext-security-http.xml
 		</param-value>
 	</context-param>
-	<context-param>
-		<param-name>primefaces.THEME</param-name>
-		<param-value>bootstrap</param-value>
-	</context-param>
+	<!-- listeners -->
 	<listener>
+		<description>Parse JavaServer Faces configuration resources</description>
+		<listener-class>com.sun.faces.config.ConfigureListener</listener-class>
+	</listener>
+	<listener>
+		<description>Bootstrap listener to start up and shut down Spring's root WebApplicationContext</description>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 	<listener>
+		<description>Exposes the request to the current thread through both LocaleContextHolder and RequestContextHolder</description>
 		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>
+	<listener>
+		<description>Monitor application</description>
+		<listener-class>net.bull.javamelody.SessionListener</listener-class>
+	</listener>
 	<!-- filters -->
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<servlet-name>facesServlet</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/monitoring*</url-pattern>
+	</filter-mapping>
+	<filter>
+		<filter-name>javamelodyFilter</filter-name>
+		<filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
+		<init-param>
+			<param-name>url-exclude-pattern</param-name>
+			<param-value>/javax\.faces\.resource/.*</param-value>
+		</init-param>
+		<init-param>
+			<param-name>log</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>javamelodyFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 	<filter>
 		<filter-name>gzipResponseFilter</filter-name>
 		<filter-class>org.omnifaces.filter.GzipResponseFilter</filter-class>
@@ -61,16 +103,6 @@
 		<filter-name>sessionExpirationFilter</filter-name>
 		<servlet-name>facesServlet</servlet-name>
 	</filter-mapping>
-	<!-- spring security filter must be placed after ConversationFilter (read 
-		ConversationFilter.java) -->
-	<filter>
-		<filter-name>springSecurityFilterChain</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>springSecurityFilterChain</filter-name>
-		<servlet-name>facesServlet</servlet-name>
-	</filter-mapping>
 	<filter>
 		<filter-name>conversationFilter</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -79,59 +111,45 @@
 		<filter-name>conversationFilter</filter-name>
 		<servlet-name>facesServlet</servlet-name>
 	</filter-mapping>
-    <filter>
-        <filter-name>noPageCacheFilter</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>noPageCacheFilter</filter-name>
-        <servlet-name>facesServlet</servlet-name>
-    </filter-mapping>
-
+	<filter>
+		<filter-name>noPageCacheFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>noPageCacheFilter</filter-name>
+		<servlet-name>facesServlet</servlet-name>
+	</filter-mapping>
 	<!-- JSF 2 IMPLEMENTATION -->
-	<!-- Use JSF view templates saved as *.xhtml, for use with Facelets -->
 	<context-param>
+		<description>Use JSF view templates saved as *.xhtml, for use with Facelets</description>
 		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
 		<param-value>.xhtml</param-value>
 	</context-param>
-	<!-- (in bytes) Ideally the buffer size should be large enough so the largest 
-		view can fit in it entirely for exception handling purposes and also performance 
-		reason. -->
 	<context-param>
+		<description>Ideally the buffer size should be large enough so the largest view can fit in it entirely for exception handling purposes and also performance reason (in bytes)</description>
 		<param-name>javax.faces.FACELETS_BUFFER_SIZE</param-name>
 		<param-value>10240</param-value>
 	</context-param>
-	<!-- Enables special Facelets debug output during development -->
 	<context-param>
+		<description>Enables special Facelets debug output during development</description>
 		<param-name>javax.faces.PROJECT_STAGE</param-name>
-		<param-value>Development</param-value><!-- Could be 'Production' -->
+		<param-value>Production</param-value>
 	</context-param>
-	<!-- Causes Facelets to refresh templates during development (in seconds) -->
 	<context-param>
+		<description>Causes Facelets to refresh templates during development (in seconds)</description>
 		<param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
-		<param-value>1</param-value><!-- -1 means disabled -->
+		<param-value>-1</param-value><!-- -1 means disabled -->
 	</context-param>
-	<!-- Resources cache expiration (in millisec). Enabled only in 'Production' 
-		stage -->
 	<context-param>
+		<description>Resources cache expiration (in millisec). Enabled only in 'Production' stage</description>
 		<param-name>com.sun.faces.defaultResourceMaxAge</param-name>
 		<param-value>86400000</param-value>
 	</context-param>
 	<context-param>
+		<description>Enable the usage of comments in xhtml pages</description>
 		<param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
-	<!-- Just here so the JSF implementation can initialize, *not* used at runtime -->
-	<servlet>
-		<servlet-name>facesServlet</servlet-name>
-		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<!-- Just here so the JSF implementation can initialize -->
-	<servlet-mapping>
-		<servlet-name>facesServlet</servlet-name>
-		<url-pattern>*.faces</url-pattern>
-	</servlet-mapping>
 	<context-param>
 		<param-name>javax.faces.FACELETS_LIBRARIES</param-name>
 		<param-value>/WEB-INF/taglib/components.xml</param-value>
@@ -144,6 +162,24 @@
 		<param-name>org.apache.myfaces.EXPRESSION_FACTORY</param-name>
 		<param-value>org.jboss.el.ExpressionFactoryImpl</param-value>
 	</context-param>
+	<context-param>
+		<param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<description>Primefaces theme</description>
+		<param-name>primefaces.THEME</param-name>
+		<param-value>bootstrap</param-value>
+	</context-param>
+	<servlet>
+		<servlet-name>facesServlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>facesServlet</servlet-name>
+		<url-pattern>*.faces</url-pattern>
+	</servlet-mapping>
 	<!-- Mime types -->
 	<mime-mapping>
 		<extension>css</extension>
@@ -189,17 +225,17 @@
 		<extension>xml</extension>
 		<mime-type>text/xml</mime-type>
 	</mime-mapping>
-	<!-- session timeout (in minutes) -->
 	<session-config>
+		<!-- session timeout (in minutes) -->
 		<session-timeout>10</session-timeout>
 	</session-config>
-	<!-- Error pages. Please check the ConversationAwareExceptionHandler.java -->
+	<!-- Error pages. -->
 	<error-page>
 		<exception-type>org.springframework.dao.DataAccessException</exception-type>
 		<location>/error/data-error.faces</location>
 	</error-page>
-	<!-- comment it if you use myfaces, otherwise omnifaces will complain severely -->
 	<error-page>
+		<!-- comment it if you use myfaces, otherwise omnifaces will complain severely -->
 		<exception-type>com.sun.faces.context.FacesFileNotFoundException</exception-type>
 		<location>/error/not-found.faces</location>
 	</error-page>

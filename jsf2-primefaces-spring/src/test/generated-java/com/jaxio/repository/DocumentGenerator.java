@@ -32,14 +32,14 @@ public class DocumentGenerator {
         Document document = new Document();
 
         // simple attributes follows
+        document.setDocumentBinary("d".getBytes());
+        document.setDocumentFileName("a");
         document.setDocumentContentType("a");
         document.setDocumentSize(1);
-        document.setDocumentFileName("a");
-        document.setDocumentBinary("d".getBytes());
         // mandatory relation
-        Account account = accountGenerator.getAccount();
-        accountRepository.save(account);
-        document.setAccount(account);
+        Account owner = accountGenerator.getAccount();
+        accountRepository.save(owner);
+        document.setOwner(owner);
         return document;
     }
 

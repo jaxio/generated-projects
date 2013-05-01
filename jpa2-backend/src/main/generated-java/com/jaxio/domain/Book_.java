@@ -21,5 +21,5 @@ public abstract class Book_ {
     public static volatile SingularAttribute<Book, Integer> version;
 
     // Many to one
-    public static volatile SingularAttribute<Book, Account> account;
+    public static volatile SingularAttribute<Book, Account> owner;
 }

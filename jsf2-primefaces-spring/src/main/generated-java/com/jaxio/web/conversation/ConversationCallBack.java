@@ -10,7 +10,6 @@ package com.jaxio.web.conversation;
 import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * CallBacks should be invoked at the end of a @{link ConversationContext} life.
@@ -46,22 +45,18 @@ public class ConversationCallBack<T> implements Serializable {
         return nextView();
     }
 
-    /**
-     * The given entity has been selected.
-     */
-    protected void onSelected(T entity) {
-    }
-
-    public final String selected(List<T> entities) {
+    public final String selected(T... entities) {
         incrementPopContextOnNextPauseCounter();
-        onSelected(entities);
+        for (T entity : entities) {
+            onSelected(entity);
+        }
         return nextView();
     }
 
     /**
      * The given entity has been selected.
      */
-    protected void onSelected(List<T> entity) {
+    protected void onSelected(T entity) {
     }
 
     public final String saved(T entity) {

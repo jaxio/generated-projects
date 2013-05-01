@@ -7,114 +7,63 @@
  */
 package com.jaxio.web.domain;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.SavedSearch;
 import com.jaxio.repository.SavedSearchRepository;
-import com.jaxio.web.conversation.ConversationCallBack;
 import com.jaxio.web.domain.AccountController;
 import com.jaxio.web.domain.SavedSearchGraphLoader;
 import com.jaxio.web.domain.support.GenericEditForm;
-import com.jaxio.web.faces.Conversation;
-import com.jaxio.web.permission.AccountPermission;
+import com.jaxio.web.domain.support.GenericToOneAssociation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
  * View Helper/Controller to edit {@link SavedSearch}.
  */
 @Named
-@Conversation
+@ConversationContextScoped
 public class SavedSearchEditForm extends GenericEditForm<SavedSearch, Integer> {
     @Inject
-    public void setSavedSearchRepository(SavedSearchRepository savedSearchRepository) {
-        setRepository(savedSearchRepository);
-    }
+    protected AccountController accountController;
+    protected GenericToOneAssociation<Account, String> account;
 
     @Inject
-    public void setSavedSearchGraphLoader(SavedSearchGraphLoader savedSearchGraphLoader) {
-        setEntityGraphLoader(savedSearchGraphLoader);
+    public SavedSearchEditForm(SavedSearchRepository savedSearchRepository, SavedSearchGraphLoader savedSearchGraphLoader) {
+        super(savedSearchRepository, savedSearchGraphLoader);
     }
 
+    /**
+     * The entity to edit/view.
+     */
     public SavedSearch getSavedSearch() {
         return getEntity();
     }
 
-    // --------------------------------------------
-    // Actions for account association
-    // --------------------------------------------
-    @Inject
-    private AccountController accountController;
+    @PostConstruct
+    void setupAccountsActions() {
+        account = new GenericToOneAssociation<Account, String>("savedSearch_account", accountController) {
+            @Override
+            protected Account get() {
+                return getSavedSearch().getAccount();
+            }
 
-    @Inject
-    private AccountPermission accountPermission;
+            @Override
+            protected void set(Account account) {
+                getSavedSearch().setAccount(account);
+            }
 
-    public String viewAccount() {
-        return accountController.editSubReadOnlyView("savedSearch_account", getSavedSearch().getAccount());
+            @NotNull
+            @Override
+            public Account getSelected() {
+                return super.getSelected();
+            }
+        };
     }
 
-    /**
-     * Helper for the autoComplete component used for the SavedSearch's account property.
-     */
-    public Account getSelectedAccount() {
-        return getSavedSearch().getAccount();
+    public GenericToOneAssociation<Account, String> getAccount() {
+        return account;
     }
-
-    /**
-     * Helper for the autoComplete component used for the SavedSearch's account property.
-     * Handles ajax autoComplete event and regular page postback.
-     */
-    public void setSelectedAccount(Account account) {
-        if (accountController.shouldReplace(getSavedSearch().getAccount(), account)) {
-            getSavedSearch().setAccount(account);
-        }
-    }
-
-    /**
-     * Action to navigate to the Account select page in order to select a new Account
-     * to be set on this SavedSearch's account property.
-     */
-    public String selectAccount() {
-        return accountController.selectSubView("savedSearch_account", selectAccountCallBack);
-    }
-
-    protected ConversationCallBack<Account> selectAccountCallBack = new ConversationCallBack<Account>() {
-        private static final long serialVersionUID = 1L;
-
-        // will be invoked from the AccountLazyDataModel
-        @Override
-        protected void onSelected(Account account) {
-            checkPermission(accountPermission.canSelect(account));
-            getSavedSearch().setAccount(account);
-            messageUtil.infoEntity("status_selected_ok", getSavedSearch().getAccount());
-        }
-    };
-
-    public String addAccount() {
-        return accountController.createSubView("savedSearch_account", addAccountCallBack);
-    }
-
-    protected ConversationCallBack<Account> addAccountCallBack = new ConversationCallBack<Account>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onOk(Account account) {
-            checkPermission(accountPermission.canCreate());
-            getSavedSearch().setAccount(account);
-            messageUtil.infoEntity("status_created_ok", account);
-        }
-    };
-
-    public String editAccount() {
-        return accountController.editSubView("savedSearch_account", getSavedSearch().getAccount(), editAccountCallBack);
-    }
-
-    protected ConversationCallBack<Account> editAccountCallBack = new ConversationCallBack<Account>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onOk(Account account) {
-            getSavedSearch().setAccount(account);
-            messageUtil.infoEntity("status_edited_ok", account);
-        }
-    };
 }

@@ -7,6 +7,7 @@
  */
 package com.jaxio.web.domain;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 import com.jaxio.domain.Account;
@@ -15,52 +16,47 @@ import com.jaxio.repository.BookRepository;
 import com.jaxio.web.domain.AccountController;
 import com.jaxio.web.domain.BookGraphLoader;
 import com.jaxio.web.domain.support.GenericEditForm;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.domain.support.GenericToOneAssociation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
  * View Helper/Controller to edit {@link Book}.
  */
 @Named
-@Conversation
+@ConversationContextScoped
 public class BookEditForm extends GenericEditForm<Book, Integer> {
     @Inject
-    public void setBookRepository(BookRepository bookRepository) {
-        setRepository(bookRepository);
-    }
+    protected AccountController accountController;
+    protected GenericToOneAssociation<Account, String> owner;
 
     @Inject
-    public void setBookGraphLoader(BookGraphLoader bookGraphLoader) {
-        setEntityGraphLoader(bookGraphLoader);
+    public BookEditForm(BookRepository bookRepository, BookGraphLoader bookGraphLoader) {
+        super(bookRepository, bookGraphLoader);
     }
 
+    /**
+     * The entity to edit/view.
+     */
     public Book getBook() {
         return getEntity();
     }
 
-    // --------------------------------------------
-    // Actions for account association
-    // --------------------------------------------
-    @Inject
-    private AccountController accountController;
+    @PostConstruct
+    void setupOwnersActions() {
+        owner = new GenericToOneAssociation<Account, String>("book_owner", accountController) {
+            @Override
+            protected Account get() {
+                return getBook().getOwner();
+            }
 
-    public String viewAccount() {
-        return accountController.editSubReadOnlyView("book_account", getBook().getAccount());
+            @Override
+            protected void set(Account account) {
+                getBook().setOwner(account);
+            }
+        };
     }
 
-    /**
-     * Helper for the autoComplete component used for the Book's account property.
-     */
-    public Account getSelectedAccount() {
-        return getBook().getAccount();
-    }
-
-    /**
-     * Helper for the autoComplete component used for the Book's account property.
-     * Handles ajax autoComplete event and regular page postback.
-     */
-    public void setSelectedAccount(Account account) {
-        if (accountController.shouldReplace(getBook().getAccount(), account)) {
-            getBook().setAccount(account);
-        }
+    public GenericToOneAssociation<Account, String> getOwner() {
+        return owner;
     }
 }

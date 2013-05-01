@@ -16,7 +16,8 @@ import com.jaxio.repository.LegacyRepository;
 import com.jaxio.web.converter.GenericJsfConverter;
 
 /**
- * JSF Converter for {@link Legacy}.
+ * JSF converter for {@link Legacy}.
+ * @see GenericJsfConverter
  */
 @Named
 @Singleton
@@ -27,7 +28,7 @@ public class LegacyJsfConverter extends GenericJsfConverter<Legacy, LegacyPk> {
     }
 
     @Override
-    protected LegacyPk toPk(String pkAsString) {
+    public LegacyPk toPk(String pkAsString) {
         return LegacyPk.fromString(pkAsString);
     }
 }

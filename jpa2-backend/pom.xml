@@ -33,7 +33,7 @@
 		<!-- jdbc settings for h2 -->
 		<jdbc.type>h2</jdbc.type>
 		<jdbc.driver>org.h2.Driver</jdbc.driver>
-		<jdbc.url>jdbc:h2:~/.h2/${database.name};MVCC=TRUE</jdbc.url>
+		<jdbc.url>jdbc:h2:~/.h2/${database.name};MVCC=TRUE;FILE_LOCK=NO</jdbc.url>
 		<jdbc.user>${database.user}</jdbc.user>
 		<jdbc.password>${database.password}</jdbc.password>
 		<hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
@@ -48,22 +48,20 @@
 		<!-- Version dependencies when used in multiple dependencies -->
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 		<maven-celerio-plugin.outputDir>${project.basedir}</maven-celerio-plugin.outputDir>
-		<maven-celerio-plugin.version>3.0.99</maven-celerio-plugin.version>
+		<maven-celerio-plugin.version>3.0.100</maven-celerio-plugin.version>
 		<hibernate.version>4.1.4.Final</hibernate.version>
 		<spring.version>3.2.2.RELEASE</spring.version>
 		<spring-security.version>3.1.3.RELEASE</spring-security.version>
-		<slf4j.version>1.5.10</slf4j.version>
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 		<!-- Variables substituted in resources file at build time -->
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 		<!-- Log level, see by src/main/resource/log4j.properties -->
-		<log4j.level>DEBUG</log4j.level>
+		<log.level>DEBUG</log.level>
 		<!-- hibernate, see by src/main/resource/hibernate.properties -->
 		<hibernate.show.sql>true</hibernate.show.sql>
 		<hibernate.format.sql>true</hibernate.format.sql>
 		<hibernate.generate_statistics>true</hibernate.generate_statistics>
 		<hibernate.use_sql_comments>true</hibernate.use_sql_comments>
-		<!-- Control hibernate 2d level caching -->
 		<hibernate.ehcache.configuration.file>ehcache.xml</hibernate.ehcache.configuration.file>
 		<hibernate.use.second.level.cache>true</hibernate.use.second.level.cache>
 		<hibernate.use.query.cache>true</hibernate.use.query.cache>
@@ -189,7 +187,7 @@
 				<!-- jdbc settings -->
 				<jdbc.type>h2</jdbc.type>
 				<jdbc.driver>org.h2.Driver</jdbc.driver>
-				<jdbc.url>jdbc:h2:~/.h2/${database.name};MVCC=TRUE</jdbc.url>
+				<jdbc.url>jdbc:h2:~/.h2/${database.name};MVCC=TRUE;FILE_LOCK=NO</jdbc.url>
 				<jdbc.user>${database.user}</jdbc.user>
 				<jdbc.password>${database.password}</jdbc.password>
 				<!-- hibernate -->
@@ -225,55 +223,55 @@
 				<hibernate.format.sql>false</hibernate.format.sql>
 				<hibernate.use_sql_comments>false</hibernate.use_sql_comments>
 				<hibernate.generate_statistics>false</hibernate.generate_statistics>
-				<log4j.level>WARN</log4j.level>
+				<log.level>WARN</log.level>
 			</properties>
 		</profile>
 		<!--  convenient profile to drop/create a db user (e.g. Oracle) -->
-        <profile>
-            <id>create-db-user</id>
-            <build>
-                <plugins>
-                    <!-- Execute the scripts -->
-                    <plugin>
+		<profile>
+			<id>create-db-user</id>
+			<build>
+				<plugins>
+					<!-- Execute the scripts -->
+					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>sql-maven-plugin</artifactId>
 						<version>1.5</version>
-                            <executions>
-                                <execution>
-                                    <id>create-oracle-user</id>
-                                    <phase>validate</phase>
-                                    <configuration>
-                                        <driver>${jdbc.driver}</driver>                                    
-                                        <url>${jdbc.url}</url>                                    
-                                        <username>system</username>
-                                        <password>manager</password>
-                                        <autocommit>true</autocommit>
-                                        <sqlCommand><![CDATA[
+							<executions>
+								<execution>
+									<id>create-oracle-user</id>
+									<phase>validate</phase>
+									<configuration>
+										<driver>${jdbc.driver}</driver>								
+										<url>${jdbc.url}</url>								
+										<username>system</username>
+										<password>manager</password>
+										<autocommit>true</autocommit>
+										<sqlCommand><![CDATA[
 DROP USER ${database.user} CASCADE;
 CREATE USER ${database.user} IDENTIFIED BY ${database.password};
 GRANT CONNECT, RESOURCE TO ${database.user};
  ]]>
-                                        </sqlCommand>
-                                        <print>true</print>
-                                        <printResultSet>true</printResultSet>
-                                        <onError>continue</onError>
-                                    </configuration>
-                                    <goals>
-                                        <goal>execute</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                            <dependencies>
-                                <dependency>
-                                    <groupId>${jdbc.groupId}</groupId>
-								    <artifactId>${jdbc.artifactId}</artifactId>
-								    <version>${jdbc.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+										</sqlCommand>
+										<print>true</print>
+										<printResultSet>true</printResultSet>
+										<onError>continue</onError>
+									</configuration>
+									<goals>
+										<goal>execute</goal>
+									</goals>
+								</execution>
+							</executions>
+							<dependencies>
+								<dependency>
+									<groupId>${jdbc.groupId}</groupId>
+									<artifactId>${jdbc.artifactId}</artifactId>
+									<version>${jdbc.version}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 			<!-- Drop and recreate the database -->
@@ -291,7 +289,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 							<execution>
 								<id>Create and initialize the database</id>
 								<phase>initialize</phase>
-                                <configuration>
+								<configuration>
 							<driver>${jdbc.driver}</driver>
 							<url>${jdbc.url}</url>
 							<username>${jdbc.user}</username>
@@ -468,7 +466,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>org.jadira.usertype</groupId>
 			<artifactId>usertype.core</artifactId>
-			<version>3.0.0.CR3</version>
+			<version>3.0.0.GA</version>
 		</dependency>
 		<!-- ~~~~~~~~~~~ -->
 		<!-- PERSISTENCE -->
@@ -500,9 +498,9 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-			<version>1.4</version>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jdbc</artifactId>
+			<version>7.0.39</version>
 		</dependency>
 		<dependency>
 			<!-- jdbc driver depends on the database profile used -->
@@ -524,6 +522,11 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 			<version>4.2.0.Final</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-parsers</artifactId>
+			<version>1.3</version>
+		</dependency>
+		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 			<version>1.9.12</version>
@@ -541,48 +544,33 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 			<artifactId>hibernate-validator</artifactId>
 			<version>4.2.0.Final</version>
 		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator-annotation-processor</artifactId>
-			<version>4.2.0.Final</version>
-			<scope>provided</scope>
-		</dependency>
 		<dependency> <!-- validation html -->
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.6.3</version>
+			<version>1.7.2</version>
 		</dependency>
 		<!-- ~~~~~~ -->
 		<!-- LOGGER -->
 		<!-- ~~~~~~ -->
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.15</version>
-			<exclusions>
-				<exclusion>
-					<groupId>javax.jms</groupId>
-					<artifactId>jms</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.sun.jdmk</groupId>
-					<artifactId>jmxtools</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.sun.jmx</groupId>
-					<artifactId>jmxri</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
+			<version>1.6.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
+			<artifactId>log4j-over-slf4j</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.0.11</version>
 		</dependency>
 		<!-- ~~~~~ -->
 		<!-- UTILS -->
@@ -605,7 +593,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
-			<version>1.2.2</version>
+			<version>1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -693,7 +681,15 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 			<artifactId>spring-security-config</artifactId>
 			<version>${spring-security.version}</version>
 		</dependency>
-	<!-- ~~~~ -->
+		<!-- ~~~~~~~~~~ -->
+		<!-- MONITORING -->
+		<!-- ~~~~~~~~~~ -->
+		<dependency>
+			<groupId>net.bull.javamelody</groupId>
+			<artifactId>javamelody-core</artifactId>
+			<version>1.44.0</version>
+		</dependency>
+		<!-- ~~~~ -->
 		<!-- TEST -->
 		<!-- ~~~~ -->
 		<dependency>
@@ -823,6 +819,9 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
+					<compilerArgument>-Xlint</compilerArgument>
+					<showWarnings>true</showWarnings>
+					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>
 			<plugin>

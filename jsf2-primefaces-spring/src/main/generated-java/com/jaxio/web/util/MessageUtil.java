@@ -18,11 +18,12 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import javax.persistence.OptimisticLockException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.security.access.AccessDeniedException;
 
 import com.jaxio.domain.Identifiable;
@@ -31,13 +32,13 @@ import com.jaxio.util.ResourcesUtil;
 
 /**
  * Convenient bean to create JSF info/warn/error messages.
- * Business exceptions can be mapped to user friendly messages inside the error(Exception e) method. 
+ * Business exceptions can be mapped to user friendly messages inside the {@link #error(Throwable)} method. 
  */
 @Named
 @Singleton
 @Lazy(false)
 public class MessageUtil {
-    private static final Logger log = Logger.getLogger(MessageUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(MessageUtil.class);
     private static MessageUtil instance;
 
     @Inject
@@ -106,10 +107,11 @@ public class MessageUtil {
      * Any potential exception (such as business exception) requiring a special message should be mapped here as well.
      */
     public void error(Throwable e) {
-        if (ExceptionUtil.isCausedBy(e, DataIntegrityViolationException.class)) {
-            error("error_unique_constraint_violation");
-        } else if (ExceptionUtil.isCausedBy(e, OptimisticLockingFailureException.class)) {
+        log.error(getMessage(e), e);
+        if (ExceptionUtil.isCausedBy(e, OptimisticLockException.class)) {
             error("error_concurrent_modification");
+        } else if (ExceptionUtil.isCausedBy(e, DataIntegrityViolationException.class)) {
+            error("error_unique_constraint_violation");
         } else if (ExceptionUtil.isCausedBy(e, AccessDeniedException.class)) {
             // works only if the spring security filter is before the exception filter, 
             // that is if the exception filter handles the exception first.

@@ -7,18 +7,60 @@
  */
 package com.jaxio.repository;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
+import com.jaxio.dao.DocumentDao;
 import com.jaxio.domain.Document;
-import com.jaxio.repository.support.Repository;
+import com.jaxio.repository.support.GenericRepository;
 
 /**
- * The DocumentRepository is a data-centric service for the {@link Document} entity.
- * It provides the expected methods to get/delete a {@link Document} instance
- * plus some methods to perform searches.
- * <p>
- * Search logic is driven by 2 kinds of parameters: a {@link Document} instance used
- * as a properties holder against which the search will be performed and a {@link SearchParameters}
- * instance from where you can control your search options including the usage
- * of named queries.
+ * Note: you may use multiple DAO from this layer.
  */
-public interface DocumentRepository extends Repository<Document, String> {
+@Named
+@Singleton
+public class DocumentRepository extends GenericRepository<Document, String> {
+
+    private static final Logger log = LoggerFactory.getLogger(DocumentRepository.class);
+
+    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
+    protected DocumentRepository() {
+        super();
+    }
+
+    @Inject
+    public DocumentRepository(DocumentDao documentDao) {
+        super(documentDao);
+    }
+
+    @Override
+    public Document getNew() {
+        return new Document();
+    }
+
+    @Override
+    public Document getNewWithDefaults() {
+        Document result = getNew();
+        result.initDefaultValues();
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public void delete(Document document) {
+        if (document == null) {
+            log.debug("Skipping deletion for null model!");
+            return;
+        }
+
+        // remove the reference from the associated owner
+        if (document.getOwner() != null) {
+            document.getOwner().removeEdoc(document);
+        }
+
+        super.delete(document);
+    }
 }

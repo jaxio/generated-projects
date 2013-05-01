@@ -13,7 +13,7 @@ import java.util.ResourceBundle;
 import com.jaxio.util.ResourcesUtil;
 
 /**
- * This ResourceBundle is set in faces-config.xml under 'msg' var.
+ * This {@link ResourceBundle} is set in faces-config.xml under 'msg' var.
  * <p>
  * Implementation uses Spring {@link MessageSource}.
  * <p>

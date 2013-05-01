@@ -7,63 +7,30 @@
  */
 package com.jaxio.dao.support;
 
-import java.util.*;
-
+import static org.fest.assertions.Assertions.assertThat;
 import javax.inject.Inject;
-import org.apache.log4j.Logger;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jaxio.dao.support.*;
-import com.jaxio.util.*;
-import com.jaxio.domain.Account;
-import com.jaxio.domain.Address;
-import com.jaxio.domain.Book;
-import com.jaxio.domain.Document;
-import com.jaxio.domain.Legacy;
-import com.jaxio.domain.more.MoreTypesDemo;
-import com.jaxio.domain.Role;
-import com.jaxio.domain.SavedSearch;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:spring/applicationContext-test.xml" })
 @Transactional
 public class NamedQueryUtilIT {
 
-    private static final Logger log = Logger.getLogger(NamedQueryUtilIT.class);
-
     @Inject
     private NamedQueryUtil namedQueryUtil;
 
     @Test
-    public void executeGetAllAccountsQueryName() {
-        String sqlQuery = "Account.selectAll";
-        List<Account> accounts = namedQueryUtil.findByNamedQuery(new SearchParameters().namedQuery(sqlQuery));
-
-        if (accounts != null) {
-            log.info(accounts.size());
-
-            for (Account account : accounts) {
-                log.info(account.toString());
-            }
-        }
+    public void allAccountsUsingNamedQuery() {
+        assertThat(namedQueryUtil.findByNamedQuery(new SearchParameters().namedQuery("Account.selectAll"))).hasSize(53);
     }
 
     @Test
-    public void executeGetAllAccountsSqlQuery() {
-        String sqlQuery = "Account.selectAll.native";
-        List<Account> accounts = namedQueryUtil.findByNamedQuery(new SearchParameters().namedQuery(sqlQuery));
-
-        if (accounts != null) {
-            log.info(accounts.size());
-            for (Account account : accounts) {
-                log.info(account.toString());
-            }
-        }
+    public void allAccountsUsingNativeNamedQuery() {
+        assertThat(namedQueryUtil.findByNamedQuery(new SearchParameters().namedQuery("Account.selectAll.native"))).hasSize(53);
     }
 
 }

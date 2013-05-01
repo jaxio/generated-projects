@@ -15,7 +15,8 @@ import com.jaxio.repository.more.MoreTypesDemoRepository;
 import com.jaxio.web.converter.GenericJsfConverter;
 
 /**
- * JSF Converter for {@link MoreTypesDemo}.
+ * JSF converter for {@link MoreTypesDemo}.
+ * @see GenericJsfConverter
  */
 @Named
 @Singleton

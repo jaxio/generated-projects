@@ -16,16 +16,17 @@ import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.BookPermission;
 
 /**
- * Stateless controller for Book conversation start. Provides also auto-complete support. 
+ * Stateless controller for {@link Book} conversation start. 
  */
 @Named
 @Singleton
 public class BookController extends GenericController<Book, Integer> {
-    public final static String editUri = "/domain/bookEdit.faces";
-    public final static String selectUri = "/domain/bookSelect.faces";
+    private static final String editUri = "/domain/bookEdit.faces";
+    private static final String selectUri = "/domain/bookSelect.faces";
 
     @Inject
     public BookController(BookRepository bookRepository, BookPermission bookPermission) {
         super(bookRepository, bookPermission, selectUri, editUri);
     }
+
 }

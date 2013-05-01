@@ -15,7 +15,8 @@ import com.jaxio.repository.RoleRepository;
 import com.jaxio.web.converter.GenericJsfConverter;
 
 /**
- * JSF Converter for {@link Role}.
+ * JSF converter for {@link Role}.
+ * @see GenericJsfConverter
  */
 @Named
 @Singleton

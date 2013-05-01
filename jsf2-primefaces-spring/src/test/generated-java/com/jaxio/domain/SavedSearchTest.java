@@ -31,11 +31,12 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.apache.log4j.Logger;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.jaxio.domain.Account;
 
 /**
@@ -58,8 +59,6 @@ public class SavedSearchTest {
         assertThat(model.getId()).isNotNull();
         assertThat(model.isIdSet()).isTrue();
     }
-
-    // test columns methods
 
     //-------------------------------------------------------------
     // Many to One:  SavedSearch.accountId ==> Account.id
@@ -85,33 +84,28 @@ public class SavedSearchTest {
         assertThat(many.getAccount()).isNull();
     }
 
-    @Test
-    public void toStringNotNull() {
-        SavedSearch model = new SavedSearch();
-        assertThat(model.toString()).isNotNull();
-    }
+    /*
+     public void equalsUsingPk() {
+     SavedSearch model1 = new SavedSearch();
+     SavedSearch model2 = new SavedSearch();
 
-    @Test
-    public void equalsUsingPk() {
-        SavedSearch model1 = new SavedSearch();
-        SavedSearch model2 = new SavedSearch();
+     Integer id = ValueGenerator.getUniqueInteger();
+     model1.setId(id);
+     model2.setId(id);
 
-        Integer id = ValueGenerator.getUniqueInteger();
-        model1.setId(id);
-        model2.setId(id);
+     model1.setName("a");
+     model2.setName("a");
 
-        model1.setName("a");
-        model2.setName("a");
+     model1.setFormClassname("a");
+     model2.setFormClassname("a");
 
-        model1.setFormClassname("a");
-        model2.setFormClassname("a");
-
-        model1.setFormContent("d".getBytes());
-        model2.setFormContent("d".getBytes());
-        assertThat(model1.isIdSet()).isTrue();
-        assertThat(model2.isIdSet()).isTrue();
-        assertThat(model1.hashCode()).isEqualTo(model2.hashCode());
-        assertThat(model1).isEqualTo(model2);
-        assertThat(model2).isEqualTo(model1);
-    }
+     model1.setFormContent("d".getBytes());
+     model2.setFormContent("d".getBytes());
+     assertThat(model1.isIdSet()).isTrue();
+     assertThat(model2.isIdSet()).isTrue();
+     assertThat(model1.hashCode()).isEqualTo(model2.hashCode());
+     assertThat(model1).isEqualTo(model2);
+     assertThat(model2).isEqualTo(model1);
+     }
+     */
 }

@@ -7,22 +7,31 @@
  */
 package com.jaxio.web.domain;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import com.jaxio.domain.SavedSearch;
+import com.jaxio.repository.SavedSearchRepository;
 import com.jaxio.repository.support.EntityGraphLoader;
 
 /**
- * Preloads the associations required by the view layer. 
+ * Preloads the {@link SavedSearch} associations required by the view layer.
  */
 @Named
 @Singleton
-public class SavedSearchGraphLoader implements EntityGraphLoader<SavedSearch> {
+public class SavedSearchGraphLoader extends EntityGraphLoader<SavedSearch, Integer> {
+    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
+    protected SavedSearchGraphLoader() {
+        super();
+    }
+
+    @Inject
+    public SavedSearchGraphLoader(SavedSearchRepository savedSearchRepository) {
+        super(savedSearchRepository);
+    }
 
     @Override
     public void loadGraph(SavedSearch savedSearch) {
-        if (savedSearch.getAccount() != null) {
-            savedSearch.getAccount().toString(); // force load
-        }
+        loadSingular(savedSearch.getAccount());
     }
 }

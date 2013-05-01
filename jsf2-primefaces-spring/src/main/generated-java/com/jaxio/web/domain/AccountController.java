@@ -18,13 +18,13 @@ import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.AccountPermission;
 
 /**
- * Stateless controller for Account conversation start. Provides also auto-complete support. 
+ * Stateless controller for {@link Account} conversation start. 
  */
 @Named
 @Singleton
 public class AccountController extends GenericController<Account, String> {
-    public final static String editUri = "/domain/accountEdit.faces";
-    public final static String selectUri = "/domain/accountSelect.faces";
+    private static final String editUri = "/domain/accountEdit.faces";
+    private static final String selectUri = "/domain/accountSelect.faces";
 
     @Inject
     public AccountController(AccountRepository accountRepository, AccountPermission accountPermission) {
@@ -32,7 +32,9 @@ public class AccountController extends GenericController<Account, String> {
     }
 
     @Override
-    protected void defaultOrder(SearchParameters searchParameters) {
+    protected SearchParameters defaultOrder(SearchParameters searchParameters) {
         searchParameters.orderBy(Account_.username);
+        return searchParameters;
     }
+
 }

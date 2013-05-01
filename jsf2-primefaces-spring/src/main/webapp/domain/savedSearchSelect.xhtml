@@ -15,13 +15,13 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search data="#{savedSearchLazyDataModel}" searchForm="#{savedSearchSearchForm}" permission="#{savedSearchPermission}" title="#{msg.savedSearch}" savedSearch="true">
+	<app:search data="#{savedSearchLazyDataModel}" searchForm="#{savedSearchSearchForm}" permission="#{savedSearchPermission}" title="savedSearch" savedSearch="true">
 		<ui:define name="filters">
-			<app:inputMultiAutoComplete id="name" value="#{savedSearchSearchForm.nameSelector}" label="#{msg.savedSearch_name}" controller="#{savedSearchController}" action="completeProperty" property="name" />
-			<app:inputMultiAutoComplete id="formClassname" value="#{savedSearchSearchForm.formClassnameSelector}" label="#{msg.savedSearch_formClassname}" controller="#{savedSearchController}" action="completeProperty" property="formClassname" />
-			<app:inputMultiAutoComplete id="formContent" value="#{savedSearchSearchForm.formContentSelector}" label="#{msg.savedSearch_formContent}" controller="#{savedSearchController}" action="completeProperty" property="formContent" />
-			<app:multiAutoComplete id="accountSelector" value="#{savedSearchSearchForm.accountSelector.selected}" label="#{msg.savedSearch_account}" 
-				controller="#{accountController}" converter="#{accountJsfConverter}" printer="#{accountPrinter}"/>
+			<app:inputMultiAutoComplete id="name" value="#{savedSearchSearchForm.nameSelector}" label="savedSearch_name" controller="#{savedSearchController}" completeMethod="completeProperty" property="name" />
+			<app:inputMultiAutoComplete id="formClassname" value="#{savedSearchSearchForm.formClassnameSelector}" label="savedSearch_formClassname" controller="#{savedSearchController}" completeMethod="completeProperty" property="formClassname" />
+
+			<app:multiAutoComplete id="accountSelector" value="#{savedSearchSearchForm.accountSelector.selected}" label="savedSearch_account" 
+				controller="#{accountController}" completeMethod="completeFullText" converter="#{accountJsfConverter}" />
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">
@@ -40,10 +40,10 @@
 				<h:outputText value="#{item.formContent}" />
 			</p:column>
 			<p:column id="open" headerText="#{msg.actions}" styleClass="actions-column" resizable="false">
-				<app:iconSelect actionBean="#{savedSearchLazyDataModel}" action="select" rendered="#{sub and not multiCheckboxSelection}" title="#{savedSearchPrinter.print(item)}" />
-				<app:iconEdit actionBean="#{savedSearchLazyDataModel}" action="edit" rendered="#{not sub and savedSearchPermission.canEdit(item)}" title="#{savedSearchPrinter.print(item)}" />
-				<app:iconView actionBean="#{savedSearchLazyDataModel}" action="view" rendered="#{savedSearchPermission.canView(item)}" title="#{savedSearchPrinter.print(item)}" />
-				<app:iconDelete rendered="#{not sub and savedSearchPermission.canDelete(item)}" title="#{savedSearchPrinter.print(item)}" />
+				<app:iconSelect actionBean="#{savedSearchLazyDataModel}" rendered="#{sub}" title="#{printer.print(item)}" />
+				<app:iconEdit actionBean="#{savedSearchLazyDataModel}" rendered="#{not sub and savedSearchPermission.canEdit(item)}" title="#{printer.print(item)}" />
+				<app:iconView actionBean="#{savedSearchLazyDataModel}" rendered="#{savedSearchPermission.canView(item)}" title="#{printer.print(item)}" />
+				<app:iconDelete rendered="#{not sub and savedSearchPermission.canDelete(item)}" title="#{printer.print(item)}" />
 			</p:column>
 		</ui:define>
 	</app:search>

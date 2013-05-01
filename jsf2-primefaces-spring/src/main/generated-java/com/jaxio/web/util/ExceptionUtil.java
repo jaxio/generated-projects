@@ -2,8 +2,7 @@ package com.jaxio.web.util;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import org.springframework.dao.OptimisticLockingFailureException;
+import javax.persistence.OptimisticLockException;
 
 @Named
 @Singleton
@@ -18,7 +17,7 @@ public class ExceptionUtil {
     }
 
     public void throwDataAccessException() {
-        throw new OptimisticLockingFailureException("Just testing DataAccessException from ExceptionUtil ...");
+        throw new OptimisticLockException("Just testing DataAccessException from ExceptionUtil ...");
     }
 
     public static boolean isCausedBy(Throwable e, Class<?> cause) {

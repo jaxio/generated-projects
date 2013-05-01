@@ -7,34 +7,34 @@
  */
 package com.jaxio.web.domain;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import com.jaxio.domain.Account;
+import com.jaxio.repository.AccountRepository;
 import com.jaxio.repository.support.EntityGraphLoader;
 
 /**
- * Preloads the associations required by the view layer. 
+ * Preloads the {@link Account} associations required by the view layer.
  */
 @Named
 @Singleton
-public class AccountGraphLoader implements EntityGraphLoader<Account> {
+public class AccountGraphLoader extends EntityGraphLoader<Account, String> {
+    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
+    protected AccountGraphLoader() {
+        super();
+    }
+
+    @Inject
+    public AccountGraphLoader(AccountRepository accountRepository) {
+        super(accountRepository);
+    }
 
     @Override
     public void loadGraph(Account account) {
-        if (account.getHomeAddress() != null) {
-            account.getHomeAddress().toString(); // force load
-        }
-
-        if (account.getBooks() != null) {
-            account.getBooks().size(); // force load
-        }
-
-        if (account.getDocuments() != null) {
-            account.getDocuments().size(); // force load
-        }
-
-        if (account.getRoles() != null) {
-            account.getRoles().size(); // force load
-        }
+        loadSingular(account.getHomeAddress());
+        loadCollection(account.getCoolBooks());
+        loadCollection(account.getEdocs());
+        loadCollection(account.getSecurityRoles());
     }
 }

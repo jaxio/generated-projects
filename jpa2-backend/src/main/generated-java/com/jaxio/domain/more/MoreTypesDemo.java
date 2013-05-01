@@ -22,10 +22,12 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.Digits;
-import org.apache.log4j.Logger;
+import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 import com.jaxio.domain.Identifiable;
 import com.jaxio.domain.IdentifiableHashBuilder;
@@ -35,7 +37,7 @@ import com.jaxio.domain.more.MoreTypesDemo_;
 @Table(name = "MORE_TYPES_DEMO")
 public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
     private static final long serialVersionUID = 1L;
-    private static final Logger log = Logger.getLogger(MoreTypesDemo.class);
+    private static final Logger log = LoggerFactory.getLogger(MoreTypesDemo.class);
 
     // Raw attributes
     private Integer id; // pk
@@ -51,11 +53,9 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
     private LocalDateTime dateTimeJoda;
     private Integer version;
 
-    // -------------------------------
-    // Getter & Setter
-    // -------------------------------
     // -- [id] ------------------------
 
+    @Override
     @Column(name = "ID", precision = 10)
     @GeneratedValue
     @Id
@@ -63,11 +63,19 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    public MoreTypesDemo id(Integer id) {
+        setId(id);
+        return this;
+    }
+
+    @Override
     @Transient
+    @XmlTransient
     public boolean isIdSet() {
         return id != null;
     }
@@ -83,6 +91,11 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
         this.numberInt = numberInt;
     }
 
+    public MoreTypesDemo numberInt(Integer numberInt) {
+        setNumberInt(numberInt);
+        return this;
+    }
+
     // -- [numberLong] ------------------------
 
     @Column(name = "NUMBER_LONG", precision = 19)
@@ -92,6 +105,11 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
 
     public void setNumberLong(Long numberLong) {
         this.numberLong = numberLong;
+    }
+
+    public MoreTypesDemo numberLong(Long numberLong) {
+        setNumberLong(numberLong);
+        return this;
     }
 
     // -- [numberDouble] ------------------------
@@ -105,6 +123,11 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
         this.numberDouble = numberDouble;
     }
 
+    public MoreTypesDemo numberDouble(Double numberDouble) {
+        setNumberDouble(numberDouble);
+        return this;
+    }
+
     // -- [numberFloat] ------------------------
 
     @Column(name = "NUMBER_FLOAT", precision = 7)
@@ -116,6 +139,11 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
         this.numberFloat = numberFloat;
     }
 
+    public MoreTypesDemo numberFloat(Float numberFloat) {
+        setNumberFloat(numberFloat);
+        return this;
+    }
+
     // -- [numberBigInteger] ------------------------
 
     @Column(name = "NUMBER_BIG_INTEGER", precision = 20)
@@ -125,6 +153,11 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
 
     public void setNumberBigInteger(BigInteger numberBigInteger) {
         this.numberBigInteger = numberBigInteger;
+    }
+
+    public MoreTypesDemo numberBigInteger(BigInteger numberBigInteger) {
+        setNumberBigInteger(numberBigInteger);
+        return this;
     }
 
     // -- [numberBigDecimal] ------------------------
@@ -139,6 +172,11 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
         this.numberBigDecimal = numberBigDecimal;
     }
 
+    public MoreTypesDemo numberBigDecimal(BigDecimal numberBigDecimal) {
+        setNumberBigDecimal(numberBigDecimal);
+        return this;
+    }
+
     // -- [dateJavaTemporalDate] ------------------------
 
     @Column(name = "DATE_JAVA_TEMPORAL_DATE", length = 8)
@@ -149,6 +187,11 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
 
     public void setDateJavaTemporalDate(Date dateJavaTemporalDate) {
         this.dateJavaTemporalDate = dateJavaTemporalDate;
+    }
+
+    public MoreTypesDemo dateJavaTemporalDate(Date dateJavaTemporalDate) {
+        setDateJavaTemporalDate(dateJavaTemporalDate);
+        return this;
     }
 
     // -- [dateJavaTemporalTimestamp] ------------------------
@@ -163,6 +206,11 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
         this.dateJavaTemporalTimestamp = dateJavaTemporalTimestamp;
     }
 
+    public MoreTypesDemo dateJavaTemporalTimestamp(Date dateJavaTemporalTimestamp) {
+        setDateJavaTemporalTimestamp(dateJavaTemporalTimestamp);
+        return this;
+    }
+
     // -- [dateJoda] ------------------------
 
     @Column(name = "DATE_JODA", length = 8)
@@ -173,6 +221,11 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
 
     public void setDateJoda(LocalDate dateJoda) {
         this.dateJoda = dateJoda;
+    }
+
+    public MoreTypesDemo dateJoda(LocalDate dateJoda) {
+        setDateJoda(dateJoda);
+        return this;
     }
 
     // -- [dateTimeJoda] ------------------------
@@ -187,6 +240,11 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
         this.dateTimeJoda = dateTimeJoda;
     }
 
+    public MoreTypesDemo dateTimeJoda(LocalDateTime dateTimeJoda) {
+        setDateTimeJoda(dateTimeJoda);
+        return this;
+    }
+
     // -- [version] ------------------------
 
     @Column(name = "VERSION", precision = 10)
@@ -199,6 +257,11 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
         this.version = version;
     }
 
+    public MoreTypesDemo version(Integer version) {
+        setVersion(version);
+        return this;
+    }
+
     /**
      * Set the default values.
      */
@@ -206,7 +269,7 @@ public class MoreTypesDemo implements Identifiable<Integer>, Serializable {
     }
 
     /**
-     * equals implementation using a business key.
+     * Equals implementation using a business key.
      */
     @Override
     public boolean equals(Object other) {

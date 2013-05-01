@@ -27,9 +27,9 @@ public class LegacyGenerator {
     public Legacy getLegacy() {
         Legacy legacy = new Legacy();
 
-        legacy.setCode(ValueGenerator.getUniqueString(8));
-        legacy.setDept(ValueGenerator.getUniqueInteger());
-        legacy.setName(ValueGenerator.getUniqueString(16));
+        legacy.getId().setCode(ValueGenerator.getUniqueString(8));
+        legacy.getId().setDept(ValueGenerator.getUniqueInteger());
+        legacy.getId().setName(ValueGenerator.getUniqueString(16));
         // simple attributes follows
         legacy.setExtraInfo("a");
         return legacy;

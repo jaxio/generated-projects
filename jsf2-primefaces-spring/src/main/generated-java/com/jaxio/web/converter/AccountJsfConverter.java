@@ -15,7 +15,8 @@ import com.jaxio.repository.AccountRepository;
 import com.jaxio.web.converter.GenericJsfConverter;
 
 /**
- * JSF Converter for {@link Account}.
+ * JSF converter for {@link Account}.
+ * @see GenericJsfConverter
  */
 @Named
 @Singleton

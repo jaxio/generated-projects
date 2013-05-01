@@ -8,20 +8,20 @@
 package com.jaxio.web.conversation;
 
 /**
- * Holds the current {@link Conversation} in the current Thread of execution.
+ * Holds the current {@link Conversation} in the current thread of execution.
  */
 public class ConversationHolder {
     private static final ThreadLocal<Conversation> currentConversationHolder = new ThreadLocal<Conversation>();
 
     /**
-     * Returns the {@link Conversation} that is bound to the current Thread of execution.
+     * Returns the {@link Conversation} that is bound to the current thread of execution.
      */
     public static Conversation getCurrentConversation() {
         return currentConversationHolder.get();
     }
 
     /**
-     * Bind the passed {@link Conversation} to the current Thread of execution.
+     * Bind the passed {@link Conversation} to the current thread of execution.
      */
     public static void setCurrentConversation(Conversation conversation) {
         currentConversationHolder.set(conversation);

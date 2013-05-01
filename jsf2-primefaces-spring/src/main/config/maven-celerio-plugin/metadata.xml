@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata xmlns="http://www.jaxio.com/schema/celerio">
-  <jdbcConnectivity driver="org.h2.Driver" url="jdbc:h2:~/.h2/appli;MVCC=TRUE" user="appli" password="appli" tableNamePattern="%" oracleRetrieveRemarks="false" oracleRetrieveSynonyms="true">
+  <jdbcConnectivity driver="org.h2.Driver" url="jdbc:h2:~/.h2/appli;MVCC=TRUE;FILE_LOCK=NO" user="appli" password="appli" tableNamePattern="%" oracleRetrieveRemarks="false" oracleRetrieveSynonyms="true">
     <tableTypes>
       <tableType>TABLE</tableType>
     </tableTypes>
@@ -13,7 +13,7 @@
         <column name="LOGIN" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="100" type="VARCHAR"/>
         <column name="PASSWORD" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="100" type="VARCHAR"/>
         <column name="EMAIL" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="4" size="100" type="VARCHAR"/>
-        <column name="IS_ENABLED" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="5" size="1" type="BOOLEAN"/>
+        <column name="IS_ENABLED" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="5" size="1" type="BOOLEAN"/>
         <column name="CIVILITY" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="6" size="2" type="CHAR"/>
         <column name="FIRST_NAME" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="7" size="100" type="VARCHAR"/>
         <column name="LAST_NAME" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="8" size="100" type="VARCHAR"/>
@@ -61,7 +61,7 @@
     </table>
     <table name="ADDRESS" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_6C2DC257_872A_42CD_802C_06E614BBFD24)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_6618B848_E1D8_4C97_8B6D_95FBB3997620)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="STREET_NAME" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="2" size="100" type="VARCHAR"/>
         <column name="CITY" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="100" type="VARCHAR"/>
         <column name="VERSION" columnDef="0" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="4" size="10" type="INTEGER"/>
@@ -76,7 +76,7 @@
     </table>
     <table name="BOOK" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_9764ECD0_EA5F_47E1_9ABB_1DDDFF2913CC)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_4905E32C_2AAE_4763_943B_5793677AC4F5)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="ACCOUNT_ID" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="2" size="36" type="CHAR"/>
         <column name="TITLE" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="100" type="VARCHAR"/>
         <column name="NUMBER_OF_PAGES" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="4" size="10" type="INTEGER"/>
@@ -97,10 +97,10 @@
       <columns>
         <column name="ID" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="1" size="36" type="CHAR"/>
         <column name="ACCOUNT_ID" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="36" type="CHAR"/>
-        <column name="DOCUMENT_CONTENT_TYPE" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="100" type="VARCHAR"/>
-        <column name="DOCUMENT_SIZE" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="4" size="10" type="INTEGER"/>
-        <column name="DOCUMENT_FILE_NAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="5" size="100" type="VARCHAR"/>
-        <column name="DOCUMENT_BINARY" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="6" size="2147483647" type="VARBINARY"/>
+        <column name="DOCUMENT_BINARY" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="3" size="2147483647" type="VARBINARY"/>
+        <column name="DOCUMENT_FILE_NAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="4" size="100" type="VARCHAR"/>
+        <column name="DOCUMENT_CONTENT_TYPE" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="5" size="100" type="VARCHAR"/>
+        <column name="DOCUMENT_SIZE" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="6" size="10" type="INTEGER"/>
         <column name="VERSION" columnDef="0" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="7" size="10" type="INTEGER"/>
       </columns>
       <indexes>
@@ -135,7 +135,7 @@
     </table>
     <table name="MORE_TYPES_DEMO" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_059B0065_FC65_46E6_A77F_5DEE1216BA01)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_649EA705_86E9_425E_B7AA_1FFA62486220)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="NUMBER_INT" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="2" size="10" type="INTEGER"/>
         <column name="NUMBER_LONG" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="3" size="19" type="BIGINT"/>
         <column name="NUMBER_DOUBLE" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="4" size="17" type="DOUBLE"/>
@@ -158,7 +158,7 @@
     </table>
     <table name="ROLE" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_37BBF727_2CCE_42B4_803B_5980B76A0681)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_8CF01726_0976_42B8_A8D2_56B25AE013C2)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="ROLE_NAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="100" type="VARCHAR"/>
       </columns>
       <indexes>
@@ -172,7 +172,7 @@
     </table>
     <table name="SAVED_SEARCH" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_8AEB8EB6_5494_401D_A9DD_E071793A09A3)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_33E461F2_F05E_43FC_8DD2_FAD877E1C2CF)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="NAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="128" type="VARCHAR"/>
         <column name="FORM_CLASSNAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="256" type="VARCHAR"/>
         <column name="FORM_CONTENT" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="4" size="2147483647" type="VARBINARY"/>
@@ -180,10 +180,10 @@
       </columns>
       <indexes>
         <indexe columnName="ID" indexName="PRIMARY_KEY_1E" nonUnique="false"/>
-        <indexe columnName="ACCOUNT_ID" indexName="SAVED_SEASRCH_FK_1_INDEX_1" nonUnique="true"/>
+        <indexe columnName="ACCOUNT_ID" indexName="SAVED_SEARCH_FK_1_INDEX_1" nonUnique="true"/>
       </indexes>
       <importedKeys>
-        <importedKey fkColumnName="ACCOUNT_ID" fkName="SAVED_SEASRCH_FK_1" pkColumnName="ID" pkTableName="ACCOUNT"/>
+        <importedKey fkColumnName="ACCOUNT_ID" fkName="SAVED_SEARCH_FK_1" pkColumnName="ID" pkTableName="ACCOUNT"/>
       </importedKeys>
       <primaryKeys>
         <primaryKey>ID</primaryKey>

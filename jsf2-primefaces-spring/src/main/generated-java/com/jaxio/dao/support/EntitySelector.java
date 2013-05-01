@@ -81,14 +81,14 @@ public class EntitySelector<E, T extends Identifiable<TPK>, TPK extends Serializ
     }
 
     /**
-     * Import statically this helper for smooth instanciation.
+     * Import statically this helper for smooth instantiation.
      */
     public static <E2, T2 extends Identifiable<TPK2>, TPK2 extends Serializable> EntitySelector<E2, T2, TPK2> newEntitySelector(SingularAttribute<E2, T2> field) {
         return new EntitySelector<E2, T2, TPK2>(field);
     }
 
     /**
-     * Import statically this helper for smooth instanciation.
+     * Import statically this helper for smooth instantiation.
      * It is used in the case where the PK is composite AND the pk member(s) are/is also a foreign key. 
      */
     public static <E2, T2 extends Identifiable<TPK2>, TPK2 extends Serializable, CPK2> EntitySelector<E2, T2, TPK2> newEntitySelectorInCpk(

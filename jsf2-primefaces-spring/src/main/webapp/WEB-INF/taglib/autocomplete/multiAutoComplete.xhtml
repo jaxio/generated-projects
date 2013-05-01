@@ -4,10 +4,10 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:app="http://springfuse.jaxio.com/app">
-	<app:outputLabel for="#{id}_input" value="#{label}" />
-	<h:panelGrid id="#{id}Grid" columns="2" styleClass="aria-role-presentation">
-		<p:autoComplete id="#{id}" value="#{value}" label="#{label}"
-			completeMethod="#{controller.complete}"
+	<app:outputLabel for="#{id}_input" value="#{label}" required="#{required}" rendered="#{rendered}"/>
+	<h:panelGroup id="#{id}Grid" styleClass="aria-role-presentation" rendered="#{empty rendered ? true : rendered}">
+		<p:autoComplete id="#{id}" value="#{value}" label="#{resourcesUtil.getProperty(label)}"
+			completeMethod="#{controller[(empty completeMethod) ? 'complete' : completeMethod]}"
 			var="item"
 			itemValue="#{item}"
 			itemLabel="#{printer.print(item)}"
@@ -15,10 +15,11 @@
 			dropdown="true"
 			multiple="true"
 			minQueryLength="#{empty minQueryLength ? 2 : minQueryLength}"
-			queryDelay="#{empty forceSelection ? 100 : forceSelection}"
+			queryDelay="#{empty queryDelay ? 500 : queryDelay}"
 			forceSelection="#{forceSelection}"
-			size="#{empty size ? 50 : size}">
+			size="#{empty size ? 50 : size}"
+			maxResults="#{empty maxResults ? 7 : maxResults}">
 			<ui:insert/>
 		</p:autoComplete>
-	</h:panelGrid>
+	</h:panelGroup>
 </ui:composition>

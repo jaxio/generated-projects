@@ -13,16 +13,10 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
 
 import com.jaxio.web.conversation.Conversation;
-import com.jaxio.web.conversation.ConversationContext;
 
 /**
- * Beans in the conversation scope reside in a {@link Conversation conversation}'s {@link ConversationContext}.
- * They are 'visible' only when the conversation is bound to the current Thread of execution and their 
- * hosting ConversationContext is on top of the conversation's contextes stack.
- * 
- * Such a design decision allows a conversation to have 2 'conversation scoped' beans with 
- * the same name (they just have to reside in 2 different ConversationContext).
- * This prevents bean name clash in complex navigation scenario within the same conversation.
+ * Beans in the conversation scope reside in a {@link Conversation conversation}.
+ * They are 'visible' only when the conversation is bound to the current thread of execution.
  */
 public class ConversationScope implements Scope {
 
@@ -56,6 +50,7 @@ public class ConversationScope implements Scope {
 
     @Override
     public Object resolveContextualObject(String key) {
-        return getCurrentConversation().getVar(key);
+        // TODO: is it really required?      
+        throw new UnsupportedOperationException("remove is done during conversation.end");
     }
 }

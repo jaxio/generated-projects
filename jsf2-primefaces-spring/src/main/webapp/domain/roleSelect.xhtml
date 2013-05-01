@@ -15,9 +15,10 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search data="#{roleLazyDataModel}" searchForm="#{roleSearchForm}" permission="#{rolePermission}" title="#{msg.role}" savedSearch="true">
+	<app:search data="#{roleLazyDataModel}" searchForm="#{roleSearchForm}" permission="#{rolePermission}" title="role" savedSearch="true">
 		<ui:define name="filters">
-			<app:inputMultiAutoComplete id="roleName" value="#{roleSearchForm.roleNameSelector}" label="#{msg.role_roleName}" controller="#{roleController}" action="completeProperty" property="roleName" />
+			<app:input id="fullTextQuery" value="#{roleSearchForm.term}" label="search_full_text" />
+			<app:inputMultiAutoComplete id="roleName" value="#{roleSearchForm.roleNameSelector}" label="role_roleName" controller="#{roleController}" completeMethod="completePropertyFullText" property="roleName" />
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">
@@ -30,10 +31,10 @@
 				<h:outputText value="#{item.roleName}" />
 			</p:column>
 			<p:column id="open" headerText="#{msg.actions}" styleClass="actions-column" resizable="false">
-				<app:iconSelect actionBean="#{roleLazyDataModel}" action="select" rendered="#{sub and not multiCheckboxSelection}" title="#{rolePrinter.print(item)}" />
-				<app:iconEdit actionBean="#{roleLazyDataModel}" action="edit" rendered="#{not sub and rolePermission.canEdit(item)}" title="#{rolePrinter.print(item)}" />
-				<app:iconView actionBean="#{roleLazyDataModel}" action="view" rendered="#{rolePermission.canView(item)}" title="#{rolePrinter.print(item)}" />
-				<app:iconDelete rendered="#{not sub and rolePermission.canDelete(item)}" title="#{rolePrinter.print(item)}" />
+				<app:iconSelect actionBean="#{roleLazyDataModel}" rendered="#{sub}" title="#{printer.print(item)}" />
+				<app:iconEdit actionBean="#{roleLazyDataModel}" rendered="#{not sub and rolePermission.canEdit(item)}" title="#{printer.print(item)}" />
+				<app:iconView actionBean="#{roleLazyDataModel}" rendered="#{rolePermission.canView(item)}" title="#{printer.print(item)}" />
+				<app:iconDelete rendered="#{not sub and rolePermission.canDelete(item)}" title="#{printer.print(item)}" />
 			</p:column>
 		</ui:define>
 	</app:search>

@@ -21,7 +21,7 @@ import javax.validation.Payload;
 
 import com.jaxio.validation.impl.FixedLengthValidator;
 
-@Target( { METHOD, FIELD, ANNOTATION_TYPE })
+@Target({ METHOD, FIELD, ANNOTATION_TYPE })
 @Retention(RUNTIME)
 @Constraint(validatedBy = FixedLengthValidator.class)
 @Documented

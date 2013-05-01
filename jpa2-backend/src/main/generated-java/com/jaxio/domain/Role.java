@@ -15,26 +15,30 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-import org.apache.log4j.Logger;
+import javax.xml.bind.annotation.XmlTransient;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 import com.jaxio.domain.Role_;
 
 @Entity
 @Table(name = "`ROLE`")
+@Indexed
 public class Role implements Identifiable<Integer>, Serializable {
     private static final long serialVersionUID = 1L;
-    private static final Logger log = Logger.getLogger(Role.class);
+    private static final Logger log = LoggerFactory.getLogger(Role.class);
 
     // Raw attributes
     private Integer id; // pk
     private String roleName; // unique (not null)
 
-    // -------------------------------
-    // Getter & Setter
-    // -------------------------------
     // -- [id] ------------------------
 
+    @Override
     @Column(name = "ID", precision = 10)
     @GeneratedValue
     @Id
@@ -42,11 +46,19 @@ public class Role implements Identifiable<Integer>, Serializable {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    public Role id(Integer id) {
+        setId(id);
+        return this;
+    }
+
+    @Override
     @Transient
+    @XmlTransient
     public boolean isIdSet() {
         return id != null;
     }
@@ -56,12 +68,18 @@ public class Role implements Identifiable<Integer>, Serializable {
     @Size(max = 100)
     @NotEmpty
     @Column(name = "ROLE_NAME", nullable = false, unique = true, length = 100)
+    @Field(analyzer = @Analyzer(definition = "custom"))
     public String getRoleName() {
         return roleName;
     }
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public Role roleName(String roleName) {
+        setRoleName(roleName);
+        return this;
     }
 
     /**
@@ -71,7 +89,7 @@ public class Role implements Identifiable<Integer>, Serializable {
     }
 
     /**
-     * equals implementation using a business key.
+     * Equals implementation using a business key.
      */
     @Override
     public boolean equals(Object other) {

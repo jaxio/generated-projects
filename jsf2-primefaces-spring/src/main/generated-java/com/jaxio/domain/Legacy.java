@@ -17,8 +17,9 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
-import org.apache.log4j.Logger;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 import com.jaxio.domain.IdentifiableHashBuilder;
 import com.jaxio.domain.Legacy_;
@@ -27,7 +28,7 @@ import com.jaxio.domain.Legacy_;
 @Table(name = "LEGACY", uniqueConstraints = { @UniqueConstraint(name = "PRIMARY_KEY_8", columnNames = { "NAME", "CODE", "DEPT" }) })
 public class Legacy implements Identifiable<LegacyPk>, Serializable {
     private static final long serialVersionUID = 1L;
-    private static final Logger log = Logger.getLogger(Legacy.class);
+    private static final Logger log = LoggerFactory.getLogger(Legacy.class);
 
     // Composite primary key
     private LegacyPk id = new LegacyPk();
@@ -57,6 +58,11 @@ public class Legacy implements Identifiable<LegacyPk>, Serializable {
         this.id = id;
     }
 
+    public Legacy id(LegacyPk id) {
+        setId(id);
+        return this;
+    }
+
     /**
      * Tells whether or not this instance has a non empty composite primary key set.
      * @return true if a non empty primary key is set, false otherwise
@@ -68,83 +74,6 @@ public class Legacy implements Identifiable<LegacyPk>, Serializable {
         return getId() != null && getId().isIdSet();
     }
 
-    /**
-     * Helper method to set directly the code into the LegacyPk corresponding field.
-     * todo document $pkAttribute.comment
-     * @param code the code
-     */
-    public void setCode(String code) {
-        if (getId() == null) {
-            setId(new LegacyPk());
-        }
-
-        getId().setCode(code);
-    }
-
-    /**
-     * Helper method to get directly the code from the LegacyPk corresponding field.
-     * @return the code
-     */
-    @Transient
-    @XmlTransient
-    @Size(max = 8)
-    @NotEmpty
-    public String getCode() {
-        return getId() != null ? getId().getCode() : null;
-    }
-
-    /**
-     * Helper method to set directly the dept into the LegacyPk corresponding field.
-     * todo document $pkAttribute.comment
-     * @param dept the dept
-     */
-    public void setDept(Integer dept) {
-        if (getId() == null) {
-            setId(new LegacyPk());
-        }
-
-        getId().setDept(dept);
-    }
-
-    /**
-     * Helper method to get directly the dept from the LegacyPk corresponding field.
-     * @return the dept
-     */
-    @Transient
-    @XmlTransient
-    @NotNull
-    public Integer getDept() {
-        return getId() != null ? getId().getDept() : null;
-    }
-
-    /**
-     * Helper method to set directly the name into the LegacyPk corresponding field.
-     * todo document $pkAttribute.comment
-     * @param name the name
-     */
-    public void setName(String name) {
-        if (getId() == null) {
-            setId(new LegacyPk());
-        }
-
-        getId().setName(name);
-    }
-
-    /**
-     * Helper method to get directly the name from the LegacyPk corresponding field.
-     * @return the name
-     */
-    @Transient
-    @XmlTransient
-    @Size(max = 16)
-    @NotEmpty
-    public String getName() {
-        return getId() != null ? getId().getName() : null;
-    }
-
-    // -------------------------------
-    // Getter & Setter
-    // -------------------------------
     // -- [extraInfo] ------------------------
 
     @Size(max = 100)
@@ -158,6 +87,11 @@ public class Legacy implements Identifiable<LegacyPk>, Serializable {
         this.extraInfo = extraInfo;
     }
 
+    public Legacy extraInfo(String extraInfo) {
+        setExtraInfo(extraInfo);
+        return this;
+    }
+
     /**
      * Set the default values.
      */
@@ -165,7 +99,7 @@ public class Legacy implements Identifiable<LegacyPk>, Serializable {
     }
 
     /**
-     * equals implementation using a business key.
+     * Equals implementation using a business key.
      */
     @Override
     public boolean equals(Object other) {

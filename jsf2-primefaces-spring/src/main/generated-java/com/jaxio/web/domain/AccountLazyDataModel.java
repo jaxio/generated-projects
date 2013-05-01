@@ -9,17 +9,20 @@ package com.jaxio.web.domain;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import com.jaxio.dao.support.OrderBy;
+import org.primefaces.model.LazyDataModel;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Account_;
 import com.jaxio.repository.AccountRepository;
 import com.jaxio.web.converter.AccountJsfConverter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
-import com.jaxio.web.faces.Conversation;
+import com.jaxio.web.faces.ConversationContextScoped;
 
+/**
+ * Provide PrimeFaces {@link LazyDataModel} for {@link Account}
+ */
 @Named
-@Conversation
+@ConversationContextScoped
 public class AccountLazyDataModel extends GenericLazyDataModel<Account, String, AccountSearchForm> {
     private static final long serialVersionUID = 1L;
 
@@ -31,6 +34,6 @@ public class AccountLazyDataModel extends GenericLazyDataModel<Account, String, 
 
     @Override
     protected void defaultOrder(SearchParameters sp) {
-        sp.addOrderBy(new OrderBy(Account_.username));
+        sp.orderBy(Account_.username);
     }
 }

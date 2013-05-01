@@ -66,6 +66,11 @@ public class LegacyPk implements Comparable<LegacyPk>, Serializable {
         this.code = code;
     }
 
+    public LegacyPk code(String code) {
+        setCode(code);
+        return this;
+    }
+
     /**
      * Helper that determines if this attribute is set or not.
      */
@@ -84,6 +89,11 @@ public class LegacyPk implements Comparable<LegacyPk>, Serializable {
 
     public void setDept(Integer dept) {
         this.dept = dept;
+    }
+
+    public LegacyPk dept(Integer dept) {
+        setDept(dept);
+        return this;
     }
 
     /**
@@ -105,6 +115,11 @@ public class LegacyPk implements Comparable<LegacyPk>, Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public LegacyPk name(String name) {
+        setName(name);
+        return this;
     }
 
     /**

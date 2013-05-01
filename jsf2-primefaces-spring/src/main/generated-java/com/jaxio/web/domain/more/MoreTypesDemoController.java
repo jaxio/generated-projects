@@ -16,16 +16,17 @@ import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.more.MoreTypesDemoPermission;
 
 /**
- * Stateless controller for MoreTypesDemo conversation start. Provides also auto-complete support. 
+ * Stateless controller for {@link MoreTypesDemo} conversation start. 
  */
 @Named
 @Singleton
 public class MoreTypesDemoController extends GenericController<MoreTypesDemo, Integer> {
-    public final static String editUri = "/domain/more/moreTypesDemoEdit.faces";
-    public final static String selectUri = "/domain/more/moreTypesDemoSelect.faces";
+    private static final String editUri = "/domain/more/moreTypesDemoEdit.faces";
+    private static final String selectUri = "/domain/more/moreTypesDemoSelect.faces";
 
     @Inject
     public MoreTypesDemoController(MoreTypesDemoRepository moreTypesDemoRepository, MoreTypesDemoPermission moreTypesDemoPermission) {
         super(moreTypesDemoRepository, moreTypesDemoPermission, selectUri, editUri);
     }
+
 }

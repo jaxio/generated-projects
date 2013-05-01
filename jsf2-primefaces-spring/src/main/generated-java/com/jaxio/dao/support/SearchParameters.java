@@ -7,8 +7,10 @@
  */
 package com.jaxio.dao.support;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 import java.io.Serializable;
@@ -17,8 +19,10 @@ import java.util.Map;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import com.jaxio.domain.Identifiable;
 
@@ -36,6 +40,7 @@ import com.jaxio.domain.Identifiable;
  * <li>Enable/disable 2d level cache</li>
  * <li>LIKE search against all string values: simply set the searchPattern property</li>
  * <li>Named query: if you set a named query it will be executed. Named queries can be defined in annotation or src/main/resources/META-INF/orm.xml</li>
+ * <li>FullTextSearch: simply set the term property (requires Hibernate Search)</li>
  * </ul>
  * 
  * Note : All requests are limited to a maximum number of elements to prevent resource exhaustion.
@@ -49,7 +54,7 @@ import com.jaxio.domain.Identifiable;
  * @see EntitySelector
  */
 public class SearchParameters implements Serializable {
-    static final private long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private SearchMode searchMode = SearchMode.EQUALS;
 
@@ -80,6 +85,7 @@ public class SearchParameters implements Serializable {
 
     // pattern to match against all strings.
     private String searchPattern;
+
     // Warn: before enabling cache for queries,
     // check this: https://hibernate.atlassian.net/browse/HHH-1523
     private Boolean cacheable = false;
@@ -101,8 +107,7 @@ public class SearchParameters implements Serializable {
      * @see SearchMode#EQUALS
      */
     public void setSearchMode(SearchMode searchMode) {
-        Validate.notNull(searchMode, "searchMode must not be null");
-        this.searchMode = searchMode;
+        this.searchMode = checkNotNull(searchMode);
     }
 
     /**
@@ -162,6 +167,10 @@ public class SearchParameters implements Serializable {
         return searchMode;
     }
 
+    public boolean is(SearchMode searchMode) {
+        return getSearchMode() == searchMode;
+    }
+
     // -----------------------------------
     // Named query support
     // -----------------------------------
@@ -199,17 +208,14 @@ public class SearchParameters implements Serializable {
      * Set the parameters for the named query.
      */
     public void setNamedQueryParameters(Map<String, Object> parameters) {
-        Validate.notNull(parameters, "parameters must not be null");
-        this.parameters = parameters;
+        this.parameters = checkNotNull(parameters);
     }
 
     /**
      * Set the parameters for the named query.
      */
     public void addNamedQueryParameter(String name, Object value) {
-        Validate.notNull(name, "name must not be null");
-        Validate.notNull(value, "value must not be null");
-        parameters.put(name, value);
+        parameters.put(checkNotNull(name), checkNotNull(value));
     }
 
     /**
@@ -239,7 +245,7 @@ public class SearchParameters implements Serializable {
      * Return the value of the passed parameter name.
      */
     public Object getNamedQueryParameter(String parameterName) {
-        return parameters.get(parameterName);
+        return parameters.get(checkNotNull(parameterName));
     }
 
     // -----------------------------------
@@ -275,6 +281,71 @@ public class SearchParameters implements Serializable {
      */
     public String getSearchPattern() {
         return searchPattern;
+    }
+
+    // -----------------------------------
+    // Terms support (hibernate search)
+    // -----------------------------------
+
+    private List<String> termsOnDefault = newArrayList();
+    private ArrayListMultimap<String, String> termsOnAny = ArrayListMultimap.create();
+    private ArrayListMultimap<String, String> termsOnAll = ArrayListMultimap.create();
+
+    public boolean hasTerms() {
+        return !(termsOnAny.isEmpty() && termsOnAll.isEmpty() && termsOnDefault.isEmpty());
+    }
+
+    public List<String> getTermsOnDefault() {
+        return termsOnDefault;
+    }
+
+    public ArrayListMultimap<String, String> getTermsOnAny() {
+        return termsOnAny;
+    }
+
+    public ArrayListMultimap<String, String> getTermsOnAll() {
+        return termsOnAll;
+    }
+
+    public SearchParameters term(String term) {
+        if (isNotBlank(term)) {
+            termsOnDefault.add(term);
+        }
+        return this;
+    }
+
+    public SearchParameters termOn(String term, String props) {
+        return addTerm(termsOnAll, term, props);
+    }
+
+    public SearchParameters termOn(String term, SingularAttribute<?, ?> attr) {
+        return addTerm(termsOnAll, term, attr.getName());
+    }
+
+    public SearchParameters termOnAll(String term, SingularAttribute<?, ?>... attrs) {
+        return addTerm(termsOnAll, term, JpaUtil.toNames(attrs));
+    }
+
+    public SearchParameters termOnAny(String term, String... props) {
+        return addTerm(termsOnAny, term, props);
+    }
+
+    public SearchParameters termOnAny(String term, SingularAttribute<?, ?>... attrs) {
+        return addTerm(termsOnAny, term, JpaUtil.toNames(attrs));
+    }
+
+    public SearchParameters term(String term, SingularAttribute<?, ?>... attrs) {
+        return addTerm(termsOnAny, term, JpaUtil.toNames(attrs));
+    }
+
+    private SearchParameters addTerm(Multimap<String, String> termsMap, String term, String... props) {
+        if (isBlank(term) || props == null || props.length == 0) {
+            return this;
+        }
+        for (String prop : props) {
+            termsMap.put(term, prop);
+        }
+        return this;
     }
 
     // -----------------------------------
@@ -328,39 +399,28 @@ public class SearchParameters implements Serializable {
     // Order by support
     // -----------------------------------
 
-    public boolean hasOrders() {
-        return !orders.isEmpty();
-    }
-
     public List<OrderBy> getOrders() {
         return orders;
     }
 
     public void addOrderBy(String fieldName) {
-        Validate.notNull(fieldName, "fieldName must not be null");
-        orders.add(new OrderBy(fieldName));
+        orders.add(new OrderBy(checkNotNull(fieldName)));
     }
 
     public void addOrderBy(String fieldName, OrderByDirection direction) {
-        Validate.notNull(fieldName, "fieldName must not be null");
-        Validate.notNull(direction, "direction must not be null");
-        orders.add(new OrderBy(fieldName, direction));
+        orders.add(new OrderBy(checkNotNull(fieldName), checkNotNull(direction)));
     }
 
-    public void addOrderBy(SingularAttribute<? extends Identifiable<? extends Serializable>, ? extends Serializable> attribute) {
-        Validate.notNull(attribute, "attribute must not be null");
-        orders.add(new OrderBy(attribute));
+    public void addOrderBy(SingularAttribute<?, ?> attribute) {
+        orders.add(new OrderBy(checkNotNull(attribute)));
     }
 
-    public void addOrderBy(SingularAttribute<? extends Identifiable<? extends Serializable>, ? extends Serializable> attribute, OrderByDirection direction) {
-        Validate.notNull(attribute, "fieldName must not be null");
-        Validate.notNull(direction, "direction must not be null");
-        orders.add(new OrderBy(attribute, direction));
+    public void addOrderBy(SingularAttribute<?, ?> attribute, OrderByDirection direction) {
+        orders.add(new OrderBy(checkNotNull(attribute), checkNotNull(direction)));
     }
 
     public void addOrderBy(OrderBy orderBy) {
-        Validate.notNull(orderBy, "orderBy must not be null");
-        orders.add(orderBy);
+        orders.add(checkNotNull(orderBy));
     }
 
     public SearchParameters orderBy(OrderBy orderBy) {
@@ -378,15 +438,18 @@ public class SearchParameters implements Serializable {
         return this;
     }
 
-    public SearchParameters orderBy(SingularAttribute<? extends Identifiable<? extends Serializable>, ? extends Serializable> attribute) {
+    public SearchParameters orderBy(SingularAttribute<?, ?> attribute) {
         addOrderBy(attribute);
         return this;
     }
 
-    public SearchParameters orderBy(SingularAttribute<? extends Identifiable<? extends Serializable>, ? extends Serializable> attribute,
-            OrderByDirection direction) {
+    public SearchParameters orderBy(SingularAttribute<?, ?> attribute, OrderByDirection direction) {
         addOrderBy(attribute, direction);
         return this;
+    }
+
+    public boolean hasOrders() {
+        return !orders.isEmpty();
     }
 
     public void clearOrders() {
@@ -413,6 +476,10 @@ public class SearchParameters implements Serializable {
         return this;
     }
 
+    public boolean hasRanges() {
+        return !ranges.isEmpty();
+    }
+
     public void clearRanges() {
         ranges.clear();
     }
@@ -437,6 +504,10 @@ public class SearchParameters implements Serializable {
         return this;
     }
 
+    public boolean hasProperties() {
+        return !properties.isEmpty();
+    }
+
     public void clearProperties() {
         properties.clear();
     }
@@ -459,6 +530,10 @@ public class SearchParameters implements Serializable {
     public SearchParameters entity(EntitySelector<?, ? extends Identifiable<?>, ?> entitySelector) {
         addEntity(entitySelector);
         return this;
+    }
+
+    public boolean hasEntities() {
+        return !entities.isEmpty();
     }
 
     public void clearEntities() {
@@ -597,6 +672,22 @@ public class SearchParameters implements Serializable {
         return extraParameters;
     }
 
+    /**
+     * add additionnal parameter.
+     */
+    public SearchParameters addExtraParameter(String key, Object o) {
+        extraParameters.put(key, o);
+        return this;
+    }
+
+    /**
+     * get additionnal parameter.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getExtraParameter(String key) {
+        return (T) extraParameters.get(key);
+    }
+
     // -----------------------------------
     // Use and in NN Search 
     // -----------------------------------
@@ -615,7 +706,7 @@ public class SearchParameters implements Serializable {
     }
 
     public boolean getUseANDInManyToMany() {
-        return this.useANDInManyToMany;
+        return useANDInManyToMany;
     }
 
     // -----------------------------------
