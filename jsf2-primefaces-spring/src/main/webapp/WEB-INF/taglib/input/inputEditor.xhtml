@@ -10,6 +10,7 @@
 			<f:validateBean binding="#{lenientBeanValidator}"/>
 			<ui:insert/>
 		</p:editor>
+		<p:tooltip for="#{id}" value="#{tooltip}" showEffect="slide" rendered="#{not empty tooltip}"/>
 	</h:panelGroup>
 	<h:outputText value="#{value}" rendered="#{readonly and (empty rendered or rendered)}" />
 </ui:composition>

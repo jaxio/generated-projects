@@ -1,0 +1,45 @@
+.printWatermark {
+	display: none;
+}
+
+/* background is made transparent */
+body,
+div.ui-layout-center,
+div.ui-layout-center div.ui-layout-unit-content div.ui-toolbar,
+.ui-fieldset,
+.ui-breadcrumb,
+div.ui-tabs div.ui-tabs-panel,
+div.searchResult,
+.ui-datatable th.ui-state-default,
+.ui-widget-content,
+.ui-datatable tr.ui-state-highlight,
+.ui-tabs .ui-tabs-nav.ui-widget-header li.ui-state-active a
+{
+	background-color: transparent;
+	background-image: none;
+}
+
+/* force char color to black */
+.ui-datatable th.ui-state-default,
+.ui-widget-content,
+#searchResultsRegion,
+div.ui-tabs ul.ui-widget-header.ui-tabs-nav li a,
+div.ui-tabs ul.ui-widget-header.ui-tabs-nav li.ui-state-active a,
+.ui-accordion .ui-accordion-header.ui-state-default a,
+.ui-datatable tr.ui-state-highlight
+{
+	color: black;
+}
+
+/* remove some navigation element */
+.environment,
+div.ui-breadcrumb,
+div.ui-toolbar,
+a.ui-button,
+span.ui-button,
+#form\3Atop,#form\3Atop div,
+#form\3Atop-toolbar,
+.actions-column
+{
+	display: none;
+}

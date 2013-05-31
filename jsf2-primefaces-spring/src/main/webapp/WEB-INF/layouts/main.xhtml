@@ -22,9 +22,9 @@
 		</f:facet>
 	</h:head>
 	<h:body>
-		<p:growl widgetVar="growlNotificationBar" showDetail="true" sticky="false" life="1500" />
+		<p:growl widgetVar="growlNotificationBar" showDetail="true" sticky="false" life="1500" for="seleniumOnly" />
 		<img class="environment #{environmentService.environment}"/>
-		<h:form id="form" enctype="multipart/form-data; charset=utf-8">
+		<h:form id="form" enctype="multipart/form-data; charset=utf-8" prependId="#{empty prependId or prependId}">
 			<!-- regular layout (does not work with chromeshades) -->
 			<p:layout fullPage="true" >
 				<p:layoutUnit id="top" position="north" resizable="false" size="115">
@@ -35,11 +35,11 @@
 							<h:panelGroup>
 								<div class="userInfo">
 									<h:outputText value="#{userContextService.username} #{userContextService.roles}" styleClass="userInfo-username" rendered="#{userContextService.isLoggedIn()}"/>
-									<h:outputLink id="login_link" value="#{facesContext.externalContext.requestContextPath}/login.faces" styleClass="userInfo-user" rendered="#{userContextService.isAnonymousUser()}">#{msg.connexion}</h:outputLink>
+									<h:outputLink id="login_link" value="#{facesContext.externalContext.requestContextPath}/login.faces" styleClass="userInfo-user" rendered="#{userContextService.isAnonymousUser()}">#{msg.login}</h:outputLink>
 									<h:outputLink id="logout_link" value="#{facesContext.externalContext.requestContextPath}/logout.faces" styleClass="userInfo-user" rendered="#{userContextService.isLoggedIn()}">#{msg.logout}</h:outputLink>
 									<h:outputLink id="home_link" value="#{facesContext.externalContext.requestContextPath}/home.faces" styleClass="userInfo-welcome">#{msg.home}</h:outputLink>
-									<p:commandLink id="switchToFrench" action="#{localeService.switchToFrench()}" styleClass="userInfo-fr" rendered="#{!localeService.isFrench()}" />
-									<p:commandLink id="switchToEnglish" action="#{localeService.switchToEnglish()}" styleClass="userInfo-en" rendered="#{localeService.isFrench()}" />
+									<p:commandLink id="switchToFrench" action="#{localeService.switchToFrench()}" styleClass="userInfo-fr" rendered="#{!localeService.isFrench()}" ajax="false"/>
+									<p:commandLink id="switchToEnglish" action="#{localeService.switchToEnglish()}" styleClass="userInfo-en" rendered="#{localeService.isFrench()}" ajax="false"/>
 									<h:outputLink url="#{facesContext.externalContext.requestContextPath}/monitoring" rendered="#{userContextService.hasRole('ROLE_MONITORING')}">Monitoring</h:outputLink>
 								</div>
 							</h:panelGroup>
@@ -50,9 +50,9 @@
 							<ui:insert name="toolbarChildren"/>
 							<p:toolbarGroup align="right">
 								<p:menuButton
-									value="Conversations (#{conversationManager.conversationCount})"
-									model="#{conversationManager.conversationMenuModel}" 
-									rendered="#{conversationManager.conversationCount > 0}"/>
+									value="#{resourcesUtil.getPluralableProperty('menu_active_flows', conversationManager.nbConversations)}"
+									model="#{conversationMenu.model}" 
+									rendered="#{conversationMenu.render}"/>
 								<p:menuButton value="Domain">
 									<p:menuitem value="#{msg.account}" action="#{accountController.beginSearch()}" rendered="#{accountPermission.canSearch()}" />
 									<p:menuitem value="#{msg.address}" action="#{addressController.beginSearch()}" rendered="#{addressPermission.canSearch()}" />
@@ -61,11 +61,11 @@
 									<p:menuitem value="#{msg.role}" action="#{roleController.beginSearch()}" rendered="#{rolePermission.canSearch()}" />
 									<p:menuitem value="#{msg.savedSearch}" action="#{savedSearchController.beginSearch()}" rendered="#{savedSearchPermission.canSearch()}" />
 								</p:menuButton>
-								<p:menuButton value="Debug">
-									<p:menuitem value="Throw exception" action="#{exceptionUtil.throwRuntimeException()}" process="@this" ajax="false" immediate="true" icon="ui-icon ui-icon-alert" />
-									<p:menuitem value="Throw ajax exception" action="#{exceptionUtil.throwRuntimeException()}" update="messages" process="@this" ajax="true" immediate="true" icon="ui-icon ui-icon-alert" style="width:300px"/>
-									<p:menuitem value="Throw data access exception" action="#{exceptionUtil.throwDataAccessException()}" process="@this" ajax="false" immediate="true" icon="ui-icon ui-icon-alert" style="width:350px"/>
-									<p:menuitem value="Throw ajax data access exception" action="#{exceptionUtil.throwDataAccessException()}" update="messages" process="@this" ajax="true" immediate="true" icon="ui-icon ui-icon-alert" style="width:800px"/>
+								<p:menuButton value="Debug" id="debug">
+									<p:menuitem id="throwException" value="Throw exception" action="#{exceptionUtil.throwRuntimeException()}" process="@this" ajax="false" immediate="true" icon="ui-icon ui-icon-alert" />
+									<p:menuitem id="throwAjaxException" value="Throw ajax exception" action="#{exceptionUtil.throwRuntimeException()}" update="messages" process="@this" ajax="true" immediate="true" icon="ui-icon ui-icon-alert" style="width:300px"/>
+									<p:menuitem id="throwDataAccessException" value="Throw data access exception" action="#{exceptionUtil.throwDataAccessException()}" process="@this" ajax="false" immediate="true" icon="ui-icon ui-icon-alert" style="width:350px"/>
+									<p:menuitem id="thowAjaxDataAccessException" value="Throw ajax data access exception" action="#{exceptionUtil.throwDataAccessException()}" update="messages" process="@this" ajax="true" immediate="true" icon="ui-icon ui-icon-alert" style="width:800px"/>
 								</p:menuButton>
 							</p:toolbarGroup>
 						</p:toolbar>
@@ -74,7 +74,7 @@
 							<script type="text/javascript">
 								$(function() {
 									setTimeout(function() {
-										APP.focusTo('form:cancel');
+										APP.focusTo('form:back');
 									}, 200);
 								});
 							</script>
@@ -83,7 +83,7 @@
 				</p:layoutUnit>
 				<p:layoutUnit id="center" position="center">
 					<div id="messagesRegion" aria-label="form feedback" aria-live="assertive" aria-relevant="additions">
-						<appcc:messages id="messages" />
+						<appcc:messages id="messages" rendered="#{empty disableMessages or not disableMessages}" />
 					</div>
 					<p:focus context="center" rendered="#{messagesHelper.hasNoMessages()}" />
 					<ui:insert name="content"/>

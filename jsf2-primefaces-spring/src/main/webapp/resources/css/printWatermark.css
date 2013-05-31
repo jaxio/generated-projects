@@ -1,0 +1,24 @@
+div.printWatermark {
+	display:block;
+	position:fixed;
+	z-index:-1;
+	width:100%;
+	height:100%;
+}
+
+div.printWatermark div {
+	position:absolute;
+	left:0;
+	width:100%;
+	top: 10%;
+	bottom: 10%;
+}
+
+div.printWatermark img {
+	width: 100%;
+	height: 80%;
+}
+
+button.ui-button {
+	display: none;
+}

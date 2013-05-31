@@ -14,15 +14,15 @@ form .required-pseudo-label {
 	font-weight: bold;
 }
 
-div .ui-menu.ui-menubar{
-	background-color:transprent;
+div .ui-menu.ui-menubar {
+	background-color:transparent;
 	background: rgb(129,127,126); /* Old browsers */
-	background: -moz-linear-gradient(top,  rgba(129,127,126,1) 0%, rgba(84,82,80,1) 65%, rgba(84,82,80,1) 100%) ; /* FF3.6+ */
+	background: -moz-linear-gradient(top, rgba(129,127,126,1) 0%, rgba(84,82,80,1) 65%, rgba(84,82,80,1) 100%) ; /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(129,127,126,1)), color-stop(65%,rgba(84,82,80,1)), color-stop(100%,rgba(84,82,80,1))) ; /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  rgba(129,127,126,1) 0%,rgba(84,82,80,1) 65%,rgba(84,82,80,1) 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  rgba(129,127,126,1) 0%,rgba(84,82,80,1) 65%,rgba(84,82,80,1) 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  rgba(129,127,126,1) 0%,rgba(84,82,80,1) 65%,rgba(84,82,80,1) 100%); /* IE10+ */
-	background: linear-gradient(to bottom,  rgba(129,127,126,1) 0%,rgba(84,82,80,1) 65%,rgba(84,82,80,1) 100%); /* W3C */
+	background: -webkit-linear-gradient(top, rgba(129,127,126,1) 0%,rgba(84,82,80,1) 65%,rgba(84,82,80,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, rgba(129,127,126,1) 0%,rgba(84,82,80,1) 65%,rgba(84,82,80,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, rgba(129,127,126,1) 0%,rgba(84,82,80,1) 65%,rgba(84,82,80,1) 100%); /* IE10+ */
+	background: linear-gradient(to bottom, rgba(129,127,126,1) 0%,rgba(84,82,80,1) 65%,rgba(84,82,80,1) 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#817f7e', endColorstr='#545250',GradientType=0 ); /* IE6-9 */
 	border:none;
 	border-radius:0px;
@@ -31,12 +31,12 @@ div .ui-menu.ui-menubar{
 }
 
 /*only apply to topmenu entries */
-li.topmenu>a>.ui-menuitem-text{ 
+li.topmenu>a>.ui-menuitem-text { 
 	color:#ffffff ;
 }
 
-a .ui-menuitem-text  {
-    color:#000000;
+a .ui-menuitem-text {
+	color:#000000;
 	font-weight:bold;
 	margin-right:5px;
 }
@@ -73,12 +73,12 @@ a .ui-menuitem-text  {
 }
 
 /* info message */
-div .ui-messages-info{
+div .ui-messages-info {
 	background-color: #ddffdd;
 	border-color:#aaddaa;
 }
 
-div.searchResult{
+div.searchResult {
 	background-color:#f5f5f5;
 	border:#bbb solid 1px;
 	padding:5px;
@@ -109,7 +109,7 @@ div.searchResult{
 	text-align: left !important;
 }
 
-/* ICONS for p:commandButon. Note the usage of JSF2 resource facility :-) */
+/* ICONS for p:commandButon. Note the usage of JSF2 resource facility */
 .iconView { 
 	background-image: url("#{resource['icons/eye.png']}") !important;
 }
@@ -145,7 +145,7 @@ div.searchResult{
 	background-color:#f5f5f5;
 }
 
-html body .ui-state-error{
+html body .ui-state-error {
 	color:black;
 	background: #ffeeee ;
 	border: 1px solid #CD0A0A ;
@@ -153,16 +153,16 @@ html body .ui-state-error{
 
 /* tabs */
 
-div.ui-layout-unit div.ui-tabs{
+div.ui-layout-unit div.ui-tabs {
 	margin-bottom:10px;	
 }
 
-div.ui-tabs ul.ui-widget-header.ui-tabs-nav{
+div.ui-tabs ul.ui-widget-header.ui-tabs-nav {
 	padding: 0px 0px 1px 0px;
 }
 
 div.ui-tabs ul.ui-widget-header.ui-tabs-nav li a,
-div.ui-tabs ul.ui-widget-header.ui-tabs-nav li.ui-state-active a{
+div.ui-tabs ul.ui-widget-header.ui-tabs-nav li.ui-state-active a {
 	border:#bbb solid 1px;
 	border-bottom:none;
 	font-weight:bold;
@@ -170,23 +170,27 @@ div.ui-tabs ul.ui-widget-header.ui-tabs-nav li.ui-state-active a{
 	padding:5px 10px;
 }
 
-div.ui-tabs div.ui-tabs-panel{
+div.ui-tabs div.ui-tabs-panel {
 	background-color:#f5f5f5;
 	border:#bbb solid 1px;
 	border-top:none;
 }
 
-/* p:dataTable*/
+/* p:dataTable */
 .ui-datatable .ui-datatable-data td,
 .ui-datatable .ui-datatable-data-empty td {
 	text-align: center;
 }
 
-.ui-datatable th.ui-sortable-column div.ui-dt-c{
+/* right align numbers in p:dataTable */
+.ui-datatable .ui-datatable-data td.numeric {
+	text-align: right;
+}
+
+.ui-datatable th.ui-sortable-column div.ui-dt-c {
 	padding: 4px 15px;
 }
-.ui-datatable th.ui-state-default
- {
+.ui-datatable th.ui-state-default {
 	border: 1px solid #b3b3b3;
 	color:white;
 	background:#777;
@@ -211,7 +215,7 @@ div.ui-tabs div.ui-tabs-panel{
 	text-align: center;
 }
 
-.ui-layout, .ui-layout-doc, .ui-layout-unit, .ui-layout-wrap, .ui-layout-bd, .ui-layout-hd{
+.ui-layout, .ui-layout-doc, .ui-layout-unit, .ui-layout-wrap, .ui-layout-bd, .ui-layout-hd {
 	border: none;
 }
 
@@ -283,32 +287,31 @@ div.ui-layout-north td {
 	vertical-align:top;
 }
 
-div.ui-layout-center{
+div.ui-layout-center {
 	padding:0px;
 	background-color: #d0d3dc;
 }
 
-div.ui-layout-center div.ui-layout-unit-content{
+div.ui-layout-center div.ui-layout-unit-content {
 	padding-left:15px;
 	padding-right:15px;
 	background-color: transparent;
 }
 
-div.ui-layout-center div.ui-layout-unit-content div.ui-toolbar{
-	background:#eaeaea;
+div.ui-layout-center div.ui-layout-unit-content div.ui-toolbar {
+	background-color:#eaeaea;
 	background-image:none;
 	border: #bbb solid 1px;
-
 }
 
-div.ui-layout-center div.ui-layout-unit-content div.ui-toolbar button.ui-button{
-background: rgb(136,181,202); /* Old browsers */
-	background: -moz-linear-gradient(top,  rgba(184,212,255,1) 0%,rgba(145,185,201,1) 100%); /* FF3.6+ */
+div.ui-layout-center div.ui-layout-unit-content div.ui-toolbar button.ui-button {
+	background: rgb(136,181,202); /* Old browsers */
+	background: -moz-linear-gradient(top, rgba(184,212,255,1) 0%,rgba(145,185,201,1) 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(184,212,255,1)), color-stop(100%,rgba(145,185,201,1))); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  rgba(184,212,255,1) 0%,rgba(145,185,201,1) 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  rgba(184,212,255,1) 0%,rgba(145,185,201,1) 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  rgba(184,212,255,1) 0%,rgba(145,185,201,1) 100%); /* IE10+ */
-	background: linear-gradient(to bottom,  rgba(184,212,255,1) 0%,rgba(145,185,201,1) 100%); /* W3C */
+	background: -webkit-linear-gradient(top, rgba(184,212,255,1) 0%,rgba(145,185,201,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, rgba(184,212,255,1) 0%,rgba(145,185,201,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, rgba(184,212,255,1) 0%,rgba(145,185,201,1) 100%); /* IE10+ */
+	background: linear-gradient(to bottom, rgba(184,212,255,1) 0%,rgba(145,185,201,1) 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#B8D4FF', endColorstr='#91B9C9',GradientType=0 ); /* IE6-9 */
 	border:#eee outset 1px;
 	margin:0px 3px;
@@ -317,14 +320,14 @@ background: rgb(136,181,202); /* Old browsers */
 }
 
 div.ui-layout-center div.ui-layout-unit-content div.ui-toolbar button.ui-button.ui-state-hover,
-div.ui-layout-center div.ui-layout-unit-content div.ui-toolbar button.ui-button:hover{
+div.ui-layout-center div.ui-layout-unit-content div.ui-toolbar button.ui-button:hover {
 	background: rgb(255,114,0); /* Old browsers */
-	background: -moz-linear-gradient(top,  rgba(255,114,0,1) 0%, rgba(255,151,51,1) 100%); /* FF3.6+ */
+	background: -moz-linear-gradient(top, rgba(255,114,0,1) 0%, rgba(255,151,51,1) 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,114,0,1)), color-stop(100%,rgba(255,151,51,1))); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  rgba(255,114,0,1) 0%,rgba(255,151,51,1) 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  rgba(255,114,0,1) 0%,rgba(255,151,51,1) 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  rgba(255,114,0,1) 0%,rgba(255,151,51,1) 100%); /* IE10+ */
-	background: linear-gradient(to bottom,  rgba(255,114,0,1) 0%,rgba(255,151,51,1) 100%); /* W3C */
+	background: -webkit-linear-gradient(top, rgba(255,114,0,1) 0%,rgba(255,151,51,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, rgba(255,114,0,1) 0%,rgba(255,151,51,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, rgba(255,114,0,1) 0%,rgba(255,151,51,1) 100%); /* IE10+ */
+	background: linear-gradient(to bottom, rgba(255,114,0,1) 0%,rgba(255,151,51,1) 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff7200', endColorstr='#ff9733',GradientType=0 ); /* IE6-9 */
 	border:#eee inset 1px;
 }

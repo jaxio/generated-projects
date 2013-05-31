@@ -4,12 +4,12 @@
 	<p:commandLink
 		id="#{id}"
 		ajax="false"
-		action="#{actionBean.search()}"
+		action="#{model.search()}"
 		process="@form"
 		disabled="#{readonly}"
-		rendered="#{empty rendered or rendered}"
 		styleClass="ui-button"
-		title="#{msg.icon_search} #{resourcesUtil.getProperty(title)}" >
+		rendered="#{empty rendered ? not sub and not readonly and permission.canSearch() : rendered}"
+		title="#{resourcesUtil.getProperty('icon_search', resourcesUtil.getProperty(title))}">
 		<ui:insert/>
 		<div class="ui-button ui-icon iconSearch"/>
 	</p:commandLink>

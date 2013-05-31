@@ -12,12 +12,12 @@
 				value="#{msg.back}" icon="ui-icon-arrowreturnthick-1-w"/>
 		</p:toolbarGroup>	
 		<p:toolbarGroup align="left" rendered="#{not sub and not readonly}">
-			<p:commandButton id="quit" action="#{searchForm.quit()}" ajax="false" process="@form"
+			<p:commandButton id="quit" action="#{searchForm.quit()}" ajax="false" immediate="true" process="@form"
 				icon="ui-icon-closethick"
 				value="#{msg.menu_quit}"
 				title="#{msg.menu_quit} #{resourcesUtil.getProperty(title)}" />
 			<p:separator />
-			<p:commandButton id="create" action="#{data.create()}" ajax="false" immediate="true" process="@this"
+			<p:commandButton id="create" action="#{model.create()}" ajax="false" immediate="true" process="@this"
 				icon="ui-icon-document"
 				rendered="#{empty bean and permission.canCreate()}"
 				value="#{msg.menu_new}"
@@ -25,7 +25,7 @@
 		</p:toolbarGroup>
 	</ui:define>
 	<ui:define name="content">
-		<p:breadCrumb model="#{conversationManager.breadCrumbMenuModel}" rendered="#{conversationManager.renderBreadCrumb}" />	
+		<p:breadCrumb model="#{conversationBreadCrumb.model}" rendered="#{conversationBreadCrumb.render}" />	
 		<p:fieldset id="filtersFieldset" legend="#{msg.search_criteria}" toggleable="true">
 			<input type="hidden" name="_cid" value="#{conversationManager.currentConversation.cid}"/>
 			<f:validateBean disabled="true">
@@ -34,14 +34,14 @@
 				</h:panelGrid>
 			</f:validateBean>
 		</p:fieldset>
-		<p:commandButton id="search" actionListener="#{data.onSearch()}" process="@form"
+		<p:commandButton id="search" actionListener="#{model.onSearch()}" process="@form"
 			icon="iconSearch" styleClass="aria-search-button default"
 			update="messages searchResults" value="#{msg.menu_search}"
 			title="#{msg.menu_search} #{resourcesUtil.getProperty(title)}" />
 		<p:commandButton id="resetSearch" icon="ui-icon-power" value="#{msg.search_reset}"
 			actionListener="#{searchForm.reset()}"
 			update="messages filtersFieldset searchResults searchFormName"/>
-		<p:commandButton id="excel" action="#{data.onExcel()}" process="@form"
+		<p:commandButton id="excel" action="#{model.onExcel()}" process="@form"
 			icon="iconExcel" value="Excel" ajax="false" />
 		<p:commandButton id="saveSearch" actionListener="#{savedSearchService.save(searchForm)}" process="@form"
 			rendered="#{savedSearch}" icon="ui-icon-disk"
@@ -77,35 +77,36 @@
 		</span>
 		<c:if test="#{not multiCheckboxSelection}">
 			<p:dataTable id="searchResults"
-				value="#{data}" var="item" lazy="true"
+				value="#{model}" var="item" lazy="true"
 				paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom"
 				rowsPerPageTemplate="10,25,50,100" rows="10"
-				selectionMode="single" selection="#{data.selectedRow}"
+				selectionMode="single" selection="#{model.selectedRow}"
 				emptyMessage="#{msg.search_empty}">
 				<ui:insert name="result" />
 			</p:dataTable>
 		</c:if>
 		<c:if test="#{multiCheckboxSelection}">
 			<p:dataTable id="searchResults"
-				value="#{data}" var="item" lazy="true"
+				value="#{model}" var="item" lazy="true"
 				paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom"
 				rowsPerPageTemplate="10,25,50,100" rows="10"
-				selection="#{data.selectedRows}"
+				selection="#{model.selectedRows}"
 				emptyMessage="#{msg.search_empty}">
+				<p:column id="selectAll" selectionMode="multiple" style="width:18px" rendered="#{permission.canSelect()}" />
 				<ui:insert name="result" />
 				<f:facet name="footer">
-					<app:iconMultiSelect actionBean="#{data}" rendered="true" process="@this" />
+					<app:iconMultiSelect model="#{model}" rendered="true" process="@this" />
 				</f:facet>
 			</p:dataTable>
 		</c:if>
-		<script type="text/javascript">APP.updateSearchResultsRegion('#{resourcesUtil.getPluralableProperty("search_results_status", data.rowCount)}');</script>
+		<script type="text/javascript">APP.updateSearchResultsRegion('#{resourcesUtil.getPluralableProperty("search_results_status", model.rowCount)}');</script>
 	</ui:define>
 	<ui:define name="dialogs">
 		<p:confirmDialog widgetVar="askForDeleteItemDialog" header="#{msg.menu_delete}?" message="#{msg.dialog_delete_confirm}">
 			<h:panelGrid id="askForDeleteItemDialogContent" columns="2" cellpadding="4" style="margin:0 auto;">  
-				<h:outputText value="#{printer.print(data.selectedRow)}" style="font-weight:bold" rendered="#{not empty data.selectedRow}"/>  
+				<h:outputText value="#{printer.print(model.selectedRow)}" style="font-weight:bold" rendered="#{not empty model.selectedRow}"/>  
 			</h:panelGrid>
-			<p:commandButton id="askForDeleteItemDialogYes" action="#{data.delete()}" ajax="true" immediate="true" oncomplete="askForDeleteItemDialog.hide();" process="@this" value="#{msg.yes}" title="#{msg.dialog_delete_confirm} #{msg.yes}" icon="ui-icon-check" update=":form:searchResults :form:messages"/>
+			<p:commandButton id="askForDeleteItemDialogYes" action="#{model.delete()}" ajax="true" immediate="true" oncomplete="askForDeleteItemDialog.hide();" process="@this" value="#{msg.yes}" title="#{msg.dialog_delete_confirm} #{msg.yes}" icon="ui-icon-check" update=":form:searchResults :form:messages"/>
 			<p:commandButton id="askForDeleteItemDialogNo" value="#{msg.no}" title="#{msg.dialog_delete_confirm} #{msg.no}" onclick="askForDeleteItemDialog.hide(); return false;" icon="ui-icon-cancel"/>
 		</p:confirmDialog>
 	</ui:define>

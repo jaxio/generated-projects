@@ -6,12 +6,12 @@
 	<h:outputText value="" />
 	<p:fieldset legend="#{resourcesUtil.getProperty(label)}">
 		<p:selectManyCheckbox id="#{id}" value="#{value.selected}" converter="#{converter}" disabled="#{empty disabled ? false : disabled}"
-			layout="#{items.list.size() lt 4 ? 'lineDirection' : 'pageDirection'}" rendered="#{not nullAllowed}">
+			layout="#{items.list.size() lt 5 ? 'lineDirection' : 'pageDirection'}" rendered="#{not nullAllowed}">
 			<f:selectItems value="#{items.list}" />
 			<ui:insert/>
 		</p:selectManyCheckbox>
 		<p:selectManyCheckbox id="#{id}_null_allowed" value="#{value.selected}" converter="#{converter}" disabled="#{empty disabled ? false : disabled}"
-			layout="#{items.list.size() lt 4 ? 'lineDirection' : 'pageDirection'}" rendered="#{nullAllowed}">
+			layout="#{items.list.size() lt 5 ? 'lineDirection' : 'pageDirection'}" rendered="#{nullAllowed}">
 			<f:selectItems value="#{items.list}" />
 			<f:selectItem itemLabel="#{msg.null_value}" itemValue="#{null}" />
 			<ui:insert/>

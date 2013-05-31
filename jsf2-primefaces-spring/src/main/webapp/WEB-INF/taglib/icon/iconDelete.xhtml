@@ -2,14 +2,15 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" 
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
-	<p:commandLink update=":form:askForDeleteItemDialogContent" 
-					process="@this"
-					immediate="true" 
-					oncomplete="askForDeleteItemDialog.show(); APP.focusTo('form:askForDeleteItemDialogNo');"
-					styleClass="ui-button"
-					rendered="#{rendered}"
-					title="#{resourcesUtil.getProperty(title)}">
-		<f:setPropertyActionListener value="#{item}" target="#{data.selectedRow}" />
+	<p:commandLink 
+		update=":form:askForDeleteItemDialogContent" 
+		process="@this"
+		immediate="true" 
+		oncomplete="askForDeleteItemDialog.show(); APP.focusTo('form:askForDeleteItemDialogNo');"
+		styleClass="ui-button"
+		rendered="#{empty rendered ? not sub and permission.canDelete(item) : rendered}"
+		title="#{empty item ? resourcesUtil.getProperty(title) : resourcesUtil.getProperty('icon_delete', printer.print(item))}" >
+		<f:setPropertyActionListener value="#{item}" target="#{model.selectedRow}" />
 		<div class="ui-button ui-icon iconDelete"/>
 	</p:commandLink>
 </ui:composition>

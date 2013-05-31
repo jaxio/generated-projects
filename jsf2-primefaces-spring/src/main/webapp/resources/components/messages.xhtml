@@ -21,6 +21,7 @@
 		<div id="#{cc.clientId}"> 
 			<ui:repeat var="severity" value="${messagesHelper.severitiesGlobalMessages}" varStatus="severityStatus">
 				<p:outputPanel layout="block" styleClass="ui-messages-${messagesHelper.getCssFriendlySeverity(severity)} ui-corner-all" rendered="${messagesHelper.hasMultipleGlobalMessages(severity)}">
+					<a href="#" class="ui-messages-close" style="float: right;" onclick="$(this).parent().slideUp();return false;"><span class="ui-icon ui-icon-close"></span></a>
 					<span class="ui-messages-${messagesHelper.getCssFriendlySeverity(severity)}-icon"></span>
 					<ul>
 						<ui:repeat var="item" value="${messagesHelper.getGlobalMessages(severity)}" varStatus="status">
@@ -37,6 +38,7 @@
 					</script>
 				</p:outputPanel>
 				<p:outputPanel layout="block" styleClass="ui-messages-${messagesHelper.getCssFriendlySeverity(severity)} ui-corner-all" rendered="${messagesHelper.hasSingleGlobalMessage(severity)}">
+					<a href="#" class="ui-messages-close" style="float: right;" onclick="$(this).parent().slideUp();return false;"><span class="ui-icon ui-icon-close"></span></a>
 					<span class="ui-messages-${messagesHelper.getCssFriendlySeverity(severity)}-icon"></span>
 					<span class="ui-messages-${messagesHelper.getCssFriendlySeverity(severity)}-summary"><a id="${messagesHelper.getCssFriendlySeverity(severity)}-gMsgNo00" href="javascript:void" 
 							onclick="PrimeFaces.focus(null, 'form:center');" >${messagesHelper.getSingleGlobalMessage(severity).facesMessage.summary}</a></span>
@@ -51,6 +53,7 @@
 			</ui:repeat>
 			
 			<p:outputPanel layout="block" styleClass="ui-messages-${messagesHelper.maxSeverityNonGlobalMessages} ui-corner-all" rendered="${messagesHelper.hasNonGlobalMessages()}">
+				<a href="#" class="ui-messages-close" style="float: right;" onclick="$(this).parent().slideUp();return false;"><span class="ui-icon ui-icon-close"></span></a>
 				<span class="ui-messages-${messagesHelper.maxSeverityNonGlobalMessages}-icon"></span>
 				<span class="ui-messages-${messagesHelper.maxSeverityNonGlobalMessages}-summary">
 					<a id="errorPresent" href="javascript:void" onclick="APP.focusTo('errorMsgNo0'); return false;">

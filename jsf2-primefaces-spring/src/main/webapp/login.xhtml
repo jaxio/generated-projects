@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -5,50 +6,29 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:appcc="http://java.sun.com/jsf/composite/components"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components"	
 	template="/WEB-INF/layouts/main.xhtml">
+	<ui:param name="title" value="login_title" />
+	<ui:param name="prependId" value="false" />
+	<ui:param name="disableMessages" value="false" />
+	<f:metadata>
+		<f:viewParam name="session_expired" value="#{loginPageManager.sessionExpired}" />
+	</f:metadata>
 	<ui:define name="content">
-		<!-- our form is not a jsf form... -->
-		<script>$("form").attr('action','#{request.contextPath}/logincheck.faces');</script>
 		<p:panel id="loginPanel" header="#{msg.login_header}" styleClass="loginBox">
 			<p:focus context="loginPanel"/>
-			<h:outputText value="#{msg.login_description}" escape="false"/>
-			<table>
-				<tbody>
-					<c:if test="#{not empty param.login_error}">
-						<tr>
-							<td colspan="2" style="background-color: orange; text-align: center;">#{msg.login_error}</td>
-						</tr>
-					</c:if>
-					<c:if test="#{not empty param.session_expired}">
-						<tr>
-							<td colspan="2">#{msg.session_expired}</td>
-						</tr>
-					</c:if>
-					<tr>
-						<td>
-							<label for="j_username"><strong>#{msg.login_login}</strong></label></td>
-						<td>
-							<c:if test="#{not empty param.login_error}">
-								<c:set var="username" value="#{sessionScope.SPRING_SECURITY_LAST_USERNAME}" />
-							</c:if>
-							<input id="j_username" type="text" name="j_username" value="#{username}" />
-						</td>
-					</tr>
-					<tr>
-						<td style="width: 100px;">
-							<label for="j_password"><strong>#{msg.login_password}</strong></label></td>
-						<td>
-							<input id="j_password" type="password" name="j_password" />
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<p>
-				<input id="_spring_security_remember_me" type="checkbox" name="_spring_security_remember_me" />
-				<label for="_spring_security_remember_me">#{msg.login_rememberme}</label>
-			</p>
-			<input name="submit" type="submit" value="#{msg.login_submit}" />
+			<h:outputText value="#{msg.login_description}" />
+			<h:panelGrid columns="1">
+				<appcc:messages id="loginMessages" />
+			</h:panelGrid>
+			<h:panelGrid columns="2">
+				<h:outputLabel for="j_username" value="#{msg.login_login}" styleClass="required" />
+				<h:inputText id="j_username" label="#{msg.login_login}" required="true" />
+				<h:outputLabel for="j_password" value="#{msg.login_password}" styleClass="required" />
+				<h:inputSecret id="j_password" label="#{msg.login_password}" required="true" />
+				<p:spacer/>
+				<p:commandButton id="login" value="#{msg.login_submit}" action="#{loginPageManager.doLogin()}" icon="ui-icon-circle-check" update="loginMessages" />
+			</h:panelGrid>
 		</p:panel>
 	</ui:define>
 </ui:composition>

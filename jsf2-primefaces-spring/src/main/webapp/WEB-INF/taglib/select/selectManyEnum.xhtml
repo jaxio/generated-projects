@@ -1,18 +1,17 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" 
 	xmlns:ui="http://java.sun.com/jsf/facelets" 
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:app="http://springfuse.jaxio.com/app">
 	<app:outputLabel for="#{id}" value="#{label}" required="#{required}" rendered="#{rendered}" />
 	<p:selectManyCheckbox id="#{id}" value="#{value.selected}" converter="#{converter}" disabled="#{empty disabled ? false : disabled}"
-		layout="#{items.list.size() lt 4 ? 'lineDirection' : 'pageDirection'}" rendered="#{not nullAllowed}">
+		layout="#{items.list.size() lt 5 ? 'lineDirection' : 'pageDirection'}">
 		<f:selectItems value="#{items.list}" />
-		<ui:insert/>
-	</p:selectManyCheckbox>
-	<p:selectManyCheckbox id="#{id}_null_allowed" value="#{value.selected}" converter="#{converter}" disabled="#{empty disabled ? false : disabled}"
-		layout="#{items.list.size() lt 4 ? 'lineDirection' : 'pageDirection'}" rendered="#{nullAllowed}">
-		<f:selectItems value="#{items.list}" />
-		<f:selectItem itemLabel="#{msg.null_value}" itemValue="#{null}" />
+		<c:if test="#{nullAllowed}">
+			<f:selectItem itemLabel="#{msg.null_value}" itemValue="#{null}" />
+		</c:if>
 		<ui:insert/>
 	</p:selectManyCheckbox>
 </ui:composition>

@@ -7,11 +7,12 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components"
 	template="/WEB-INF/layouts/main.xhtml">
+	<ui:param name="title" value="concurrentModificationResolution_title" />
 	<ui:define name="content">
 		<p:panel id="refreshPanel" header="#{msg.concurrentModificationResolution_conflict}">
 			<input type="hidden" name="_cid" value="#{conversationManager.currentConversation.cid}"/>
 			<p:outputPanel>
-				<h:outputText value="#{msg.concurrentModificationResolution_conflict_description}" escape="false" />
+				<h:outputText value="#{msg.concurrentModificationResolution_description}" escape="false" />
 			</p:outputPanel>
 			<p:commandButton 
 				ajax="false"

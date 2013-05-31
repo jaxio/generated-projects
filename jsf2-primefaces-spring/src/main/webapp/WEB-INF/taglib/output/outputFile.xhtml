@@ -4,6 +4,6 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 	<h:panelGroup rendered="#{empty rendered ? true : rendered}">
-		<h:commandLink rendered="#{not empty filename}"	value="#{filename}"><p:fileDownload value="#{stream}" /></h:commandLink>
+		<h:commandLink value="#{empty filename ? resourcesUtil.getProperty('download') : filename}"><p:fileDownload value="#{stream}" /></h:commandLink>
 	</h:panelGroup>
 </ui:composition>

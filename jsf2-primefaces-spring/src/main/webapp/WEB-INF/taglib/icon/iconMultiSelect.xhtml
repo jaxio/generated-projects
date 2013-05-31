@@ -3,13 +3,13 @@
 	xmlns:p="http://primefaces.org/ui">
 	<p:commandLink
 		ajax="false"
-		action="#{actionBean.multiSelect()}"
+		action="#{model.multiSelect()}"
 		process="@this"
 		disabled="#{readonly}"
-		rendered="#{rendered}"
 		immediate="#{not empty immediate and immediate}"
 		styleClass="ui-button"
-		title="#{msg.icon_select} #{resourcesUtil.getProperty(title)}">
+		rendered="#{empty rendered ? not sub and permission.canSelect() : rendered}"
+		title="#{resourcesUtil.getProperty('icon_multiselect', resourcesUtil.getProperty(title))}" >
 		<ui:insert/>
 		<div class="ui-button ui-icon iconSelect"/>
 	</p:commandLink>

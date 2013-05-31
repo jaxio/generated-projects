@@ -4,11 +4,15 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:p="http://primefaces.org/ui"
-	template="/WEB-INF/layouts/main.xhtml">
+	template="/WEB-INF/layouts/#{print ? 'print' : 'main'}.xhtml">
 	<ui:define name="toolbarChildren">
+		<p:toolbarGroup>
+			<p:commandButton id="print" value="#{msg.menu_print}" action="#{bean.print()}" rendered="#{bean.entity.idSet}"
+				icon="ui-icon-print" immediate="true" ajax="false" />
+		</p:toolbarGroup>
 		<p:toolbarGroup rendered="#{sub or readonly}">
 			<p:commandButton id="back" action="#{bean.back()}" process="@none" ajax="false" immediate="true"
-				value="#{msg.back}" icon="ui-icon-arrowreturnthick-1-w"/>
+				value="#{msg.back}" icon="ui-icon-arrowreturnthick-1-w" />
 		</p:toolbarGroup>
 		<p:toolbarGroup rendered="#{not sub and not readonly}">
 			<p:commandButton id="close" oncomplete="askForSaveDialog.show(); APP.focusAskForSaveDialog();"
@@ -25,17 +29,24 @@
 		</p:toolbarGroup>
 	</ui:define>
 	<ui:define name="content">
-		<p:breadCrumb model="#{conversationManager.breadCrumbMenuModel}" rendered="#{conversationManager.renderBreadCrumb}" />
+		<p:breadCrumb model="#{conversationBreadCrumb.model}" rendered="#{conversationBreadCrumb.render}" />
 		<p:fieldset id="fieldset">
 			<input type="hidden" name="_cid" value="#{conversationManager.currentConversation.cid}"/>
 			<f:validateBean disabled="true">
 				<h:panelGrid columns="2" styleClass="aria-role-presentation">
 					<ui:insert name="form" />
 				</h:panelGrid>
-				<app:saveButton title="#{resourcesUtil.getProperty(title)}" bean="#{bean}"/>
+				<app:saveButton title="#{title}" bean="#{bean}"/>
 			</f:validateBean>
 		</p:fieldset>
-		<ui:insert name="tabs" />
+		<p:tabView id="tabs" activeIndex="#{bean.tabBean.activeIndex}" rendered="#{not empty bean.tabBean and not print}">
+			<p:ajax event="tabChange" />
+			<ui:insert name="tabs"/>
+		</p:tabView>
+		<p:accordionPanel id="tabsPrint" activeIndex="0,1,2,3,4,5,6,7,8,9,10" cache="false" multiple="true" 
+			rendered="#{not empty bean.tabBean and print}">
+			<ui:insert name="tabs"/>
+		</p:accordionPanel>
 	</ui:define>
 	<ui:define name="dialogs">
 		<ui:insert name="custom-dialogs" />

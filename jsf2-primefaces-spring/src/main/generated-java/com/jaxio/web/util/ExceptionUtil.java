@@ -13,11 +13,11 @@ public class ExceptionUtil {
      * error handling code is correct.
      */
     public void throwRuntimeException() {
-        throw new RuntimeException("Just testing from ExceptionUtil ...");
+        throw new RuntimeException("Just testing RuntimeException from ExceptionUtil ...");
     }
 
     public void throwDataAccessException() {
-        throw new OptimisticLockException("Just testing DataAccessException from ExceptionUtil ...");
+        throw new OptimisticLockException("Just testing OptimisticLockException from ExceptionUtil ...");
     }
 
     public static boolean isCausedBy(Throwable e, Class<?> cause) {
@@ -30,5 +30,4 @@ public class ExceptionUtil {
         }
         return false;
     }
-
 }
