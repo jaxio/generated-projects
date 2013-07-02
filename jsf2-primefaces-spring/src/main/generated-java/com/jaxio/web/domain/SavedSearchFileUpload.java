@@ -10,6 +10,7 @@ package com.jaxio.web.domain;
 
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
+
 import com.jaxio.domain.SavedSearch;
 
 public class SavedSearchFileUpload {

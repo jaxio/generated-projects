@@ -13,7 +13,6 @@ import java.util.Collection;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jaxio.repository.support.GenericRepository;
 import com.jaxio.domain.Identifiable;
 
 /**

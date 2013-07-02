@@ -8,11 +8,13 @@
  */
 package com.jaxio.web.domain.support;
 
-import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newTreeSet;
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -28,19 +30,23 @@ import javax.inject.Inject;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.WordUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Splitter;
+import com.jaxio.context.UserContext;
 import com.jaxio.dao.support.JpaUniqueUtil;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Identifiable;
-import com.jaxio.printer.TypeAwarePrinter;
+import com.jaxio.printer.support.GenericPrinter;
+import com.jaxio.printer.support.TypeAwarePrinter;
 import com.jaxio.repository.support.GenericRepository;
-import com.jaxio.web.util.MessageUtil;
 import com.jaxio.util.ResourcesUtil;
 import com.jaxio.web.conversation.ConversationCallBack;
 import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationManager;
 import com.jaxio.web.permission.support.GenericPermission;
-import com.jaxio.context.UserContext;
+import com.jaxio.web.util.MessageUtil;
 
 /**
  * Base controller for JPA entities providing helper methods to:
@@ -53,6 +59,7 @@ import com.jaxio.context.UserContext;
  * </ul>
  */
 public abstract class GenericController<E extends Identifiable<PK>, PK extends Serializable> {
+    private static final Logger log = LoggerFactory.getLogger(GenericController.class);
     private static final String PERMISSION_DENIED = "/error/accessdenied";
     private String selectUri;
     private String editUri;
@@ -64,13 +71,15 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
     @Inject
     protected MessageUtil messageUtil;
     @Inject
-    protected TypeAwarePrinter printer;
+    protected TypeAwarePrinter typeAwarePrinter;
     protected GenericRepository<E, PK> repository;
     protected GenericPermission<E> permission;
+    protected GenericPrinter<E> printer;
 
-    public GenericController(GenericRepository<E, PK> repository, GenericPermission<E> permission, String selectUri, String editUri) {
+    public GenericController(GenericRepository<E, PK> repository, GenericPermission<E> permission, GenericPrinter<E> printer, String selectUri, String editUri) {
         this.repository = checkNotNull(repository);
         this.permission = checkNotNull(permission);
+        this.printer = checkNotNull(printer);
         this.selectUri = checkNotNull(selectUri);
         this.editUri = checkNotNull(editUri);
     }
@@ -143,40 +152,89 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
      * Auto-complete support. This method is used by primefaces autoComplete component.
      */
     public List<E> complete(String value) {
-        return repository.find(completeSearchParameters(value));
+        try {
+            SearchParameters searchParameters = searchParameters().orMode();
+            E template = repository.getNew();
+            for (String property : completeProperties()) {
+                if (repository.isIndexed(property)) {
+                    searchParameters.termOnAny(value, property);
+                } else {
+                    PropertyUtils.setProperty(template, property, value);
+                }
+            }
+            return repository.find(template, searchParameters);
+        } catch (Exception e) {
+            log.warn("error during complete", e);
+            throw propagate(e);
+        }
     }
 
-    public List<E> completeFullText(String value) {
-        return repository.find(completeFullTextSearchParameters(value));
+    private Iterable<String> completeProperties() {
+        String completeOnProperties = parameter("completeOnProperties", String.class);
+        return isBlank(completeOnProperties) ? printer.getDisplayedAttributes() : Splitter.on(";,").omitEmptyStrings().split(completeOnProperties);
+    }
+
+    public List<String> completeProperty(String value) {
+        String property = parameter("property", String.class);
+        Integer maxResults = parameter("maxResults", Integer.class);
+        return completeProperty(value, property, maxResults);
+    }
+
+    public List<String> completeProperty(String value, String property) {
+        return completeProperty(value, property, null);
+    }
+
+    public List<String> completeProperty(String value, String property, Integer maxResults) {
+        List<String> ret = newArrayList(value);
+        if (repository.isIndexed(property)) {
+            ret.addAll(completePropertyUsingFullText(value, property, maxResults));
+        } else {
+            ret.addAll(completePropertyInDatabase(value, property, maxResults));
+        }
+        return ret;
+    }
+
+    private Set<String> completePropertyUsingFullText(String term, String property, Integer maxResults) {
+        try {
+            SearchParameters searchParameters = searchParameters().termOn(term, property).orderBy(property);
+            if (maxResults != null) {
+                searchParameters.maxResults(maxResults);
+            }
+            Set<String> match = newTreeSet();
+            for (E object : repository.find(searchParameters)) {
+                match.add((String) PropertyUtils.getProperty(object, property));
+            }
+            return match;
+        } catch (Exception e) {
+            log.warn("error during completePropertyUsingFullText", e);
+            throw propagate(e);
+        }
+    }
+
+    private Set<String> completePropertyInDatabase(String value, String property, Integer maxResults) {
+        try {
+            SearchParameters searchParameters = searchParameters().orderBy(property);
+            if (maxResults != null) {
+                searchParameters.maxResults(maxResults);
+            }
+            E template = repository.getNew();
+            PropertyUtils.setProperty(template, property, value);
+            Set<String> match = newTreeSet();
+            for (E object : repository.find(template, searchParameters)) {
+                match.add((String) PropertyUtils.getProperty(object, property));
+            }
+            return match;
+        } catch (Exception e) {
+            log.warn("error during completePropertyInDatabase", e);
+            throw propagate(e);
+        }
     }
 
     /**
-     * A simple auto-complete that returns exactly the input. It is used in search forms with PropertySelector. 
+     * A simple autoComplete that returns exactly the input. It is used in search forms with {@link PropertySelector}.
      */
     public List<String> completeSame(String value) {
         return newArrayList(value);
-    }
-
-    public List<String> completePropertyFullText(String term) throws Exception {
-        String property = parameter("property", String.class);
-        Integer maxResults = parameter("maxResults", Integer.class);
-        Set<String> ret = newHashSet(term);
-        for (E object : repository.find(new SearchParameters().termOn(term, property).orderBy(property).maxResults(maxResults - 1))) {
-            ret.add((String) PropertyUtils.getProperty(object, property));
-        }
-        return newArrayList(ret);
-    }
-
-    public List<String> completeProperty(String value) throws Exception {
-        String property = parameter("property", String.class);
-        Integer maxResults = parameter("maxResults", Integer.class);
-        E template = repository.getNew();
-        PropertyUtils.setProperty(template, property, value);
-        Set<String> ret = newHashSet(value);
-        for (E object : repository.find(template, new SearchParameters().anywhere().orderBy(property).maxResults(maxResults - 1))) {
-            ret.add((String) PropertyUtils.getProperty(object, property));
-        }
-        return newArrayList(ret);
     }
 
     @SuppressWarnings("unchecked")
@@ -189,11 +247,7 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
     }
 
     protected SearchParameters searchParameters() {
-        return defaultOrder(new SearchParameters().anywhere());
-    }
-
-    protected SearchParameters completeFullTextSearchParameters(String value) {
-        return searchParameters().term(value);
+        return defaultOrder(new SearchParameters().caseInsensitive().limitBroadSearch().anywhere());
     }
 
     protected SearchParameters defaultOrder(SearchParameters searchParameters) {
@@ -383,7 +437,7 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
         if (!permission.canEdit(entity)) {
             return getPermissionDenied();
         }
-        ConversationContext<E> ctx = getSelectedContext(entity).labelKey(getEditLabelKey(), printer.print(entity));
+        ConversationContext<E> ctx = getSelectedContext(entity).labelKey(getEditLabelKey(), typeAwarePrinter.print(entity));
         return getCurrentConversation().nextContext(ctx).view();
     }
 
@@ -394,7 +448,7 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
         if (!permission.canView(entity)) {
             return getPermissionDenied();
         }
-        ConversationContext<E> ctx = getSelectedContext(entity).sub().readonly().labelKey(getViewLabelKey(), printer.print(entity));
+        ConversationContext<E> ctx = getSelectedContext(entity).sub().readonly().labelKey(getViewLabelKey(), typeAwarePrinter.print(entity));
         return getCurrentConversation().nextContext(ctx).view();
     }
 
@@ -405,7 +459,7 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
         if (!permission.canView(entity)) {
             return getPermissionDenied();
         }
-        ConversationContext<E> ctx = getSelectedContext(entity).readonly().print().labelKey(getViewLabelKey(), printer.print(entity));
+        ConversationContext<E> ctx = getSelectedContext(entity).readonly().print().labelKey(getViewLabelKey(), typeAwarePrinter.print(entity));
         return getCurrentConversation().nextContext(ctx).view();
     }
 
@@ -462,7 +516,7 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
         model.put("search_date", excelExportSupport.dateToString(new Date()));
         model.put("search_by", UserContext.getUsername());
         model.put("searchParameters", searchParameters);
-        model.put("printer", printer);
+        model.put("printer", typeAwarePrinter);
         excelObjects(model, searchParameters);
         excelExportService.export("excel/" + getEntityName().toLowerCase() + ".xlsx", model, getExcelOutputname());
     }

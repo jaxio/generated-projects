@@ -11,18 +11,18 @@ package com.jaxio.web.domain;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
+
 import com.jaxio.domain.Account;
-import com.jaxio.domain.Address;
-import com.jaxio.domain.Book;
-import com.jaxio.domain.Document;
-import com.jaxio.domain.Role;
+import com.jaxio.domain.Currency;
+import com.jaxio.domain.Customer;
+import com.jaxio.domain.Transaction;
 import com.jaxio.repository.AccountRepository;
 import com.jaxio.web.domain.AccountController;
 import com.jaxio.web.domain.AccountGraphLoader;
-import com.jaxio.web.domain.AddressController;
-import com.jaxio.web.domain.BookController;
-import com.jaxio.web.domain.DocumentController;
-import com.jaxio.web.domain.RoleController;
+import com.jaxio.web.domain.CurrencyController;
+import com.jaxio.web.domain.CustomerController;
+import com.jaxio.web.domain.TransactionController;
 import com.jaxio.web.domain.support.GenericEditForm;
 import com.jaxio.web.domain.support.GenericToManyAssociation;
 import com.jaxio.web.domain.support.GenericToOneAssociation;
@@ -34,21 +34,18 @@ import com.jaxio.web.util.TabBean;
  */
 @Named
 @ConversationContextScoped
-public class AccountEditForm extends GenericEditForm<Account, String> {
+public class AccountEditForm extends GenericEditForm<Account, Integer> {
     @Inject
     protected AccountController accountController;
     @Inject
-    protected AddressController addressController;
-    protected GenericToOneAssociation<Address, Integer> homeAddress;
+    protected CurrencyController currencyController;
+    protected GenericToOneAssociation<Currency, Integer> currency;
     @Inject
-    protected BookController bookController;
-    protected GenericToManyAssociation<Book, Integer> coolBooks;
+    protected CustomerController customerController;
+    protected GenericToOneAssociation<Customer, Integer> customer;
     @Inject
-    protected DocumentController documentController;
-    protected GenericToManyAssociation<Document, String> edocs;
-    @Inject
-    protected RoleController roleController;
-    protected GenericToManyAssociation<Role, Integer> securityRoles;
+    protected TransactionController transactionController;
+    protected GenericToManyAssociation<Transaction, Integer> transactions;
     protected TabBean tabBean = new TabBean();
 
     @Inject
@@ -76,89 +73,76 @@ public class AccountEditForm extends GenericEditForm<Account, String> {
     }
 
     @PostConstruct
-    void setupHomeAddressesActions() {
-        homeAddress = new GenericToOneAssociation<Address, Integer>("account_homeAddress", addressController) {
+    void setupCurrencyActions() {
+        currency = new GenericToOneAssociation<Currency, Integer>("account_currency", currencyController) {
             @Override
-            protected Address get() {
-                return getAccount().getHomeAddress();
+            protected Currency get() {
+                return getAccount().getCurrency();
             }
 
             @Override
-            protected void set(Address address) {
-                getAccount().setHomeAddress(address);
+            protected void set(Currency currency) {
+                getAccount().setCurrency(currency);
+            }
+
+            @NotNull
+            @Override
+            public Currency getSelected() {
+                return super.getSelected();
             }
         };
     }
 
-    public GenericToOneAssociation<Address, Integer> getHomeAddress() {
-        return homeAddress;
+    public GenericToOneAssociation<Currency, Integer> getCurrency() {
+        return currency;
     }
 
     @PostConstruct
-    void setupCoolBooksActions() {
-        coolBooks = new GenericToManyAssociation<Book, Integer>(getAccount().getCoolBooks(), "account_coolBooks", bookController) {
+    void setupCustomerActions() {
+        customer = new GenericToOneAssociation<Customer, Integer>("account_customer", customerController) {
             @Override
-            protected void remove(Book book) {
-                getAccount().removeBook(book);
+            protected Customer get() {
+                return getAccount().getCustomer();
             }
 
             @Override
-            protected void add(Book book) {
-                getAccount().addBook(book);
+            protected void set(Customer customer) {
+                getAccount().setCustomer(customer);
             }
 
+            @NotNull
             @Override
-            protected void onCreate(Book book) {
-                book.setOwner(getAccount()); // for display
+            public Customer getSelected() {
+                return super.getSelected();
             }
         };
     }
 
-    public GenericToManyAssociation<Book, Integer> getCoolBooks() {
-        return coolBooks;
+    public GenericToOneAssociation<Customer, Integer> getCustomer() {
+        return customer;
     }
 
     @PostConstruct
-    void setupEdocsActions() {
-        edocs = new GenericToManyAssociation<Document, String>(getAccount().getEdocs(), "account_edocs", documentController) {
+    void setupTransactionsActions() {
+        transactions = new GenericToManyAssociation<Transaction, Integer>(getAccount().getTransactions(), "account_transactions", transactionController) {
             @Override
-            protected void remove(Document document) {
-                getAccount().removeEdoc(document);
+            protected void remove(Transaction transaction) {
+                getAccount().removeTransaction(transaction);
             }
 
             @Override
-            protected void add(Document document) {
-                getAccount().addEdoc(document);
+            protected void add(Transaction transaction) {
+                getAccount().addTransaction(transaction);
             }
 
             @Override
-            protected void onCreate(Document edoc) {
-                edoc.setOwner(getAccount()); // for display
-            }
-        };
-    }
-
-    public GenericToManyAssociation<Document, String> getEdocs() {
-        return edocs;
-    }
-
-    @PostConstruct
-    void setupSecurityRolesActions() {
-        securityRoles = new GenericToManyAssociation<Role, Integer>(getAccount().getSecurityRoles(), "account_securityRoles", roleController) {
-            @Override
-            protected void remove(Role role) {
-                getAccount().removeSecurityRole(role);
-            }
-
-            @Override
-            protected void add(Role role) {
-                // add the object only to the securityRole side of the relation 
-                getAccount().getSecurityRoles().add(role);
+            protected void onCreate(Transaction transaction) {
+                transaction.setAccount(getAccount()); // for display
             }
         };
     }
 
-    public GenericToManyAssociation<Role, Integer> getSecurityRoles() {
-        return securityRoles;
+    public GenericToManyAssociation<Transaction, Integer> getTransactions() {
+        return transactions;
     }
 }

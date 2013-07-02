@@ -8,58 +8,40 @@
  */
 package com.jaxio.domain;
 
-import java.io.*;
-import java.util.*;
-
-import static org.fest.assertions.Assertions.assertThat;
-import org.junit.Test;
-
-import com.jaxio.util.*;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
-import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
-import static javax.persistence.TemporalType.TIMESTAMP;
+import static org.fest.assertions.Assertions.assertThat;
+
+import java.io.*;
 import java.io.Serializable;
+import java.util.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.ParamDef;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.validator.constraints.Email;
+
 import org.hibernate.validator.constraints.NotEmpty;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.jaxio.domain.Address;
-import com.jaxio.domain.Book;
-import com.jaxio.domain.Civility;
-import com.jaxio.domain.Document;
-import com.jaxio.domain.Role;
 
-import com.jaxio.domain.Civility;
+import com.jaxio.domain.Currency;
+import com.jaxio.domain.Customer;
+import com.jaxio.domain.Transaction;
+import com.jaxio.util.*;
 
 /**
  * Basic tests for Account
@@ -77,117 +59,88 @@ public class AccountTest {
     @Test
     public void isIdSetReturnsTrue() {
         Account model = new Account();
-        model.setId(ValueGenerator.getUniqueString(36));
+        model.setId(ValueGenerator.getUniqueInteger());
         assertThat(model.getId()).isNotNull();
         assertThat(model.isIdSet()).isTrue();
     }
 
     //-------------------------------------------------------------
-    // Many to One:  Account.homeAddress ==> Address.id
+    // Many to One:  Account.currency ==> Currency.id
     //-------------------------------------------------------------
 
     @Test
-    public void manyToOne_setHomeAddress() {
+    public void manyToOne_setCurrency() {
         Account many = new Account();
 
         // init
-        Address one = new Address();
+        Currency one = new Currency();
         one.setId(ValueGenerator.getUniqueInteger());
-        many.setHomeAddress(one);
+        many.setCurrency(one);
 
         // make sure it is propagated properly
-        assertThat(many.getHomeAddress()).isEqualTo(one);
+        assertThat(many.getCurrency()).isEqualTo(one);
 
         // now set it to back to null
-        many.setHomeAddress(null);
+        many.setCurrency(null);
 
         // make sure null is propagated properly
-        assertThat(many.getHomeAddress()).isNull();
+        assertThat(many.getCurrency()).isNull();
     }
 
-    //-------------------------------------------------------------
-    // One to Many: SimpleOneToMany ACCOUNT.ID ==> BOOK.ACCOUNT_ID
-    //-------------------------------------------------------------
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // book.book <-- account.owners
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
     @Test
-    public void oneToMany_addBook() {
-        Account one = new Account();
-        Book many = new Book();
+    public void manyToOne_setCustomer() {
+        Account many = new Account();
 
         // init
-        one.addBook(many);
+        Customer one = new Customer();
+        one.setId(ValueGenerator.getUniqueInteger());
+        many.setCustomer(one);
 
-        // make sure it is propagated
-        assertThat(one.getCoolBooks()).contains(many);
-        assertThat(one).isEqualTo(many.getOwner());
+        // make sure it is propagated properly
+        assertThat(many.getCustomer()).isEqualTo(one);
 
-        // now set it to null
-        one.removeBook(many);
+        // now set it to back to null
+        many.setCustomer(null);
 
-        // make sure null is propagated
-        assertThat(one.getCoolBooks().contains(many)).isFalse();
-        assertThat(many.getOwner()).isNull();
+        // make sure null is propagated properly
+        assertThat(many.getCustomer()).isNull();
     }
 
+    //-------------------------------------------------------------
+    // One to Many: SimpleOneToMany ACCOUNT.ID ==> TRANSACTION.ACCOUNT_ID
+    //-------------------------------------------------------------
+
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // document.edoc <-- account.owners
+    // transaction.transaction <-- account.accounts
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     @Test
-    public void oneToMany_addEdoc() {
+    public void oneToMany_addTransaction() {
         Account one = new Account();
-        Document many = new Document();
+        Transaction many = new Transaction();
 
         // init
-        one.addEdoc(many);
+        one.addTransaction(many);
 
         // make sure it is propagated
-        assertThat(one.getEdocs()).contains(many);
-        assertThat(one).isEqualTo(many.getOwner());
+        assertThat(one.getTransactions()).contains(many);
+        assertThat(one).isEqualTo(many.getAccount());
 
         // now set it to null
-        one.removeEdoc(many);
+        one.removeTransaction(many);
 
         // make sure null is propagated
-        assertThat(one.getEdocs().contains(many)).isFalse();
-        assertThat(many.getOwner()).isNull();
-    }
-
-    //-------------------------------------------------------------
-    // Pure Many to Many
-    //-------------------------------------------------------------
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-    @Test
-    public void manyToMany_addSecurityRole() {
-        Account many1 = new Account();
-        Role many2 = new Role();
-
-        // add it
-        many1.addSecurityRole(many2);
-
-        // check it is propagated
-        assertThat(many1.getSecurityRoles()).contains(many2);
-        // now let's remove it
-        many1.removeSecurityRole(many2);
-
-        // check it is propagated
-        assertThat(many1.getSecurityRoles().contains(many2)).isFalse();
+        assertThat(one.getTransactions().contains(many)).isFalse();
+        assertThat(many.getAccount()).isNull();
     }
 
     @Test
     public void equalsUsingBusinessKey() {
         Account model1 = new Account();
         Account model2 = new Account();
-        String username = ValueGenerator.getUniqueString(100);
-        model1.setUsername(username);
-        model2.setUsername(username);
+        String accountNumber = ValueGenerator.getUniqueString(100);
+        model1.setAccountNumber(accountNumber);
+        model2.setAccountNumber(accountNumber);
         assertThat(model1).isEqualTo(model2);
         assertThat(model2).isEqualTo(model1);
         assertThat(model1.hashCode()).isEqualTo(model2.hashCode());

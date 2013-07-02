@@ -6,9 +6,8 @@
 		ajax="false"
 		action="#{model.add()}"
 		process="@form"
-		disabled="#{readonly}"
 		styleClass="ui-button"
-		rendered="#{empty rendered ? not sub and permission.canCreate() : rendered}"
+		rendered="#{empty rendered ? not readonly and permission.canCreate() : rendered}"
 		title="#{resourcesUtil.getProperty('icon_add', resourcesUtil.getProperty(title))}" >
 		<ui:insert/>
 		<div class="ui-button ui-icon iconAdd"/>

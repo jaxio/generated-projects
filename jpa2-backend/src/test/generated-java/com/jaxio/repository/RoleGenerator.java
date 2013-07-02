@@ -10,6 +10,7 @@ package com.jaxio.repository;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.domain.Role;
 import com.jaxio.util.ValueGenerator;
 

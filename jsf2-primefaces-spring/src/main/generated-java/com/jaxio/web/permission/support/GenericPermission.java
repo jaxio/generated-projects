@@ -9,9 +9,20 @@
 package com.jaxio.web.permission.support;
 
 import java.io.Serializable;
+
 import com.jaxio.domain.Identifiable;
 
 public abstract class GenericPermission<E extends Identifiable<? extends Serializable>> {
+    private final Class<E> clazz;
+
+    public GenericPermission(Class<E> clazz) {
+        this.clazz = clazz;
+    }
+
+    public Class<E> getTarget() {
+        return clazz;
+    }
+
     public boolean canCreate() {
         return true;
     }

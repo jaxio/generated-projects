@@ -19,7 +19,6 @@ import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -29,7 +28,6 @@ import javax.persistence.metamodel.EntityType;
 @Named
 @Singleton
 public class ByPatternUtil {
-
     @PersistenceContext
     private EntityManager em;
 
@@ -37,7 +35,7 @@ public class ByPatternUtil {
      * Lookup entities having at least one String attribute matching the passed sp's pattern
      */
     @SuppressWarnings("unchecked")
-    public <T> Predicate byPattern(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder, final SearchParameters sp, final Class<T> type) {
+    public <T> Predicate byPattern(Root<T> root, CriteriaBuilder builder, SearchParameters sp, Class<T> type) {
         if (!sp.hasSearchPattern()) {
             return null;
         }

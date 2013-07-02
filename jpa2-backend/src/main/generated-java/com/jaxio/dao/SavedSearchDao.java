@@ -10,7 +10,7 @@ package com.jaxio.dao;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import com.jaxio.dao.SavedSearchDao;
+
 import com.jaxio.dao.support.GenericDao;
 import com.jaxio.domain.SavedSearch;
 

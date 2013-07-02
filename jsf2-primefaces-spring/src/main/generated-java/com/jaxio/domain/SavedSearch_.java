@@ -10,7 +10,8 @@ package com.jaxio.domain;
 
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
-import com.jaxio.domain.Account;
+
+import com.jaxio.domain.User;
 
 @StaticMetamodel(SavedSearch.class)
 public abstract class SavedSearch_ {
@@ -22,5 +23,5 @@ public abstract class SavedSearch_ {
     public static volatile SingularAttribute<SavedSearch, byte[]> formContent;
 
     // Many to one
-    public static volatile SingularAttribute<SavedSearch, Account> account;
+    public static volatile SingularAttribute<SavedSearch, User> user;
 }

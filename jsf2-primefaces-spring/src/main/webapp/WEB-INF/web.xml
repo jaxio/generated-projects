@@ -244,7 +244,7 @@
 		<mime-type>text/xml</mime-type>
 	</mime-mapping>
 	<session-config>
-		<!-- session timeout (in minutes) -->
+		<!-- session timeout in minutes -->
 		<session-timeout>10</session-timeout>
 	</session-config>
 	<!-- Error pages. -->
@@ -262,6 +262,10 @@
 		<location>/error/error.faces</location>
 	</error-page>
 	<error-page>
+		<exception-type>org.springframework.security.core.AuthenticationException</exception-type>
+		<location>/error/error.faces</location>
+	</error-page>
+		<error-page>
 		<error-code>500</error-code>
 		<location>/error/error.faces</location>
 	</error-page>

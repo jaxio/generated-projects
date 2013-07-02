@@ -10,9 +10,11 @@ package com.jaxio.web.domain.support;
 
 import java.io.Serializable;
 import java.util.List;
+
 import javax.faces.model.ListDataModel;
 
 import org.primefaces.model.SelectableDataModel;
+
 import com.jaxio.domain.Identifiable;
 
 public class SelectableListDataModel<E extends Identifiable<?>> extends ListDataModel<E> implements SelectableDataModel<E>, Serializable {

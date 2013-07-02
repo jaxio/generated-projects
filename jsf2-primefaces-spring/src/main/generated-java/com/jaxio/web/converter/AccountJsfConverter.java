@@ -11,6 +11,7 @@ package com.jaxio.web.converter;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.domain.Account;
 import com.jaxio.repository.AccountRepository;
 import com.jaxio.web.converter.support.GenericJsfConverter;
@@ -21,9 +22,9 @@ import com.jaxio.web.converter.support.GenericJsfConverter;
  */
 @Named
 @Singleton
-public class AccountJsfConverter extends GenericJsfConverter<Account, String> {
+public class AccountJsfConverter extends GenericJsfConverter<Account, Integer> {
     @Inject
     public AccountJsfConverter(AccountRepository accountRepository) {
-        super(accountRepository, Account.class, String.class);
+        super(accountRepository, Account.class, Integer.class);
     }
 }

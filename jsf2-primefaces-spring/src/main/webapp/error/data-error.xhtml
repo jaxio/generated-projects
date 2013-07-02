@@ -12,10 +12,10 @@
 	<ui:param name="title" value="error_database_title" />
 	<ui:define name="content">
 		<h2>${msg.error_database}</h2>
-		<h:panelGrid columns="2">		
-	 		<h:outputText value="Date/time" /> <h:outputText value="#{of:formatDate(now, 'yyyy-MM-dd HH:mm:ss')}" />
-	 		<h:outputText value="Exception type" /> <h:outputText value="#{requestScope['javax.servlet.error.exception_type']}" />
-	 		<h:outputText value="Exception message" /> <h:outputText value="#{requestScope['javax.servlet.error.message']}" />
+		<h:panelGrid columns="2">
+			<h:outputText value="Date/time" /> <h:outputText value="#{of:formatDate(now, 'yyyy-MM-dd HH:mm:ss')}" />
+			<h:outputText value="Exception type" /> <h:outputText value="#{requestScope['javax.servlet.error.exception_type']}" />
+			<h:outputText value="Exception message" /> <h:outputText value="#{requestScope['javax.servlet.error.message']}" />
 		</h:panelGrid>
 	</ui:define>
 </ui:composition>

@@ -11,7 +11,9 @@ package com.jaxio.domain;
 import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
+
 import java.io.Serializable;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,24 +25,20 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Objects;
-import com.jaxio.domain.Account;
 import com.jaxio.domain.IdentifiableHashBuilder;
 import com.jaxio.domain.SavedSearch_;
+import com.jaxio.domain.User;
 
 @Entity
 @Table(name = "SAVED_SEARCH")
-@FilterDef(name = "mySavedSearchFilter", defaultCondition = "ACCOUNT_ID = :currentAccountId ", parameters = @ParamDef(name = "currentAccountId", type = "org.hibernate.type.StringType"))
-@Filter(name = "mySavedSearchFilter")
 public class SavedSearch implements Identifiable<Integer>, Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(SavedSearch.class);
@@ -52,7 +50,7 @@ public class SavedSearch implements Identifiable<Integer>, Serializable {
     private byte[] formContent;
 
     // Many to one
-    private Account account;
+    private User user;
 
     // -- [id] ------------------------
 
@@ -135,30 +133,37 @@ public class SavedSearch implements Identifiable<Integer>, Serializable {
         return this;
     }
 
+    /**
+     * Determine without loading it, that is without risking a Lazy exception, if the formContent is loaded or not.
+     */
+    @Transient
+    public boolean isFormContentSet() {
+        return formContent != null;
+    }
+
     // -----------------------------------------------------------------
     // Many to One support
     // -----------------------------------------------------------------
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // many-to-one: SavedSearch.account ==> Account.id
+    // many-to-one: SavedSearch.user ==> User.id
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    @NotNull
-    @JoinColumn(name = "ACCOUNT_ID", nullable = false)
+    @JoinColumn(name = "USER_ID")
     @ManyToOne(cascade = { PERSIST, MERGE }, fetch = LAZY)
-    public Account getAccount() {
-        return account;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Set the {@link #account} without adding this SavedSearch instance on the passed {@link #account}
+     * Set the {@link #user} without adding this SavedSearch instance on the passed {@link #user}
      */
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public SavedSearch account(Account account) {
-        setAccount(account);
+    public SavedSearch user(User user) {
+        setUser(user);
         return this;
     }
 

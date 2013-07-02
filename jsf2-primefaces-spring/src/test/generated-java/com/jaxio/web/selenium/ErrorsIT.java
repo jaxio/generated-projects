@@ -12,11 +12,9 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import com.jaxio.web.selenium.page.role.RoleSearchPage;
-
-import com.jaxio.web.selenium.support.SeleniumTest;
 import com.jaxio.web.selenium.page.HomePage;
 import com.jaxio.web.selenium.support.Page;
+import com.jaxio.web.selenium.support.SeleniumTest;
 
 public class ErrorsIT extends SeleniumTest {
     @Test
@@ -26,17 +24,6 @@ public class ErrorsIT extends SeleniumTest {
         anonymousHomePage.connexion();
         loginPage.login("unknownUser", "invalidPassword");
         loginPage.hasMessage("Invalid credentials");
-    }
-
-    RoleSearchPage roleSearchPage;
-
-    @Test
-    public void dataIntegrityError() {
-        englishHomePage();
-        loginAsAnAdmin();
-        loggedHomePage.roles();
-        roleSearchPage.delete("ROLE_ADMIN");
-        roleSearchPage.hasMessage("Action refused because it violates data integrity");
     }
 
     @Page
@@ -60,10 +47,10 @@ public class ErrorsIT extends SeleniumTest {
         englishHomePage();
         webClient.click(ajaxErrors.debugButton);
         webClient.click(ajaxErrors.throwException);
-        ajaxErrors.hasMessage("Just testing RuntimeException from ExceptionUtil");
+        ajaxErrors.hasText("Just testing RuntimeException from ExceptionUtil");
         webClient.click(ajaxErrors.debugButton);
         webClient.click(ajaxErrors.throwAjaxException);
-        ajaxErrors.hasMessage("Just testing RuntimeException from ExceptionUtil");
+        ajaxErrors.hasText("Just testing RuntimeException from ExceptionUtil");
     }
 
     @Test

@@ -10,7 +10,7 @@
 		<p:toolbarGroup rendered="#{sub or readonly}">
 			<p:commandButton id="back" action="#{searchForm.back()}" process="@none" ajax="false" immediate="true"
 				value="#{msg.back}" icon="ui-icon-arrowreturnthick-1-w"/>
-		</p:toolbarGroup>	
+		</p:toolbarGroup>
 		<p:toolbarGroup align="left" rendered="#{not sub and not readonly}">
 			<p:commandButton id="quit" action="#{searchForm.quit()}" ajax="false" immediate="true" process="@form"
 				icon="ui-icon-closethick"
@@ -25,7 +25,7 @@
 		</p:toolbarGroup>
 	</ui:define>
 	<ui:define name="content">
-		<p:breadCrumb model="#{conversationBreadCrumb.model}" rendered="#{conversationBreadCrumb.render}" />	
+		<p:breadCrumb model="#{conversationBreadCrumb.model}" rendered="#{conversationBreadCrumb.render}" />
 		<p:fieldset id="filtersFieldset" legend="#{msg.search_criteria}" toggleable="true">
 			<input type="hidden" name="_cid" value="#{conversationManager.currentConversation.cid}"/>
 			<f:validateBean disabled="true">
@@ -43,32 +43,39 @@
 			update="messages filtersFieldset searchResults searchFormName"/>
 		<p:commandButton id="excel" action="#{model.onExcel()}" process="@form"
 			icon="iconExcel" value="Excel" ajax="false" />
-		<p:commandButton id="saveSearch" actionListener="#{savedSearchService.save(searchForm)}" process="@form"
-			rendered="#{savedSearch}" icon="ui-icon-disk"
-			update="filtersFieldset messages searchResults"
-			value="#{msg.search_save}" ajax="true" />
-		<p:autoComplete id="searchFormName"
-			value="#{searchForm.searchFormName}" rendered="#{savedSearch}"
+		<!--  [SAVED SEARCH] -->
+		<p:autoComplete id="searchFormName" rendered="#{savedSearch}"
+			value="#{searchForm.currentSavedSearch}"
 			completeMethod="#{savedSearchService.finderFor(searchForm).find}"
-			var="item" itemValue="#{item}" itemLabel="#{item}" dropdown="true"
-			size="30">
-			<p:ajax event="itemSelect" listener="#{savedSearchService.onChange}"
-				update="filtersFieldset messages searchResults" />
-			<f:attribute name="searchForm" value="#{searchForm}" />
-			<f:validateBean binding="#{lenientBeanValidator}" />
+			var="item" itemValue="#{item}" itemLabel="#{savedSearchPrinter.print(item)}" converter="#{savedSearchJsfConverter}"
+			dropdown="true" size="30">
+			<p:ajax event="itemSelect" update="filtersFieldset messages searchResults searchFormName" />
 		</p:autoComplete>
+		<p:commandButton id="displaySavedSearchPanel" rendered="#{savedSearch}" icon="ui-icon-disk" />
+		<p:overlayPanel id="savedSearchPanel" widgetVar="savedSearchPanel" for="displaySavedSearchPanel" hideEffect="fade" dynamic="false">
+			<h:panelGrid columns="2" styleClass="aria-role-presentation">
+				<app:input id="savedSearchName" value="#{searchForm.searchFormName}" label="savedSearch_name" required="true" />
+				<app:inputBoolean id="savedSearchPrivate" label="savedSearchName_private" value="#{searchForm.privateSearch}" />
+			</h:panelGrid>
+			<h:panelGroup>
+				<p:commandButton id="saveSearch" actionListener="#{savedSearchService.save(searchForm)}" process="@form"
+					icon="ui-icon-disk" update="filtersFieldset messages searchResults savedSearchPanel"
+					value="#{msg.search_save}" />
+			</h:panelGroup>
+		</p:overlayPanel>
+		<!-- [/SAVED SEARCH] -->
 		<ui:insert name="buttons" />
 		<br />
 		<span style="height: 16px; display: block;">
 			<p:ajaxStatus>
 				<f:facet name="start">
-					<h:graphicImage name="icons/ajaxloading.gif" alt="" />
+					<h:graphicImage id="ajaxSearchLoading" name="icons/ajaxloading.gif" alt="Loading..." />
 				</f:facet>
 				<f:facet name="error">
-					<h:outputText value="#{msg.error_ajax}" />
+					<h:outputText id="ajaxSearchError" value="#{msg.error_ajax}" />
 				</f:facet>
 				<f:facet name="success">
-					<h:outputText value="" />
+					<h:outputText id="ajaxSearchSuccess" value="" />
 				</f:facet>
 			</p:ajaxStatus>
 		</span>
@@ -103,8 +110,8 @@
 	</ui:define>
 	<ui:define name="dialogs">
 		<p:confirmDialog widgetVar="askForDeleteItemDialog" header="#{msg.menu_delete}?" message="#{msg.dialog_delete_confirm}">
-			<h:panelGrid id="askForDeleteItemDialogContent" columns="2" cellpadding="4" style="margin:0 auto;">  
-				<h:outputText value="#{printer.print(model.selectedRow)}" style="font-weight:bold" rendered="#{not empty model.selectedRow}"/>  
+			<h:panelGrid id="askForDeleteItemDialogContent" columns="2" cellpadding="4" style="margin:0 auto;">
+				<h:outputText value="#{printer.print(model.selectedRow)}" style="font-weight:bold" rendered="#{not empty model.selectedRow}"/>
 			</h:panelGrid>
 			<p:commandButton id="askForDeleteItemDialogYes" action="#{model.delete()}" ajax="true" immediate="true" oncomplete="askForDeleteItemDialog.hide();" process="@this" value="#{msg.yes}" title="#{msg.dialog_delete_confirm} #{msg.yes}" icon="ui-icon-check" update=":form:searchResults :form:messages"/>
 			<p:commandButton id="askForDeleteItemDialogNo" value="#{msg.no}" title="#{msg.dialog_delete_confirm} #{msg.no}" onclick="askForDeleteItemDialog.hide(); return false;" icon="ui-icon-cancel"/>

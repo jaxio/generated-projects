@@ -28,11 +28,11 @@ import com.jaxio.dao.support.OrderBy;
 import com.jaxio.dao.support.OrderByDirection;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Identifiable;
-import com.jaxio.printer.TypeAwarePrinter;
+import com.jaxio.printer.support.TypeAwarePrinter;
 import com.jaxio.repository.support.GenericRepository;
 import com.jaxio.util.ResourcesUtil;
-import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationCallBack;
+import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.util.MessageUtil;
 import com.jaxio.web.util.PrimeFacesUtil;
 
@@ -91,14 +91,13 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
 
     /**
      * Applies the passed parameters to the passed SearchParameters.
-     * Note: filters are not supported for the moment
      * @return the passed searchParameters
      */
     protected SearchParameters populateSearchParameters(SearchParameters sp, int first, int pageSize, String sortField, SortOrder sortOrder,
             Map<String, String> filters) {
-        sp.setFirstResult(bypassFirstOffset ? 0 : first);
+        sp.setFirst(bypassFirstOffset ? 0 : first);
         bypassFirstOffset = false;
-        sp.setMaxResults(pageSize);
+        sp.setPageSize(pageSize);
 
         sp.clearOrders();
         if (isNotEmpty(sortField)) {

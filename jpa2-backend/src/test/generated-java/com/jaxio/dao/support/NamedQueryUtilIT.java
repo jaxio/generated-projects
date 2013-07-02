@@ -9,7 +9,9 @@
 package com.jaxio.dao.support;
 
 import static org.fest.assertions.Assertions.assertThat;
+
 import javax.inject.Inject;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -26,12 +28,11 @@ public class NamedQueryUtilIT {
 
     @Test
     public void allAccountsUsingNamedQuery() {
-        assertThat(namedQueryUtil.findByNamedQuery(new SearchParameters().namedQuery("Account.selectAll"))).hasSize(53);
+        assertThat(namedQueryUtil.findByNamedQuery(new SearchParameters().namedQuery("User.selectAll"))).hasSize(53);
     }
 
     @Test
     public void allAccountsUsingNativeNamedQuery() {
-        assertThat(namedQueryUtil.findByNamedQuery(new SearchParameters().namedQuery("Account.selectAll.native"))).hasSize(53);
+        assertThat(namedQueryUtil.findByNamedQuery(new SearchParameters().namedQuery("User.selectAll.native"))).hasSize(53);
     }
-
 }

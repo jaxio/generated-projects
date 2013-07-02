@@ -23,21 +23,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 
-import com.jaxio.domain.Account;
 import com.jaxio.domain.Address;
-import com.jaxio.domain.Book;
-import com.jaxio.domain.Document;
 import com.jaxio.domain.Role;
+import com.jaxio.domain.User;
 
 @Named
 @Lazy(false)
 public class MassIndexerService {
     private static final Logger log = LoggerFactory.getLogger(MassIndexerService.class);
-    protected static final Class<?>[] CLASSES_TO_BE_INDEXED = { Account.class //
-            , Address.class //
-            , Book.class //
-            , Document.class //
+    protected static final Class<?>[] CLASSES_TO_BE_INDEXED = { Address.class //
             , Role.class //
+            , User.class //
     };
     @PersistenceContext
     protected EntityManager entityManager;

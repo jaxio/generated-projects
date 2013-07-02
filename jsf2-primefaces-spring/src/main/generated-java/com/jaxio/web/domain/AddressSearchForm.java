@@ -9,7 +9,9 @@
 package com.jaxio.web.domain;
 
 import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
+
 import javax.inject.Named;
+
 import com.jaxio.dao.support.PropertySelector;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Address;
@@ -19,7 +21,7 @@ import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
  * View Helper to search {@link Address}.
- * It exposes a {@link Address} instance so it can be used in search by Example query.
+ * It exposes a {@link Address} instance so it can be used in search by-example-query.
  */
 @Named
 @ConversationContextScoped
@@ -27,8 +29,10 @@ public class AddressSearchForm extends GenericSearchForm<Address, Integer, Addre
     private static final long serialVersionUID = 1L;
 
     protected Address address = new Address();
-    protected PropertySelector<Address, String> streetNameSelector = newPropertySelector(Address_.streetName);
+    protected PropertySelector<Address, String> streetSelector = newPropertySelector(Address_.street);
+    protected PropertySelector<Address, String> zipCodeSelector = newPropertySelector(Address_.zipCode);
     protected PropertySelector<Address, String> citySelector = newPropertySelector(Address_.city);
+    protected PropertySelector<Address, String> countrySelector = newPropertySelector(Address_.country);
 
     public Address getAddress() {
         return address;
@@ -47,10 +51,11 @@ public class AddressSearchForm extends GenericSearchForm<Address, Integer, Addre
     @Override
     public SearchParameters toSearchParameters() {
         return new SearchParameters() //
+                .limitBroadSearch() //
                 .anywhere() //
+                .caseInsensitive() //
                 .term(term) //
-                .property(streetNameSelector) //
-                .property(citySelector) //
+                .property(streetSelector, zipCodeSelector, citySelector, countrySelector) //
         ;
     }
 
@@ -58,16 +63,26 @@ public class AddressSearchForm extends GenericSearchForm<Address, Integer, Addre
     public void resetWithOther(AddressSearchForm other) {
         this.address = other.getAddress();
         this.term = other.getTerm();
-        this.streetNameSelector = other.getStreetNameSelector();
+        this.streetSelector = other.getStreetSelector();
+        this.zipCodeSelector = other.getZipCodeSelector();
         this.citySelector = other.getCitySelector();
+        this.countrySelector = other.getCountrySelector();
     }
 
     // Property selectors
-    public PropertySelector<Address, String> getStreetNameSelector() {
-        return streetNameSelector;
+    public PropertySelector<Address, String> getStreetSelector() {
+        return streetSelector;
+    }
+
+    public PropertySelector<Address, String> getZipCodeSelector() {
+        return zipCodeSelector;
     }
 
     public PropertySelector<Address, String> getCitySelector() {
         return citySelector;
+    }
+
+    public PropertySelector<Address, String> getCountrySelector() {
+        return countrySelector;
     }
 }

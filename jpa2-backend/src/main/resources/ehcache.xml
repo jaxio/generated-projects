@@ -61,8 +61,6 @@
 
 		You can override cache configuration given a cache name the following way:
 
-
-
 		The following cache may be used
 
 		# hibernate related
@@ -71,23 +69,23 @@
 
 		# database related
 		com.jaxio.domain.Account
-		com.jaxio.domain.Book.coolBooks
-		com.jaxio.domain.Document.edocs
-		com.jaxio.domain.Account.securityRoles
+		com.jaxio.domain.Transaction.transactions
 
 		com.jaxio.domain.Address
 
-		com.jaxio.domain.Book
+		com.jaxio.domain.Currency
 
-		com.jaxio.domain.Document
-
-		com.jaxio.domain.Legacy
-
-		com.jaxio.domain.more.MoreTypesDemo
+		com.jaxio.domain.Customer
+		com.jaxio.domain.Account.accounts
 
 		com.jaxio.domain.Role
 
 		com.jaxio.domain.SavedSearch
+
+		com.jaxio.domain.Transaction
+
+		com.jaxio.domain.User
+		com.jaxio.domain.User.securityRoles
 
 	-->
 </ehcache>

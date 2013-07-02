@@ -11,9 +11,9 @@ package com.jaxio.web.faces;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 
+import org.omnifaces.eventlistener.DefaultPhaseListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.omnifaces.eventlistener.DefaultPhaseListener;
 
 /**
  * Simple phase listener logger. Convenient when learning/debugging JSF.

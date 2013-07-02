@@ -9,6 +9,7 @@
 package com.jaxio.domain;
 
 import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,12 +19,14 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
+
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Objects;
 import com.jaxio.domain.Address_;
 import com.jaxio.domain.IdentifiableHashBuilder;
@@ -37,8 +40,10 @@ public class Address implements Identifiable<Integer>, Serializable {
 
     // Raw attributes
     private Integer id;
-    private String streetName;
+    private String street;
+    private String zipCode;
     private String city;
+    private String country;
     private Integer version;
 
     // -- [id] ------------------------
@@ -68,20 +73,37 @@ public class Address implements Identifiable<Integer>, Serializable {
         return id != null;
     }
 
-    // -- [streetName] ------------------------
+    // -- [street] ------------------------
 
     @Size(max = 100)
-    @Column(name = "STREET_NAME", length = 100)
-    public String getStreetName() {
-        return streetName;
+    @Column(name = "STREET", length = 100)
+    public String getStreet() {
+        return street;
     }
 
-    public void setStreetName(String streetName) {
-        this.streetName = streetName;
+    public void setStreet(String street) {
+        this.street = street;
     }
 
-    public Address streetName(String streetName) {
-        setStreetName(streetName);
+    public Address street(String street) {
+        setStreet(street);
+        return this;
+    }
+
+    // -- [zipCode] ------------------------
+
+    @Size(max = 10)
+    @Column(name = "ZIP_CODE", length = 10)
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public Address zipCode(String zipCode) {
+        setZipCode(zipCode);
         return this;
     }
 
@@ -101,6 +123,25 @@ public class Address implements Identifiable<Integer>, Serializable {
 
     public Address city(String city) {
         setCity(city);
+        return this;
+    }
+
+    // -- [country] ------------------------
+
+    @Size(max = 100)
+    @NotEmpty
+    @Column(name = "COUNTRY", nullable = false, length = 100)
+    @Field(analyzer = @Analyzer(definition = "custom"))
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public Address country(String country) {
+        setCountry(country);
         return this;
     }
 
@@ -150,8 +191,10 @@ public class Address implements Identifiable<Integer>, Serializable {
     public String toString() {
         return Objects.toStringHelper(this) //
                 .add(Address_.id.getName(), getId()) //
-                .add(Address_.streetName.getName(), getStreetName()) //
+                .add(Address_.street.getName(), getStreet()) //
+                .add(Address_.zipCode.getName(), getZipCode()) //
                 .add(Address_.city.getName(), getCity()) //
+                .add(Address_.country.getName(), getCountry()) //
                 .add(Address_.version.getName(), getVersion()) //
                 .toString();
     }

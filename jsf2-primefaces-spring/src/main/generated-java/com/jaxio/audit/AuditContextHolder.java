@@ -39,7 +39,7 @@ public class AuditContextHolder {
     }
 
     /**
-     * The username bound to this thread or if it is null the username returned by the {@link UserContext};  
+     * The username bound to this thread or if it is null the username returned by the {@link UserContext};
      */
     public static String username() {
         return username.get() == null ? UserContext.getUsername() : username.get();

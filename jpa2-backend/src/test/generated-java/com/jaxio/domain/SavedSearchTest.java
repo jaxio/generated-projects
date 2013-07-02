@@ -8,17 +8,15 @@
  */
 package com.jaxio.domain;
 
-import java.io.*;
-import java.util.*;
-
-import static org.fest.assertions.Assertions.assertThat;
-import org.junit.Test;
-
-import com.jaxio.util.*;
 import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
+import static org.fest.assertions.Assertions.assertThat;
+
+import java.io.*;
 import java.io.Serializable;
+import java.util.*;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,15 +28,15 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
+
 import org.hibernate.validator.constraints.NotEmpty;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.jaxio.domain.Account;
+
+import com.jaxio.domain.User;
+import com.jaxio.util.*;
 
 /**
  * Basic tests for SavedSearch
@@ -62,26 +60,26 @@ public class SavedSearchTest {
     }
 
     //-------------------------------------------------------------
-    // Many to One:  SavedSearch.account ==> Account.id
+    // Many to One:  SavedSearch.user ==> User.id
     //-------------------------------------------------------------
 
     @Test
-    public void manyToOne_setAccount() {
+    public void manyToOne_setUser() {
         SavedSearch many = new SavedSearch();
 
         // init
-        Account one = new Account();
-        one.setId(ValueGenerator.getUniqueString(36));
-        many.setAccount(one);
+        User one = new User();
+        one.setId(ValueGenerator.getUniqueInteger());
+        many.setUser(one);
 
         // make sure it is propagated properly
-        assertThat(many.getAccount()).isEqualTo(one);
+        assertThat(many.getUser()).isEqualTo(one);
 
         // now set it to back to null
-        many.setAccount(null);
+        many.setUser(null);
 
         // make sure null is propagated properly
-        assertThat(many.getAccount()).isNull();
+        assertThat(many.getUser()).isNull();
     }
 
     /*

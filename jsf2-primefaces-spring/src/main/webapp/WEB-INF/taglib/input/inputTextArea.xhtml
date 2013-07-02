@@ -6,7 +6,7 @@
 	xmlns:app="http://springfuse.jaxio.com/app">
 	<app:outputLabel for="#{id}" value="#{label}" required="#{required}" rendered="#{rendered}" />
 	<h:panelGroup rendered="#{(empty readonly or not readonly) and (empty rendered or rendered)}">
-		<p:inputTextarea id="#{id}" value="#{value}" cols="37" rows="3">
+		<p:inputTextarea id="#{id}" value="#{value}" cols="#{empty cols ? 37 : cols}" rows="#{empty rows ? 3 : rows}">
 			<f:validateBean binding="#{lenientBeanValidator}"/>
 			<ui:insert/>
 		</p:inputTextarea>

@@ -18,7 +18,8 @@ import org.hibernate.search.annotations.Factory;
 import org.hibernate.search.cfg.SearchMapping;
 
 /**
- * This configuration is picked up by hibernate search using the <code>hibernate.search.model_mapping</code> code in <code>/META-INF/persistence.xml</code>
+ * This configuration is picked up by hibernate search using the <code>hibernate.search.model_mapping</code>
+ * code in <code>/META-INF/persistence.xml</code>
  */
 public class SearchMappingFactory {
     @Factory

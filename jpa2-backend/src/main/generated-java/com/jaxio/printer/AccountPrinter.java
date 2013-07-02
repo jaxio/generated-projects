@@ -9,23 +9,24 @@
 package com.jaxio.printer;
 
 import java.util.Locale;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.domain.Account;
-import com.jaxio.printer.DiscoverablePrinter;
+import com.jaxio.domain.Account_;
+import com.jaxio.printer.support.GenericPrinter;
 
 /**
- * {@link org.springframework.format.Printer} for {@link Account} 
+ * {@link GenericPrinter} for {@link Account} 
  *
- * @see org.springframework.format.Printer
- * @see DiscoverablePrinter
  * @see TypeAwarePrinter
  */
 @Named
 @Singleton
-public class AccountPrinter extends DiscoverablePrinter<Account> {
+public class AccountPrinter extends GenericPrinter<Account> {
     public AccountPrinter() {
-        super(Account.class);
+        super(Account.class, Account_.accountNumber.getName(), Account_.name.getName());
     }
 
     @Override
@@ -34,9 +35,8 @@ public class AccountPrinter extends DiscoverablePrinter<Account> {
             return "";
         }
         StringBuilder ret = new StringBuilder();
-        appendIfNotEmpty(ret, account.getUsername());
-        appendIfNotEmpty(ret, account.getFirstName());
-        appendIfNotEmpty(ret, account.getLastName());
+        appendIfNotEmpty(ret, account.getAccountNumber());
+        appendIfNotEmpty(ret, account.getName());
         return ret.toString();
     }
 }

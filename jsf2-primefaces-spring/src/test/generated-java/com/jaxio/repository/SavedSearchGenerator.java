@@ -8,13 +8,10 @@
  */
 package com.jaxio.repository;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import com.jaxio.domain.Account;
+
 import com.jaxio.domain.SavedSearch;
-import com.jaxio.repository.AccountGenerator;
-import com.jaxio.repository.AccountRepository;
 
 /**
  * Helper class to create transient entities instance for testing purposes.
@@ -34,15 +31,7 @@ public class SavedSearchGenerator {
         savedSearch.setName("a");
         savedSearch.setFormClassname("a");
         savedSearch.setFormContent("dummy".getBytes());
-        // mandatory relation
-        Account account = accountGenerator.getAccount();
-        accountRepository.save(account);
-        savedSearch.setAccount(account);
         return savedSearch;
     }
 
-    @Inject
-    private AccountRepository accountRepository;
-    @Inject
-    private AccountGenerator accountGenerator;
 }

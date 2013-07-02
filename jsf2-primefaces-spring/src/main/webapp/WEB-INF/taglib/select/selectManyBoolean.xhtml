@@ -2,7 +2,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" 
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:app="http://springfuse.jaxio.com/app">	
+	xmlns:app="http://springfuse.jaxio.com/app">
 	<app:outputLabel for="#{id}" value="#{label}" required="#{required}" rendered="#{rendered}" />
 	<p:selectManyCheckbox id="#{id}" value="#{value.selected}" converter="#{booleanConverter}" rendered="#{not nullAllowed}">
 		<f:selectItem itemLabel="#{msg.boolean_true}" itemValue="#{true}" />

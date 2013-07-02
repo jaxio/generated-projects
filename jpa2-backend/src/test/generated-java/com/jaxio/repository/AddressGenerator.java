@@ -10,6 +10,7 @@ package com.jaxio.repository;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.domain.Address;
 
 /**
@@ -27,8 +28,10 @@ public class AddressGenerator {
         Address address = new Address();
 
         // simple attributes follows
-        address.setStreetName("a");
+        address.setStreet("a");
+        address.setZipCode("a");
         address.setCity("a");
+        address.setCountry("a");
         return address;
     }
 

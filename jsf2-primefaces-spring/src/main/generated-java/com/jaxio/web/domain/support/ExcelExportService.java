@@ -21,12 +21,12 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
-import net.sf.jxls.transformer.XLSTransformer;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.core.io.ClassPathResource;
+
+import net.sf.jxls.transformer.XLSTransformer;
 
 @Named
 public class ExcelExportService {
@@ -73,9 +73,14 @@ public class ExcelExportService {
         if (resources.containsKey(templateClasspathLocation)) {
             return resources.get(templateClasspathLocation);
         } else {
-            byte[] templateAsStream = IOUtils.toByteArray(new ClassPathResource(templateClasspathLocation).getInputStream());
-            resources.put(templateClasspathLocation, templateAsStream);
-            return templateAsStream;
+            InputStream inputStream = new ClassPathResource(templateClasspathLocation).getInputStream();
+            try {
+                byte[] templateAsStream = IOUtils.toByteArray(inputStream);
+                resources.put(templateClasspathLocation, templateAsStream);
+                return templateAsStream;
+            } finally {
+                closeQuietly(inputStream);
+            }
         }
     }
 
@@ -99,5 +104,4 @@ public class ExcelExportService {
         }
         return max;
     }
-
 }

@@ -10,39 +10,33 @@ package com.jaxio.web.domain;
 
 import static com.jaxio.dao.support.EntitySelector.newEntitySelector;
 import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
-import static com.jaxio.dao.support.Ranges.RangeDate.newRangeDate;
+
 import javax.inject.Named;
+
 import com.jaxio.dao.support.EntitySelector;
 import com.jaxio.dao.support.PropertySelector;
-import com.jaxio.dao.support.Ranges.RangeDate;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Account_;
-import com.jaxio.domain.Address;
-import com.jaxio.domain.Civility;
+import com.jaxio.domain.Currency;
+import com.jaxio.domain.Customer;
 import com.jaxio.web.domain.support.GenericSearchForm;
 import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
  * View Helper to search {@link Account}.
- * It exposes a {@link Account} instance so it can be used in search by Example query.
+ * It exposes a {@link Account} instance so it can be used in search by-example-query.
  */
 @Named
 @ConversationContextScoped
-public class AccountSearchForm extends GenericSearchForm<Account, String, AccountSearchForm> {
+public class AccountSearchForm extends GenericSearchForm<Account, Integer, AccountSearchForm> {
     private static final long serialVersionUID = 1L;
 
     protected Account account = new Account();
-    protected RangeDate<Account> birthDateRange = newRangeDate(Account_.birthDate);
-    protected PropertySelector<Account, String> usernameSelector = newPropertySelector(Account_.username);
-    protected PropertySelector<Account, String> passwordSelector = newPropertySelector(Account_.password);
-    protected PropertySelector<Account, String> emailSelector = newPropertySelector(Account_.email);
-    protected PropertySelector<Account, Boolean> isEnabledSelector = newPropertySelector(Account_.isEnabled);
-    protected PropertySelector<Account, Civility> civilitySelector = newPropertySelector(Account_.civility);
-    protected PropertySelector<Account, String> firstNameSelector = newPropertySelector(Account_.firstName);
-    protected PropertySelector<Account, String> lastNameSelector = newPropertySelector(Account_.lastName);
-    protected PropertySelector<Account, String> descriptionSelector = newPropertySelector(Account_.description);
-    protected EntitySelector<Account, Address, Integer> homeAddressSelector = newEntitySelector(Account_.homeAddress);
+    protected PropertySelector<Account, String> accountNumberSelector = newPropertySelector(Account_.accountNumber);
+    protected PropertySelector<Account, String> nameSelector = newPropertySelector(Account_.name);
+    protected EntitySelector<Account, Currency, Integer> currencySelector = newEntitySelector(Account_.currency);
+    protected EntitySelector<Account, Customer, Integer> customerSelector = newEntitySelector(Account_.customer);
 
     public Account getAccount() {
         return account;
@@ -61,78 +55,39 @@ public class AccountSearchForm extends GenericSearchForm<Account, String, Accoun
     @Override
     public SearchParameters toSearchParameters() {
         return new SearchParameters() //
+                .limitBroadSearch() //
                 .anywhere() //
-                .leftJoin(Account_.homeAddress) //
-                .term(term) //
-                .range(birthDateRange) //
-                .property(usernameSelector) //
-                .property(passwordSelector) //
-                .property(emailSelector) //
-                .property(isEnabledSelector) //
-                .property(civilitySelector) //
-                .property(firstNameSelector) //
-                .property(lastNameSelector) //
-                .property(descriptionSelector) //
-                .entity(homeAddressSelector) //
+                .caseInsensitive() //
+                .leftJoin(Account_.customer) //
+                .property(accountNumberSelector, nameSelector) //
+                .entity(currencySelector, customerSelector) //
         ;
     }
 
     @Override
     public void resetWithOther(AccountSearchForm other) {
         this.account = other.getAccount();
-        this.term = other.getTerm();
-        this.birthDateRange = other.getBirthDateRange();
-        this.usernameSelector = other.getUsernameSelector();
-        this.passwordSelector = other.getPasswordSelector();
-        this.emailSelector = other.getEmailSelector();
-        this.isEnabledSelector = other.getIsEnabledSelector();
-        this.civilitySelector = other.getCivilitySelector();
-        this.firstNameSelector = other.getFirstNameSelector();
-        this.lastNameSelector = other.getLastNameSelector();
-        this.descriptionSelector = other.getDescriptionSelector();
-        this.homeAddressSelector = other.getHomeAddressSelector();
-    }
-
-    // Ranges
-    public RangeDate<Account> getBirthDateRange() {
-        return birthDateRange;
+        this.accountNumberSelector = other.getAccountNumberSelector();
+        this.nameSelector = other.getNameSelector();
+        this.currencySelector = other.getCurrencySelector();
+        this.customerSelector = other.getCustomerSelector();
     }
 
     // Property selectors
-    public PropertySelector<Account, String> getUsernameSelector() {
-        return usernameSelector;
+    public PropertySelector<Account, String> getAccountNumberSelector() {
+        return accountNumberSelector;
     }
 
-    public PropertySelector<Account, String> getPasswordSelector() {
-        return passwordSelector;
-    }
-
-    public PropertySelector<Account, String> getEmailSelector() {
-        return emailSelector;
-    }
-
-    public PropertySelector<Account, Boolean> getIsEnabledSelector() {
-        return isEnabledSelector;
-    }
-
-    public PropertySelector<Account, Civility> getCivilitySelector() {
-        return civilitySelector;
-    }
-
-    public PropertySelector<Account, String> getFirstNameSelector() {
-        return firstNameSelector;
-    }
-
-    public PropertySelector<Account, String> getLastNameSelector() {
-        return lastNameSelector;
-    }
-
-    public PropertySelector<Account, String> getDescriptionSelector() {
-        return descriptionSelector;
+    public PropertySelector<Account, String> getNameSelector() {
+        return nameSelector;
     }
 
     // Relation selectors
-    public EntitySelector<Account, Address, Integer> getHomeAddressSelector() {
-        return homeAddressSelector;
+    public EntitySelector<Account, Currency, Integer> getCurrencySelector() {
+        return currencySelector;
+    }
+
+    public EntitySelector<Account, Customer, Integer> getCustomerSelector() {
+        return customerSelector;
     }
 }

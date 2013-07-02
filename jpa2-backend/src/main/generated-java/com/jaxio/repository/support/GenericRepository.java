@@ -11,9 +11,10 @@ package com.jaxio.repository.support;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.metamodel.SingularAttribute;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jaxio.dao.support.GenericDao;
@@ -260,7 +261,7 @@ public abstract class GenericRepository<E extends Identifiable<PK>, PK extends S
     }
 
     /**
-     * @return the number of entities that  {@link #find(SearchParameters)} would return.
+     * @return the number of entities that {@link #find(SearchParameters)} would return.
      */
     @Transactional(readOnly = true)
     public int findCount(SearchParameters sp) {
@@ -280,5 +281,19 @@ public abstract class GenericRepository<E extends Identifiable<PK>, PK extends S
      */
     public Comparable<Object> getVersion(E model) {
         return dao.getVersion(model);
+    }
+
+    /**
+     * Is the property indexed ?
+     */
+    public boolean isIndexed(String property) {
+        return dao.isIndexed(property);
+    }
+
+    /**
+     * Is the property indexed ?
+     */
+    public boolean isIndexed(SingularAttribute<E, ?> field) {
+        return isIndexed(field.getName());
     }
 }

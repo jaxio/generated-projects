@@ -10,7 +10,9 @@ package com.jaxio.web.domain;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.primefaces.model.LazyDataModel;
+
 import com.jaxio.domain.SavedSearch;
 import com.jaxio.repository.SavedSearchRepository;
 import com.jaxio.web.converter.SavedSearchJsfConverter;

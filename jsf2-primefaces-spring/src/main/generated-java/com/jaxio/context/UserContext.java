@@ -11,7 +11,6 @@ package com.jaxio.context;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyList;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 
@@ -51,7 +50,7 @@ public class UserContext {
         return ANONYMOUS_USER;
     }
 
-    public static Serializable getId() {
+    public static Integer getId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth != null) {

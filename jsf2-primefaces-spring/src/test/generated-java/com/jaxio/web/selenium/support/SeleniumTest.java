@@ -30,19 +30,19 @@ public abstract class SeleniumTest {
 
     protected void englishHomePage() {
         webClient.page("/home.faces?locale=en");
-        webClient.hasText("Please login first in order to access the application content.");
+        webClient.waitUntilTextIsPresent("Please login first in order to access the application content.");
     }
 
     protected void loginAsAnAdmin() {
         webClient.step("Login as admin");
         anonymousHomePage.connexion();
         loginPage.login("admin", "admin");
-        webClient.hasText("Congratulations admin, you are logged");
+        webClient.waitUntilTextIsPresent("Congratulations admin, you are logged");
     }
 
     protected void logout() {
         webClient.step("Logout");
         loggedHomePage.logout();
-        webClient.hasText("Please login first in order to access the application content.");
+        webClient.waitUntilTextIsPresent("Please login first in order to access the application content.");
     }
 }

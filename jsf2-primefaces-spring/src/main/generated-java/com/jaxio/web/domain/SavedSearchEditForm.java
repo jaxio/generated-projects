@@ -11,13 +11,13 @@ package com.jaxio.web.domain;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
-import com.jaxio.domain.Account;
+
 import com.jaxio.domain.SavedSearch;
+import com.jaxio.domain.User;
 import com.jaxio.repository.SavedSearchRepository;
-import com.jaxio.web.domain.AccountController;
 import com.jaxio.web.domain.SavedSearchController;
 import com.jaxio.web.domain.SavedSearchGraphLoader;
+import com.jaxio.web.domain.UserController;
 import com.jaxio.web.domain.support.GenericEditForm;
 import com.jaxio.web.domain.support.GenericToOneAssociation;
 import com.jaxio.web.faces.ConversationContextScoped;
@@ -31,8 +31,8 @@ public class SavedSearchEditForm extends GenericEditForm<SavedSearch, Integer> {
     @Inject
     protected SavedSearchController savedSearchController;
     @Inject
-    protected AccountController accountController;
-    protected GenericToOneAssociation<Account, String> account;
+    protected UserController userController;
+    protected GenericToOneAssociation<User, Integer> user;
 
     @Inject
     public SavedSearchEditForm(SavedSearchRepository savedSearchRepository, SavedSearchGraphLoader savedSearchGraphLoader) {
@@ -51,27 +51,21 @@ public class SavedSearchEditForm extends GenericEditForm<SavedSearch, Integer> {
     }
 
     @PostConstruct
-    void setupAccountsActions() {
-        account = new GenericToOneAssociation<Account, String>("savedSearch_account", accountController) {
+    void setupUserActions() {
+        user = new GenericToOneAssociation<User, Integer>("savedSearch_user", userController) {
             @Override
-            protected Account get() {
-                return getSavedSearch().getAccount();
+            protected User get() {
+                return getSavedSearch().getUser();
             }
 
             @Override
-            protected void set(Account account) {
-                getSavedSearch().setAccount(account);
-            }
-
-            @NotNull
-            @Override
-            public Account getSelected() {
-                return super.getSelected();
+            protected void set(User user) {
+                getSavedSearch().setUser(user);
             }
         };
     }
 
-    public GenericToOneAssociation<Account, String> getAccount() {
-        return account;
+    public GenericToOneAssociation<User, Integer> getUser() {
+        return user;
     }
 }

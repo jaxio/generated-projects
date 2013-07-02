@@ -9,8 +9,8 @@
 package com.jaxio.web.conversation;
 
 import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
-import static com.jaxio.web.conversation.ConversationUtil.getConversationId;
 import static com.jaxio.web.conversation.ConversationUtil.getConversationContextId;
+import static com.jaxio.web.conversation.ConversationUtil.getConversationId;
 
 import java.io.IOException;
 

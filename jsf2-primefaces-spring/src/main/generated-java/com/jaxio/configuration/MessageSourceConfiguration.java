@@ -42,12 +42,13 @@ public class MessageSourceConfiguration {
                 // generated domain resources
                 "classpath:/localization/domain/Account", //
                 "classpath:/localization/domain/Address", //
-                "classpath:/localization/domain/Book", //
-                "classpath:/localization/domain/Document", //
-                "classpath:/localization/domain/Legacy", //
-                "classpath:/localization/domain/MoreTypesDemo", //
+                "classpath:/localization/domain/Currency", //
+                "classpath:/localization/domain/Customer", //
                 "classpath:/localization/domain/Role", //
                 "classpath:/localization/domain/SavedSearch", //
+                "classpath:/localization/domain/Transaction", //
+                "classpath:/localization/domain/User", //
+                "classpath:/localization/domain/Civility", //
                 // default bean validation messages 
                 "classpath:org/hibernate/validator/ValidationMessages" //
         );

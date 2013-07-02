@@ -8,11 +8,17 @@
  */
 package com.jaxio.repository;
 
-import java.util.Date;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.domain.Account;
-import com.jaxio.domain.Civility;
+import com.jaxio.domain.Currency;
+import com.jaxio.domain.Customer;
+import com.jaxio.repository.CurrencyGenerator;
+import com.jaxio.repository.CurrencyRepository;
+import com.jaxio.repository.CustomerGenerator;
+import com.jaxio.repository.CustomerRepository;
 import com.jaxio.util.ValueGenerator;
 
 /**
@@ -30,20 +36,25 @@ public class AccountGenerator {
         Account account = new Account();
 
         // simple attributes follows
-        account.setUsername(ValueGenerator.getUniqueString(100));
-        account.setPassword("a");
-        account.setEmail(ValueGenerator.getUniqueEmail());
-        account.setIsEnabled(true);
-        account.setCivility(Civility.MR);
-        account.setFirstName("a");
-        account.setLastName("a");
-        account.setBirthDate(new Date());
-        account.setDescription("a");
-        account.setCreationDate(new Date());
-        account.setCreationAuthor("a");
-        account.setLastModificationDate(new Date());
-        account.setLastModificationAuthor("a");
+        account.setAccountNumber(ValueGenerator.getUniqueString(100));
+        account.setName("a");
+        // mandatory relation
+        Currency currency = currencyGenerator.getCurrency();
+        currencyRepository.save(currency);
+        account.setCurrency(currency);
+        // mandatory relation
+        Customer customer = customerGenerator.getCustomer();
+        customerRepository.save(customer);
+        account.setCustomer(customer);
         return account;
     }
 
+    @Inject
+    private CurrencyRepository currencyRepository;
+    @Inject
+    private CurrencyGenerator currencyGenerator;
+    @Inject
+    private CustomerRepository customerRepository;
+    @Inject
+    private CustomerGenerator customerGenerator;
 }

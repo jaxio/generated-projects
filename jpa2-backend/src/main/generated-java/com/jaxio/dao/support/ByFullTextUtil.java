@@ -21,7 +21,6 @@ import javax.persistence.Embeddable;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -39,22 +38,19 @@ public class ByFullTextUtil {
     @Inject
     HibernateSearchUtil hibernateSearchUtil;
 
-    public <T extends Identifiable<?>> Predicate byFullText(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder, final SearchParameters sp, T entity,
-            List<SingularAttribute<?, ?>> indexedAttributes) {
+    public <T extends Identifiable<?>> Predicate byFullText(Root<T> root, CriteriaBuilder builder, SearchParameters sp, T entity, List<String> indexedAttributes) {
         if (!sp.hasTerms()) {
             return null;
         }
 
-        List<String> properties = JpaUtil.toNamesList(indexedAttributes);
         if (JpaUtil.hasSimplePk(entity)) {
-            return onSimplePrimaryKey(root, builder, sp, properties);
+            return onSimplePrimaryKey(root, builder, sp, indexedAttributes);
         } else {
-            return onCompositePrimaryKeys(root, builder, sp, properties);
+            return onCompositePrimaryKeys(root, builder, sp, indexedAttributes);
         }
     }
 
-    private <T extends Identifiable<?>> Predicate onCompositePrimaryKeys(Root<T> root, CriteriaBuilder builder, final SearchParameters sp,
-            List<String> properties) {
+    private <T extends Identifiable<?>> Predicate onCompositePrimaryKeys(Root<T> root, CriteriaBuilder builder, SearchParameters sp, List<String> properties) {
         List<? extends T> found = hibernateSearchUtil.find(root.getJavaType(), sp, properties);
         if (found.isEmpty()) {
             return builder.disjunction();
@@ -64,19 +60,19 @@ public class ByFullTextUtil {
         for (T t : found) {
             predicates.add(byExampleOnEntity(root, t, sp, builder));
         }
-        return JpaUtil.andPredicate(builder, JpaUtil.orPredicate(builder, predicates));
+        return JpaUtil.concatPredicate(sp, builder, JpaUtil.orPredicate(builder, predicates));
     }
 
-    private <T> Predicate onSimplePrimaryKey(Root<T> root, CriteriaBuilder builder, final SearchParameters sp, List<String> properties) {
+    private <T> Predicate onSimplePrimaryKey(Root<T> root, CriteriaBuilder builder, SearchParameters sp, List<String> properties) {
         List<Serializable> ids = hibernateSearchUtil.findId(root.getJavaType(), sp, properties);
         if (ids.isEmpty()) {
             return builder.disjunction();
         }
 
-        return JpaUtil.andPredicate(builder, root.get("id").in(ids));
+        return JpaUtil.concatPredicate(sp, builder, root.get("id").in(ids));
     }
 
-    public <T extends Identifiable<?>> Predicate byExampleOnEntity(Root<T> rootPath, final T entityValue, SearchParameters sp, CriteriaBuilder builder) {
+    public <T extends Identifiable<?>> Predicate byExampleOnEntity(Root<T> rootPath, T entityValue, SearchParameters sp, CriteriaBuilder builder) {
         if (entityValue == null) {
             return null;
         }
@@ -99,7 +95,7 @@ public class ByFullTextUtil {
         }
     }
 
-    public <E> Predicate byExampleOnEmbeddable(Path<E> embeddablePath, final E embeddableValue, SearchParameters sp, CriteriaBuilder builder) {
+    public <E> Predicate byExampleOnEmbeddable(Path<E> embeddablePath, E embeddableValue, SearchParameters sp, CriteriaBuilder builder) {
         if (embeddableValue == null) {
             return null;
         }
@@ -112,7 +108,7 @@ public class ByFullTextUtil {
     /**
      * Add a predicate for each simple property whose value is not null.
      */
-    public <T> List<Predicate> byExample(ManagedType<T> mt, Path<T> mtPath, final T mtValue, SearchParameters sp, CriteriaBuilder builder) {
+    public <T> List<Predicate> byExample(ManagedType<T> mt, Path<T> mtPath, T mtValue, SearchParameters sp, CriteriaBuilder builder) {
         List<Predicate> predicates = newArrayList();
         for (SingularAttribute<? super T, ?> attr : mt.getSingularAttributes()) {
             if (!isPrimaryKey(mt, attr)) {

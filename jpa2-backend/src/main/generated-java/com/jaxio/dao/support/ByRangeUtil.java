@@ -15,7 +15,6 @@ import static java.lang.Boolean.TRUE;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -24,8 +23,8 @@ import javax.persistence.criteria.Root;
  */
 public class ByRangeUtil {
 
-    public static <E> Predicate byRanges(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder builder, final List<Range<?, ?>> ranges, final Class<E> type) {
-
+    public static <E> Predicate byRanges(Root<E> root, CriteriaBuilder builder, SearchParameters sp, Class<E> type) {
+        List<Range<?, ?>> ranges = sp.getRanges();
         List<Predicate> predicates = newArrayList();
         for (Range<?, ?> r : ranges) {
             @SuppressWarnings("unchecked")
@@ -50,7 +49,7 @@ public class ByRangeUtil {
             }
         }
 
-        return JpaUtil.andPredicate(builder, predicates);
+        return JpaUtil.concatPredicate(sp, builder, predicates);
     }
 
     private static <D extends Comparable<? super D>, E> Predicate buildRangePredicate(Range<E, D> range, Root<E> root, CriteriaBuilder builder) {

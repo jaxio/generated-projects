@@ -8,13 +8,13 @@
  */
 package com.jaxio.dao.support;
 
-import java.io.Serializable;
-
-import javax.persistence.metamodel.SingularAttribute;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.jaxio.dao.support.OrderByDirection.ASC;
 import static com.jaxio.dao.support.OrderByDirection.DESC;
+
+import java.io.Serializable;
+
+import javax.persistence.metamodel.SingularAttribute;
 
 /**
  * Holder class for search ordering used by the {@link SearchParameters}.

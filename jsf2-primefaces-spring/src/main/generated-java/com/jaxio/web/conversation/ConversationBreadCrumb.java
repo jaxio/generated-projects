@@ -21,6 +21,10 @@ import org.primefaces.component.menuitem.MenuItem;
 import org.primefaces.model.DefaultMenuModel;
 import org.primefaces.model.MenuModel;
 
+/**
+ * The Conversation breadcrumb displays the current conversation contextes.
+ * Usage: &lt;breadcrumb model="#{conversationBreadCrumb.model}" rendered="#{conversationBreadCrumb.render}" /&gt;
+ */
 @Named
 @Singleton
 public class ConversationBreadCrumb {
@@ -48,8 +52,10 @@ public class ConversationBreadCrumb {
                 menuItem = new MenuItem();
                 menuItem.setValue(ctx.getLabel());
                 if (i == beforeLastIndex && beforeLastIndex > 0) {
-                    // calls back button action
+                    // calls back button action which will trigger the callback 
+                    // as if the user had pressed on 'back' button.
                     menuItem.setOnclick("APP.menu.back()");
+                    menuItem.setImmediate(true);
                 } else {
                     menuItem.setDisabled(true);
                 }

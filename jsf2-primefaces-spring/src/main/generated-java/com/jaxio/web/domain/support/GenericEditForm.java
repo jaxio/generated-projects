@@ -21,14 +21,14 @@ import org.apache.commons.lang.WordUtils;
 
 import com.jaxio.dao.support.JpaUniqueUtil;
 import com.jaxio.domain.Identifiable;
-import com.jaxio.printer.TypeAwarePrinter;
+import com.jaxio.printer.support.TypeAwarePrinter;
 import com.jaxio.repository.support.EntityGraphLoader;
 import com.jaxio.repository.support.GenericRepository;
 import com.jaxio.util.ResourcesUtil;
-import com.jaxio.web.util.MessageUtil;
-import com.jaxio.web.util.TabBean;
 import com.jaxio.web.conversation.ConversationCallBack;
 import com.jaxio.web.conversation.ConversationContext;
+import com.jaxio.web.util.MessageUtil;
+import com.jaxio.web.util.TabBean;
 
 /**
  * Base Edit Form for JPA entities.
@@ -85,7 +85,7 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
                 // we can use the entity as is, it does not have any association
                 // or they are eargly loaded.
                 // TODO: probably a repository.readonlyMerge(context().getEntity()); to be consistent
-                // ==> AGAIN this demonstration IMO that we do not need a separated service...            	    
+                // ==> AGAIN this demonstration IMO that we do not need a separated service...                    
                 entity = context().getEntity();
             }
         } else {

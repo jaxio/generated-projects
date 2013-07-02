@@ -11,9 +11,11 @@ package com.jaxio.web.domain;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Role;
 import com.jaxio.domain.Role_;
+import com.jaxio.printer.RolePrinter;
 import com.jaxio.repository.RoleRepository;
 import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.RolePermission;
@@ -28,8 +30,8 @@ public class RoleController extends GenericController<Role, Integer> {
     public static final String ROLE_SELECT_URI = "/domain/roleSelect.faces";
 
     @Inject
-    public RoleController(RoleRepository roleRepository, RolePermission rolePermission) {
-        super(roleRepository, rolePermission, ROLE_SELECT_URI, ROLE_EDIT_URI);
+    public RoleController(RoleRepository roleRepository, RolePermission rolePermission, RolePrinter rolePrinter) {
+        super(roleRepository, rolePermission, rolePrinter, ROLE_SELECT_URI, ROLE_EDIT_URI);
     }
 
     @Override

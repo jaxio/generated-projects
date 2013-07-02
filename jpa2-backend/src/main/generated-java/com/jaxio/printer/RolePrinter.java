@@ -9,23 +9,24 @@
 package com.jaxio.printer;
 
 import java.util.Locale;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.domain.Role;
-import com.jaxio.printer.DiscoverablePrinter;
+import com.jaxio.domain.Role_;
+import com.jaxio.printer.support.GenericPrinter;
 
 /**
- * {@link org.springframework.format.Printer} for {@link Role} 
+ * {@link GenericPrinter} for {@link Role} 
  *
- * @see org.springframework.format.Printer
- * @see DiscoverablePrinter
  * @see TypeAwarePrinter
  */
 @Named
 @Singleton
-public class RolePrinter extends DiscoverablePrinter<Role> {
+public class RolePrinter extends GenericPrinter<Role> {
     public RolePrinter() {
-        super(Role.class);
+        super(Role.class, Role_.roleName.getName());
     }
 
     @Override

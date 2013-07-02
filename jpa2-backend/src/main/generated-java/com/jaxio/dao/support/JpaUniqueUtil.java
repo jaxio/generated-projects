@@ -35,6 +35,7 @@ import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.WordUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.util.ReflectionUtils;
 
 import com.jaxio.domain.Identifiable;
@@ -176,8 +177,13 @@ public class JpaUniqueUtil {
         String entityName = getEntityName(entity);
         String sqlQuery = "select count(c) from " + entityName + " c where";
         boolean first = true;
-        for (String propertyName : values.keySet()) {
-            sqlQuery += (!first ? " and " : " ") + propertyName + "=:" + propertyName;
+        for (Map.Entry<String, Object> property : values.entrySet()) {
+            sqlQuery += !first ? " and " : " ";
+            if (property.getValue() instanceof String) {
+                sqlQuery += "upper(" + property.getKey() + ")=:" + property.getKey();
+            } else {
+                sqlQuery += property.getKey() + "=:" + property.getKey();
+            }
             first = false;
         }
         if (entity.isIdSet()) {
@@ -187,8 +193,13 @@ public class JpaUniqueUtil {
             sqlQuery += " id<>:id";
         }
         TypedQuery<Long> query = entityManager.createQuery(sqlQuery, Long.class);
-        for (String propertyName : values.keySet()) {
-            query.setParameter(propertyName, values.get(propertyName));
+        for (Map.Entry<String, Object> property : values.entrySet()) {
+            String propertyName = property.getKey();
+            Object value = property.getValue();
+            if (value instanceof String) {
+                value = ((String) value).toUpperCase(LocaleContextHolder.getLocale());
+            }
+            query.setParameter(propertyName, value);
         }
         if (entity.isIdSet()) {
             query.setParameter("id", entity.getId());

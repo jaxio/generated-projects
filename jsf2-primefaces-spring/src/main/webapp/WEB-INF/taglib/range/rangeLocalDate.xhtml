@@ -7,11 +7,11 @@
 	<app:outputLabel for="#{id}" value="#{label}" required="#{required}" rendered="#{rendered}" />
 	<h:panelGrid columns="4" id="#{id}" styleClass="aria-role-presentation" rendered="#{empty rendered ? true : rendered}">
 		<label for="form:#{id}RangeFrom_input">#{msg.date_range_from}</label>
-		<p:calendar id="#{id}RangeFrom" value="#{value.from}" pattern="yyyy-MM-dd">
+		<p:calendar id="#{id}RangeFrom" value="#{value.from}" pattern="yyyy-MM-dd" navigator="true">
 			<f:converter converterId="localDateConverter"/>
 		</p:calendar>
 		<label for="form:#{id}RangeTo_input">#{msg.date_range_to}</label>
-		<p:calendar id="#{id}RangeTo" value="#{value.to}" pattern="yyyy-MM-dd">
+		<p:calendar id="#{id}RangeTo" value="#{value.to}" pattern="yyyy-MM-dd" navigator="true">
 			<f:converter converterId="localDateConverter"/>
 		</p:calendar>
 	</h:panelGrid>

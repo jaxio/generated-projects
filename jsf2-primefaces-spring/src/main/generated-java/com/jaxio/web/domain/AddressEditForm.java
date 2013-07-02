@@ -10,6 +10,7 @@ package com.jaxio.web.domain;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import com.jaxio.domain.Address;
 import com.jaxio.repository.AddressRepository;
 import com.jaxio.web.domain.AddressController;

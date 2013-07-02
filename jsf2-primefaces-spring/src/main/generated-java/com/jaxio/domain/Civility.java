@@ -8,13 +8,48 @@
  */
 package com.jaxio.domain;
 
-import com.jaxio.util.ResourcesUtil;
 import com.jaxio.domain.LabelizedEnum;
+import com.jaxio.util.ResourcesUtil;
 
 public enum Civility implements LabelizedEnum {
-    MR, MS;
+    MISTER("MR"), //
+    MISS("MS");
+    private String code;
+
+    Civility(String code) {
+        this.code = code;
+    }
+
+    public String toString() {
+        return this.code;
+    }
+
+    public static Civility fromString(String value) {
+        if (value == null) {
+            return null;
+        }
+        for (Civility enumValue : Civility.values()) {
+            if (value.equals(enumValue.toString())) {
+                return enumValue;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String getLabel() {
         return ResourcesUtil.getInstance().getProperty("Civility_" + name());
+    }
+
+    public static Civility fromLabel(String label) {
+        if (label == null) {
+            return null;
+        }
+        for (Civility enumValue : Civility.values()) {
+            if (label.equals(enumValue.getLabel())) {
+                return enumValue;
+            }
+        }
+        return null;
     }
 }

@@ -6,7 +6,7 @@
 	xmlns:app="http://springfuse.jaxio.com/app">
 	<app:outputLabel for="#{id}" value="#{label}" required="#{required}" rendered="#{rendered}" />
 	<p:selectOneRadio id="#{id}" value="#{value}" label="#{resourcesUtil.getProperty(label)}" rendered="#{not readonly}" disabled="#{empty disabled ? false : disabled}"
-		layout="#{values.size() lt 4 ? 'lineDirection' : 'pageDirection'}">
+		layout="#{empty layout ? (values.size() lt 4 ? 'lineDirection' : 'pageDirection') : layout}">
 		<f:selectItems value="#{values}" />
 		<f:validateBean binding="#{lenientBeanValidator}" />
 		<ui:insert/>

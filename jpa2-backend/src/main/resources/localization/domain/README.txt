@@ -7,5 +7,6 @@
 # Template pack-backend-jpa:src/main/resources/localization/domain/README.p.vm.txt
 #
 
+
 This folder contains Resources file for entities.
-Note that each base file must be declared in the Spring configuration file applicationContext.xml
+Note that each base file must be declared in the Spring configuration MessageSourceConfiguration Java class.

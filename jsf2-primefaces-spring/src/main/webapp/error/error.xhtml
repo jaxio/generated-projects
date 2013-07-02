@@ -12,7 +12,7 @@
 	<ui:param name="title" value="error_unknown_title" />
 	<ui:define name="content">
 		<p:panel header="${msg.error_unknown}">
-		<h:panelGrid columns="2">		
+		<h:panelGrid columns="2">
 			<h:outputText value="Date/time:" /> <h:outputText value="#{of:formatDate(now, 'yyyy-MM-dd HH:mm:ss')}" />
 			<h:outputText value="User agent" /> <h:outputText value="#{header['user-agent']}" />
 			<h:outputText value="User IP" /> <h:outputText value="#{empty header['x-forwarded-for'] ? request.remoteAddr : fn:split(header['x-forwarded-for'], ',')[0]}" />

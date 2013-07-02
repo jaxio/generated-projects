@@ -37,6 +37,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.util.ReflectionUtils;
 
 import com.jaxio.domain.Identifiable;
@@ -66,8 +67,24 @@ public class JpaUtil {
         }
     }
 
+    public static Predicate concatPredicate(SearchParameters sp, CriteriaBuilder builder, Predicate... predicatesNullAllowed) {
+        return concatPredicate(sp, builder, newArrayList(predicatesNullAllowed));
+    }
+
+    public static Predicate concatPredicate(SearchParameters sp, CriteriaBuilder builder, Iterable<Predicate> predicatesNullAllowed) {
+        if (sp.isAndMode()) {
+            return andPredicate(builder, predicatesNullAllowed);
+        } else {
+            return orPredicate(builder, predicatesNullAllowed);
+        }
+    }
+
     public static Predicate andPredicate(CriteriaBuilder builder, Predicate... predicatesNullAllowed) {
         return andPredicate(builder, newArrayList(predicatesNullAllowed));
+    }
+
+    public static Predicate orPredicate(CriteriaBuilder builder, Predicate... predicatesNullAllowed) {
+        return orPredicate(builder, newArrayList(predicatesNullAllowed));
     }
 
     public static Predicate andPredicate(CriteriaBuilder builder, Iterable<Predicate> predicatesNullAllowed) {
@@ -95,7 +112,7 @@ public class JpaUtil {
     public static <E> Predicate stringPredicate(Expression<String> path, Object attrValue, SearchMode searchMode, SearchParameters sp, CriteriaBuilder builder) {
         if (sp.isCaseInsensitive()) {
             path = builder.lower(path);
-            attrValue = ((String) attrValue).toLowerCase();
+            attrValue = ((String) attrValue).toLowerCase(LocaleContextHolder.getLocale());
         }
 
         switch (searchMode != null ? searchMode : sp.getSearchMode()) {

@@ -8,10 +8,9 @@
  */
 package com.jaxio.dao;
 
-import static com.jaxio.domain.Address_.city;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import com.jaxio.dao.AddressDao;
+
 import com.jaxio.dao.support.GenericDao;
 import com.jaxio.domain.Address;
 
@@ -23,6 +22,6 @@ import com.jaxio.domain.Address;
 @Singleton
 public class AddressDao extends GenericDao<Address, Integer> {
     public AddressDao() {
-        super(Address.class, city);
+        super(Address.class);
     }
 }

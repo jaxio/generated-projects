@@ -10,7 +10,9 @@ package com.jaxio.web.domain;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.primefaces.model.LazyDataModel;
+
 import com.jaxio.domain.Role;
 import com.jaxio.repository.RoleRepository;
 import com.jaxio.web.converter.RoleJsfConverter;

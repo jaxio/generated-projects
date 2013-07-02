@@ -11,19 +11,19 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd" version="2.0">
 	<persistence-unit name="appliPU" transaction-type="RESOURCE_LOCAL">
 		<description><![CDATA[
-			Main persistence unit. 
-            It is named spring-persistence.xml to prevent JBoss from picking it automatically, which would create a mess as we use Spring.
-            With JBoss/Spring it is required to list the classes explicitely.
+			Main persistence unit.
+			It is named spring-persistence.xml to prevent JBoss from picking it automatically, which would create a mess as we use Spring.
+			With JBoss/Spring it is required to list the classes explicitly.
 		]]></description>
 		<mapping-file>META-INF/spring-orm.xml</mapping-file>
-        <class>com.jaxio.domain.Account</class>
-        <class>com.jaxio.domain.Address</class>
-        <class>com.jaxio.domain.Book</class>
-        <class>com.jaxio.domain.Document</class>
-        <class>com.jaxio.domain.Legacy</class>
-        <class>com.jaxio.domain.more.MoreTypesDemo</class>
-        <class>com.jaxio.domain.Role</class>
-        <class>com.jaxio.domain.SavedSearch</class>
+		<class>com.jaxio.domain.Account</class>
+		<class>com.jaxio.domain.Address</class>
+		<class>com.jaxio.domain.Currency</class>
+		<class>com.jaxio.domain.Customer</class>
+		<class>com.jaxio.domain.Role</class>
+		<class>com.jaxio.domain.SavedSearch</class>
+		<class>com.jaxio.domain.Transaction</class>
+		<class>com.jaxio.domain.User</class>
 		<properties>
 			<property name="hibernate.search.model_mapping" value="com.jaxio.search.SearchMappingFactory" />
 		</properties>

@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
 
 @Named
 @Singleton
@@ -48,11 +47,8 @@ public class HibernateSearchUtil {
     public <T> List<T> find(Class<T> clazz, SearchParameters sp, List<String> availableProperties) {
         log.info("Searching {} for '{}' with terms : onAll = {}, onAny = {}, default = {} with available Properties: {}", new Object[] { clazz.getSimpleName(),
                 sp.getTermsOnAll(), sp.getTermsOnAny(), sp.getTermsOnDefault(), availableProperties });
-        FullTextQuery ftq = getFullTextEntityManager(entityManager).createFullTextQuery(
-                query(sp.getTermsOnAll(), sp.getTermsOnAny(), sp.getTermsOnDefault(), availableProperties), clazz);
-        if (sp.getFirstResult() >= 0) {
-            ftq.setFirstResult(sp.getFirstResult());
-        }
+        FullTextQuery ftq = getFullTextEntityManager(entityManager).createFullTextQuery( //
+                query(sp, availableProperties), clazz);
         if (sp.getMaxResults() > 0) {
             ftq.setMaxResults(sp.getMaxResults());
         }
@@ -66,16 +62,13 @@ public class HibernateSearchUtil {
     public <T> List<Serializable> findId(Class<T> clazz, SearchParameters sp, List<String> availableProperties) {
         log.info("Searching ids {} ids for '{}' with terms : onAll = {}, onAny = {}, default = {} with available properties : {}",
                 new Object[] { clazz.getSimpleName(), sp.getTermsOnAll(), sp.getTermsOnAny(), sp.getTermsOnDefault(), availableProperties });
-        FullTextQuery ftq = getFullTextEntityManager(entityManager).createFullTextQuery(
-                query(sp.getTermsOnAll(), sp.getTermsOnAny(), sp.getTermsOnDefault(), availableProperties), clazz);
+        FullTextQuery ftq = getFullTextEntityManager(entityManager).createFullTextQuery( //
+                query(sp, availableProperties), clazz);
         ftq.setProjection("id");
-        if (sp.getFirstResult() >= 0) {
-            ftq.setFirstResult(sp.getFirstResult());
-        }
         if (sp.getMaxResults() > 0) {
             ftq.setMaxResults(sp.getMaxResults());
         }
-        List<Serializable> ids = Lists.newArrayList();
+        List<Serializable> ids = newArrayList();
         List<Object[]> resultList = ftq.getResultList();
         for (Object[] result : resultList) {
             ids.add((Serializable) result[0]);
@@ -83,12 +76,11 @@ public class HibernateSearchUtil {
         return ids;
     }
 
-    private Query query(ArrayListMultimap<String, String> termsOnAll, ArrayListMultimap<String, String> termsOnAny, List<String> termsOnDefault,
-            List<String> availableProperties) {
+    private Query query(SearchParameters sp, List<String> availableProperties) {
         List<String> clauses = newArrayList();
-        addOnAllClauses(termsOnAll, clauses, availableProperties);
-        addOnAnyClauses(termsOnAny, clauses, availableProperties);
-        addOnDefaultClauses(termsOnDefault, availableProperties, clauses);
+        addOnAllClauses(sp, sp.getTermsOnAll(), clauses, availableProperties);
+        addOnAnyClauses(sp, sp.getTermsOnAny(), clauses, availableProperties);
+        addOnDefaultClauses(sp, sp.getTermsOnDefault(), availableProperties, clauses);
 
         StringBuilder query = new StringBuilder();
         query.append("+(");
@@ -101,34 +93,35 @@ public class HibernateSearchUtil {
         query.append(")");
 
         try {
+            log.info("Executing Lucene query : {}", query);
             return new QueryParser(LUCENE_36, availableProperties.get(0), new StopAnalyzer(LUCENE_36)).parse(query.toString());
         } catch (Exception e) {
             throw propagate(e);
         }
     }
 
-    private void addOnAllClauses(ArrayListMultimap<String, String> termsOnAll, List<String> clauses, List<String> availableProperties) {
+    private void addOnAllClauses(SearchParameters sp, ArrayListMultimap<String, String> termsOnAll, List<String> clauses, List<String> availableProperties) {
         for (Entry<String, String> term : termsOnAll.entries()) {
-            addClause(term.getKey(), term.getValue(), clauses, availableProperties);
+            addClause(sp, term.getKey(), term.getValue(), clauses, availableProperties);
         }
     }
 
-    private void addOnDefaultClauses(List<String> termsOnDefault, List<String> availableProperties, List<String> clauses) {
+    private void addOnDefaultClauses(SearchParameters sp, List<String> termsOnDefault, List<String> availableProperties, List<String> clauses) {
         for (String term : termsOnDefault) {
-            addOnAnyClause(term, availableProperties, clauses, availableProperties);
+            addOnAnyClause(sp, term, availableProperties, clauses, availableProperties);
         }
     }
 
-    private void addOnAnyClauses(ArrayListMultimap<String, String> termsOnAny, List<String> clauses, List<String> availableProperties) {
+    private void addOnAnyClauses(SearchParameters sp, ArrayListMultimap<String, String> termsOnAny, List<String> clauses, List<String> availableProperties) {
         for (String term : termsOnAny.keySet()) {
-            addOnAnyClause(term, termsOnAny.get(term), clauses, availableProperties);
+            addOnAnyClause(sp, term, termsOnAny.get(term), clauses, availableProperties);
         }
     }
 
-    private void addOnAnyClause(String term, List<String> properties, List<String> clauses, List<String> availableProperties) {
+    private void addOnAnyClause(SearchParameters sp, String term, List<String> properties, List<String> clauses, List<String> availableProperties) {
         List<String> subClauses = newArrayList();
         for (String property : properties) {
-            addClause(term, property, subClauses, availableProperties);
+            addClause(sp, term, property, subClauses, availableProperties);
         }
         if (subClauses.isEmpty()) {
             return;
@@ -149,7 +142,7 @@ public class HibernateSearchUtil {
         }
     }
 
-    private void addClause(String term, String property, List<String> clauses, List<String> availableProperties) {
+    private void addClause(SearchParameters sp, String term, String property, List<String> clauses, List<String> availableProperties) {
         checkArgument(availableProperties.contains(property), property + " is not indexed");
         String[] words = term.split(SPACES_OR_PUNCTUATION);
         StringBuilder subQuery = new StringBuilder();
@@ -158,7 +151,7 @@ public class HibernateSearchUtil {
             if (subQuery.length() > 1) {
                 subQuery.append(" AND ");
             }
-            subQuery.append(property + ":" + escape(word) + "~0.4");
+            subQuery.append(property + ":" + escape(word) + "~" + sp.getSearchSimilarity());
         }
         subQuery.append(")");
         clauses.add(subQuery.toString());

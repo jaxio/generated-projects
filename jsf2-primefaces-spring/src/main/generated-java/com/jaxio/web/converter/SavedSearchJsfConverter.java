@@ -11,6 +11,7 @@ package com.jaxio.web.converter;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.domain.SavedSearch;
 import com.jaxio.repository.SavedSearchRepository;
 import com.jaxio.web.converter.support.GenericJsfConverter;

@@ -14,14 +14,13 @@
 			itemLabel="#{printer.print(item)}"
 			converter="#{converter}"
 			minQueryLength="#{empty minQueryLength ? 2 : minQueryLength}"
-			queryDelay="#{empty queryDelay ? 200 : queryDelay}"
 			forceSelection="#{forceSelection}"
 			size="#{empty size ? 50 : size}"
-			maxResults="#{empty maxResults ? 7 : maxResults}"
 			dropdown="true"
 			rendered="#{not readonly}">
 			<f:validateBean binding="#{lenientBeanValidator}"/>
 			<p:ajax event="itemSelect" update="#{id}Grid"/>
+			<f:attribute name="completeOnProperties" value="#{completeOnProperties}" />
 		</p:autoComplete>
 		<h:outputText value="#{printer.print(value)}" rendered="#{readonly}"/>
 		<h:panelGroup>

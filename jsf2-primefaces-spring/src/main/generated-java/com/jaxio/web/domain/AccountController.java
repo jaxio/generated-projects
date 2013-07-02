@@ -11,9 +11,11 @@ package com.jaxio.web.domain;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Account_;
+import com.jaxio.printer.AccountPrinter;
 import com.jaxio.repository.AccountRepository;
 import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.AccountPermission;
@@ -23,17 +25,17 @@ import com.jaxio.web.permission.AccountPermission;
  */
 @Named
 @Singleton
-public class AccountController extends GenericController<Account, String> {
+public class AccountController extends GenericController<Account, Integer> {
     public static final String ACCOUNT_EDIT_URI = "/domain/accountEdit.faces";
     public static final String ACCOUNT_SELECT_URI = "/domain/accountSelect.faces";
 
     @Inject
-    public AccountController(AccountRepository accountRepository, AccountPermission accountPermission) {
-        super(accountRepository, accountPermission, ACCOUNT_SELECT_URI, ACCOUNT_EDIT_URI);
+    public AccountController(AccountRepository accountRepository, AccountPermission accountPermission, AccountPrinter accountPrinter) {
+        super(accountRepository, accountPermission, accountPrinter, ACCOUNT_SELECT_URI, ACCOUNT_EDIT_URI);
     }
 
     @Override
     protected SearchParameters defaultOrder(SearchParameters searchParameters) {
-        return searchParameters.orderBy(Account_.username);
+        return searchParameters.orderBy(Account_.accountNumber);
     }
 }

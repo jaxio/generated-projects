@@ -61,5 +61,4 @@ public class ViewScope implements Scope {
         }
         return null;
     }
-
 }

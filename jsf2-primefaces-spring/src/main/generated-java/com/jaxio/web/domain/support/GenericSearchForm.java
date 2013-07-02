@@ -8,15 +8,25 @@
  */
 package com.jaxio.web.domain.support;
 
-import java.io.Serializable;
-import javax.inject.Inject;
-import javax.annotation.PostConstruct;
+import static com.google.common.base.Throwables.propagate;
+import static org.apache.commons.io.IOUtils.closeQuietly;
 
-import com.jaxio.domain.Identifiable;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import com.jaxio.dao.support.SearchParameters;
+import com.jaxio.domain.Identifiable;
+import com.jaxio.domain.SavedSearch;
 import com.jaxio.web.conversation.Conversation;
 import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationManager;
+import com.jaxio.web.util.MessageUtil;
 
 /**
  * Base Search Form for JPA entities.
@@ -27,6 +37,8 @@ public abstract class GenericSearchForm<E extends Identifiable<PK>, PK extends S
 
     @Inject
     private transient ConversationManager conversationManager;
+    @Inject
+    private transient MessageUtil messageUtil;
 
     @SuppressWarnings("unchecked")
     @PostConstruct
@@ -51,6 +63,20 @@ public abstract class GenericSearchForm<E extends Identifiable<PK>, PK extends S
      */
     protected abstract E getEntity();
 
+    /**
+     * Always null as we use the setter only to add element.
+     */
+    public SavedSearch getCurrentSavedSearch() {
+        return null;
+    }
+
+    public void setCurrentSavedSearch(SavedSearch savedSearch) {
+        if (savedSearch != null) {
+            messageUtil.info("saved_search_loaded", savedSearch.getName());
+            resetWithOther(fromByteArray(savedSearch.getFormContent()));
+        }
+    }
+
     protected String searchFormName;
 
     public String getSearchFormName() {
@@ -59,6 +85,16 @@ public abstract class GenericSearchForm<E extends Identifiable<PK>, PK extends S
 
     public void setSearchFormName(String searchFormName) {
         this.searchFormName = searchFormName;
+    }
+
+    private boolean privateSearch;
+
+    public boolean isPrivateSearch() {
+        return privateSearch;
+    }
+
+    public void setPrivateSearch(boolean privateSearch) {
+        this.privateSearch = privateSearch;
     }
 
     protected String term;
@@ -83,7 +119,37 @@ public abstract class GenericSearchForm<E extends Identifiable<PK>, PK extends S
     public abstract void resetWithOther(F other);
 
     public void reset() {
+        messageUtil.info("search_reseted");
         setSearchFormName(null);
         resetWithOther(newInstance());
+    }
+
+    protected byte[] toByteArray() {
+        ObjectOutputStream oos = null;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            oos = new ObjectOutputStream(baos);
+            oos.writeObject(this);
+            oos.flush();
+            return baos.toByteArray();
+        } catch (Exception e) {
+            throw propagate(e);
+        } finally {
+            closeQuietly(oos);
+            closeQuietly(baos);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected F fromByteArray(byte[] bytes) {
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
+            return (F) ois.readObject();
+        } catch (Exception e) {
+            throw propagate(e);
+        } finally {
+            closeQuietly(ois);
+        }
     }
 }

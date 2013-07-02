@@ -12,7 +12,6 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.Collection;
 import java.util.List;
-import java.io.Serializable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,7 +19,6 @@ import javax.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,23 +27,23 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jaxio.context.UserWithId;
-import com.jaxio.domain.Account;
-import com.jaxio.repository.AccountRepository;
+import com.jaxio.domain.User;
+import com.jaxio.repository.UserRepository;
 
 /**
  * An implementation of Spring Security's UserDetailsService.
  */
-@Named("userDetailsService")
 @Singleton
+@Named("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private static final Logger log = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
-    private AccountRepository accountRepository;
+    private UserRepository userRepository;
 
     @Inject
-    public UserDetailsServiceImpl(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
+    public UserDetailsServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     /**
@@ -67,7 +65,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         log.debug("Security verification for user '{}'", username);
 
-        Account account = accountRepository.getByUsername(username);
+        User account = userRepository.getByUsername(username);
 
         if (account == null) {
             log.info("User {} could not be found", username);
@@ -80,9 +78,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         boolean accountNonExpired = true;
         boolean credentialsNonExpired = true;
         boolean accountNonLocked = true;
-        Serializable id = account.getId();
-
-        return new UserWithId(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, grantedAuthorities, id);
+        return new UserWithId(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, grantedAuthorities, account.getId());
     }
 
     private Collection<GrantedAuthority> toGrantedAuthorities(List<String> roles) {

@@ -78,12 +78,7 @@ public class NamedQueryUtil {
         }
 
         // pagination
-        if (sp.getFirstResult() >= 0) {
-            query.setFirstResult(sp.getFirstResult());
-        }
-        if (sp.getMaxResults() > 0) {
-            query.setMaxResults(sp.getMaxResults());
-        }
+        sp.applyPagination(query);
 
         // named parameters
         setQueryParameters(query, sp);

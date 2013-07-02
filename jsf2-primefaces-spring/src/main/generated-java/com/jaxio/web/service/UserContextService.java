@@ -9,8 +9,10 @@
 package com.jaxio.web.service;
 
 import java.util.List;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.context.UserContext;
 
 /**

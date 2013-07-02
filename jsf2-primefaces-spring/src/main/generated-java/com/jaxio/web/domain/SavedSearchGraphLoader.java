@@ -11,6 +11,7 @@ package com.jaxio.web.domain;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.domain.SavedSearch;
 import com.jaxio.repository.SavedSearchRepository;
 import com.jaxio.repository.support.EntityGraphLoader;
@@ -33,6 +34,6 @@ public class SavedSearchGraphLoader extends EntityGraphLoader<SavedSearch, Integ
 
     @Override
     public void loadGraph(SavedSearch savedSearch) {
-        loadSingular(savedSearch.getAccount());
+        loadSingular(savedSearch.getUser());
     }
 }

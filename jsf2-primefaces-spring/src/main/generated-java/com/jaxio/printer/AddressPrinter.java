@@ -9,23 +9,24 @@
 package com.jaxio.printer;
 
 import java.util.Locale;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.domain.Address;
-import com.jaxio.printer.DiscoverablePrinter;
+import com.jaxio.domain.Address_;
+import com.jaxio.printer.support.GenericPrinter;
 
 /**
- * {@link org.springframework.format.Printer} for {@link Address} 
+ * {@link GenericPrinter} for {@link Address} 
  *
- * @see org.springframework.format.Printer
- * @see DiscoverablePrinter
  * @see TypeAwarePrinter
  */
 @Named
 @Singleton
-public class AddressPrinter extends DiscoverablePrinter<Address> {
+public class AddressPrinter extends GenericPrinter<Address> {
     public AddressPrinter() {
-        super(Address.class);
+        super(Address.class, Address_.city.getName(), Address_.country.getName());
     }
 
     @Override
@@ -35,6 +36,7 @@ public class AddressPrinter extends DiscoverablePrinter<Address> {
         }
         StringBuilder ret = new StringBuilder();
         appendIfNotEmpty(ret, address.getCity());
+        appendIfNotEmpty(ret, address.getCountry());
         return ret.toString();
     }
 }

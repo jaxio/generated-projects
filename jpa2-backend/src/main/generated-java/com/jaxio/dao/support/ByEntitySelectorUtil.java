@@ -25,10 +25,11 @@ import com.jaxio.domain.Identifiable;
  */
 public class ByEntitySelectorUtil {
 
-    public static <E> Predicate byEntitySelectors(Root<E> root, CriteriaBuilder builder, final List<EntitySelector<?, ? extends Identifiable<?>, ?>> selectors) {
+    public static <E> Predicate byEntitySelectors(Root<E> root, CriteriaBuilder builder, SearchParameters sp) {
+        List<EntitySelector<?, ?, ?>> selectors = sp.getEntities();
         List<Predicate> predicates = newArrayList();
 
-        for (EntitySelector<?, ? extends Identifiable<?>, ?> s : selectors) {
+        for (EntitySelector<?, ?, ?> s : selectors) {
             @SuppressWarnings("unchecked")
             EntitySelector<E, ? extends Identifiable<?>, ?> selector = (EntitySelector<E, ? extends Identifiable<?>, ?>) s;
 
@@ -53,7 +54,7 @@ public class ByEntitySelectorUtil {
             }
         }
 
-        return JpaUtil.andPredicate(builder, predicates);
+        return JpaUtil.concatPredicate(sp, builder, predicates);
     }
 
     private static <E> Expression<?> getExpression(Root<E> root, EntitySelector<E, ? extends Identifiable<?>, ?> selector) {

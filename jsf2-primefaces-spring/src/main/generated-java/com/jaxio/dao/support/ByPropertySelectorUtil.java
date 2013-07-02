@@ -26,8 +26,8 @@ import com.jaxio.dao.support.SearchParameters;
  */
 public class ByPropertySelectorUtil {
     @SuppressWarnings("unchecked")
-    public static <E> Predicate byPropertySelectors(Root<E> root, CriteriaBuilder builder, final SearchParameters sp,
-            final List<PropertySelector<?, ?>> selectors) {
+    public static <E> Predicate byPropertySelectors(Root<E> root, CriteriaBuilder builder, SearchParameters sp) {
+        List<PropertySelector<?, ?>> selectors = sp.getProperties();
         List<Predicate> predicates = newArrayList();
 
         for (PropertySelector<?, ?> selector : selectors) {
@@ -37,7 +37,7 @@ public class ByPropertySelectorUtil {
                 byObjectSelector(root, builder, predicates, sp, (PropertySelector<E, ?>) selector);
             }
         }
-        return JpaUtil.andPredicate(builder, predicates);
+        return JpaUtil.concatPredicate(sp, builder, predicates);
     }
 
     private static <E> void byBooleanSelector(Root<E> root, CriteriaBuilder builder, List<Predicate> predicates, PropertySelector<E, Boolean> selector) {

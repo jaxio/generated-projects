@@ -10,19 +10,21 @@ package com.jaxio.web.domain;
 
 import static com.jaxio.dao.support.EntitySelector.newEntitySelector;
 import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
+
 import javax.inject.Named;
+
 import com.jaxio.dao.support.EntitySelector;
 import com.jaxio.dao.support.PropertySelector;
 import com.jaxio.dao.support.SearchParameters;
-import com.jaxio.domain.Account;
 import com.jaxio.domain.SavedSearch;
 import com.jaxio.domain.SavedSearch_;
+import com.jaxio.domain.User;
 import com.jaxio.web.domain.support.GenericSearchForm;
 import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
  * View Helper to search {@link SavedSearch}.
- * It exposes a {@link SavedSearch} instance so it can be used in search by Example query.
+ * It exposes a {@link SavedSearch} instance so it can be used in search by-example-query.
  */
 @Named
 @ConversationContextScoped
@@ -32,7 +34,7 @@ public class SavedSearchSearchForm extends GenericSearchForm<SavedSearch, Intege
     protected SavedSearch savedSearch = new SavedSearch();
     protected PropertySelector<SavedSearch, String> nameSelector = newPropertySelector(SavedSearch_.name);
     protected PropertySelector<SavedSearch, String> formClassnameSelector = newPropertySelector(SavedSearch_.formClassname);
-    protected EntitySelector<SavedSearch, Account, String> accountSelector = newEntitySelector(SavedSearch_.account);
+    protected EntitySelector<SavedSearch, User, Integer> userSelector = newEntitySelector(SavedSearch_.user);
 
     public SavedSearch getSavedSearch() {
         return savedSearch;
@@ -51,10 +53,11 @@ public class SavedSearchSearchForm extends GenericSearchForm<SavedSearch, Intege
     @Override
     public SearchParameters toSearchParameters() {
         return new SearchParameters() //
+                .limitBroadSearch() //
                 .anywhere() //
-                .property(nameSelector) //
-                .property(formClassnameSelector) //
-                .entity(accountSelector) //
+                .caseInsensitive() //
+                .property(nameSelector, formClassnameSelector) //
+                .entity(userSelector) //
         ;
     }
 
@@ -63,7 +66,7 @@ public class SavedSearchSearchForm extends GenericSearchForm<SavedSearch, Intege
         this.savedSearch = other.getSavedSearch();
         this.nameSelector = other.getNameSelector();
         this.formClassnameSelector = other.getFormClassnameSelector();
-        this.accountSelector = other.getAccountSelector();
+        this.userSelector = other.getUserSelector();
     }
 
     // Property selectors
@@ -76,7 +79,7 @@ public class SavedSearchSearchForm extends GenericSearchForm<SavedSearch, Intege
     }
 
     // Relation selectors
-    public EntitySelector<SavedSearch, Account, String> getAccountSelector() {
-        return accountSelector;
+    public EntitySelector<SavedSearch, User, Integer> getUserSelector() {
+        return userSelector;
     }
 }

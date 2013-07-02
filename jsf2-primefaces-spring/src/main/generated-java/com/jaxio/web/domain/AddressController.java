@@ -11,7 +11,9 @@ package com.jaxio.web.domain;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.domain.Address;
+import com.jaxio.printer.AddressPrinter;
 import com.jaxio.repository.AddressRepository;
 import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.AddressPermission;
@@ -26,7 +28,7 @@ public class AddressController extends GenericController<Address, Integer> {
     public static final String ADDRESS_SELECT_URI = "/domain/addressSelect.faces";
 
     @Inject
-    public AddressController(AddressRepository addressRepository, AddressPermission addressPermission) {
-        super(addressRepository, addressPermission, ADDRESS_SELECT_URI, ADDRESS_EDIT_URI);
+    public AddressController(AddressRepository addressRepository, AddressPermission addressPermission, AddressPrinter addressPrinter) {
+        super(addressRepository, addressPermission, addressPrinter, ADDRESS_SELECT_URI, ADDRESS_EDIT_URI);
     }
 }

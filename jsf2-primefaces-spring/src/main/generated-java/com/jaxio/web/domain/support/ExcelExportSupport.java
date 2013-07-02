@@ -20,7 +20,7 @@ import com.jaxio.dao.support.PropertySelector;
 import com.jaxio.dao.support.Range;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Identifiable;
-import com.jaxio.printer.TypeAwarePrinter;
+import com.jaxio.printer.support.TypeAwarePrinter;
 
 @Named
 public class ExcelExportSupport {
@@ -71,5 +71,4 @@ public class ExcelExportSupport {
     public String dateToString(Date date) {
         return new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(date);
     }
-
 }

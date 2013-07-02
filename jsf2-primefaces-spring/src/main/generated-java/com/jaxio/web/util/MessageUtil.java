@@ -19,16 +19,11 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.persistence.OptimisticLockException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.access.AccessDeniedException;
 
 import com.jaxio.domain.Identifiable;
-import com.jaxio.printer.TypeAwarePrinter;
+import com.jaxio.printer.support.TypeAwarePrinter;
 import com.jaxio.util.ResourcesUtil;
 
 /**
@@ -39,7 +34,6 @@ import com.jaxio.util.ResourcesUtil;
 @Singleton
 @Lazy(false)
 public class MessageUtil {
-    private static final Logger log = LoggerFactory.getLogger(MessageUtil.class);
     private static MessageUtil instance;
 
     @Inject
@@ -103,42 +97,10 @@ public class MessageUtil {
         return newFacesMessageUsingKey(SEVERITY_ERROR, summaryKey, args);
     }
 
-    /**
-     * Map the passed exception to an error message.
-     * Any potential exception (such as business exception) requiring a special message should be mapped here as well.
-     */
-    public void error(Throwable e) {
-        log.error(getMessage(e), e);
-        if (ExceptionUtil.isCausedBy(e, OptimisticLockException.class)) {
-            error("error_concurrent_modification");
-        } else if (ExceptionUtil.isCausedBy(e, DataIntegrityViolationException.class)) {
-            error("error_data_integrity_violation");
-        } else if (ExceptionUtil.isCausedBy(e, AccessDeniedException.class)) {
-            // works only if the spring security filter is before the exception filter, 
-            // that is if the exception filter handles the exception first.
-            error("error_access_denied");
-        } else {
-            error("status_exception_ko", getMessage(e));
-            log.error("====> !!ATTENTION!! DEVELOPERS should provide a less generic error message for the cause of this exception <====");
-        }
-    }
-
     private void addFacesMessage(FacesMessage fm) {
         if (fm != null) {
             FacesContext.getCurrentInstance().addMessage(null, fm);
         }
-    }
-
-    private String getMessage(Throwable e) {
-        String message = e.getClass().getCanonicalName();
-        Throwable current = e;
-        while (current != null) {
-            if (current.getMessage() != null && !current.getMessage().trim().isEmpty()) {
-                message = current.getMessage();
-            }
-            current = current.getCause();
-        }
-        return message;
     }
 
     private void addFacesMessageUsingKey(Severity severity, String summaryKey, Object arg) {

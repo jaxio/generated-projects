@@ -8,6 +8,7 @@
  */
 package com.jaxio.dao.support;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 
 import java.io.Serializable;
@@ -30,7 +31,7 @@ public class PropertySelector<E, F> implements Serializable {
      * @param field the property that should match one of the selected value.
      */
     public PropertySelector(SingularAttribute<E, F> field) {
-        this.field = field;
+        this.field = checkNotNull(field);
     }
 
     public SingularAttribute<E, F> getField() {
@@ -48,7 +49,18 @@ public class PropertySelector<E, F> implements Serializable {
      * Set the possible candidates for property.
      */
     public void setSelected(List<F> selected) {
-        this.selected = selected;
+        if (selected == null) {
+            clearSelected();
+        } else {
+            this.selected = selected;
+        }
+    }
+
+    /**
+     * Add a possible candidates for property.
+     */
+    public void add(F selected) {
+        this.selected.add(selected);
     }
 
     public boolean isNotEmpty() {
@@ -74,7 +86,7 @@ public class PropertySelector<E, F> implements Serializable {
      * It is null by default.
      */
     public void setSearchMode(SearchMode searchMode) {
-        this.searchMode = searchMode;
+        this.searchMode = checkNotNull(searchMode);
     }
 
     /**

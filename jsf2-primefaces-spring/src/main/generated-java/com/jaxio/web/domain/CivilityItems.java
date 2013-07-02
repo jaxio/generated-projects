@@ -12,9 +12,9 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.List;
 
+import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.faces.model.SelectItem;
 
 import com.jaxio.domain.Civility;
 

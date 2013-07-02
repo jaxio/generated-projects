@@ -14,8 +14,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import javax.persistence.NonUniqueResultException;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,10 +23,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.jaxio.domain.SavedSearch;
-import com.jaxio.repository.SavedSearchRepository;
 import com.jaxio.dao.SavedSearchDao;
 import com.jaxio.dao.support.SearchParameters;
+import com.jaxio.domain.SavedSearch;
+import com.jaxio.repository.SavedSearchRepository;
 
 /**
  * Unit test on SavedSearchRepository

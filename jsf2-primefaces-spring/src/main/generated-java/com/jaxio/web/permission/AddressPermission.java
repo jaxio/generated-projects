@@ -10,10 +10,14 @@ package com.jaxio.web.permission;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.domain.Address;
 import com.jaxio.web.permission.support.GenericPermission;
 
 @Named
 @Singleton
 public class AddressPermission extends GenericPermission<Address> {
+    public AddressPermission() {
+        super(Address.class);
+    }
 }

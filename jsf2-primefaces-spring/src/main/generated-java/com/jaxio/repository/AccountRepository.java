@@ -9,20 +9,20 @@
 package com.jaxio.repository;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import org.springframework.transaction.annotation.Transactional;
+
 import com.jaxio.dao.AccountDao;
 import com.jaxio.domain.Account;
 import com.jaxio.repository.support.GenericRepository;
 
-/**
- * Note: you may use multiple DAO from this layer.
- */
 @Named
 @Singleton
-public class AccountRepository extends GenericRepository<Account, String> {
+public class AccountRepository extends GenericRepository<Account, Integer> {
 
     // required by cglib to create a proxy around the object as we are using the @Transactional annotation
     protected AccountRepository() {
@@ -56,14 +56,8 @@ public class AccountRepository extends GenericRepository<Account, String> {
         if (model.isIdSet()) {
             return super.get(model);
         }
-        if (isBlank(model.getUsername())) {
-            Account result = getByUsername(model.getUsername());
-            if (result != null) {
-                return result;
-            }
-        }
-        if (isBlank(model.getEmail())) {
-            Account result = getByEmail(model.getEmail());
+        if (isBlank(model.getAccountNumber())) {
+            Account result = getByAccountNumber(model.getAccountNumber());
             if (result != null) {
                 return result;
             }
@@ -73,46 +67,24 @@ public class AccountRepository extends GenericRepository<Account, String> {
     }
 
     /**
-     * Return the persistent instance of {@link Account} with the given unique property value username,
+     * Return the persistent instance of {@link Account} with the given unique property value accountNumber,
      * or null if there is no such persistent instance.
      *
-     * @param username the unique value
+     * @param accountNumber the unique value
      * @return the corresponding {@link Account} persistent instance or null
      */
     @Transactional(readOnly = true)
-    public Account getByUsername(String username) {
-        return findUniqueOrNone(new Account().username(username));
+    public Account getByAccountNumber(String accountNumber) {
+        return findUniqueOrNone(new Account().accountNumber(accountNumber));
     }
 
     /**
-     * Delete a {@link Account} using the unique column username
+     * Delete a {@link Account} using the unique column accountNumber
      *
-     * @param username the unique value
+     * @param accountNumber the unique value
      */
     @Transactional
-    public void deleteByUsername(String username) {
-        delete(getByUsername(username));
-    }
-
-    /**
-     * Return the persistent instance of {@link Account} with the given unique property value email,
-     * or null if there is no such persistent instance.
-     *
-     * @param email the unique value
-     * @return the corresponding {@link Account} persistent instance or null
-     */
-    @Transactional(readOnly = true)
-    public Account getByEmail(String email) {
-        return findUniqueOrNone(new Account().email(email));
-    }
-
-    /**
-     * Delete a {@link Account} using the unique column email
-     *
-     * @param email the unique value
-     */
-    @Transactional
-    public void deleteByEmail(String email) {
-        delete(getByEmail(email));
+    public void deleteByAccountNumber(String accountNumber) {
+        delete(getByAccountNumber(accountNumber));
     }
 }

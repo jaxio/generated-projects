@@ -18,11 +18,11 @@ import static java.util.Calendar.YEAR;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.springframework.context.i18n.LocaleContextHolder;
 

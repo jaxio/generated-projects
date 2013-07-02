@@ -24,7 +24,8 @@
 				onclick="askForDeleteDialog.show(); APP.focusAskForDeleteDialog();"
 				value="#{msg.menu_delete_and_close}"
 				title="#{msg.menu_delete_and_close} #{resourcesUtil.getProperty(title)}"
-				disabled="#{empty bean.entity.id}" />
+				disabled="#{empty bean.entity.id}"
+				rendered="#{permission.canDelete(bean.entity)}" />
 			<p:separator />
 		</p:toolbarGroup>
 	</ui:define>

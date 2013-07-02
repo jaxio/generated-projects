@@ -9,17 +9,17 @@
 package com.jaxio.repository;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import org.springframework.transaction.annotation.Transactional;
+
 import com.jaxio.dao.RoleDao;
 import com.jaxio.domain.Role;
 import com.jaxio.repository.support.GenericRepository;
 
-/**
- * Note: you may use multiple DAO from this layer.
- */
 @Named
 @Singleton
 public class RoleRepository extends GenericRepository<Role, Integer> {

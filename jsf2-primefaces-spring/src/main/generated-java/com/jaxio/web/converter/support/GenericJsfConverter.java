@@ -8,6 +8,9 @@
  */
 package com.jaxio.web.converter.support;
 
+import static org.apache.commons.lang.StringUtils.removeEnd;
+import static org.apache.commons.lang.StringUtils.removeStart;
+
 import java.io.Serializable;
 
 import javax.faces.component.UIComponent;
@@ -27,6 +30,8 @@ import com.jaxio.repository.support.GenericRepository;
 public class GenericJsfConverter<E extends Identifiable<PK>, PK extends Serializable> implements Converter {
     public static final String NULL_OBJECT_AS_STRING = "__null__";
     public static final String NEW_OBJECT_AS_STRING = "__new__";
+    public static final String PK_PREFIX = "__pk:";
+    public static final String PK_SUFFIX = "__";
 
     private Class<E> type;
     private Class<PK> pkType;
@@ -52,7 +57,12 @@ public class GenericJsfConverter<E extends Identifiable<PK>, PK extends Serializ
             return ((UIInput) component).getValue();
         }
 
-        E entity = entityService.getById(toPk(value));
+        E entity = null;
+        if (value.startsWith(PK_PREFIX) && value.endsWith(PK_SUFFIX)) {
+            String pkAsString = removeStart(value, PK_PREFIX);
+            pkAsString = removeEnd(pkAsString, PK_SUFFIX);
+            entity = entityService.getById(toPk(pkAsString));
+        }
         if (entity == null && component instanceof UIInput) {
             // id is manually set and entity is not yet persisted
             return ((UIInput) component).getValue();
@@ -77,7 +87,7 @@ public class GenericJsfConverter<E extends Identifiable<PK>, PK extends Serializ
 
         Identifiable<PK> io = (Identifiable<PK>) object;
         if (io.isIdSet()) {
-            return io.getId().toString();
+            return PK_PREFIX + io.getId().toString() + PK_SUFFIX;
         } else if (component instanceof UIInput) {
             return NEW_OBJECT_AS_STRING;
         } else {

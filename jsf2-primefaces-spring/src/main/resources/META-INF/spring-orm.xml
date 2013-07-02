@@ -59,24 +59,24 @@
 		named query starts with "from" instead of "select", the "select count(*) "
 		will be dynamically appended so it returns what you expect.
 	]]></description>
-	<entity metadata-complete="false" class="com.jaxio.domain.Account">
+	<entity metadata-complete="false" class="com.jaxio.domain.User">
 		<!-- basic example with dynamic ordering support -->
-		<named-query name="Account.selectAll">
-			<query>from com.jaxio.domain.Account</query>
+		<named-query name="User.selectAll">
+			<query>from com.jaxio.domain.User</query>
 			<hint name="dynamic" value="true" />
-			<hint name="query" value="from com.jaxio.domain.Account" />
+			<hint name="query" value="from com.jaxio.domain.User" />
 			<hint name="org.hibernate.cacheable" value="true" />
 		</named-query>
 		<!-- the :currentUserId will be replaced automatically with the value returned by the UserContext -->
 		<named-query name="getMyAccountOnlyExample">
-			<query>from com.jaxio.domain.Account as account
+			<query>from com.jaxio.domain.User as account
 			where account.id = :currentAccountId</query>
 			<hint name="dynamic" value="true" />
-			<hint name="query" value="from com.jaxio.domain.Account as account where account.id = :currentUserId" />
+			<hint name="query" value="from com.jaxio.domain.User as account where account.id = :currentUserId" />
 			<hint name="org.hibernate.cacheable" value="true" />
 		</named-query>
-		<named-native-query name="Account.selectAll.native" result-class="com.jaxio.domain.Account">
-			<query>select {account.*} from ACCOUNT</query>
+		<named-native-query name="User.selectAll.native" result-class="com.jaxio.domain.User">
+			<query>select {account.*} from USER</query>
 		</named-native-query>
 	</entity>
 </entity-mappings>

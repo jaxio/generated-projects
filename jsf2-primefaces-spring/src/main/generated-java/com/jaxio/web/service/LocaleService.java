@@ -8,20 +8,24 @@
  */
 package com.jaxio.web.service;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
 import static java.util.Locale.ENGLISH;
 import static java.util.Locale.FRENCH;
 import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSION;
-import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
+
 import java.util.Locale;
+
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.servlet.LocaleResolver;
+
 import com.jaxio.web.conversation.Conversation;
 
 @Named

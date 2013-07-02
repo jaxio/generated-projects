@@ -8,8 +8,8 @@
  */
 package com.jaxio.dao.support;
 
-import static com.jaxio.dao.support.JpaUtil.compositePkPropertyName;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.jaxio.dao.support.JpaUtil.compositePkPropertyName;
 import static java.util.Collections.emptyList;
 import static javax.persistence.metamodel.Attribute.PersistentAttributeType.EMBEDDED;
 import static javax.persistence.metamodel.Attribute.PersistentAttributeType.MANY_TO_ONE;
@@ -47,7 +47,7 @@ public class ByExampleUtil {
     @PersistenceContext
     private EntityManager em;
 
-    public <T extends Identifiable<?>> Predicate byExampleOnEntity(Root<T> rootPath, final T entityValue, SearchParameters sp, CriteriaBuilder builder) {
+    public <T extends Identifiable<?>> Predicate byExampleOnEntity(Root<T> rootPath, T entityValue, CriteriaBuilder builder, SearchParameters sp) {
         if (entityValue == null) {
             return null;
         }
@@ -60,7 +60,7 @@ public class ByExampleUtil {
         predicates.addAll(byExampleOnCompositePk(rootPath, entityValue, sp, builder));
         predicates.addAll(byExampleOnXToOne(mt, rootPath, entityValue, sp, builder)); // 1 level deep only
         predicates.addAll(byExampleOnManyToMany(mt, rootPath, entityValue, sp, builder));
-        return JpaUtil.andPredicate(builder, predicates);
+        return JpaUtil.concatPredicate(sp, builder, predicates);
     }
 
     protected <T extends Identifiable<?>> List<Predicate> byExampleOnCompositePk(Root<T> root, T entity, SearchParameters sp, CriteriaBuilder builder) {
@@ -72,7 +72,7 @@ public class ByExampleUtil {
         }
     }
 
-    public <E> Predicate byExampleOnEmbeddable(Path<E> embeddablePath, final E embeddableValue, SearchParameters sp, CriteriaBuilder builder) {
+    public <E> Predicate byExampleOnEmbeddable(Path<E> embeddablePath, E embeddableValue, SearchParameters sp, CriteriaBuilder builder) {
         if (embeddableValue == null) {
             return null;
         }
@@ -86,7 +86,7 @@ public class ByExampleUtil {
     /**
      * Add a predicate for each simple property whose value is not null.
      */
-    public <T> List<Predicate> byExample(ManagedType<T> mt, Path<T> mtPath, final T mtValue, SearchParameters sp, CriteriaBuilder builder) {
+    public <T> List<Predicate> byExample(ManagedType<T> mt, Path<T> mtPath, T mtValue, SearchParameters sp, CriteriaBuilder builder) {
         List<Predicate> predicates = newArrayList();
         for (SingularAttribute<? super T, ?> attr : mt.getSingularAttributes()) {
             if (attr.getPersistentAttributeType() == MANY_TO_ONE //
@@ -114,7 +114,7 @@ public class ByExampleUtil {
      * entity's properties value.
      */
     @SuppressWarnings("unchecked")
-    public <T extends Identifiable<?>, M2O extends Identifiable<?>> List<Predicate> byExampleOnXToOne(ManagedType<T> mt, Root<T> mtPath, final T mtValue,
+    public <T extends Identifiable<?>, M2O extends Identifiable<?>> List<Predicate> byExampleOnXToOne(ManagedType<T> mt, Root<T> mtPath, T mtValue,
             SearchParameters sp, CriteriaBuilder builder) {
         List<Predicate> predicates = newArrayList();
         for (SingularAttribute<? super T, ?> attr : mt.getSingularAttributes()) {
@@ -138,7 +138,7 @@ public class ByExampleUtil {
     /**
      * Construct a join predicate on collection (eg many to many, List)
      */
-    public <T> List<Predicate> byExampleOnManyToMany(ManagedType<T> mt, Root<T> mtPath, final T mtValue, SearchParameters sp, CriteriaBuilder builder) {
+    public <T> List<Predicate> byExampleOnManyToMany(ManagedType<T> mt, Root<T> mtPath, T mtValue, SearchParameters sp, CriteriaBuilder builder) {
         List<Predicate> predicates = newArrayList();
         for (PluralAttribute<T, ?, ?> pa : mt.getDeclaredPluralAttributes()) {
             if (pa.getCollectionType() == PluralAttribute.CollectionType.LIST) {

@@ -5,7 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:app="http://springfuse.jaxio.com/app">
 	<app:outputLabel for="#{id}_input" value="#{label}" required="#{required}" rendered="#{rendered}" />
-	<h:panelGroup rendered="#{(empty readonly or not readonly) and (empty rendered or rendered)}">
+	<h:panelGroup rendered="#{(empty readonly or not readonly) and (empty rendered or rendered)}" navigator="true">
 		<p:calendar id="#{id}" value="#{value}" pattern="yyyy-MM-dd">
 			<f:converter converterId="localDateConverter"/>
 			<f:validateBean binding="#{lenientBeanValidator}"/>

@@ -10,10 +10,14 @@ package com.jaxio.web.permission;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.domain.SavedSearch;
 import com.jaxio.web.permission.support.GenericPermission;
 
 @Named
 @Singleton
 public class SavedSearchPermission extends GenericPermission<SavedSearch> {
+    public SavedSearchPermission() {
+        super(SavedSearch.class);
+    }
 }

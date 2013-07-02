@@ -10,10 +10,14 @@ package com.jaxio.web.permission;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.domain.Role;
 import com.jaxio.web.permission.support.GenericPermission;
 
 @Named
 @Singleton
 public class RolePermission extends GenericPermission<Role> {
+    public RolePermission() {
+        super(Role.class);
+    }
 }

@@ -23,16 +23,15 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-
 import com.jaxio.util.ResourcesUtil;
 
 /**

@@ -8,43 +8,27 @@
  */
 package com.jaxio.domain;
 
-import java.util.Date;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
-import com.jaxio.domain.Address;
-import com.jaxio.domain.Book;
-import com.jaxio.domain.Civility;
-import com.jaxio.domain.Document;
-import com.jaxio.domain.Role;
+
+import com.jaxio.domain.Currency;
+import com.jaxio.domain.Customer;
+import com.jaxio.domain.Transaction;
 
 @StaticMetamodel(Account.class)
 public abstract class Account_ {
 
     // Raw attributes
-    public static volatile SingularAttribute<Account, String> id;
-    public static volatile SingularAttribute<Account, String> username;
-    public static volatile SingularAttribute<Account, String> password;
-    public static volatile SingularAttribute<Account, String> email;
-    public static volatile SingularAttribute<Account, Boolean> isEnabled;
-    public static volatile SingularAttribute<Account, Civility> civility;
-    public static volatile SingularAttribute<Account, String> firstName;
-    public static volatile SingularAttribute<Account, String> lastName;
-    public static volatile SingularAttribute<Account, Date> birthDate;
-    public static volatile SingularAttribute<Account, String> description;
-    public static volatile SingularAttribute<Account, Date> creationDate;
-    public static volatile SingularAttribute<Account, String> creationAuthor;
-    public static volatile SingularAttribute<Account, Date> lastModificationDate;
-    public static volatile SingularAttribute<Account, String> lastModificationAuthor;
+    public static volatile SingularAttribute<Account, Integer> id;
+    public static volatile SingularAttribute<Account, String> accountNumber;
+    public static volatile SingularAttribute<Account, String> name;
     public static volatile SingularAttribute<Account, Integer> version;
 
     // Many to one
-    public static volatile SingularAttribute<Account, Address> homeAddress;
+    public static volatile SingularAttribute<Account, Currency> currency;
+    public static volatile SingularAttribute<Account, Customer> customer;
 
     // One to many
-    public static volatile ListAttribute<Account, Book> coolBooks;
-    public static volatile ListAttribute<Account, Document> edocs;
-
-    // Many to many
-    public static volatile ListAttribute<Account, Role> securityRoles;
+    public static volatile ListAttribute<Account, Transaction> transactions;
 }

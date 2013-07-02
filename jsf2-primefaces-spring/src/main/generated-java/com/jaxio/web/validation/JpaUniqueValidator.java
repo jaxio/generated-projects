@@ -8,7 +8,6 @@
  */
 package com.jaxio.web.validation;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
@@ -44,9 +43,6 @@ public class JpaUniqueValidator implements Validator {
             if (entity == null && isBlank(property)) {
                 return;
             }
-
-            checkNotNull(entity, "Missing 'entity' attribute");
-            checkNotNull(property, "Missing 'property' attribute");
 
             String errorCode = jpaUniqueUtil.validateSimpleUnique(entity, property, value);
             if (errorCode != null) {

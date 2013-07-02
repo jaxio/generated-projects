@@ -41,6 +41,9 @@ a .ui-menuitem-text {
 	margin-right:5px;
 }
 
+.ui-autocomplete-panel {
+	max-height: 200px;
+}
 /* fix menu child width */
 .ui-menu .ui-menu-parent .ui-menu-child {
 	width:auto !important;
@@ -182,8 +185,8 @@ div.ui-tabs div.ui-tabs-panel {
 	text-align: center;
 }
 
-/* right align numbers in p:dataTable */
-.ui-datatable .ui-datatable-data td.numeric {
+/* right align numbers in p:dataTable, header/footer included */
+.ui-datatable .ui-datatable-data td.numeric, .ui-datatable-tablewrapper td.numeric {
 	text-align: right;
 }
 

@@ -10,7 +10,9 @@ package com.jaxio.web.domain;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.primefaces.model.LazyDataModel;
+
 import com.jaxio.domain.Account;
 import com.jaxio.repository.AccountRepository;
 import com.jaxio.web.converter.AccountJsfConverter;
@@ -22,7 +24,7 @@ import com.jaxio.web.faces.ConversationContextScoped;
  */
 @Named
 @ConversationContextScoped
-public class AccountLazyDataModel extends GenericLazyDataModel<Account, String, AccountSearchForm> {
+public class AccountLazyDataModel extends GenericLazyDataModel<Account, Integer, AccountSearchForm> {
     private static final long serialVersionUID = 1L;
 
     @Inject

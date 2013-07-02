@@ -8,7 +8,7 @@
 	<h:panelGroup rendered="#{(empty readonly or not readonly) and (empty rendered or rendered)}">
 		<p:calendar id="#{id}" value="#{value}" pattern="yyyy-MM-dd HH:mm" showButtonPanel="true" navigator="true">
 			<f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
-			<f:validateBean binding="#{lenientBeanValidator}"/>	
+			<f:validateBean binding="#{lenientBeanValidator}"/>
 			<ui:insert/>
 		</p:calendar>
 		<p:tooltip for="#{id}" value="#{tooltip}" showEffect="slide" rendered="#{not empty tooltip}"/>

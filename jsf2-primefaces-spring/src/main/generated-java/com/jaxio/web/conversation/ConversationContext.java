@@ -10,7 +10,6 @@ package com.jaxio.web.conversation;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
-
 import static com.jaxio.web.conversation.ConversationUtil.cidParamNameValue;
 
 import java.io.Serializable;

@@ -9,7 +9,9 @@
 package com.jaxio.web.domain;
 
 import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
+
 import javax.inject.Named;
+
 import com.jaxio.dao.support.PropertySelector;
 import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Role;
@@ -19,7 +21,7 @@ import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
  * View Helper to search {@link Role}.
- * It exposes a {@link Role} instance so it can be used in search by Example query.
+ * It exposes a {@link Role} instance so it can be used in search by-example-query.
  */
 @Named
 @ConversationContextScoped
@@ -46,7 +48,9 @@ public class RoleSearchForm extends GenericSearchForm<Role, Integer, RoleSearchF
     @Override
     public SearchParameters toSearchParameters() {
         return new SearchParameters() //
+                .limitBroadSearch() //
                 .anywhere() //
+                .caseInsensitive() //
                 .term(term) //
                 .property(roleNameSelector) //
         ;

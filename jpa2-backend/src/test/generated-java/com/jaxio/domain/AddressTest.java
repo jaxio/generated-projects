@@ -8,14 +8,12 @@
  */
 package com.jaxio.domain;
 
+import static org.fest.assertions.Assertions.assertThat;
+
 import java.io.*;
+import java.io.Serializable;
 import java.util.*;
 
-import static org.fest.assertions.Assertions.assertThat;
-import org.junit.Test;
-
-import com.jaxio.util.*;
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,12 +22,16 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.Size;
+
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.jaxio.util.*;
 
 /**
  * Basic tests for Address
@@ -61,11 +63,17 @@ public class AddressTest {
      model1.setId(id);
      model2.setId(id);
 
-     model1.setStreetName("a");
-     model2.setStreetName("a");
+     model1.setStreet("a");
+     model2.setStreet("a");
+
+     model1.setZipCode("a");
+     model2.setZipCode("a");
 
      model1.setCity("a");
      model2.setCity("a");
+
+     model1.setCountry("a");
+     model2.setCountry("a");
 
      model1.setVersion(1);
      model2.setVersion(1);

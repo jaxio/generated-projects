@@ -8,19 +8,24 @@
  */
 package com.jaxio.dao.support;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang.StringUtils.trim;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.Query;
 import javax.persistence.metamodel.SingularAttribute;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.jaxio.domain.Identifiable;
 
 /**
  * The SearchParameters is used to pass search parameters to the DAO layer.
@@ -53,6 +58,7 @@ public class SearchParameters implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private SearchMode searchMode = SearchMode.EQUALS;
+    private boolean andMode = true;
 
     // named query related
     private String namedQuery;
@@ -61,13 +67,14 @@ public class SearchParameters implements Serializable {
     private List<OrderBy> orders = newArrayList();
 
     // technical parameters
-    private boolean caseSensitive = false;
+    private boolean caseSensitive = true;
 
-    // Pagination
-    private int maxResults = 500;
-    private int firstResult = 0;
+    // pagination
+    private int maxResults = -1;
+    private int first = 0;
+    private int pageSize = 0;
 
-    // Joins
+    // joins
     private List<SingularAttribute<?, ?>> leftJoins = newArrayList();
 
     // ranges
@@ -77,7 +84,7 @@ public class SearchParameters implements Serializable {
     private List<PropertySelector<?, ?>> properties = newArrayList();
 
     // entity selectors
-    private List<EntitySelector<?, ? extends Identifiable<?>, ?>> entities = newArrayList();
+    private List<EntitySelector<?, ?, ?>> entities = newArrayList();
 
     // pattern to match against all strings.
     private String searchPattern;
@@ -86,6 +93,7 @@ public class SearchParameters implements Serializable {
     private List<String> termsOnDefault = newArrayList();
     private ArrayListMultimap<String, String> termsOnAny = ArrayListMultimap.create();
     private ArrayListMultimap<String, String> termsOnAll = ArrayListMultimap.create();
+    private Float searchSimilarity = 0.4f;
 
     // Warn: before enabling cache for queries,
     // check this: https://hibernate.atlassian.net/browse/HHH-1523
@@ -173,6 +181,30 @@ public class SearchParameters implements Serializable {
     }
 
     // -----------------------------------
+    // Predicate mode
+    // -----------------------------------
+
+    /**
+     * use <code>and</code> to build the final predicate
+     */
+    public SearchParameters andMode() {
+        andMode = true;
+        return this;
+    }
+
+    /**
+     * use <code>or</code> to build the final predicate
+     */
+    public SearchParameters orMode() {
+        andMode = false;
+        return this;
+    }
+
+    public boolean isAndMode() {
+        return andMode;
+    }
+
+    // -----------------------------------
     // Named query support
     // -----------------------------------
 
@@ -243,7 +275,7 @@ public class SearchParameters implements Serializable {
     }
 
     /**
-     * Return the value of the passed parameter name.
+     * Return the value of the given parameter name.
      */
     public Object getNamedQueryParameter(String parameterName) {
         return parameters.get(checkNotNull(parameterName));
@@ -254,14 +286,14 @@ public class SearchParameters implements Serializable {
     // -----------------------------------
 
     /**
-     * When it returns true, it indicates to the DAO layer to use the passed searchPattern on all string properties.
+     * When it returns true, it indicates to the DAO layer to use the given searchPattern on all string properties.
      */
     public boolean hasSearchPattern() {
         return isNotBlank(searchPattern);
     }
 
     /**
-     * Set the pattern which may contains wildcards (ex: "e%r%ka" ). The passed searchPattern is used by the DAO layer on all string properties. Null by
+     * Set the pattern which may contains wildcards (ex: "e%r%ka" ). The given searchPattern is used by the DAO layer on all string properties. Null by
      * default.
      */
     public void setSearchPattern(String searchPattern) {
@@ -269,7 +301,7 @@ public class SearchParameters implements Serializable {
     }
 
     /**
-     * Fluently set the pattern which may contains wildcards (ex: "e%r%ka" ). The passed searchPattern is used by the DAO layer on all string properties. Null
+     * Fluently set the pattern which may contains wildcards (ex: "e%r%ka" ). The given searchPattern is used by the DAO layer on all string properties. Null
      * by default.
      */
     public SearchParameters searchPattern(String searchPattern) {
@@ -311,28 +343,28 @@ public class SearchParameters implements Serializable {
         return this;
     }
 
-    public SearchParameters termOn(String term, String props) {
-        return addTerm(termsOnAll, term, props);
+    public SearchParameters termOn(String term, String... properties) {
+        return addTerm(termsOnAll, term, properties);
     }
 
-    public SearchParameters termOn(String term, SingularAttribute<?, ?> attr) {
-        return addTerm(termsOnAll, term, attr.getName());
+    public SearchParameters termOn(String term, SingularAttribute<?, ?>... attributes) {
+        return addTerm(termsOnAll, term, attributes);
     }
 
-    public SearchParameters termOnAll(String term, SingularAttribute<?, ?>... attrs) {
-        return addTerm(termsOnAll, term, JpaUtil.toNames(attrs));
+    public SearchParameters termOnAny(String term, String... properties) {
+        return addTerm(termsOnAny, term, properties);
     }
 
-    public SearchParameters termOnAny(String term, String... props) {
-        return addTerm(termsOnAny, term, props);
+    public SearchParameters termOnAny(String term, SingularAttribute<?, ?>... attributes) {
+        return addTerm(termsOnAny, term, attributes);
     }
 
-    public SearchParameters termOnAny(String term, SingularAttribute<?, ?>... attrs) {
-        return addTerm(termsOnAny, term, JpaUtil.toNames(attrs));
+    public SearchParameters term(String term, SingularAttribute<?, ?>... attributes) {
+        return addTerm(termsOnAny, term, attributes);
     }
 
-    public SearchParameters term(String term, SingularAttribute<?, ?>... attrs) {
-        return addTerm(termsOnAny, term, JpaUtil.toNames(attrs));
+    private SearchParameters addTerm(Multimap<String, String> termsMap, String term, SingularAttribute<?, ?>... attributes) {
+        return addTerm(termsMap, term, JpaUtil.toNames(attributes));
     }
 
     private SearchParameters addTerm(Multimap<String, String> termsMap, String term, String... props) {
@@ -340,8 +372,21 @@ public class SearchParameters implements Serializable {
             return this;
         }
         for (String prop : props) {
-            termsMap.put(term, prop);
+            termsMap.put(term, trim(prop));
         }
+        return this;
+    }
+
+    public Float getSearchSimilarity() {
+        return searchSimilarity;
+    }
+
+    public void setSearchSimilarity(Float searchSimilarity) {
+        this.searchSimilarity = searchSimilarity;
+    }
+
+    public SearchParameters searchSimilarity(Float searchSimilarity) {
+        setSearchSimilarity(searchSimilarity);
         return this;
     }
 
@@ -462,14 +507,13 @@ public class SearchParameters implements Serializable {
     }
 
     public void addRange(Range<?, ?> range) {
-        ranges.add(range);
+        ranges.add(checkNotNull(range));
     }
 
-    /**
-     * Add the passed {@link Range} in order to create a 'range' predicate on the corresponding property. 
-     */
-    public SearchParameters range(Range<?, ?> range) {
-        addRange(range);
+    public SearchParameters range(Range<?, ?>... ranges) {
+        for (Range<?, ?> range : checkNotNull(ranges)) {
+            addRange(range);
+        }
         return this;
     }
 
@@ -490,14 +534,13 @@ public class SearchParameters implements Serializable {
     }
 
     public void addProperty(PropertySelector<?, ?> propertySelector) {
-        properties.add(propertySelector);
+        properties.add(checkNotNull(propertySelector));
     }
 
-    /**
-     * Add the passed {@link PropertySelector} in order to construct an OR predicate for the corresponding property. 
-     */
-    public SearchParameters property(PropertySelector<?, ?> propertySelector) {
-        addProperty(propertySelector);
+    public SearchParameters property(PropertySelector<?, ?>... propertySelectors) {
+        for (PropertySelector<?, ?> propertySelector : checkNotNull(propertySelectors)) {
+            addProperty(propertySelector);
+        }
         return this;
     }
 
@@ -513,19 +556,23 @@ public class SearchParameters implements Serializable {
     // Search by entity selector support
     // -----------------------------------
 
-    public List<EntitySelector<?, ? extends Identifiable<?>, ?>> getEntities() {
+    public List<EntitySelector<?, ?, ?>> getEntities() {
         return entities;
     }
 
-    public void addEntity(EntitySelector<?, ? extends Identifiable<?>, ?> entitySelector) {
+    public void addEntity(EntitySelector<?, ?, ?> entitySelector) {
+        checkNotNull(entitySelector);
+        checkNotNull(entitySelector.getField());
         entities.add(entitySelector);
     }
 
     /**
-     * Add the passed {@link EntitySelector} in order to construct an OR predicate for the underlying foreign key. 
+     * Add the given {@link EntitySelector}s to construct predicate for the underlying foreign key. 
      */
-    public SearchParameters entity(EntitySelector<?, ? extends Identifiable<?>, ?> entitySelector) {
-        addEntity(entitySelector);
+    public SearchParameters entity(EntitySelector<?, ?, ?>... entitySelectors) {
+        for (EntitySelector<?, ?, ?> entitySelector : checkNotNull(entitySelectors)) {
+            addEntity(entitySelector);
+        }
         return this;
     }
 
@@ -562,17 +609,53 @@ public class SearchParameters implements Serializable {
         return this;
     }
 
-    public void setFirstResult(int firstResult) {
-        this.firstResult = firstResult;
-    }
-
-    public SearchParameters firstResult(int firstResult) {
-        setFirstResult(firstResult);
+    public SearchParameters limitBroadSearch() {
+        setMaxResults(500);
         return this;
     }
 
-    public int getFirstResult() {
-        return firstResult;
+    /**
+     * Set the position of the first result to retrieve.
+     * @param first position of the first result, numbered from 0
+     */
+    public void setFirst(int first) {
+        this.first = first;
+    }
+
+    public SearchParameters first(int first) {
+        setFirst(first);
+        return this;
+    }
+
+    public int getFirst() {
+        return first;
+    }
+
+    /**
+     * Set the page size, that is the maximum number of result to retrieve.
+     */
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public SearchParameters pageSize(int pageSize) {
+        setPageSize(pageSize);
+        return this;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    protected void applyPagination(Query query) {
+        if (first > 0) {
+            query.setFirstResult(first);
+        }
+        if (pageSize > 0) {
+            query.setMaxResults(pageSize);
+        } else if (maxResults > 0) {
+            query.setMaxResults(maxResults);
+        }
     }
 
     // -----------------------------------------
@@ -591,17 +674,19 @@ public class SearchParameters implements Serializable {
     }
 
     /**
-     * The passed attribute (x-to-one association) will be fetched with a left join.
+     * The given attribute (x-to-one association) will be fetched with a left join.
      */
     public void addLeftJoin(SingularAttribute<?, ?> xToOneAttribute) {
-        leftJoins.add(xToOneAttribute);
+        leftJoins.add(checkNotNull(xToOneAttribute));
     }
 
     /**
      * Fluently set the join attribute
      */
-    public SearchParameters leftJoin(SingularAttribute<?, ?> xToOneAttribute) {
-        addLeftJoin(xToOneAttribute);
+    public SearchParameters leftJoin(SingularAttribute<?, ?>... xToOneAttributes) {
+        for (SingularAttribute<?, ?> xToOneAttribute : checkNotNull(xToOneAttributes)) {
+            addLeftJoin(xToOneAttribute);
+        }
         return this;
     }
 
@@ -646,7 +731,7 @@ public class SearchParameters implements Serializable {
     }
 
     public SearchParameters cacheRegion(String cacheRegion) {
-        setCacheRegion(cacheRegion);
+        setCacheRegion(checkNotNull(cacheRegion));
         return this;
     }
 
@@ -673,7 +758,7 @@ public class SearchParameters implements Serializable {
      * add additionnal parameter.
      */
     public SearchParameters addExtraParameter(String key, Object o) {
-        extraParameters.put(key, o);
+        extraParameters.put(checkNotNull(key), o);
         return this;
     }
 

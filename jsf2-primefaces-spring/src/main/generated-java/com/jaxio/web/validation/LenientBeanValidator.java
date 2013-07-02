@@ -8,12 +8,13 @@
  */
 package com.jaxio.web.validation;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.BeanValidator;
 import javax.inject.Named;
 
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 
 /**
@@ -23,7 +24,7 @@ import org.springframework.context.annotation.Scope;
  * _HACK_ This setting is tricky. It circumvents a JSF limitation.
  */
 @Named
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+@Scope(SCOPE_PROTOTYPE)
 public class LenientBeanValidator extends BeanValidator {
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) {

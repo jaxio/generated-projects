@@ -11,13 +11,11 @@ package com.jaxio.repository;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.dao.AddressDao;
 import com.jaxio.domain.Address;
 import com.jaxio.repository.support.GenericRepository;
 
-/**
- * Note: you may use multiple DAO from this layer.
- */
 @Named
 @Singleton
 public class AddressRepository extends GenericRepository<Address, Integer> {

@@ -11,13 +11,11 @@ package com.jaxio.repository;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.dao.SavedSearchDao;
 import com.jaxio.domain.SavedSearch;
 import com.jaxio.repository.support.GenericRepository;
 
-/**
- * Note: you may use multiple DAO from this layer.
- */
 @Named
 @Singleton
 public class SavedSearchRepository extends GenericRepository<SavedSearch, Integer> {

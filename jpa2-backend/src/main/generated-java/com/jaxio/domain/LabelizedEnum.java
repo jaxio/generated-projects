@@ -9,5 +9,9 @@
 package com.jaxio.domain;
 
 public interface LabelizedEnum {
+
+    /**
+     * The localized label for this enum value.
+     */
     String getLabel();
 }

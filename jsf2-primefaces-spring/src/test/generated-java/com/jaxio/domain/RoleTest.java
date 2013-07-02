@@ -8,14 +8,12 @@
  */
 package com.jaxio.domain;
 
+import static org.fest.assertions.Assertions.assertThat;
+
 import java.io.*;
+import java.io.Serializable;
 import java.util.*;
 
-import static org.fest.assertions.Assertions.assertThat;
-import org.junit.Test;
-
-import com.jaxio.util.*;
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,12 +21,16 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
+
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.jaxio.util.*;
 
 /**
  * Basic tests for Role

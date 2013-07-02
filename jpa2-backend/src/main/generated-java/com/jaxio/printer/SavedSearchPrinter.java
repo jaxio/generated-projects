@@ -9,23 +9,24 @@
 package com.jaxio.printer;
 
 import java.util.Locale;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.domain.SavedSearch;
-import com.jaxio.printer.DiscoverablePrinter;
+import com.jaxio.domain.SavedSearch_;
+import com.jaxio.printer.support.GenericPrinter;
 
 /**
- * {@link org.springframework.format.Printer} for {@link SavedSearch} 
+ * {@link GenericPrinter} for {@link SavedSearch} 
  *
- * @see org.springframework.format.Printer
- * @see DiscoverablePrinter
  * @see TypeAwarePrinter
  */
 @Named
 @Singleton
-public class SavedSearchPrinter extends DiscoverablePrinter<SavedSearch> {
+public class SavedSearchPrinter extends GenericPrinter<SavedSearch> {
     public SavedSearchPrinter() {
-        super(SavedSearch.class);
+        super(SavedSearch.class, SavedSearch_.name.getName());
     }
 
     @Override

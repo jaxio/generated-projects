@@ -11,7 +11,9 @@ package com.jaxio.web.domain;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.domain.SavedSearch;
+import com.jaxio.printer.SavedSearchPrinter;
 import com.jaxio.repository.SavedSearchRepository;
 import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.SavedSearchPermission;
@@ -26,8 +28,8 @@ public class SavedSearchController extends GenericController<SavedSearch, Intege
     public static final String SAVEDSEARCH_SELECT_URI = "/domain/savedSearchSelect.faces";
 
     @Inject
-    public SavedSearchController(SavedSearchRepository savedSearchRepository, SavedSearchPermission savedSearchPermission) {
-        super(savedSearchRepository, savedSearchPermission, SAVEDSEARCH_SELECT_URI, SAVEDSEARCH_EDIT_URI);
+    public SavedSearchController(SavedSearchRepository savedSearchRepository, SavedSearchPermission savedSearchPermission, SavedSearchPrinter savedSearchPrinter) {
+        super(savedSearchRepository, savedSearchPermission, savedSearchPrinter, SAVEDSEARCH_SELECT_URI, SAVEDSEARCH_EDIT_URI);
     }
 
     public SavedSearchFileUpload getSavedSearchFileUpload(SavedSearch savedSearch) {

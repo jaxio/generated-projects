@@ -10,10 +10,14 @@ package com.jaxio.web.permission;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import com.jaxio.domain.Account;
 import com.jaxio.web.permission.support.GenericPermission;
 
 @Named
 @Singleton
 public class AccountPermission extends GenericPermission<Account> {
+    public AccountPermission() {
+        super(Account.class);
+    }
 }

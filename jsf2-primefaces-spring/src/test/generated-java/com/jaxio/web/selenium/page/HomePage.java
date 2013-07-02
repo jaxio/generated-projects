@@ -22,18 +22,18 @@ public class HomePage {
     public WebElement accountsLink;
     @FindBy(id = "form:selectAddresses")
     public WebElement addressesLink;
-    @FindBy(id = "form:selectBooks")
-    public WebElement booksLink;
-    @FindBy(id = "form:selectDocuments")
-    public WebElement documentsLink;
-    @FindBy(id = "form:selectLegacies")
-    public WebElement legaciesLink;
-    @FindBy(id = "form:selectMoreTypesDemos")
-    public WebElement moreTypesDemosLink;
+    @FindBy(id = "form:selectCurrencies")
+    public WebElement currenciesLink;
+    @FindBy(id = "form:selectCustomers")
+    public WebElement customersLink;
     @FindBy(id = "form:selectRoles")
     public WebElement rolesLink;
     @FindBy(id = "form:selectSavedSearchs")
     public WebElement savedSearchsLink;
+    @FindBy(id = "form:selectTransactions")
+    public WebElement transactionsLink;
+    @FindBy(id = "form:selectUsers")
+    public WebElement usersLink;
     @FindBy(id = "form:switchToFrench")
     public WebElement switchToFrench;
     @FindBy(id = "form:switchToEnglish")
@@ -63,20 +63,12 @@ public class HomePage {
         webClient.click(addressesLink);
     }
 
-    public void books() {
-        webClient.click(booksLink);
+    public void currencies() {
+        webClient.click(currenciesLink);
     }
 
-    public void documents() {
-        webClient.click(documentsLink);
-    }
-
-    public void legacies() {
-        webClient.click(legaciesLink);
-    }
-
-    public void moreTypesDemos() {
-        webClient.click(moreTypesDemosLink);
+    public void customers() {
+        webClient.click(customersLink);
     }
 
     public void roles() {
@@ -87,15 +79,23 @@ public class HomePage {
         webClient.click(savedSearchsLink);
     }
 
+    public void transactions() {
+        webClient.click(transactionsLink);
+    }
+
+    public void users() {
+        webClient.click(usersLink);
+    }
+
     public void hasText(String... values) {
         for (String value : values) {
-            webClient.hasText(value);
+            webClient.waitUntilTextIsPresent(value);
         }
     }
 
     public void hasMessage(String... values) {
         for (String value : values) {
-            webClient.hasText(messagesPanel, value);
+            webClient.waitUntilTextIsPresent(messagesPanel, value);
         }
     }
 

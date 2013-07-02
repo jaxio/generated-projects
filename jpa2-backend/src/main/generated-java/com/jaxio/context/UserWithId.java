@@ -8,7 +8,6 @@
  */
 package com.jaxio.context;
 
-import java.io.Serializable;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -16,19 +15,18 @@ import org.springframework.security.core.userdetails.User;
 
 /**
  * Simple User that also keep track of the primary key.
- * The primary key is used by hibernate filter.
  */
 public class UserWithId extends User {
     private static final long serialVersionUID = 1L;
-    private Serializable id;
+    private Integer id;
 
     public UserWithId(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
-            Collection<? extends GrantedAuthority> authorities, Serializable id) {
+            Collection<? extends GrantedAuthority> authorities, Integer id) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
         this.id = id;
     }
 
-    public Serializable getId() {
+    public Integer getId() {
         return id;
     }
 }

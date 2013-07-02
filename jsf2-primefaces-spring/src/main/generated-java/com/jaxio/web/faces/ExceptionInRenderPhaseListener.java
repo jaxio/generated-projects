@@ -16,12 +16,11 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 
+import org.omnifaces.eventlistener.DefaultPhaseListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.omnifaces.eventlistener.DefaultPhaseListener;
 
 import com.google.common.collect.Iterables;
-
 import com.jaxio.web.conversation.ConversationManager;
 
 /**

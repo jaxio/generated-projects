@@ -10,12 +10,13 @@ package com.jaxio.dao.support;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.jaxio.dao.support.JpaUtil.buildJpaOrders;
 import static com.jaxio.dao.support.ByEntitySelectorUtil.byEntitySelectors;
 import static com.jaxio.dao.support.ByPropertySelectorUtil.byPropertySelectors;
 import static com.jaxio.dao.support.ByRangeUtil.byRanges;
+import static com.jaxio.dao.support.JpaUtil.buildJpaOrders;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -32,8 +33,10 @@ import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.hibernate.search.annotations.Field;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 
 import com.jaxio.domain.Identifiable;
 
@@ -50,21 +53,35 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
     private NamedQueryUtil namedQueryUtil;
     @Inject
     private ByFullTextUtil byFullTextUtil;
+    private List<String> indexedAttributes;
     @PersistenceContext
     private EntityManager entityManager;
     private Class<E> type;
     private Logger log;
-    private List<SingularAttribute<?, ?>> indexedAttributes;
     private String cacheRegion;
 
     /**
      * This constructor needs the real type of the generic type E so it can be passed to the {@link EntityManager}.
      */
-    public GenericDao(Class<E> type, SingularAttribute<?, ?>... indexedAttributes) {
+    public GenericDao(Class<E> type) {
         this.type = type;
         this.log = LoggerFactory.getLogger(getClass());
         this.cacheRegion = type.getCanonicalName();
-        this.indexedAttributes = newArrayList(indexedAttributes);
+        this.indexedAttributes = buildIndexedAttributes(type);
+    }
+
+    private List<String> buildIndexedAttributes(Class<E> type) {
+        List<String> ret = newArrayList();
+        for (Method m : type.getMethods()) {
+            if (m.getAnnotation(Field.class) != null) {
+                ret.add(BeanUtils.findPropertyForMethod(m).getName());
+            }
+        }
+        return ret;
+    }
+
+    public boolean isIndexed(String property) {
+        return indexedAttributes.contains(property);
     }
 
     public Class<E> getType() {
@@ -152,12 +169,7 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
         setCacheHints(typedQuery, sp);
 
         // pagination
-        if (sp.getFirstResult() >= 0) {
-            typedQuery.setFirstResult(sp.getFirstResult());
-        }
-        if (sp.getMaxResults() > 0) {
-            typedQuery.setMaxResults(sp.getMaxResults());
-        }
+        sp.applyPagination(typedQuery);
 
         // execution
         List<E> entities = typedQuery.getResultList();
@@ -218,51 +230,49 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
 
         if (result == null) {
             throw new NoResultException("Developper: You expected 1 result but we found none ! sample: " + entity);
+        } else {
+            return result;
         }
-
-        return result;
     }
 
     /**
-     * We request at most 2, if there's more than one then we throw a  {@link NonUniqueResultException}
+     * We request at most 2, if there's more than one then we throw a {@link NonUniqueResultException}
      * @throws NonUniqueResultException
      */
     public E findUniqueOrNone(E entity, SearchParameters sp) {
         // this code is an optimization to prevent using a count
-        sp.setFirstResult(0);
+        sp.setFirst(0);
         sp.setMaxResults(2);
         List<E> results = find(entity, sp);
 
         if (results == null || results.isEmpty()) {
             return null;
-        }
-
-        if (results.size() > 1) {
+        } else if (results.size() > 1) {
             throw new NonUniqueResultException("Developper: You expected 1 result but we found more ! sample: " + entity);
+        } else {
+            return results.iterator().next();
         }
-
-        return results.iterator().next();
     }
 
     protected <R> Predicate getPredicate(Root<E> root, CriteriaQuery<R> query, CriteriaBuilder builder, E entity, SearchParameters sp) {
-        return JpaUtil.andPredicate(builder, //
-                byFullTextUtil.byFullText(root, query, builder, sp, entity, indexedAttributes), //
-                byRanges(root, query, builder, sp.getRanges(), type), //
-                byPropertySelectors(root, builder, sp, sp.getProperties()), //
-                byEntitySelectors(root, builder, sp.getEntities()), //
-                byExample(root, entity, sp, builder), //
-                byPatternUtil.byPattern(root, query, builder, sp, type), //
-                byExtraPredicate(root, query, builder, entity, sp));
+        return JpaUtil.concatPredicate(sp, builder, //
+                byFullTextUtil.byFullText(root, builder, sp, entity, indexedAttributes), //
+                byRanges(root, builder, sp, type), //
+                byPropertySelectors(root, builder, sp), //
+                byEntitySelectors(root, builder, sp), //
+                byExample(root, builder, sp, entity), //
+                byPatternUtil.byPattern(root, builder, sp, type), //
+                byExtraPredicate(root, builder, sp, entity));
     }
 
-    protected Predicate byExample(Root<E> root, E entity, SearchParameters sp, CriteriaBuilder builder) {
-        return byExampleUtil.byExampleOnEntity(root, entity, sp, builder);
+    protected Predicate byExample(Root<E> root, CriteriaBuilder builder, SearchParameters sp, E entity) {
+        return byExampleUtil.byExampleOnEntity(root, entity, builder, sp);
     }
 
     /**
      * You may override this method to add a Predicate to the default find method.
      */
-    protected <R> Predicate byExtraPredicate(Root<E> root, CriteriaQuery<R> query, CriteriaBuilder builder, E entity, SearchParameters sp) {
+    protected <R> Predicate byExtraPredicate(Root<E> root, CriteriaBuilder builder, SearchParameters sp, E entity) {
         return null;
     }
 
@@ -355,22 +365,21 @@ public abstract class GenericDao<E extends Identifiable<PK>, PK extends Serializ
         if (!entityType.hasVersionAttribute()) {
             return null;
         }
-        return (Comparable<Object>) JpaUtil.getValue(entity, gerVersionAttribute(entityType));
+        return (Comparable<Object>) JpaUtil.getValue(entity, getVersionAttribute(entityType));
     }
 
     /**
      * _HACK_ too bad that JPA does not provide this entityType.getVersion();
+     * 
      * @see http://stackoverflow.com/questions/13265094/generic-way-to-get-jpa-entity-version
      */
-    private SingularAttribute<? super E, ?> gerVersionAttribute(EntityType<E> entityType) {
-        SingularAttribute<? super E, ?> version = null;
+    private SingularAttribute<? super E, ?> getVersionAttribute(EntityType<E> entityType) {
         for (SingularAttribute<? super E, ?> sa : entityType.getSingularAttributes()) {
             if (sa.isVersion()) {
-                version = sa;
-                break;
+                return sa;
             }
         }
-        return version;
+        return null;
     }
 
     // -----------------

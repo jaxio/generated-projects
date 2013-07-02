@@ -14,9 +14,6 @@
 	<packaging>war</packaging>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>appli</name>
-	<prerequisites>
-		<maven>2.2.0</maven>
-	</prerequisites>
 	<properties>
 		<!-- ~~~~~~~~ -->
 		<!-- Database -->
@@ -49,13 +46,13 @@
 		<!-- Version dependencies when used in multiple dependencies -->
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 		<maven-celerio-plugin.outputDir>${project.basedir}</maven-celerio-plugin.outputDir>
-		<maven-celerio-plugin.version>3.0.101</maven-celerio-plugin.version>
+		<maven-celerio-plugin.version>3.0.102</maven-celerio-plugin.version>
 		<hibernate.version>4.2.0.Final</hibernate.version>
 		<spring.version>3.2.3.RELEASE</spring.version>
 		<spring-security.version>3.1.4.RELEASE</spring-security.version>
 		<jsf-api.version>2.1.22</jsf-api.version>
 		<primefaces.version>3.5</primefaces.version>
-		<primefaces-themes.version>1.0.9</primefaces-themes.version>
+		<primefaces-themes.version>1.0.10</primefaces-themes.version>
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 		<!-- Variables substituted in resources file at build time -->
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -69,7 +66,7 @@
 		<!-- logs -->
 		<log.target>${project.build.directory}/logs</log.target>
 		<log.level>DEBUG</log.level>
-		<log.sql.queries.level>DEBUG</log.sql.queries.level>		
+		<log.sql.queries.level>DEBUG</log.sql.queries.level>
 		<!-- hibernate, see by src/main/resource/hibernate.properties -->
 		<hibernate.show.sql>true</hibernate.show.sql>
 		<hibernate.format.sql>true</hibernate.format.sql>
@@ -266,8 +263,8 @@
 									<id>create-oracle-user</id>
 									<phase>validate</phase>
 									<configuration>
-										<driver>${jdbc.driver}</driver>								
-										<url>${jdbc.url}</url>								
+										<driver>${jdbc.driver}</driver>
+										<url>${jdbc.url}</url>
 										<username>system</username>
 										<password>manager</password>
 										<autocommit>true</autocommit>
@@ -535,7 +532,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-jdbc</artifactId>
-			<version>7.0.40</version>
+			<version>7.0.41</version>
 		</dependency>
 		<dependency>
 			<!-- jdbc driver depends on the database profile used -->
@@ -783,7 +780,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>org.omnifaces</groupId>
 			<artifactId>omnifaces</artifactId>
-			<version>1.4.1</version>
+			<version>1.5</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
@@ -822,7 +819,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>net.bull.javamelody</groupId>
 			<artifactId>javamelody-core</artifactId>
-			<version>1.44.0</version>
+			<version>1.45.0</version>
 		</dependency>
 		<!-- ~~~~ -->
 		<!-- TEST -->
@@ -940,6 +937,9 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 								<requireJavaVersion>
 									<version>[1.6.0-26,)</version>
 								</requireJavaVersion>
+								<requireMavenVersion>
+									<version>3.0.3</version>
+								</requireMavenVersion>
 							</rules>
 						</configuration>
 					</execution>
@@ -1025,7 +1025,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 						<id>start-jetty</id>
 						<phase>pre-integration-test</phase>
 						<goals>
-							<goal>run</goal>
+							<goal>start</goal>
 						</goals>
 						<configuration>
 							<daemon>true</daemon>
@@ -1053,7 +1053,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 						<selenium.webdriver>firefox</selenium.webdriver>
 						<selenium.follow.visually>false</selenium.follow.visually>
 					</systemPropertyVariables>
-					<argLine>${jacoco.it.agent.argLine}</argLine> 
+					<argLine>${jacoco.it.agent.argLine}</argLine>
 				</configuration>
 				<executions>
 					<execution>

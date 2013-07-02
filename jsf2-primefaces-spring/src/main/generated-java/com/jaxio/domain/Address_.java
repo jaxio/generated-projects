@@ -16,7 +16,9 @@ public abstract class Address_ {
 
     // Raw attributes
     public static volatile SingularAttribute<Address, Integer> id;
-    public static volatile SingularAttribute<Address, String> streetName;
+    public static volatile SingularAttribute<Address, String> street;
+    public static volatile SingularAttribute<Address, String> zipCode;
     public static volatile SingularAttribute<Address, String> city;
+    public static volatile SingularAttribute<Address, String> country;
     public static volatile SingularAttribute<Address, Integer> version;
 }

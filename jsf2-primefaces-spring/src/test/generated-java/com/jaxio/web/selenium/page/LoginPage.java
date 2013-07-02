@@ -33,6 +33,6 @@ public class LoginPage {
     }
 
     public void hasMessage(String value) {
-        webClient.hasText(loginMessages, value);
+        webClient.waitUntilTextIsPresent(loginMessages, value);
     }
 }

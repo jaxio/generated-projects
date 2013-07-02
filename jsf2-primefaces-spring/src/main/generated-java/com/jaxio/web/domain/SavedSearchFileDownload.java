@@ -9,12 +9,15 @@
 package com.jaxio.web.domain;
 
 import java.io.ByteArrayInputStream;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.jaxio.domain.SavedSearch;
 import com.jaxio.repository.SavedSearchRepository;
 
@@ -33,14 +36,19 @@ public class SavedSearchFileDownload {
     @Transactional(readOnly = true)
     public StreamedContent getFormContentStream(SavedSearch detachedSavedSearch) {
         SavedSearch savedSearch = null;
-        if (detachedSavedSearch.getFormContent() != null) {
+        if (detachedSavedSearch.isFormContentSet()) {
             savedSearch = detachedSavedSearch;
-        } else {
+        } else if (detachedSavedSearch.isIdSet()) {
             savedSearch = savedSearchRepository.get(detachedSavedSearch);
         }
-        return new DefaultStreamedContent( //
-                new ByteArrayInputStream(savedSearch.getFormContent()), //
-                "application/download", //
-                "formContent");
+
+        if (savedSearch != null && savedSearch.getFormContent() != null) {
+            return new DefaultStreamedContent( //
+                    new ByteArrayInputStream(savedSearch.getFormContent()), //
+                    "application/download", //
+                    "formContent");
+        } else {
+            return null;
+        }
     }
 }
