@@ -4,30 +4,28 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/repository/Repository.e.vm.java
+ * Template pack-backend-jpa:src/main/java/repository/Repository.e.vm.java
  */
 package com.jaxio.repository;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.jaxio.dao.CustomerDao;
+import org.hibernate.LazyInitializationException;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.jaxio.domain.Customer;
 import com.jaxio.repository.support.GenericRepository;
 
+/**
+ * {@link GenericRepository} for {@link Customer} 
+ */
 @Named
 @Singleton
 public class CustomerRepository extends GenericRepository<Customer, Integer> {
 
-    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
-    protected CustomerRepository() {
-        super();
-    }
-
-    @Inject
-    public CustomerRepository(CustomerDao customerDao) {
-        super(customerDao);
+    public CustomerRepository() {
+        super(Customer.class);
     }
 
     @Override
@@ -37,8 +35,22 @@ public class CustomerRepository extends GenericRepository<Customer, Integer> {
 
     @Override
     public Customer getNewWithDefaults() {
-        Customer result = getNew();
-        result.initDefaultValues();
-        return result;
+        return getNew().withDefaults();
+    }
+
+    /**
+     * Safe way to load the contractBinary content. 
+     */
+    @Transactional(readOnly = true)
+    public byte[] getContractBinary(Customer customer) {
+        if (!customer.isIdSet()) {
+            return customer.getContractBinary();
+        }
+
+        try {
+            return customer.getContractBinary();
+        } catch (LazyInitializationException lie) { // _HACK_ as we still rely on hibernate here
+            return get(customer).getContractBinary();
+        }
     }
 }

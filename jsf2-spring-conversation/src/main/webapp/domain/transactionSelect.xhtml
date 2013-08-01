@@ -15,7 +15,8 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search title="transaction_search" model="#{transactionLazyDataModel}" searchForm="#{transactionSearchForm}" controller="#{transactionController}" permission="#{transactionPermission}" savedSearch="true">
+	<app:search title="transaction_search" model="#{transactionLazyDataModel}" searchForm="#{transactionSearchForm}"
+		controller="#{transactionController}" permission="#{transactionPermission}" savedSearch="true">
 		<ui:define name="filters">
 			<app:multiAutoComplete id="accountSelector" value="#{transactionSearchForm.accountSelector.selected}" label="transaction_account" 
 				controller="#{accountController}" converter="#{accountJsfConverter}" permission="#{accountPermission}"/>
@@ -37,10 +38,10 @@
 				<h:outputText value="#{item.amount}" />
 			</p:column>
 			<p:column id="transaction_transactionDate" headerText="#{msg.transaction_transactionDate}" sortBy="#{item.transactionDate}" styleClass="transactionDate">
-				<h:outputText value="#{item.transactionDate}" converter="#{localDateConverter}"/>
+				<app:outputLocalDate value="#{item.transactionDate}" />
 			</p:column>
 			<p:column id="transaction_valueDate" headerText="#{msg.transaction_valueDate}" sortBy="#{item.valueDate}" styleClass="valueDate">
-				<h:outputText value="#{item.valueDate}" converter="#{localDateConverter}"/>
+				<app:outputLocalDate value="#{item.valueDate}" />
 			</p:column>
 			<p:column id="transaction_description" headerText="#{msg.transaction_description}" sortBy="#{item.description}" styleClass="description">
 				<h:outputText value="#{item.description}" />

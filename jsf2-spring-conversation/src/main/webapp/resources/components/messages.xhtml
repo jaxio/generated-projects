@@ -32,6 +32,7 @@
 					<script type="text/javascript">
 						$(function() {
 							setTimeout(function() {
+								PrimeFaces.scrollTo('${messagesHelper.getCssFriendlySeverity(severity)}-gMsgNo0');
 								APP.focusTo('${messagesHelper.getCssFriendlySeverity(severity)}-gMsgNo0');
 							}, 400);
 						});
@@ -40,11 +41,12 @@
 				<p:outputPanel layout="block" styleClass="ui-messages-${messagesHelper.getCssFriendlySeverity(severity)} ui-corner-all" rendered="${messagesHelper.hasSingleGlobalMessage(severity)}">
 					<a href="#" class="ui-messages-close" style="float: right;" onclick="$(this).parent().slideUp();return false;"><span class="ui-icon ui-icon-close"></span></a>
 					<span class="ui-messages-${messagesHelper.getCssFriendlySeverity(severity)}-icon"></span>
-					<span class="ui-messages-${messagesHelper.getCssFriendlySeverity(severity)}-summary"><a id="${messagesHelper.getCssFriendlySeverity(severity)}-gMsgNo00" href="javascript:void" 
+					<span class="ui-messages-${messagesHelper.getCssFriendlySeverity(severity)}-summary"><a id="${messagesHelper.getCssFriendlySeverity(severity)}-gMsgNo0" href="javascript:void" 
 							onclick="PrimeFaces.focus(null, 'form:center');" >${messagesHelper.getSingleGlobalMessage(severity).facesMessage.summary}</a></span>
 					<script type="text/javascript">
 						$(function() {
 							setTimeout(function() {
+								PrimeFaces.scrollTo('${messagesHelper.getCssFriendlySeverity(severity)}-gMsgNo0');
 								APP.focusTo('${messagesHelper.getCssFriendlySeverity(severity)}-gMsgNo0');
 							}, 400);
 						});
@@ -68,6 +70,7 @@
 				<script type="text/javascript">
 					$(function() {
 						setTimeout(function() {
+							PrimeFaces.scrollTo('errorPresent');
 							APP.focusTo('errorPresent');
 						}, 500);
 					});

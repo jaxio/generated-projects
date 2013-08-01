@@ -8,9 +8,7 @@
  */
 package com.jaxio.web.selenium.support.elements;
 
-import org.openqa.selenium.By;
-
-public abstract class Input<T> extends CustomElement {
+public abstract class Input<T> extends ByCustomWebElement {
     public Input(String id) {
         super(id);
     }
@@ -20,10 +18,10 @@ public abstract class Input<T> extends CustomElement {
     public abstract T value();
 
     protected void typeString(String value) {
-        webClient.fill(By.id(id), value);
+        webClient.fill(by, value);
     }
 
     protected String valueAttribute() {
-        return webClient.find(By.id(id)).getAttribute("value");
+        return webClient.find(by).getAttribute("value");
     }
 }

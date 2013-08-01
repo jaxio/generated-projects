@@ -15,7 +15,8 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search title="account_search" model="#{accountLazyDataModel}" searchForm="#{accountSearchForm}" controller="#{accountController}" permission="#{accountPermission}" savedSearch="true">
+	<app:search title="account_search" model="#{accountLazyDataModel}" searchForm="#{accountSearchForm}"
+		controller="#{accountController}" permission="#{accountPermission}" savedSearch="true">
 		<ui:define name="filters">
 			<app:inputMultiAutoComplete id="accountNumber" value="#{accountSearchForm.accountNumberSelector}" label="account_accountNumber" completeMethod="completeProperty" property="accountNumber" />
 			<app:inputMultiAutoComplete id="name" value="#{accountSearchForm.nameSelector}" label="account_name" completeMethod="completeProperty" property="name" />

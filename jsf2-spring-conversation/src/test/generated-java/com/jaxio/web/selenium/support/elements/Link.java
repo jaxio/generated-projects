@@ -8,17 +8,17 @@
  */
 package com.jaxio.web.selenium.support.elements;
 
-public class Link extends CustomElement {
+public class Link extends ByCustomWebElement {
     public Link(String id) {
         super(id);
     }
 
     public String getText() {
-        webClient.waitUntilDisplayed(by());
-        return webClient.find(by()).getText();
+        webClient.waitUntilDisplayed(by);
+        return webClient.find(by).getText();
     }
 
     public void click() {
-        webClient.click(by());
+        webClient.click(by);
     }
 }

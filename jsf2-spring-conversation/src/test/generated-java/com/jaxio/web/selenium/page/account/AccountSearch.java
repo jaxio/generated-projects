@@ -10,7 +10,7 @@ package com.jaxio.web.selenium.page.account;
 
 import com.jaxio.web.selenium.support.Page;
 import com.jaxio.web.selenium.support.elements.Autocomplete;
-import com.jaxio.web.selenium.support.elements.CustomElement;
+import com.jaxio.web.selenium.support.elements.CustomWebElement;
 import com.jaxio.web.selenium.support.elements.EntityAction;
 import com.jaxio.web.selenium.support.elements.Messages;
 import com.jaxio.web.selenium.support.elements.OrderBy;
@@ -25,7 +25,7 @@ public class AccountSearch {
     public AccountSearchOrders orders;
     public AccountSearchForm form;
 
-    public static class AccountSearchOrders extends CustomElement {
+    public static class AccountSearchOrders extends CustomWebElement {
         public OrderBy accountNumber = new OrderBy("account_accountNumber");
         public OrderBy name = new OrderBy("account_name");
         public OrderBy currencyId = new OrderBy("account_currencyId");

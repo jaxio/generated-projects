@@ -16,6 +16,7 @@ import org.primefaces.model.LazyDataModel;
 import com.jaxio.domain.Currency;
 import com.jaxio.repository.CurrencyRepository;
 import com.jaxio.web.converter.CurrencyJsfConverter;
+import com.jaxio.web.domain.CurrencyExcelExporter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
 import com.jaxio.web.faces.ConversationContextScoped;
 
@@ -29,7 +30,7 @@ public class CurrencyLazyDataModel extends GenericLazyDataModel<Currency, Intege
 
     @Inject
     public CurrencyLazyDataModel(CurrencyRepository currencyRepository, CurrencyJsfConverter currencyConverter, CurrencyController currencyController,
-            CurrencySearchForm currencySearchForm) {
-        super(currencyRepository, currencyConverter, currencyController, currencySearchForm);
+            CurrencySearchForm currencySearchForm, CurrencyExcelExporter currencyExcelExporter) {
+        super(currencyRepository, currencyConverter, currencyController, currencySearchForm, currencyExcelExporter);
     }
 }

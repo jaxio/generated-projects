@@ -9,7 +9,7 @@
 package com.jaxio.web.selenium.page.savedsearch;
 
 import com.jaxio.web.selenium.support.Page;
-import com.jaxio.web.selenium.support.elements.CustomElement;
+import com.jaxio.web.selenium.support.elements.CustomWebElement;
 import com.jaxio.web.selenium.support.elements.EditAction;
 import com.jaxio.web.selenium.support.elements.EntityAction;
 import com.jaxio.web.selenium.support.elements.Messages;
@@ -19,13 +19,13 @@ import com.jaxio.web.selenium.support.elements.Upload;
 
 @Page
 public class SavedSearchEdit {
-    public EditAction edit;
+    public EditAction action;
     public Messages messages;
     public EntityAction entity;
     public SavedSearchEditForm form;
     public SavedSearchEditTabs tabs;
 
-    public static class SavedSearchEditForm extends CustomElement {
+    public static class SavedSearchEditForm extends CustomWebElement {
         public StringInput name = new StringInput("form:name");
         public StringInput formClassname = new StringInput("form:formClassname");
         public Upload formContent = new Upload("form:formContent");
@@ -33,6 +33,6 @@ public class SavedSearchEdit {
         public NoInverseManyToOne user = new NoInverseManyToOne("form:user");
     };
 
-    public static class SavedSearchEditTabs extends CustomElement {
+    public static class SavedSearchEditTabs extends CustomWebElement {
     };
 }

@@ -16,6 +16,7 @@ import org.primefaces.model.LazyDataModel;
 import com.jaxio.domain.Role;
 import com.jaxio.repository.RoleRepository;
 import com.jaxio.web.converter.RoleJsfConverter;
+import com.jaxio.web.domain.RoleExcelExporter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
 import com.jaxio.web.faces.ConversationContextScoped;
 
@@ -28,7 +29,8 @@ public class RoleLazyDataModel extends GenericLazyDataModel<Role, Integer, RoleS
     private static final long serialVersionUID = 1L;
 
     @Inject
-    public RoleLazyDataModel(RoleRepository roleRepository, RoleJsfConverter roleConverter, RoleController roleController, RoleSearchForm roleSearchForm) {
-        super(roleRepository, roleConverter, roleController, roleSearchForm);
+    public RoleLazyDataModel(RoleRepository roleRepository, RoleJsfConverter roleConverter, RoleController roleController, RoleSearchForm roleSearchForm,
+            RoleExcelExporter roleExcelExporter) {
+        super(roleRepository, roleConverter, roleController, roleSearchForm, roleExcelExporter);
     }
 }

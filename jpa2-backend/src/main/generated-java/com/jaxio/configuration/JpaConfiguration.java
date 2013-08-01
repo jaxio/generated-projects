@@ -4,12 +4,13 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/configuration/JpaConfiguration.p.vm.java
+ * Template pack-backend-jpa:src/main/java/configuration/JpaConfiguration.p.vm.java
  */
 package com.jaxio.configuration;
 
 import java.util.Properties;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.hibernate.SessionFactory;
@@ -24,6 +25,12 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 @Configuration
 public class JpaConfiguration {
+
+    @Value("classpath:hibernate.properties")
+    private Properties jpaProperties;
+
+    @Resource(name = "dataSource")
+    private DataSource dataSource;
 
     /**
      * Enable exception translation for beans annotated with @Repository
@@ -41,14 +48,11 @@ public class JpaConfiguration {
         return new JpaTransactionManager();
     }
 
-    @Value("classpath:hibernate.properties")
-    private Properties jpaProperties;
-
     /**
      * Build the entity manager with Hibernate as a provider.
      */
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
         emf.setDataSource(dataSource);
         // We set the persistenceXmlLocation to a different name to make it work on JBoss.

@@ -8,18 +8,16 @@
  */
 package com.jaxio.web.domain;
 
-import java.io.ByteArrayInputStream;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.jaxio.domain.Customer;
+import com.jaxio.domain.Customer_;
 import com.jaxio.repository.CustomerRepository;
+import com.jaxio.web.domain.support.ByteArrayStreamedContent;
 
 /**
  * Stateless controller to download {@link Customer} binaries 
@@ -31,24 +29,26 @@ public class CustomerFileDownload {
     private CustomerRepository customerRepository;
 
     /**
-     * Primefaces support for contractBinary file download, this method is transactional so the binary can be lazily loaded
+     * Primefaces support for contractBinary file download.
      */
-    @Transactional(readOnly = true)
-    public StreamedContent getContractBinaryStream(Customer detachedCustomer) {
-        Customer customer = null;
-        if (detachedCustomer.isContractBinarySet()) {
-            customer = detachedCustomer;
-        } else if (detachedCustomer.isIdSet()) {
-            customer = customerRepository.get(detachedCustomer);
-        }
-
-        if (customer != null && customer.getContractBinary() != null) {
-            return new DefaultStreamedContent( //
-                    new ByteArrayInputStream(customer.getContractBinary()), //
-                    customer.getContractContentType(), //
-                    customer.getContractFileName());
-        } else {
+    public StreamedContent getContractBinaryStream(final Customer customer) {
+        // check whether the binary is null WITHOUT downloading it.
+        if (customer.isIdSet()) {
+            if (customerRepository.isPropertyNull(customer.getId(), Customer_.contractBinary)) {
+                return null;
+            }
+        } else if (customer.getContractBinary() == null) {
             return null;
         }
+
+        ByteArrayStreamedContent basc = new ByteArrayStreamedContent() {
+            @Override
+            public byte[] getByteArray() {
+                return customerRepository.getContractBinary(customer);
+            }
+        };
+        basc.setContentType(customer.getContractContentType());
+        basc.setName(customer.getContractFileName());
+        return basc;
     }
 }

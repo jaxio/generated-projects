@@ -10,7 +10,7 @@ package com.jaxio.web.selenium.page.customer;
 
 import com.jaxio.web.selenium.support.Page;
 import com.jaxio.web.selenium.support.elements.Autocomplete;
-import com.jaxio.web.selenium.support.elements.CustomElement;
+import com.jaxio.web.selenium.support.elements.CustomWebElement;
 import com.jaxio.web.selenium.support.elements.EntityAction;
 import com.jaxio.web.selenium.support.elements.Messages;
 import com.jaxio.web.selenium.support.elements.OrderBy;
@@ -25,7 +25,7 @@ public class CustomerSearch {
     public CustomerSearchOrders orders;
     public CustomerSearchForm form;
 
-    public static class CustomerSearchOrders extends CustomElement {
+    public static class CustomerSearchOrders extends CustomWebElement {
         public OrderBy companyName = new OrderBy("customer_companyName");
         public OrderBy addressId = new OrderBy("customer_addressId");
     }

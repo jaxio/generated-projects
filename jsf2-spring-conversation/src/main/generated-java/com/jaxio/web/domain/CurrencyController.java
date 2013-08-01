@@ -19,7 +19,7 @@ import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.CurrencyPermission;
 
 /**
- * Stateless controller for {@link Currency} conversation start. 
+ * Stateless controller for {@link Currency} conversation start.
  */
 @Named
 @Singleton

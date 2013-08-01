@@ -27,6 +27,9 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.LocaleResolver;
 
+/**
+ * Set the current {@link Locale} in the {@link LocaleContextHolder}
+ */
 public class LocaleResolverRequestFilter extends OncePerRequestFilter {
     private static final Logger log = LoggerFactory.getLogger(LocaleResolverRequestFilter.class);
 

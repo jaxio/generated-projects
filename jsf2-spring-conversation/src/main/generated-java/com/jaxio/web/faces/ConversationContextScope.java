@@ -17,11 +17,11 @@ import com.jaxio.web.conversation.Conversation;
 import com.jaxio.web.conversation.ConversationContext;
 
 /**
- * Beans in the 'conversationContext' scope reside in a {@link Conversation conversation}'s {@link ConversationContext}.
- * They are 'visible' only when the conversation is bound to the current thread of execution and their 
+ * Beans in the <code>conversationContext</code> scope reside in a {@link Conversation conversation}'s {@link ConversationContext}.
+ * They are <code>visible</code> only when the conversation is bound to the current thread of execution and their 
  * hosting ConversationContext is on top of the conversation's contextes stack.
  * <p>
- * Such a design decision allows a conversation to have 2 'conversation scoped' beans with 
+ * Such a design decision allows a conversation to have 2 <code>conversation scoped</code> beans with 
  * the same name (they just have to reside in 2 different ConversationContext).
  * This prevents bean name clash in complex navigation scenario within the same conversation.
  */

@@ -15,7 +15,8 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search title="savedSearch_search" model="#{savedSearchLazyDataModel}" searchForm="#{savedSearchSearchForm}" controller="#{savedSearchController}" permission="#{savedSearchPermission}" savedSearch="true">
+	<app:search title="savedSearch_search" model="#{savedSearchLazyDataModel}" searchForm="#{savedSearchSearchForm}"
+		controller="#{savedSearchController}" permission="#{savedSearchPermission}" savedSearch="true">
 		<ui:define name="filters">
 			<app:inputMultiAutoComplete id="name" value="#{savedSearchSearchForm.nameSelector}" label="savedSearch_name" completeMethod="completeProperty" property="name" />
 			<app:inputMultiAutoComplete id="formClassname" value="#{savedSearchSearchForm.formClassnameSelector}" label="savedSearch_formClassname" completeMethod="completeProperty" property="formClassname" />
@@ -31,9 +32,6 @@
 			</p:column>
 			<p:column id="savedSearch_formClassname" headerText="#{msg.savedSearch_formClassname}" sortBy="#{item.formClassname}" styleClass="formClassname">
 				<h:outputText value="#{item.formClassname}" />
-			</p:column>
-			<p:column id="savedSearch_formContent" headerText="#{msg.savedSearch_formContent}" sortBy="#{item.formContent}" styleClass="formContent">
-				<app:outputFile stream="#{savedSearchFileDownload.getFormContentStream(item)}"/>
 			</p:column>
 			<p:column id="actions" headerText="#{msg.actions}" styleClass="actions-column" resizable="false">
 				<app:iconSelect item="#{item}" />

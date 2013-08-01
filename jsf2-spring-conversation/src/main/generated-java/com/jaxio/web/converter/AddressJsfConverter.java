@@ -17,8 +17,7 @@ import com.jaxio.repository.AddressRepository;
 import com.jaxio.web.converter.support.GenericJsfConverter;
 
 /**
- * JSF converter for {@link Address}.
- * @see GenericJsfConverter
+ * {@link GenericJsfConverter} for {@link Address}.
  */
 @Named
 @Singleton

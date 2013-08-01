@@ -11,18 +11,12 @@ package com.jaxio.web.domain.support;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newTreeSet;
+import static com.jaxio.repository.support.MetamodelUtil.toAttribute;
 import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -34,14 +28,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Splitter;
-import com.jaxio.context.UserContext;
-import com.jaxio.dao.support.JpaUniqueUtil;
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Identifiable;
 import com.jaxio.printer.support.GenericPrinter;
 import com.jaxio.printer.support.TypeAwarePrinter;
 import com.jaxio.repository.support.GenericRepository;
-import com.jaxio.util.ResourcesUtil;
+import com.jaxio.repository.support.JpaUniqueUtil;
+import com.jaxio.repository.support.SearchParameters;
+import com.jaxio.repository.support.TermSelector;
 import com.jaxio.web.conversation.ConversationCallBack;
 import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationManager;
@@ -84,15 +77,15 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
         this.editUri = checkNotNull(editUri);
     }
 
-    public GenericRepository<E, PK> getRepository() {
+    public final GenericRepository<E, PK> getRepository() {
         return repository;
     }
 
-    public GenericPermission<E> getPermission() {
+    public final GenericPermission<E> getPermission() {
         return permission;
     }
 
-    public MessageUtil getMessageUtil() {
+    public final MessageUtil getMessageUtil() {
         return messageUtil;
     }
 
@@ -153,11 +146,13 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
      */
     public List<E> complete(String value) {
         try {
-            SearchParameters searchParameters = searchParameters().orMode();
+            SearchParameters searchParameters = new SearchParameters().limitBroadSearch().distinct().orMode();
             E template = repository.getNew();
             for (String property : completeProperties()) {
                 if (repository.isIndexed(property)) {
-                    searchParameters.termOnAny(value, property);
+                    TermSelector termSelector = new TermSelector(toAttribute(property, repository.getType()));
+                    termSelector.setSelected(value);
+                    searchParameters.addTerm(termSelector);
                 } else {
                     PropertyUtils.setProperty(template, property, value);
                 }
@@ -184,46 +179,49 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
         return completeProperty(value, property, null);
     }
 
-    public List<String> completeProperty(String value, String property, Integer maxResults) {
-        List<String> ret = newArrayList(value);
+    public List<String> completeProperty(String toMatch, String property, Integer maxResults) {
+        List<String> values = newArrayList();
         if (repository.isIndexed(property)) {
-            ret.addAll(completePropertyUsingFullText(value, property, maxResults));
+            values.addAll(completePropertyUsingFullText(toMatch, property, maxResults));
         } else {
-            ret.addAll(completePropertyInDatabase(value, property, maxResults));
+            values.addAll(completePropertyInDatabase(toMatch, property, maxResults));
         }
-        return ret;
+        if (isBlank(toMatch) || values.contains(toMatch)) {
+            // the term is already in the results, return them directly
+            return values;
+        } else {
+            // add the term before the results as it is not part of the results
+            List<String> retWithValue = newArrayList(toMatch);
+            retWithValue.addAll(values);
+            return retWithValue;
+        }
     }
 
-    private Set<String> completePropertyUsingFullText(String term, String property, Integer maxResults) {
+    private List<String> completePropertyUsingFullText(String term, String property, Integer maxResults) {
         try {
-            SearchParameters searchParameters = searchParameters().termOn(term, property).orderBy(property);
+            SearchParameters searchParameters = new SearchParameters().limitBroadSearch().distinct();
+            TermSelector termSelector = new TermSelector(toAttribute(property, repository.getType()));
+            termSelector.setSelected(term);
+            searchParameters.addTerm(termSelector);
             if (maxResults != null) {
                 searchParameters.maxResults(maxResults);
             }
-            Set<String> match = newTreeSet();
-            for (E object : repository.find(searchParameters)) {
-                match.add((String) PropertyUtils.getProperty(object, property));
-            }
-            return match;
+            return repository.findProperty(String.class, repository.getNew(), searchParameters, property);
         } catch (Exception e) {
             log.warn("error during completePropertyUsingFullText", e);
             throw propagate(e);
         }
     }
 
-    private Set<String> completePropertyInDatabase(String value, String property, Integer maxResults) {
+    private List<String> completePropertyInDatabase(String value, String property, Integer maxResults) {
         try {
-            SearchParameters searchParameters = searchParameters().orderBy(property);
+            SearchParameters searchParameters = new SearchParameters().limitBroadSearch().caseInsensitive().anywhere().distinct();
             if (maxResults != null) {
                 searchParameters.maxResults(maxResults);
             }
             E template = repository.getNew();
             PropertyUtils.setProperty(template, property, value);
-            Set<String> match = newTreeSet();
-            for (E object : repository.find(template, searchParameters)) {
-                match.add((String) PropertyUtils.getProperty(object, property));
-            }
-            return match;
+            return repository.findProperty(String.class, template, searchParameters, property);
         } catch (Exception e) {
             log.warn("error during completePropertyInDatabase", e);
             throw propagate(e);
@@ -247,7 +245,11 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
     }
 
     protected SearchParameters searchParameters() {
-        return defaultOrder(new SearchParameters().caseInsensitive().limitBroadSearch().anywhere());
+        return defaultOrder(new SearchParameters() //
+                .limitBroadSearch() //
+                .distinct() //
+                .anywhere() //
+                .caseInsensitive());
     }
 
     protected SearchParameters defaultOrder(SearchParameters searchParameters) {
@@ -495,44 +497,5 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
 
     private String getEntityName() {
         return repository.getType().getSimpleName();
-    }
-
-    // ----------------------------------------
-    // EXCEL RELATED
-    // ----------------------------------------
-
-    @Inject
-    private ExcelExportService excelExportService;
-
-    @Inject
-    private ExcelExportSupport excelExportSupport;
-
-    @Inject
-    private ResourcesUtil resourcesUtil;
-
-    public void onExcel(SearchParameters searchParameters) throws IOException {
-        Map<String, Object> model = newHashMap();
-        model.put("msg", resourcesUtil);
-        model.put("search_date", excelExportSupport.dateToString(new Date()));
-        model.put("search_by", UserContext.getUsername());
-        model.put("searchParameters", searchParameters);
-        model.put("printer", typeAwarePrinter);
-        excelObjects(model, searchParameters);
-        excelExportService.export("excel/" + getEntityName().toLowerCase() + ".xlsx", model, getExcelOutputname());
-    }
-
-    protected String getExcelOutputname() {
-        return getEntityName() + "-" + new SimpleDateFormat("MM-dd-yyyy_HH-mm-ss").format(new Date()) + ".xlsx";
-    }
-
-    protected void excelObjects(Map<String, Object> model, SearchParameters searchParameters) {
-        excelExportSupport.convertSearchParametersToMap(model, searchParameters);
-
-        int count = repository.findCount(searchParameters);
-        model.put("search_nb_results", count);
-        if (count > 65535) {
-            searchParameters.maxResults(65535);
-        }
-        model.put(WordUtils.uncapitalize(getEntityName()), repository.find(searchParameters));
     }
 }

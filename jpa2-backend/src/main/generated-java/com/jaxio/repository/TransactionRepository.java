@@ -4,30 +4,25 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/repository/Repository.e.vm.java
+ * Template pack-backend-jpa:src/main/java/repository/Repository.e.vm.java
  */
 package com.jaxio.repository;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.jaxio.dao.TransactionDao;
 import com.jaxio.domain.Transaction;
 import com.jaxio.repository.support.GenericRepository;
 
+/**
+ * {@link GenericRepository} for {@link Transaction} 
+ */
 @Named
 @Singleton
 public class TransactionRepository extends GenericRepository<Transaction, Integer> {
 
-    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
-    protected TransactionRepository() {
-        super();
-    }
-
-    @Inject
-    public TransactionRepository(TransactionDao transactionDao) {
-        super(transactionDao);
+    public TransactionRepository() {
+        super(Transaction.class);
     }
 
     @Override
@@ -37,8 +32,6 @@ public class TransactionRepository extends GenericRepository<Transaction, Intege
 
     @Override
     public Transaction getNewWithDefaults() {
-        Transaction result = getNew();
-        result.initDefaultValues();
-        return result;
+        return getNew().withDefaults();
     }
 }

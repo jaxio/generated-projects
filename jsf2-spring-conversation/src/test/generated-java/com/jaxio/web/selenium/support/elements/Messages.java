@@ -9,6 +9,7 @@
 package com.jaxio.web.selenium.support.elements;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.palominolabs.xpath.XPathUtils.getXPathString;
 
 import java.util.List;
 
@@ -16,7 +17,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class Messages extends CustomElement {
+public class Messages extends CustomWebElement {
+    private static final String MESSAGES_ERROR_LEVEL = "error";
+    private static final String MESSAGES_INFO_LEVEL = "info";
     @FindBy(id = "form:messages")
     public WebElement messagesPanel;
 
@@ -26,9 +29,27 @@ public class Messages extends CustomElement {
         }
     }
 
+    public void hasError(String... values) {
+        for (String value : values) {
+            hasMessageLevel(value, MESSAGES_ERROR_LEVEL);
+        }
+    }
+
+    public void hasInfo(String... values) {
+        for (String value : values) {
+            hasMessageLevel(value, MESSAGES_INFO_LEVEL);
+        }
+    }
+
+    private void hasMessageLevel(String message, String level) {
+        String xpath = "//div[@id='form:messages']/div[contains(@class, 'ui-messages-" + level + "')]//span[contains(@class, 'ui-messages-" + level
+                + "-summary' text()=" + getXPathString(message) + "]";
+        webClient.waitUntilDisplayed(By.xpath(xpath));
+    }
+
     public List<String> getMessages() {
         List<String> ret = newArrayList();
-        By xpath = By.xpath("//span[contains(@class,'ui-messages-info-summary')]/a");
+        By xpath = By.xpath("//div[@id='form:messages']//span[contains(@class,'-summary')]/a");
         for (WebElement webElement : webClient.findAll(xpath)) {
             ret.add(webElement.getText());
         }

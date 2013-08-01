@@ -9,7 +9,7 @@
 package com.jaxio.web.selenium.page.currency;
 
 import com.jaxio.web.selenium.support.Page;
-import com.jaxio.web.selenium.support.elements.CustomElement;
+import com.jaxio.web.selenium.support.elements.CustomWebElement;
 import com.jaxio.web.selenium.support.elements.EditAction;
 import com.jaxio.web.selenium.support.elements.EntityAction;
 import com.jaxio.web.selenium.support.elements.IntegerInput;
@@ -18,18 +18,18 @@ import com.jaxio.web.selenium.support.elements.StringInput;
 
 @Page
 public class CurrencyEdit {
-    public EditAction edit;
+    public EditAction action;
     public Messages messages;
     public EntityAction entity;
     public CurrencyEditForm form;
     public CurrencyEditTabs tabs;
 
-    public static class CurrencyEditForm extends CustomElement {
+    public static class CurrencyEditForm extends CustomWebElement {
         public StringInput code = new StringInput("form:code");
         public StringInput name = new StringInput("form:name");
         public IntegerInput decimalCount = new IntegerInput("form:decimalCount");
     };
 
-    public static class CurrencyEditTabs extends CustomElement {
+    public static class CurrencyEditTabs extends CustomWebElement {
     };
 }

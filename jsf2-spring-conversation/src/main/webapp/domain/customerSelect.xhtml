@@ -15,7 +15,8 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search title="customer_search" model="#{customerLazyDataModel}" searchForm="#{customerSearchForm}" controller="#{customerController}" permission="#{customerPermission}" savedSearch="true">
+	<app:search title="customer_search" model="#{customerLazyDataModel}" searchForm="#{customerSearchForm}"
+		controller="#{customerController}" permission="#{customerPermission}" savedSearch="true">
 		<ui:define name="filters">
 			<app:inputMultiAutoComplete id="companyName" value="#{customerSearchForm.companyNameSelector}" label="customer_companyName" completeMethod="completeProperty" property="companyName" />
 			<app:multiAutoComplete id="addressSelector" value="#{customerSearchForm.addressSelector.selected}" label="customer_address" 
@@ -28,7 +29,7 @@
 			<p:column id="customer_companyName" headerText="#{msg.customer_companyName}" sortBy="#{item.companyName}" styleClass="companyName">
 				<h:outputText value="#{item.companyName}" />
 			</p:column>
-			<p:column id="customer_contractBinary" headerText="#{msg.customer_contractBinary}" sortBy="#{item.contractBinary}" styleClass="contractBinary">
+			<p:column id="customer_contractFileName" headerText="#{msg.customer_contractFileName}" sortBy="#{item.contractFileName}" styleClass="contractFileName">
 				<app:outputFile filename="#{item.contractFileName}" stream="#{customerFileDownload.getContractBinaryStream(item)}"/>
 			</p:column>
 			<p:column id="actions" headerText="#{msg.actions}" styleClass="actions-column" resizable="false">

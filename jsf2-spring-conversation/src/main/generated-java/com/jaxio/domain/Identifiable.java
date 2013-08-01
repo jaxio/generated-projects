@@ -4,7 +4,7 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/domain/Identifiable.p.vm.java
+ * Template pack-backend-jpa:src/main/java/domain/support/Identifiable.p.vm.java
  */
 package com.jaxio.domain;
 
@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 /**
  * By making entities implement this interface we can easily retrieve from the
- * {@link com.jaxio.dao.support.GenericDao} the identifier property of the entity.
+ * {@link com.jaxio.repository.support.GenericRepository} the identifier property of the entity.
  */
 public interface Identifiable<PK extends Serializable> {
 

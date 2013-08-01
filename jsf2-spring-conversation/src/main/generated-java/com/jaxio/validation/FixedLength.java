@@ -4,7 +4,7 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/validation/FixedLength.p.vm.java
+ * Template pack-backend-jpa:src/main/java/validation/FixedLength.p.vm.java
  */
 package com.jaxio.validation;
 

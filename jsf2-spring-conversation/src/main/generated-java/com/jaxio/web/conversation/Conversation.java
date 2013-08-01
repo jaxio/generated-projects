@@ -58,15 +58,14 @@ import org.slf4j.LoggerFactory;
  * </ol>
  */
 public class Conversation implements Serializable {
+    private static final long serialVersionUID = 1L;
     public static final String CONVERSATION_COUNTER_KEY = "convCounter";
     private static final Logger log = LoggerFactory.getLogger(Conversation.class);
-
-    private static final long serialVersionUID = 1L;
 
     private String id;
 
     /**
-     *  Stores 'conversation' scope beans.
+     *  Stores <code>conversation</code> scope beans.
      */
     private Map<String, Object> beans = new HashMap<String, Object>();
 
@@ -248,7 +247,7 @@ public class Conversation implements Serializable {
         return (T) contextes.peek();
     }
 
-    protected Stack<ConversationContext<?>> getConversationContextes() {
+    public Stack<ConversationContext<?>> getConversationContextes() {
         return contextes;
     }
 

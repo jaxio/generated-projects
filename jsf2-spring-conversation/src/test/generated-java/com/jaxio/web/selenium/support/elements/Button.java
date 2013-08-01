@@ -10,7 +10,7 @@ package com.jaxio.web.selenium.support.elements;
 
 import org.openqa.selenium.By;
 
-public class Button extends CustomElement {
+public class Button extends ByCustomWebElement {
     public Button(String id) {
         super(id);
     }

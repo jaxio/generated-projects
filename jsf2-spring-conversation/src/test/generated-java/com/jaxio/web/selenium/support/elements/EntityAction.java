@@ -8,7 +8,7 @@
  */
 package com.jaxio.web.selenium.support.elements;
 
-public class EntityAction extends CustomElement {
+public class EntityAction extends CustomWebElement {
     public Button saveAndClose = new Button("form:saveAndClose");
     public Button close = new Button("form:close");
     public Button delete = new Button("form:delete");

@@ -15,7 +15,7 @@
 	<!-- public pages -->
 	<http pattern="/" security="none" />
 	<http pattern="/favicon.ico" security="none" />
-	<http pattern="/resource/*" security="none" />
+	<http pattern="/resources/*" security="none" />
 	<http pattern="/javax.*/**" security="none" />
 	<http pattern="/login.faces*" security="none" />
 	<http pattern="/error/*" security="none" />

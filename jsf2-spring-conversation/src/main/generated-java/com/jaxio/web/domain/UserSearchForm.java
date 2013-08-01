@@ -8,15 +8,16 @@
  */
 package com.jaxio.web.domain;
 
-import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
+import static com.jaxio.repository.support.PropertySelector.newPropertySelector;
 
 import javax.inject.Named;
 
-import com.jaxio.dao.support.PropertySelector;
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Civility;
 import com.jaxio.domain.User;
 import com.jaxio.domain.User_;
+import com.jaxio.repository.support.PropertySelector;
+import com.jaxio.repository.support.SearchParameters;
+import com.jaxio.repository.support.TermSelector;
 import com.jaxio.web.domain.support.GenericSearchForm;
 import com.jaxio.web.faces.ConversationContextScoped;
 
@@ -29,6 +30,13 @@ import com.jaxio.web.faces.ConversationContextScoped;
 public class UserSearchForm extends GenericSearchForm<User, Integer, UserSearchForm> {
     private static final long serialVersionUID = 1L;
 
+    // full text search (applied first)
+    protected TermSelector usernameTermSelector = new TermSelector(User_.username);
+    protected TermSelector emailTermSelector = new TermSelector(User_.email);
+    protected TermSelector firstNameTermSelector = new TermSelector(User_.firstName);
+    protected TermSelector lastNameTermSelector = new TermSelector(User_.lastName);
+
+    // classic search
     protected User user = new User();
     protected PropertySelector<User, String> usernameSelector = newPropertySelector(User_.username);
     protected PropertySelector<User, String> passwordSelector = newPropertySelector(User_.password);
@@ -54,19 +62,26 @@ public class UserSearchForm extends GenericSearchForm<User, Integer, UserSearchF
 
     @Override
     public SearchParameters toSearchParameters() {
-        return new SearchParameters() //
-                .limitBroadSearch() //
-                .anywhere() //
-                .caseInsensitive() //
-                .term(term) //
-                .property(usernameSelector, passwordSelector, emailSelector, isEnabledSelector, civilitySelector, firstNameSelector, lastNameSelector) //
-        ;
+        SearchParameters sp = searchParameters();
+        // full text search
+        sp.addTerm(termsOnAll);
+        sp.addTerm(usernameTermSelector);
+        sp.addTerm(emailTermSelector);
+        sp.addTerm(firstNameTermSelector);
+        sp.addTerm(lastNameTermSelector);
+        // classic search
+        sp.property(usernameSelector, passwordSelector, emailSelector, isEnabledSelector, civilitySelector, firstNameSelector, lastNameSelector);
+        return sp;
     }
 
     @Override
     public void resetWithOther(UserSearchForm other) {
         this.user = other.getUser();
-        this.term = other.getTerm();
+        this.termsOnAll = other.getTermsOnAll();
+        this.usernameTermSelector = other.getUsernameTermSelector();
+        this.emailTermSelector = other.getEmailTermSelector();
+        this.firstNameTermSelector = other.getFirstNameTermSelector();
+        this.lastNameTermSelector = other.getLastNameTermSelector();
         this.usernameSelector = other.getUsernameSelector();
         this.passwordSelector = other.getPasswordSelector();
         this.emailSelector = other.getEmailSelector();
@@ -74,6 +89,23 @@ public class UserSearchForm extends GenericSearchForm<User, Integer, UserSearchF
         this.civilitySelector = other.getCivilitySelector();
         this.firstNameSelector = other.getFirstNameSelector();
         this.lastNameSelector = other.getLastNameSelector();
+    }
+
+    // Term selectors    
+    public TermSelector getUsernameTermSelector() {
+        return usernameTermSelector;
+    }
+
+    public TermSelector getEmailTermSelector() {
+        return emailTermSelector;
+    }
+
+    public TermSelector getFirstNameTermSelector() {
+        return firstNameTermSelector;
+    }
+
+    public TermSelector getLastNameTermSelector() {
+        return lastNameTermSelector;
     }
 
     // Property selectors

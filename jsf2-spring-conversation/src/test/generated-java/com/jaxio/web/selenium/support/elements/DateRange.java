@@ -14,9 +14,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.format.datetime.DateFormatter;
 
 public class DateRange extends Range<Date> {
-    String pattern = "yyyy-MM-dd";
-    DateInput from;
-    DateInput to;
+    private String pattern = "yyyy-MM-dd";
+    private DateInput from;
+    private DateInput to;
 
     public DateRange(String id) {
         from = new DateInput(id + "RangeFrom_input");

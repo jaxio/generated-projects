@@ -12,7 +12,7 @@ import com.jaxio.domain.Civility;
 import com.jaxio.web.selenium.support.Page;
 import com.jaxio.web.selenium.support.elements.Checkbox;
 import com.jaxio.web.selenium.support.elements.ChooseEnum;
-import com.jaxio.web.selenium.support.elements.CustomElement;
+import com.jaxio.web.selenium.support.elements.CustomWebElement;
 import com.jaxio.web.selenium.support.elements.EditAction;
 import com.jaxio.web.selenium.support.elements.EntityAction;
 import com.jaxio.web.selenium.support.elements.Messages;
@@ -21,13 +21,13 @@ import com.jaxio.web.selenium.support.elements.Tab;
 
 @Page
 public class UserEdit {
-    public EditAction edit;
+    public EditAction action;
     public Messages messages;
     public EntityAction entity;
     public UserEditForm form;
     public UserEditTabs tabs;
 
-    public static class UserEditForm extends CustomElement {
+    public static class UserEditForm extends CustomWebElement {
         public StringInput username = new StringInput("form:username");
         public StringInput password = new StringInput("form:password");
         public StringInput email = new StringInput("form:email");
@@ -37,7 +37,7 @@ public class UserEdit {
         public StringInput lastName = new StringInput("form:lastName");
     };
 
-    public static class UserEditTabs extends CustomElement {
+    public static class UserEditTabs extends CustomWebElement {
         public Tab securityRoles = new Tab("securityRole", "securityRoles");
     };
 }

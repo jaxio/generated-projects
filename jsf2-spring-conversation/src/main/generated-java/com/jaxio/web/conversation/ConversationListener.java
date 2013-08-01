@@ -23,7 +23,7 @@ public interface ConversationListener {
     void conversationCreated(Conversation conversation);
 
     /**
-     * Called to indicate the conversation is being resumed.
+     * Called to indicate the passed conversation is being resumed.
      */
     void conversationResuming(Conversation conversation, HttpServletRequest request);
 

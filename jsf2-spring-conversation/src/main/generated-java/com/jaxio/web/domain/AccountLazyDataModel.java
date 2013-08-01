@@ -16,6 +16,7 @@ import org.primefaces.model.LazyDataModel;
 import com.jaxio.domain.Account;
 import com.jaxio.repository.AccountRepository;
 import com.jaxio.web.converter.AccountJsfConverter;
+import com.jaxio.web.domain.AccountExcelExporter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
 import com.jaxio.web.faces.ConversationContextScoped;
 
@@ -29,7 +30,7 @@ public class AccountLazyDataModel extends GenericLazyDataModel<Account, Integer,
 
     @Inject
     public AccountLazyDataModel(AccountRepository accountRepository, AccountJsfConverter accountConverter, AccountController accountController,
-            AccountSearchForm accountSearchForm) {
-        super(accountRepository, accountConverter, accountController, accountSearchForm);
+            AccountSearchForm accountSearchForm, AccountExcelExporter accountExcelExporter) {
+        super(accountRepository, accountConverter, accountController, accountSearchForm, accountExcelExporter);
     }
 }

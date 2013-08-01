@@ -12,17 +12,17 @@ import static com.palominolabs.xpath.XPathUtils.getXPathString;
 
 import org.openqa.selenium.By;
 
-public class ManyBooleans extends CustomElement {
-    String id;
+public class ManyBooleans extends ByCustomWebElement {
+    private final String xPathId;
 
     public ManyBooleans(String id) {
-        this.id = id;
+        super(id);
+        this.xPathId = getXPathString(id);
     }
 
     public void choose(Boolean... values) {
         for (Boolean value : values) {
-            webClient.click(By.xpath("//input[@type='checkbox' and @name=" + getXPathString(id) + " and @value=" + getXPathString(value ? "true" : "false")
-                    + "]"));
+            webClient.click(By.xpath("//input[@type='checkbox' and @name=" + xPathId + " and @value=" + getXPathString(value ? "true" : "false") + "]"));
         }
     }
 }

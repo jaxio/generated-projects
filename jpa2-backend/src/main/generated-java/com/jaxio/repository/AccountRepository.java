@@ -4,34 +4,27 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/repository/Repository.e.vm.java
+ * Template pack-backend-jpa:src/main/java/repository/Repository.e.vm.java
  */
 package com.jaxio.repository;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jaxio.dao.AccountDao;
 import com.jaxio.domain.Account;
 import com.jaxio.repository.support.GenericRepository;
 
+/**
+ * {@link GenericRepository} for {@link Account} 
+ */
 @Named
 @Singleton
 public class AccountRepository extends GenericRepository<Account, Integer> {
 
-    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
-    protected AccountRepository() {
-        super();
-    }
-
-    @Inject
-    public AccountRepository(AccountDao accountDao) {
-        super(accountDao);
+    public AccountRepository() {
+        super(Account.class);
     }
 
     @Override
@@ -41,29 +34,7 @@ public class AccountRepository extends GenericRepository<Account, Integer> {
 
     @Override
     public Account getNewWithDefaults() {
-        Account result = getNew();
-        result.initDefaultValues();
-        return result;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Account get(Account model) {
-        if (model == null) {
-            return null;
-        }
-
-        if (model.isIdSet()) {
-            return super.get(model);
-        }
-        if (isBlank(model.getAccountNumber())) {
-            Account result = getByAccountNumber(model.getAccountNumber());
-            if (result != null) {
-                return result;
-            }
-        }
-
-        return null;
+        return getNew().withDefaults();
     }
 
     /**

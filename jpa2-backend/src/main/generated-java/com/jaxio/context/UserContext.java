@@ -4,7 +4,7 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/context/UserContext.p.vm.java
+ * Template pack-backend-jpa:src/main/java/context/UserContext.p.vm.java
  */
 package com.jaxio.context;
 
@@ -28,7 +28,7 @@ public class UserContext {
 
     /**
      * Get the current username. Note that it may not correspond to a username that
-     * currently exists in your accounts' repository; it could be a spring security
+     * currently exists in your account repository; it could be a spring security
      * 'anonymous user'.
      *
      * @see org.springframework.security.web.authentication.AnonymousAuthenticationFilter

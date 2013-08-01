@@ -12,7 +12,7 @@ import com.jaxio.domain.Civility;
 import com.jaxio.web.selenium.support.Page;
 import com.jaxio.web.selenium.support.elements.Autocomplete;
 import com.jaxio.web.selenium.support.elements.ChooseEnum;
-import com.jaxio.web.selenium.support.elements.CustomElement;
+import com.jaxio.web.selenium.support.elements.CustomWebElement;
 import com.jaxio.web.selenium.support.elements.EntityAction;
 import com.jaxio.web.selenium.support.elements.ManyBooleans;
 import com.jaxio.web.selenium.support.elements.Messages;
@@ -28,7 +28,7 @@ public class UserSearch {
     public UserSearchOrders orders;
     public UserSearchForm form;
 
-    public static class UserSearchOrders extends CustomElement {
+    public static class UserSearchOrders extends CustomWebElement {
         public OrderBy username = new OrderBy("user_username");
         public OrderBy password = new OrderBy("user_password");
         public OrderBy email = new OrderBy("user_email");
@@ -47,5 +47,9 @@ public class UserSearch {
         public Autocomplete firstName = new Autocomplete("form:firstName");
         public Autocomplete lastName = new Autocomplete("form:lastName");
         public Autocomplete securityRoles = new Autocomplete("form:securityRolesSelector");
+        public Autocomplete usernameTerm = new Autocomplete("form:usernameTerm");
+        public Autocomplete emailTerm = new Autocomplete("form:emailTerm");
+        public Autocomplete firstNameTerm = new Autocomplete("form:firstNameTerm");
+        public Autocomplete lastNameTerm = new Autocomplete("form:lastNameTerm");
     }
 }

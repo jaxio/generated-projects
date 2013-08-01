@@ -23,15 +23,17 @@ public @interface FollowVisually {
         INFO, DEBUG, TRACE
     }
 
-    long waitAfterClickInMs() default -1;
+    long driverWaitBeforeStopInSeconds() default 5;
 
-    long waitAfterClearInMs() default -1;
+    long waitAfterClickInMs() default 250;
 
-    long waitAfterStepInMs() default -1;
+    long waitAfterClearInMs() default 250;
 
-    long waitAfterFillInMs() default -1;
+    long waitAfterStepInMs() default 1500;
 
-    long waitAfterNotificationInMs() default -1;
+    long waitAfterFillInMs() default 250;
+
+    long waitAfterNotificationInMs() default 1000;
 
     FollowLevel level() default com.jaxio.web.selenium.support.FollowVisually.FollowLevel.INFO;
 }

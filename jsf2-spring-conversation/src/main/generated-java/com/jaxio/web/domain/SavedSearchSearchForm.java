@@ -8,17 +8,17 @@
  */
 package com.jaxio.web.domain;
 
-import static com.jaxio.dao.support.EntitySelector.newEntitySelector;
-import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
+import static com.jaxio.repository.support.EntitySelector.newEntitySelector;
+import static com.jaxio.repository.support.PropertySelector.newPropertySelector;
 
 import javax.inject.Named;
 
-import com.jaxio.dao.support.EntitySelector;
-import com.jaxio.dao.support.PropertySelector;
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.SavedSearch;
 import com.jaxio.domain.SavedSearch_;
 import com.jaxio.domain.User;
+import com.jaxio.repository.support.EntitySelector;
+import com.jaxio.repository.support.PropertySelector;
+import com.jaxio.repository.support.SearchParameters;
 import com.jaxio.web.domain.support.GenericSearchForm;
 import com.jaxio.web.faces.ConversationContextScoped;
 
@@ -30,7 +30,6 @@ import com.jaxio.web.faces.ConversationContextScoped;
 @ConversationContextScoped
 public class SavedSearchSearchForm extends GenericSearchForm<SavedSearch, Integer, SavedSearchSearchForm> {
     private static final long serialVersionUID = 1L;
-
     protected SavedSearch savedSearch = new SavedSearch();
     protected PropertySelector<SavedSearch, String> nameSelector = newPropertySelector(SavedSearch_.name);
     protected PropertySelector<SavedSearch, String> formClassnameSelector = newPropertySelector(SavedSearch_.formClassname);
@@ -52,13 +51,10 @@ public class SavedSearchSearchForm extends GenericSearchForm<SavedSearch, Intege
 
     @Override
     public SearchParameters toSearchParameters() {
-        return new SearchParameters() //
-                .limitBroadSearch() //
-                .anywhere() //
-                .caseInsensitive() //
-                .property(nameSelector, formClassnameSelector) //
-                .entity(userSelector) //
-        ;
+        SearchParameters sp = searchParameters();
+        sp.property(nameSelector, formClassnameSelector);
+        sp.entity(userSelector);
+        return sp;
     }
 
     @Override

@@ -17,8 +17,7 @@ import com.jaxio.repository.TransactionRepository;
 import com.jaxio.web.converter.support.GenericJsfConverter;
 
 /**
- * JSF converter for {@link Transaction}.
- * @see GenericJsfConverter
+ * {@link GenericJsfConverter} for {@link Transaction}.
  */
 @Named
 @Singleton

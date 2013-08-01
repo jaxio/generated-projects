@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 
-public class SearchForm extends CustomElement {
-    public StringInput fullText = new StringInput("form:fullTextQuery");
+public class SearchForm extends CustomWebElement {
+    public final Autocomplete fullText = new Autocomplete("form:fullTextQuery");
 
     public void search() {
         webClient.click(By.id("form:search"));

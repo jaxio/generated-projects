@@ -8,35 +8,11 @@
  */
 package com.jaxio.web.selenium.support.elements;
 
-public class EditAction extends CustomElement {
-    Button quit = new Button("form:quit");
-    Button print = new Button("form:print");
-    Button delete = new Button("form:delete");
-    Button save = new Button("form:saveAndClose");
-    Button close = new Button("form:close");
-    Button ok = new Button("form:ok");
-
-    public void quit() {
-        quit.click();
-    }
-
-    public void print() {
-        print.click();
-    }
-
-    public void delete() {
-        delete.click();
-    }
-
-    public void save() {
-        save.click();
-    }
-
-    public void close() {
-        close.click();
-    }
-
-    public void ok() {
-        ok.click();
-    }
+public class EditAction extends CustomWebElement {
+    public Button quit = new Button("form:quit");
+    public Button print = new Button("form:print");
+    public Button delete = new Button("form:delete");
+    public Button save = new Button("form:saveAndClose");
+    public Button close = new Button("form:close");
+    public Button ok = new Button("form:ok");
 }

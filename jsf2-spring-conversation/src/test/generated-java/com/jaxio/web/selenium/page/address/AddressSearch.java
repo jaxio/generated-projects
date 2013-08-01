@@ -10,7 +10,7 @@ package com.jaxio.web.selenium.page.address;
 
 import com.jaxio.web.selenium.support.Page;
 import com.jaxio.web.selenium.support.elements.Autocomplete;
-import com.jaxio.web.selenium.support.elements.CustomElement;
+import com.jaxio.web.selenium.support.elements.CustomWebElement;
 import com.jaxio.web.selenium.support.elements.EntityAction;
 import com.jaxio.web.selenium.support.elements.Messages;
 import com.jaxio.web.selenium.support.elements.OrderBy;
@@ -25,7 +25,7 @@ public class AddressSearch {
     public AddressSearchOrders orders;
     public AddressSearchForm form;
 
-    public static class AddressSearchOrders extends CustomElement {
+    public static class AddressSearchOrders extends CustomWebElement {
         public OrderBy street = new OrderBy("address_street");
         public OrderBy zipCode = new OrderBy("address_zipCode");
         public OrderBy city = new OrderBy("address_city");
@@ -37,5 +37,7 @@ public class AddressSearch {
         public Autocomplete zipCode = new Autocomplete("form:zipCode");
         public Autocomplete city = new Autocomplete("form:city");
         public Autocomplete country = new Autocomplete("form:country");
+        public Autocomplete cityTerm = new Autocomplete("form:cityTerm");
+        public Autocomplete countryTerm = new Autocomplete("form:countryTerm");
     }
 }

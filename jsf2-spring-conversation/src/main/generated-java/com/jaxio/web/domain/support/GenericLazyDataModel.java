@@ -13,6 +13,8 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -24,12 +26,12 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
-import com.jaxio.dao.support.OrderBy;
-import com.jaxio.dao.support.OrderByDirection;
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Identifiable;
 import com.jaxio.printer.support.TypeAwarePrinter;
 import com.jaxio.repository.support.GenericRepository;
+import com.jaxio.repository.support.OrderBy;
+import com.jaxio.repository.support.OrderByDirection;
+import com.jaxio.repository.support.SearchParameters;
 import com.jaxio.util.ResourcesUtil;
 import com.jaxio.web.conversation.ConversationCallBack;
 import com.jaxio.web.conversation.ConversationContext;
@@ -57,27 +59,28 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
     protected Converter converter;
     protected GenericController<E, PK> controller;
     protected GenericSearchForm<E, PK, F> searchForm;
+    protected GenericExcelExporter<E> excelExporter;
 
     public GenericLazyDataModel(GenericRepository<E, PK> repository, Converter converter, GenericController<E, PK> controller,
-            GenericSearchForm<E, PK, F> searchForm) {
+            GenericSearchForm<E, PK, F> searchForm, GenericExcelExporter<E> excelExporter) {
         this.repository = repository;
         this.converter = converter;
         this.controller = controller;
         this.searchForm = searchForm;
+        this.excelExporter = excelExporter;
     }
 
     @Override
     public List<E> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters) {
-        SearchParameters sp = searchForm.toSearchParameters();
         E example = searchForm.getEntity();
-        setRowCount(repository.findCount(example, sp)); // total count so the paginator may display the total number of pages
-        populateSearchParameters(sp, first, pageSize, sortField, sortOrder, filters); // load one page of data        
+        SearchParameters sp = populateSearchParameters(first, pageSize, sortField, sortOrder, filters);
+        setRowCount(repository.findCount(example, sp));
         return repository.find(example, sp);
     }
 
     /**
      * _HACK_
-     * Call it from your view when a 'search' event is triggered to bypass offset sent by primefaces paginator.
+     * Call it from your view when a <code>search</code> event is triggered to bypass offset sent by primefaces paginator.
      */
     public void onSearch() {
         bypassFirstOffset = true;
@@ -86,22 +89,21 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
     @Override
     public void setRowCount(int rowCount) {
         super.setRowCount(rowCount);
-        PrimeFacesUtil.updateSearchResultsRegion(resourcesUtil.getPluralableProperty("search_results_status", rowCount));
+        PrimeFacesUtil.updateSearchResultsRegion(resourcesUtil.getPluralableProperty("search_results_status", rowCount), rowCount);
     }
 
     /**
      * Applies the passed parameters to the passed SearchParameters.
      * @return the passed searchParameters
      */
-    protected SearchParameters populateSearchParameters(SearchParameters sp, int first, int pageSize, String sortField, SortOrder sortOrder,
-            Map<String, String> filters) {
+    protected SearchParameters populateSearchParameters(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters) {
+        SearchParameters sp = searchForm.toSearchParameters();
         sp.setFirst(bypassFirstOffset ? 0 : first);
         bypassFirstOffset = false;
         sp.setPageSize(pageSize);
 
-        sp.clearOrders();
         if (isNotEmpty(sortField)) {
-            return sp.orderBy(new OrderBy(sortField, convert(sortOrder)));
+            return sp.orderBy(new OrderBy(convert(sortOrder), sortField, repository.getType()));
         } else {
             return controller.defaultOrder(sp);
         }
@@ -149,7 +151,7 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
     }
 
     /**
-     * Convert PrimeFaces SortOrder to our OrderByDirection.
+     * Convert PrimeFaces {@link SortOrder} to our {@link OrderByDirection}.
      */
     protected OrderByDirection convert(SortOrder order) {
         return order == SortOrder.DESCENDING ? OrderByDirection.DESC : OrderByDirection.ASC;
@@ -243,6 +245,10 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
     }
 
     public void onExcel() throws IOException {
-        controller.onExcel(searchForm.toSearchParameters());
+        excelExporter.onExcel(getExcelFilename(), repository.find(searchForm.toSearchParameters()));
+    }
+
+    protected String getExcelFilename() {
+        return repository.getType().getSimpleName() + "-" + new SimpleDateFormat("MM-dd-yyyy_HH-mm-ss").format(new Date()) + ".xls";
     }
 }

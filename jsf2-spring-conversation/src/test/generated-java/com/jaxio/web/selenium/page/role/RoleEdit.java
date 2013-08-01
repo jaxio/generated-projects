@@ -9,7 +9,7 @@
 package com.jaxio.web.selenium.page.role;
 
 import com.jaxio.web.selenium.support.Page;
-import com.jaxio.web.selenium.support.elements.CustomElement;
+import com.jaxio.web.selenium.support.elements.CustomWebElement;
 import com.jaxio.web.selenium.support.elements.EditAction;
 import com.jaxio.web.selenium.support.elements.EntityAction;
 import com.jaxio.web.selenium.support.elements.Messages;
@@ -17,16 +17,16 @@ import com.jaxio.web.selenium.support.elements.StringInput;
 
 @Page
 public class RoleEdit {
-    public EditAction edit;
+    public EditAction action;
     public Messages messages;
     public EntityAction entity;
     public RoleEditForm form;
     public RoleEditTabs tabs;
 
-    public static class RoleEditForm extends CustomElement {
+    public static class RoleEditForm extends CustomWebElement {
         public StringInput roleName = new StringInput("form:roleName");
     };
 
-    public static class RoleEditTabs extends CustomElement {
+    public static class RoleEditTabs extends CustomWebElement {
     };
 }

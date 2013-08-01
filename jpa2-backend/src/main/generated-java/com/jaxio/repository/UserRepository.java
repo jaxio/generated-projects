@@ -4,34 +4,27 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/repository/Repository.e.vm.java
+ * Template pack-backend-jpa:src/main/java/repository/Repository.e.vm.java
  */
 package com.jaxio.repository;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jaxio.dao.UserDao;
 import com.jaxio.domain.User;
 import com.jaxio.repository.support.GenericRepository;
 
+/**
+ * {@link GenericRepository} for {@link User} 
+ */
 @Named
 @Singleton
 public class UserRepository extends GenericRepository<User, Integer> {
 
-    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
-    protected UserRepository() {
-        super();
-    }
-
-    @Inject
-    public UserRepository(UserDao userDao) {
-        super(userDao);
+    public UserRepository() {
+        super(User.class);
     }
 
     @Override
@@ -41,29 +34,7 @@ public class UserRepository extends GenericRepository<User, Integer> {
 
     @Override
     public User getNewWithDefaults() {
-        User result = getNew();
-        result.initDefaultValues();
-        return result;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public User get(User model) {
-        if (model == null) {
-            return null;
-        }
-
-        if (model.isIdSet()) {
-            return super.get(model);
-        }
-        if (isBlank(model.getUsername())) {
-            User result = getByUsername(model.getUsername());
-            if (result != null) {
-                return result;
-            }
-        }
-
-        return null;
+        return getNew().withDefaults();
     }
 
     /**

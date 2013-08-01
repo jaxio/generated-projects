@@ -12,16 +12,16 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Role;
 import com.jaxio.domain.Role_;
 import com.jaxio.printer.RolePrinter;
 import com.jaxio.repository.RoleRepository;
+import com.jaxio.repository.support.SearchParameters;
 import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.RolePermission;
 
 /**
- * Stateless controller for {@link Role} conversation start. 
+ * Stateless controller for {@link Role} conversation start.
  */
 @Named
 @Singleton

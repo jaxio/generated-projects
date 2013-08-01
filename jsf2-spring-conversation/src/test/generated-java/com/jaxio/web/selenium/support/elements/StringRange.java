@@ -9,8 +9,8 @@
 package com.jaxio.web.selenium.support.elements;
 
 public class StringRange extends Range<String> {
-    StringInput from;
-    StringInput to;
+    private final StringInput from;
+    private final StringInput to;
 
     public StringRange(String id) {
         from = new StringInput(id + "RangeFrom_input");

@@ -6,7 +6,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:app="http://springfuse.jaxio.com/app">
 	<app:outputLabel for="#{id}" value="#{label}" required="#{required}" rendered="#{rendered}" />
-	<p:selectManyCheckbox id="#{id}" value="#{value.selected}" converter="#{converter}" disabled="#{empty disabled ? false : disabled}"
+	<p:selectManyCheckbox id="#{id}" value="#{value.selected}" converter="#{converter}" rendered="#{empty rendered ? true : rendered}" disabled="#{empty disabled ? false : disabled}"
 		layout="#{items.list.size() lt 5 ? 'lineDirection' : 'pageDirection'}">
 		<f:selectItems value="#{items.list}" />
 		<c:if test="#{nullAllowed}">

@@ -10,7 +10,7 @@ package com.jaxio.web.selenium.page.savedsearch;
 
 import com.jaxio.web.selenium.support.Page;
 import com.jaxio.web.selenium.support.elements.Autocomplete;
-import com.jaxio.web.selenium.support.elements.CustomElement;
+import com.jaxio.web.selenium.support.elements.CustomWebElement;
 import com.jaxio.web.selenium.support.elements.EntityAction;
 import com.jaxio.web.selenium.support.elements.Messages;
 import com.jaxio.web.selenium.support.elements.OrderBy;
@@ -25,7 +25,7 @@ public class SavedSearchSearch {
     public SavedSearchSearchOrders orders;
     public SavedSearchSearchForm form;
 
-    public static class SavedSearchSearchOrders extends CustomElement {
+    public static class SavedSearchSearchOrders extends CustomWebElement {
         public OrderBy name = new OrderBy("savedSearch_name");
         public OrderBy formClassname = new OrderBy("savedSearch_formClassname");
         public OrderBy formContent = new OrderBy("savedSearch_formContent");

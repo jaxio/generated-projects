@@ -8,9 +8,7 @@
  */
 package com.jaxio.web.selenium.support;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.jaxio.web.selenium.support.FollowVisually.FollowLevel.TRACE;
-import static java.lang.Math.max;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -26,7 +24,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
@@ -34,10 +31,6 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Select;
@@ -45,44 +38,38 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.util.StopWatch;
 
 import com.google.common.base.Function;
-
-import com.jaxio.web.selenium.support.elements.WebElementConfiguration;
 import com.jaxio.web.selenium.support.FollowVisually.FollowLevel;
+import com.jaxio.web.selenium.support.elements.WebElementConfiguration;
 
 public class WebClient {
-    public static final int WAIT_BEFORE_STOP_IN_S = 5;
-    public static final int WAIT_AFTER_CLICK_IN_MS = 250;
-    public static final int WAIT_AFTER_CLEAR_IN_MS = 250;
-    public static final int WAIT_AFTER_STEP_IN_MS = 1500;
-    public static final int WAIT_AFTER_FILL_IN_MS = 250;
-    public static final int WAIT_AFTER_NOTIFICATION_IN_MS = 1000;
-
     public final WebDriver webDriver;
-    private final String baseUrl;
-    private final long driverWaitBeforeStopInSeconds;
-    private final long waitAfterClickInMs;
-    private final long waitAfterClearInMs;
-    private final long waitAfterStepInMs;
-    private final long waitAfterFillInMs;
-    private final long waitAfterNotificationInMs;
-    private final boolean followVisually;
-    private final FollowLevel followLevel;
+    private long driverWaitBeforeStopInSeconds = 10;
+    private long waitAfterClickInMs = 0;
+    private long waitAfterClearInMs = 0;
+    private long waitAfterStepInMs = 0;
+    private long waitAfterFillInMs = 0;
+    private long waitAfterNotificationInMs = 0;
+    private boolean followVisually = false;
+    private FollowLevel followLevel;
 
-    public WebClient(WebClientBuilder builder) {
-        this.webDriver = builder.webDriver;
-        this.baseUrl = builder.baseUrl;
-        this.driverWaitBeforeStopInSeconds = builder.waitBeforeStopInSeconds;
-        this.waitAfterClickInMs = builder.waitAfterClickInMs;
-        this.waitAfterClearInMs = builder.waitAfterClearInMs;
-        this.waitAfterStepInMs = builder.waitAfterStepInMs;
-        this.waitAfterFillInMs = builder.waitAfterFillInMs;
-        this.waitAfterNotificationInMs = builder.waitAfterNotificationInMs;
-        this.followVisually = builder.followVisually;
-        this.followLevel = builder.followLevel;
+    public WebClient(WebDriver webDriver, Object instanceTest) {
+        this.webDriver = webDriver;
+        handleFollowVisually(instanceTest);
+        new WebElementConfiguration().configure(instanceTest, this);
+    }
 
-        webDriver.manage().timeouts().implicitlyWait(driverWaitBeforeStopInSeconds, TimeUnit.SECONDS);
-        webDriver.manage().window().setSize(new Dimension(1280, 1024));
-        new WebElementConfiguration().configure(builder.testInstance, this);
+    private void handleFollowVisually(Object instanceTest) {
+        FollowVisually followVisually = instanceTest.getClass().getAnnotation(FollowVisually.class);
+        if (followVisually != null) {
+            this.driverWaitBeforeStopInSeconds = followVisually.driverWaitBeforeStopInSeconds();
+            this.waitAfterClickInMs = followVisually.waitAfterClickInMs();
+            this.waitAfterClearInMs = followVisually.waitAfterClearInMs();
+            this.waitAfterStepInMs = followVisually.waitAfterStepInMs();
+            this.waitAfterFillInMs = followVisually.waitAfterFillInMs();
+            this.waitAfterNotificationInMs = followVisually.waitAfterNotificationInMs();
+            this.followLevel = followVisually.level();
+            this.followVisually = true;
+        }
     }
 
     public void fast() {
@@ -412,10 +399,6 @@ public class WebClient {
         sleep(waitAfterClickInMs);
     }
 
-    public void page(String relative) {
-        webDriver.get(baseUrl + relative);
-    }
-
     public void clear(WebElement... webElements) {
         for (WebElement webElement : webElements) {
             webElement.clear();
@@ -466,85 +449,6 @@ public class WebClient {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }
-    }
-
-    public static class WebClientBuilder {
-        WebDriver webDriver;
-        Object testInstance;
-        String baseUrl;
-        boolean followVisually = true;
-        int waitBeforeStopInSeconds = WAIT_BEFORE_STOP_IN_S;
-        long waitAfterClickInMs = WAIT_AFTER_CLICK_IN_MS;
-        long waitAfterClearInMs = WAIT_AFTER_CLICK_IN_MS;
-        long waitAfterStepInMs = WAIT_AFTER_STEP_IN_MS;
-        long waitAfterFillInMs = WAIT_AFTER_FILL_IN_MS;
-        long waitAfterNotificationInMs = WAIT_AFTER_NOTIFICATION_IN_MS;
-        FollowLevel followLevel = FollowLevel.INFO;
-
-        public static WebClientBuilder newWebClient() {
-            return new WebClientBuilder();
-        }
-
-        public WebClientBuilder waitTimeInSeconds(int waitTimeInSeconds) {
-            this.waitBeforeStopInSeconds = waitTimeInSeconds;
-            return this;
-        }
-
-        public WebClientBuilder baseUrl(String baseUrl) {
-            this.baseUrl = baseUrl;
-            return this;
-        }
-
-        public WebClientBuilder followLevel(FollowLevel followLevel) {
-            this.followLevel = followLevel;
-            return this;
-        }
-
-        public WebClientBuilder onTest(Object testInstance) {
-            this.testInstance = testInstance;
-            followVisally(testInstance);
-            return this;
-        }
-
-        private void followVisally(Object testInstance) {
-            if (!testInstance.getClass().isAnnotationPresent(FollowVisually.class)) {
-                return;
-            }
-            FollowVisually follow = testInstance.getClass().getAnnotation(FollowVisually.class);
-            waitAfterClickInMs = max(follow.waitAfterClickInMs(), WAIT_AFTER_CLICK_IN_MS);
-            waitAfterClearInMs = max(follow.waitAfterClearInMs(), WAIT_AFTER_CLEAR_IN_MS);
-            waitAfterStepInMs = max(follow.waitAfterStepInMs(), WAIT_AFTER_STEP_IN_MS);
-            waitAfterFillInMs = max(follow.waitAfterFillInMs(), WAIT_AFTER_FILL_IN_MS);
-            waitAfterNotificationInMs = max(follow.waitAfterNotificationInMs(), WAIT_AFTER_NOTIFICATION_IN_MS);
-            this.followVisually = true;
-        }
-
-        public WebClientBuilder followVisually(boolean followVisually) {
-            this.followVisually = followVisually;
-            return this;
-        }
-
-        public WebClientBuilder webDriver(String driver) {
-            if ("htmlunit".equalsIgnoreCase(driver)) {
-                this.webDriver = new HtmlUnitDriver(true);
-            } else if ("firefox".equalsIgnoreCase(driver)) {
-                this.webDriver = new FirefoxDriver();
-            } else if ("ie".equalsIgnoreCase(driver)) {
-                this.webDriver = new InternetExplorerDriver();
-            } else if ("chrome".equalsIgnoreCase(driver)) {
-                this.webDriver = new ChromeDriver();
-            } else {
-                throw new IllegalArgumentException(driver + " is not a valid web driver");
-            }
-            return this;
-        }
-
-        public WebClient build() {
-            checkNotNull(baseUrl);
-            checkNotNull(testInstance);
-            checkNotNull(webDriver);
-            return new WebClient(this);
         }
     }
 }

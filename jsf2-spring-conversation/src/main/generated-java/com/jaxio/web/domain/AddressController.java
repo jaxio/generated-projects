@@ -19,7 +19,7 @@ import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.AddressPermission;
 
 /**
- * Stateless controller for {@link Address} conversation start. 
+ * Stateless controller for {@link Address} conversation start.
  */
 @Named
 @Singleton

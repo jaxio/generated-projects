@@ -36,14 +36,9 @@
 				xxxRepository.findCount(searchParameters)
 				xxxRepository.findCount(xxxModel, searchParameters)
 
-		When you define your named query the following magic parameters
-		will be automatically replaced:
-		:currentUserId		==> replaced with the id of the current user carried by
-								the UserContext (-1 if not available)
-		:now				==> replaced with the current date
-		:anyParameterName	==> replaced with the value with either
-			- the value of xxxModel.getAnyParameterName()
-			- the value returned by searchParameters.getParameters().get("anyParameterName")
+		* When you define your named query the parameters will be replaced with either
+			- the value of xxxModel.get<parameterName>()
+			- the value returned by searchParameters.getParameters().get("<parameterName>")
 
 		Dynamic order By support:
 		=========================
@@ -65,14 +60,6 @@
 			<query>from com.jaxio.domain.User</query>
 			<hint name="dynamic" value="true" />
 			<hint name="query" value="from com.jaxio.domain.User" />
-			<hint name="org.hibernate.cacheable" value="true" />
-		</named-query>
-		<!-- the :currentUserId will be replaced automatically with the value returned by the UserContext -->
-		<named-query name="getMyAccountOnlyExample">
-			<query>from com.jaxio.domain.User as account
-			where account.id = :currentAccountId</query>
-			<hint name="dynamic" value="true" />
-			<hint name="query" value="from com.jaxio.domain.User as account where account.id = :currentUserId" />
 			<hint name="org.hibernate.cacheable" value="true" />
 		</named-query>
 		<named-native-query name="User.selectAll.native" result-class="com.jaxio.domain.User">

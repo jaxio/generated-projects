@@ -39,18 +39,17 @@
 					paginator="#{not print and accountEditForm.account.transactions.size() gt 10}" rows="#{print ? null : 10}"
 					rowsPerPageTemplate="10,25,50,100" paginatorPosition="bottom"
 					selection="#{accountEditForm.transactions.model.selectedRow}" selectionMode="single" emptyMessage="#{msg.collection_empty}">
-					<p:ajax event="rowSelect" listener="#{accountEditForm.transactions.onRowSelectEdit}" disabled="#{readonly}" />
-					<p:ajax event="rowSelect" listener="#{accountEditForm.transactions.onRowSelectView}" disabled="#{!readonly}"/>
-					<p:column id="transaction_amount" headerText="#{msg.transaction_amount}" styleClass="amount numeric">
+					<p:ajax event="rowSelect" listener="#{accountEditForm.transactions.onRowSelect}" />
+					<p:column id="transaction_amount" headerText="#{msg.transaction_amount}" sortBy="#{item.amount}" styleClass="amount numeric">
 						<h:outputText value="#{item.amount}" />
 					</p:column>
-					<p:column id="transaction_transactionDate" headerText="#{msg.transaction_transactionDate}" styleClass="transactionDate">
-						<h:outputText value="#{item.transactionDate}" converter="#{localDateConverter}"/>
+					<p:column id="transaction_transactionDate" headerText="#{msg.transaction_transactionDate}" sortBy="#{item.transactionDate}" styleClass="transactionDate">
+						<app:outputLocalDate value="#{item.transactionDate}" />
 					</p:column>
-					<p:column id="transaction_valueDate" headerText="#{msg.transaction_valueDate}" styleClass="valueDate">
-						<h:outputText value="#{item.valueDate}" converter="#{localDateConverter}"/>
+					<p:column id="transaction_valueDate" headerText="#{msg.transaction_valueDate}" sortBy="#{item.valueDate}" styleClass="valueDate">
+						<app:outputLocalDate value="#{item.valueDate}" />
 					</p:column>
-					<p:column id="transaction_description" headerText="#{msg.transaction_description}" styleClass="description">
+					<p:column id="transaction_description" headerText="#{msg.transaction_description}" sortBy="#{item.description}" styleClass="description">
 						<h:outputText value="#{item.description}" />
 					</p:column>
 					<p:column id="actions" styleClass="actions-column" resizable="false">

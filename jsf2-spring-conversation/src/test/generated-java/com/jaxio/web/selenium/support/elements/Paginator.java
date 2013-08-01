@@ -9,11 +9,10 @@
 package com.jaxio.web.selenium.support.elements;
 
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.By;
 import org.openqa.selenium.support.FindBy;
 
-public class Paginator extends CustomElement {
-    private static final String ONE_RESULT = "There is one result";
-    private static final String NO_RESULT = "There is no result";
+public class Paginator extends CustomWebElement {
     // paginator
     @FindBy(css = "div.ui-paginator-bottom span.ui-paginator-pages span.ui-state-active")
     public WebElement paginatorCurrent;
@@ -43,17 +42,6 @@ public class Paginator extends CustomElement {
     }
 
     public void hasSize(int size) {
-        hasResult(sizeToString(size));
-    }
-
-    private String sizeToString(int size) {
-        switch (size) {
-        case 0:
-            return NO_RESULT;
-        case 1:
-            return ONE_RESULT;
-        default:
-            return "There are " + size + " results";
-        }
+        webClient.waitUntilFound(By.xpath("//span[@id='searchResultsRegion' and @nb-results='" + size + "']"));
     }
 }

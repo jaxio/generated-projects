@@ -17,7 +17,7 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-public class SaveSearch extends CustomElement {
+public class SaveSearch extends ByCustomWebElement {
     public SaveSearch(String id) {
         super(id);
     }

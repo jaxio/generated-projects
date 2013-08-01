@@ -8,14 +8,15 @@
  */
 package com.jaxio.web.domain;
 
-import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
+import static com.jaxio.repository.support.PropertySelector.newPropertySelector;
 
 import javax.inject.Named;
 
-import com.jaxio.dao.support.PropertySelector;
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Address;
 import com.jaxio.domain.Address_;
+import com.jaxio.repository.support.PropertySelector;
+import com.jaxio.repository.support.SearchParameters;
+import com.jaxio.repository.support.TermSelector;
 import com.jaxio.web.domain.support.GenericSearchForm;
 import com.jaxio.web.faces.ConversationContextScoped;
 
@@ -28,6 +29,11 @@ import com.jaxio.web.faces.ConversationContextScoped;
 public class AddressSearchForm extends GenericSearchForm<Address, Integer, AddressSearchForm> {
     private static final long serialVersionUID = 1L;
 
+    // full text search (applied first)
+    protected TermSelector cityTermSelector = new TermSelector(Address_.city);
+    protected TermSelector countryTermSelector = new TermSelector(Address_.country);
+
+    // classic search
     protected Address address = new Address();
     protected PropertySelector<Address, String> streetSelector = newPropertySelector(Address_.street);
     protected PropertySelector<Address, String> zipCodeSelector = newPropertySelector(Address_.zipCode);
@@ -50,23 +56,35 @@ public class AddressSearchForm extends GenericSearchForm<Address, Integer, Addre
 
     @Override
     public SearchParameters toSearchParameters() {
-        return new SearchParameters() //
-                .limitBroadSearch() //
-                .anywhere() //
-                .caseInsensitive() //
-                .term(term) //
-                .property(streetSelector, zipCodeSelector, citySelector, countrySelector) //
-        ;
+        SearchParameters sp = searchParameters();
+        // full text search
+        sp.addTerm(termsOnAll);
+        sp.addTerm(cityTermSelector);
+        sp.addTerm(countryTermSelector);
+        // classic search
+        sp.property(streetSelector, zipCodeSelector, citySelector, countrySelector);
+        return sp;
     }
 
     @Override
     public void resetWithOther(AddressSearchForm other) {
         this.address = other.getAddress();
-        this.term = other.getTerm();
+        this.termsOnAll = other.getTermsOnAll();
+        this.cityTermSelector = other.getCityTermSelector();
+        this.countryTermSelector = other.getCountryTermSelector();
         this.streetSelector = other.getStreetSelector();
         this.zipCodeSelector = other.getZipCodeSelector();
         this.citySelector = other.getCitySelector();
         this.countrySelector = other.getCountrySelector();
+    }
+
+    // Term selectors    
+    public TermSelector getCityTermSelector() {
+        return cityTermSelector;
+    }
+
+    public TermSelector getCountryTermSelector() {
+        return countryTermSelector;
     }
 
     // Property selectors

@@ -15,7 +15,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 /**
- * Boolean converter, used by selectManyCheckbox tag.
+ * Boolean converter, used by <code>selectManyCheckbox</code> tag.
  */
 @Named
 @Singleton

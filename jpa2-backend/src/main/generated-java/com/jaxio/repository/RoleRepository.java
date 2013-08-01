@@ -4,34 +4,27 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/repository/Repository.e.vm.java
+ * Template pack-backend-jpa:src/main/java/repository/Repository.e.vm.java
  */
 package com.jaxio.repository;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jaxio.dao.RoleDao;
 import com.jaxio.domain.Role;
 import com.jaxio.repository.support.GenericRepository;
 
+/**
+ * {@link GenericRepository} for {@link Role} 
+ */
 @Named
 @Singleton
 public class RoleRepository extends GenericRepository<Role, Integer> {
 
-    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
-    protected RoleRepository() {
-        super();
-    }
-
-    @Inject
-    public RoleRepository(RoleDao roleDao) {
-        super(roleDao);
+    public RoleRepository() {
+        super(Role.class);
     }
 
     @Override
@@ -41,29 +34,7 @@ public class RoleRepository extends GenericRepository<Role, Integer> {
 
     @Override
     public Role getNewWithDefaults() {
-        Role result = getNew();
-        result.initDefaultValues();
-        return result;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Role get(Role model) {
-        if (model == null) {
-            return null;
-        }
-
-        if (model.isIdSet()) {
-            return super.get(model);
-        }
-        if (isBlank(model.getRoleName())) {
-            Role result = getByRoleName(model.getRoleName());
-            if (result != null) {
-                return result;
-            }
-        }
-
-        return null;
+        return getNew().withDefaults();
     }
 
     /**

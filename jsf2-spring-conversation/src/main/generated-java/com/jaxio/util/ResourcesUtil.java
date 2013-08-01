@@ -4,7 +4,7 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/util/ResourcesUtil.p.vm.java
+ * Template pack-backend-jpa:src/main/java/util/ResourcesUtil.p.vm.java
  */
 package com.jaxio.util;
 
@@ -43,7 +43,7 @@ public class ResourcesUtil {
     }
 
     /**
-     * Return the MessageSource that backs this ResourcesUtil.
+     * Return the {@link MessageSource} that backs this ResourcesUtil.
      */
     public MessageSource getMessageSource() {
         return messageSource;
@@ -51,7 +51,7 @@ public class ResourcesUtil {
 
     /**
      * Return the property value for the contextual locale.
-     * If no value is found, the passed key is returned.
+     * If no value is found, the given key is returned.
      */
     public String getProperty(String key, Object... args) {
         if (key == null) {
@@ -62,8 +62,15 @@ public class ResourcesUtil {
     }
 
     /**
-     * Same as getProperty() but use the count to choose the proper key.
-     * Used when the message varies depending on the context. For example: 'there is no result' vs 'there is one result' vs 'there are n results'
+     * Same as {@link #getProperty(String, Object...)} but use the count to choose the proper key.
+     * Used when the message varies depending on the context. 
+     * <p>
+     * For example: 
+     * <ul>
+     * <li>there is no result</li>
+     * <li>there is one result</li>
+     * <li>there are n results</li>
+     * </ul>
      * @param key the base key
      */
     public String getPluralableProperty(String key, int count) {

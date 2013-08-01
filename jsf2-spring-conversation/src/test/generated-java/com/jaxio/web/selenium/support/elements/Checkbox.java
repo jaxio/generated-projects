@@ -8,22 +8,20 @@
  */
 package com.jaxio.web.selenium.support.elements;
 
-import org.openqa.selenium.By;
-
-public class Checkbox extends CustomElement {
+public class Checkbox extends ByCustomWebElement {
     public Checkbox(String id) {
         super(id);
     }
 
     public void enable() {
         if (isDisabled()) {
-            webClient.click(By.id(id));
+            webClient.click(by);
         }
     }
 
     public void disable() {
         if (isEnabled()) {
-            webClient.click(By.id(id));
+            webClient.click(by);
         }
     }
 
@@ -32,6 +30,6 @@ public class Checkbox extends CustomElement {
     }
 
     public boolean isEnabled() {
-        return Boolean.valueOf(webClient.find(By.id(id)).getAttribute("checked"));
+        return Boolean.valueOf(webClient.find(by).getAttribute("checked"));
     }
 }

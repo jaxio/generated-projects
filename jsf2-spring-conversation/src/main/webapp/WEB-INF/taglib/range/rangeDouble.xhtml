@@ -6,8 +6,8 @@
 	<app:outputLabel for="#{id}" value="#{label}" required="#{required}" rendered="#{rendered}" />
 	<h:panelGrid columns="4" id="#{id}" styleClass="aria-role-presentation" rendered="#{empty rendered ? true : rendered}">
 		<app:outputLabel for="#{id}RangeFrom" value="range_from" />
-		<p:inputText id="#{id}RangeFrom" value="#{value.from}" converter="javax.faces.Double"/>
+		<p:inputText id="#{id}RangeFrom" value="#{value.from}" label="#{resourcesUtil.getProperty(label)} - #{resourcesUtil.getProperty('range_from')}" converter="javax.faces.Double"/>
 		<app:outputLabel for="#{id}RangeTo" value="range_to" />
-		<p:inputText id="#{id}RangeTo" value="#{value.to}" converter="javax.faces.Double"/>
+		<p:inputText id="#{id}RangeTo" value="#{value.to}" label="#{resourcesUtil.getProperty(label)} - #{resourcesUtil.getProperty('range_to')}" converter="javax.faces.Double"/>
 	</h:panelGrid>
 </ui:composition>

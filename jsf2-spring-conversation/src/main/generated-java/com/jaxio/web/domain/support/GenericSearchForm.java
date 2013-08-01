@@ -20,9 +20,10 @@ import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Identifiable;
 import com.jaxio.domain.SavedSearch;
+import com.jaxio.repository.support.SearchParameters;
+import com.jaxio.repository.support.TermSelector;
 import com.jaxio.web.conversation.Conversation;
 import com.jaxio.web.conversation.ConversationContext;
 import com.jaxio.web.conversation.ConversationManager;
@@ -97,20 +98,27 @@ public abstract class GenericSearchForm<E extends Identifiable<PK>, PK extends S
         this.privateSearch = privateSearch;
     }
 
-    protected String term;
+    protected TermSelector termsOnAll = new TermSelector();
 
-    public String getTerm() {
-        return term;
-    }
-
-    public void setTerm(String term) {
-        this.term = term;
+    public TermSelector getTermsOnAll() {
+        return termsOnAll;
     }
 
     /**
      * Convert all the search inputs into a @{link SearchParameters}. 
      */
     public abstract SearchParameters toSearchParameters();
+
+    /**
+     * default search parameters
+     */
+    public SearchParameters searchParameters() {
+        return new SearchParameters() //
+                .limitBroadSearch() //
+                .distinct() //
+                .anywhere() //
+                .caseInsensitive();
+    }
 
     // Reset related
 

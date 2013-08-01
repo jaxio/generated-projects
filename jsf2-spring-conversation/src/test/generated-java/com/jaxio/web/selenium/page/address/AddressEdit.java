@@ -9,7 +9,7 @@
 package com.jaxio.web.selenium.page.address;
 
 import com.jaxio.web.selenium.support.Page;
-import com.jaxio.web.selenium.support.elements.CustomElement;
+import com.jaxio.web.selenium.support.elements.CustomWebElement;
 import com.jaxio.web.selenium.support.elements.EditAction;
 import com.jaxio.web.selenium.support.elements.EntityAction;
 import com.jaxio.web.selenium.support.elements.Messages;
@@ -17,19 +17,19 @@ import com.jaxio.web.selenium.support.elements.StringInput;
 
 @Page
 public class AddressEdit {
-    public EditAction edit;
+    public EditAction action;
     public Messages messages;
     public EntityAction entity;
     public AddressEditForm form;
     public AddressEditTabs tabs;
 
-    public static class AddressEditForm extends CustomElement {
+    public static class AddressEditForm extends CustomWebElement {
         public StringInput street = new StringInput("form:street");
         public StringInput zipCode = new StringInput("form:zipCode");
         public StringInput city = new StringInput("form:city");
         public StringInput country = new StringInput("form:country");
     };
 
-    public static class AddressEditTabs extends CustomElement {
+    public static class AddressEditTabs extends CustomWebElement {
     };
 }

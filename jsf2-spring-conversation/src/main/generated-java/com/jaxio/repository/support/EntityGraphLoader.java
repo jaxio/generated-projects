@@ -4,7 +4,7 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/repository/support/EntityGraphLoader.p.vm.java
+ * Template pack-backend-jpa:src/main/java/repository/support/EntityGraphLoader.p.vm.java
  */
 package com.jaxio.repository.support;
 
@@ -14,6 +14,7 @@ import java.util.Collection;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jaxio.domain.Identifiable;
+import com.jaxio.repository.support.GenericRepository;
 
 /**
  * The EntityGraphLoader is used to load within a single read-only transaction all the desired associations that 

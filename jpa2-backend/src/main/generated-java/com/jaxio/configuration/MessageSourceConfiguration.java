@@ -4,7 +4,7 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/configuration/MessageSourceConfiguration.p.vm.java
+ * Template pack-backend-jpa:src/main/java/configuration/MessageSourceConfiguration.p.vm.java
  */
 package com.jaxio.configuration;
 
@@ -27,8 +27,7 @@ public class MessageSourceConfiguration {
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setBasenames( // 
                 // main resources
-                "classpath:/localization/messages", //
-                "classpath:/localization/application",
+                "classpath:/localization/application", "classpath:/localization/messages", //
                 // pages
                 "classpath:/localization/pages/home", //
                 "classpath:/localization/pages/login", //

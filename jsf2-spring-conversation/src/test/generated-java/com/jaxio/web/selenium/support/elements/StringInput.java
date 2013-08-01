@@ -20,5 +20,4 @@ public class StringInput extends Input<String> {
     public String value() {
         return valueAttribute();
     }
-
 }

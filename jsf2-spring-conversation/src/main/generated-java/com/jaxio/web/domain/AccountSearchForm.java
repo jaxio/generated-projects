@@ -8,18 +8,18 @@
  */
 package com.jaxio.web.domain;
 
-import static com.jaxio.dao.support.EntitySelector.newEntitySelector;
-import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
+import static com.jaxio.repository.support.EntitySelector.newEntitySelector;
+import static com.jaxio.repository.support.PropertySelector.newPropertySelector;
 
 import javax.inject.Named;
 
-import com.jaxio.dao.support.EntitySelector;
-import com.jaxio.dao.support.PropertySelector;
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Account_;
 import com.jaxio.domain.Currency;
 import com.jaxio.domain.Customer;
+import com.jaxio.repository.support.EntitySelector;
+import com.jaxio.repository.support.PropertySelector;
+import com.jaxio.repository.support.SearchParameters;
 import com.jaxio.web.domain.support.GenericSearchForm;
 import com.jaxio.web.faces.ConversationContextScoped;
 
@@ -31,7 +31,6 @@ import com.jaxio.web.faces.ConversationContextScoped;
 @ConversationContextScoped
 public class AccountSearchForm extends GenericSearchForm<Account, Integer, AccountSearchForm> {
     private static final long serialVersionUID = 1L;
-
     protected Account account = new Account();
     protected PropertySelector<Account, String> accountNumberSelector = newPropertySelector(Account_.accountNumber);
     protected PropertySelector<Account, String> nameSelector = newPropertySelector(Account_.name);
@@ -54,14 +53,11 @@ public class AccountSearchForm extends GenericSearchForm<Account, Integer, Accou
 
     @Override
     public SearchParameters toSearchParameters() {
-        return new SearchParameters() //
-                .limitBroadSearch() //
-                .anywhere() //
-                .caseInsensitive() //
-                .leftJoin(Account_.customer) //
-                .property(accountNumberSelector, nameSelector) //
-                .entity(currencySelector, customerSelector) //
-        ;
+        SearchParameters sp = searchParameters();
+        sp.leftJoin(Account_.customer);
+        sp.property(accountNumberSelector, nameSelector);
+        sp.entity(currencySelector, customerSelector);
+        return sp;
     }
 
     @Override

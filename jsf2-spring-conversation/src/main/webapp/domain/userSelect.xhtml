@@ -15,9 +15,16 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search title="user_search" model="#{userLazyDataModel}" searchForm="#{userSearchForm}" controller="#{userController}" permission="#{userPermission}" savedSearch="true">
+	<app:search title="user_search" model="#{userLazyDataModel}" searchForm="#{userSearchForm}"
+		controller="#{userController}" permission="#{userPermission}" savedSearch="true" fullText="true">
+		<ui:define name="fullTextFilters">
+            <app:inputMultiAutoComplete id="fullTextQuery" value="#{userSearchForm.termsOnAll}" label="search_full_text_all" completeMethod="completeSame" />
+			<app:inputMultiAutoComplete id="usernameTerm" value="#{userSearchForm.usernameTermSelector}" label="user_username" completeMethod="completeSame" />
+			<app:inputMultiAutoComplete id="emailTerm" value="#{userSearchForm.emailTermSelector}" label="user_email" completeMethod="completeSame" />
+			<app:inputMultiAutoComplete id="firstNameTerm" value="#{userSearchForm.firstNameTermSelector}" label="user_firstName" completeMethod="completeSame" />
+			<app:inputMultiAutoComplete id="lastNameTerm" value="#{userSearchForm.lastNameTermSelector}" label="user_lastName" completeMethod="completeSame" />
+		</ui:define>
 		<ui:define name="filters">
-			<app:input id="fullTextQuery" value="#{userSearchForm.term}" label="search_full_text" />
 			<app:inputMultiAutoComplete id="username" value="#{userSearchForm.usernameSelector}" label="user_username" completeMethod="completeProperty" property="username" />
 			<app:inputMultiAutoComplete id="password" value="#{userSearchForm.passwordSelector}" label="user_password" completeMethod="completeSame" />
 			<app:inputMultiAutoComplete id="email" value="#{userSearchForm.emailSelector}" label="user_email" completeMethod="completeProperty" property="email" />

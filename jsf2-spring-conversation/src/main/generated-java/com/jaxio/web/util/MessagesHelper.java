@@ -35,14 +35,14 @@ import com.google.common.base.Predicate;
 import com.jaxio.util.ResourcesUtil;
 
 /**
- * Helper used from the appcc:messages composite component.
+ * Helper used from the <code>appcc:messages</code> composite component.
  */
 @Named
 @Singleton
 public class MessagesHelper {
 
     @Inject
-    ResourcesUtil resourcesUtil;
+    protected ResourcesUtil resourcesUtil;
 
     public String getMaxSeverityNonGlobalMessages() {
         Severity maxSeverity = getFirst(getSeveritiesNonGlobalMessages(), FacesMessage.SEVERITY_INFO);

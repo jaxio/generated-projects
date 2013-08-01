@@ -19,13 +19,13 @@ import javax.inject.Singleton;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jaxio.context.UserContext;
-import com.jaxio.dao.support.PropertySelector;
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.SavedSearch;
 import com.jaxio.domain.SavedSearch_;
 import com.jaxio.domain.User;
 import com.jaxio.repository.SavedSearchRepository;
 import com.jaxio.repository.UserRepository;
+import com.jaxio.repository.support.PropertySelector;
+import com.jaxio.repository.support.SearchParameters;
 import com.jaxio.web.domain.support.GenericSearchForm;
 import com.jaxio.web.util.MessageUtil;
 

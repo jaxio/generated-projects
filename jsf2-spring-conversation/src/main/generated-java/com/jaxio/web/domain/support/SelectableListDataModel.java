@@ -29,7 +29,7 @@ public class SelectableListDataModel<E extends Identifiable<?>> extends ListData
     }
 
     /**
-     * Returns the currently selected row. To be called from your flow upon a "selectXxx" transition.
+     * Returns the currently selected row. To be called from your flow upon a <code>selectXxx</code> transition.
      */
     public E getSelectedRow() {
         return selectedRow;

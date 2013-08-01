@@ -39,9 +39,8 @@
 					paginator="#{not print and userEditForm.user.securityRoles.size() gt 10}" rows="#{print ? null : 10}"
 					rowsPerPageTemplate="10,25,50,100" paginatorPosition="bottom"
 					selection="#{userEditForm.securityRoles.model.selectedRow}" selectionMode="single" emptyMessage="#{msg.collection_empty}">
-					<p:ajax event="rowSelect" listener="#{userEditForm.securityRoles.onRowSelectEdit}" disabled="#{readonly}" />
-					<p:ajax event="rowSelect" listener="#{userEditForm.securityRoles.onRowSelectView}" disabled="#{!readonly}"/>
-					<p:column id="role_roleName" headerText="#{msg.role_roleName}" styleClass="roleName">
+					<p:ajax event="rowSelect" listener="#{userEditForm.securityRoles.onRowSelect}" />
+					<p:column id="role_roleName" headerText="#{msg.role_roleName}" sortBy="#{item.roleName}" styleClass="roleName">
 						<h:outputText value="#{item.roleName}" />
 					</p:column>
 					<p:column id="actions" styleClass="actions-column" resizable="false">

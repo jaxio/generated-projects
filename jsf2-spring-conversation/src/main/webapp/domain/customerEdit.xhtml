@@ -35,12 +35,11 @@
 					paginator="#{not print and customerEditForm.customer.accounts.size() gt 10}" rows="#{print ? null : 10}"
 					rowsPerPageTemplate="10,25,50,100" paginatorPosition="bottom"
 					selection="#{customerEditForm.accounts.model.selectedRow}" selectionMode="single" emptyMessage="#{msg.collection_empty}">
-					<p:ajax event="rowSelect" listener="#{customerEditForm.accounts.onRowSelectEdit}" disabled="#{readonly}" />
-					<p:ajax event="rowSelect" listener="#{customerEditForm.accounts.onRowSelectView}" disabled="#{!readonly}"/>
-					<p:column id="account_accountNumber" headerText="#{msg.account_accountNumber}" styleClass="accountNumber">
+					<p:ajax event="rowSelect" listener="#{customerEditForm.accounts.onRowSelect}" />
+					<p:column id="account_accountNumber" headerText="#{msg.account_accountNumber}" sortBy="#{item.accountNumber}" styleClass="accountNumber">
 						<h:outputText value="#{item.accountNumber}" />
 					</p:column>
-					<p:column id="account_name" headerText="#{msg.account_name}" styleClass="name">
+					<p:column id="account_name" headerText="#{msg.account_name}" sortBy="#{item.name}" styleClass="name">
 						<h:outputText value="#{item.name}" />
 					</p:column>
 					<p:column id="actions" styleClass="actions-column" resizable="false">

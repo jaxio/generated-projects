@@ -8,18 +8,16 @@
  */
 package com.jaxio.web.domain;
 
-import java.io.ByteArrayInputStream;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.jaxio.domain.SavedSearch;
+import com.jaxio.domain.SavedSearch_;
 import com.jaxio.repository.SavedSearchRepository;
+import com.jaxio.web.domain.support.ByteArrayStreamedContent;
 
 /**
  * Stateless controller to download {@link SavedSearch} binaries 
@@ -31,24 +29,25 @@ public class SavedSearchFileDownload {
     private SavedSearchRepository savedSearchRepository;
 
     /**
-     * Primefaces support for formContent file download, this method is transactional so the binary can be lazily loaded
+     * Primefaces support for formContent file download.
      */
-    @Transactional(readOnly = true)
-    public StreamedContent getFormContentStream(SavedSearch detachedSavedSearch) {
-        SavedSearch savedSearch = null;
-        if (detachedSavedSearch.isFormContentSet()) {
-            savedSearch = detachedSavedSearch;
-        } else if (detachedSavedSearch.isIdSet()) {
-            savedSearch = savedSearchRepository.get(detachedSavedSearch);
-        }
-
-        if (savedSearch != null && savedSearch.getFormContent() != null) {
-            return new DefaultStreamedContent( //
-                    new ByteArrayInputStream(savedSearch.getFormContent()), //
-                    "application/download", //
-                    "formContent");
-        } else {
+    public StreamedContent getFormContentStream(final SavedSearch savedSearch) {
+        // check whether the binary is null WITHOUT downloading it.
+        if (savedSearch.isIdSet()) {
+            if (savedSearchRepository.isPropertyNull(savedSearch.getId(), SavedSearch_.formContent)) {
+                return null;
+            }
+        } else if (savedSearch.getFormContent() == null) {
             return null;
         }
+
+        ByteArrayStreamedContent basc = new ByteArrayStreamedContent() {
+            @Override
+            public byte[] getByteArray() {
+                return savedSearchRepository.getFormContent(savedSearch);
+            }
+        };
+        basc.setName("formContent");
+        return basc;
     }
 }

@@ -4,14 +4,11 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/search/SearchMappingFactory.p.vm.java
+ * Template pack-backend-jpa:src/main/java/search/SearchMappingFactory.p.vm.java
  */
 package com.jaxio.search;
 
 import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
-import org.apache.solr.analysis.DoubleMetaphoneFilterFactory;
-import org.apache.solr.analysis.EdgeNGramFilterFactory;
-import org.apache.solr.analysis.FrenchLightStemFilterFactory;
 import org.apache.solr.analysis.LowerCaseFilterFactory;
 import org.apache.solr.analysis.NGramTokenizerFactory;
 import org.hibernate.search.annotations.Factory;
@@ -27,10 +24,7 @@ public class SearchMappingFactory {
         SearchMapping mapping = new SearchMapping();
         mapping.analyzerDef("custom", NGramTokenizerFactory.class).tokenizerParam("maxGramSize", "40") //
                 .filter(ASCIIFoldingFilterFactory.class) //
-                .filter(LowerCaseFilterFactory.class) // 
-                .filter(DoubleMetaphoneFilterFactory.class) // 
-                .filter(FrenchLightStemFilterFactory.class) //
-                .filter(EdgeNGramFilterFactory.class).param("maxGramSize", "40");
+                .filter(LowerCaseFilterFactory.class);
         return mapping;
     }
 }

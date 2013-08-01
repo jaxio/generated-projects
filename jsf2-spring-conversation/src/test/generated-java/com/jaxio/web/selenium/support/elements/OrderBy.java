@@ -18,7 +18,7 @@ import org.openqa.selenium.WebElement;
 
 import com.google.common.base.Function;
 
-public class OrderBy extends CustomElement {
+public class OrderBy extends ByCustomWebElement {
     public OrderBy(String id) {
         super(id);
     }

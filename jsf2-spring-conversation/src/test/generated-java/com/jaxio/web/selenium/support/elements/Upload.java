@@ -11,7 +11,7 @@ package com.jaxio.web.selenium.support.elements;
 import org.openqa.selenium.WebElement;
 import java.io.File;
 
-public class Upload extends CustomElement {
+public class Upload extends ByCustomWebElement {
 
     public Upload(String id) {
         super(id + "_input");
@@ -22,8 +22,7 @@ public class Upload extends CustomElement {
     }
 
     public void upload(File file) {
-        WebElement upload = webClient.find(by());
-        upload.click();
+        WebElement upload = webClient.find(by);
         upload.sendKeys(file.getAbsolutePath());
     }
 }

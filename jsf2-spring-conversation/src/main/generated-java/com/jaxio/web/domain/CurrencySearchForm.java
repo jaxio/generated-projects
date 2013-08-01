@@ -8,16 +8,16 @@
  */
 package com.jaxio.web.domain;
 
-import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
-import static com.jaxio.dao.support.Ranges.RangeInteger.newRangeInteger;
+import static com.jaxio.repository.support.PropertySelector.newPropertySelector;
+import static com.jaxio.repository.support.Ranges.RangeInteger.newRangeInteger;
 
 import javax.inject.Named;
 
-import com.jaxio.dao.support.PropertySelector;
-import com.jaxio.dao.support.Ranges.RangeInteger;
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Currency;
 import com.jaxio.domain.Currency_;
+import com.jaxio.repository.support.PropertySelector;
+import com.jaxio.repository.support.Ranges.RangeInteger;
+import com.jaxio.repository.support.SearchParameters;
 import com.jaxio.web.domain.support.GenericSearchForm;
 import com.jaxio.web.faces.ConversationContextScoped;
 
@@ -29,7 +29,6 @@ import com.jaxio.web.faces.ConversationContextScoped;
 @ConversationContextScoped
 public class CurrencySearchForm extends GenericSearchForm<Currency, Integer, CurrencySearchForm> {
     private static final long serialVersionUID = 1L;
-
     protected Currency currency = new Currency();
     protected RangeInteger<Currency> decimalCountRange = newRangeInteger(Currency_.decimalCount);
     protected PropertySelector<Currency, String> codeSelector = newPropertySelector(Currency_.code);
@@ -52,13 +51,10 @@ public class CurrencySearchForm extends GenericSearchForm<Currency, Integer, Cur
 
     @Override
     public SearchParameters toSearchParameters() {
-        return new SearchParameters() //
-                .limitBroadSearch() //
-                .anywhere() //
-                .caseInsensitive() //
-                .range(decimalCountRange) //
-                .property(codeSelector, nameSelector, decimalCountSelector) //
-        ;
+        SearchParameters sp = searchParameters();
+        sp.range(decimalCountRange);
+        sp.property(codeSelector, nameSelector, decimalCountSelector);
+        return sp;
     }
 
     @Override

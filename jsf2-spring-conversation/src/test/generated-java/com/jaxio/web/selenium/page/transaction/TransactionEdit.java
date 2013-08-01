@@ -9,7 +9,7 @@
 package com.jaxio.web.selenium.page.transaction;
 
 import com.jaxio.web.selenium.support.Page;
-import com.jaxio.web.selenium.support.elements.CustomElement;
+import com.jaxio.web.selenium.support.elements.CustomWebElement;
 import com.jaxio.web.selenium.support.elements.DateInput;
 import com.jaxio.web.selenium.support.elements.EditAction;
 import com.jaxio.web.selenium.support.elements.EntityAction;
@@ -21,13 +21,13 @@ import com.jaxio.web.selenium.support.elements.StringInput;
 
 @Page
 public class TransactionEdit {
-    public EditAction edit;
+    public EditAction action;
     public Messages messages;
     public EntityAction entity;
     public TransactionEditForm form;
     public TransactionEditTabs tabs;
 
-    public static class TransactionEditForm extends CustomElement {
+    public static class TransactionEditForm extends CustomWebElement {
         public IntegerInput amount = new IntegerInput("form:amount");
         public DateInput transactionDate = new DateInput("form:transactionDate");
         public DateInput valueDate = new DateInput("form:valueDate");
@@ -38,6 +38,6 @@ public class TransactionEdit {
         public ManyToOne account = new ManyToOne("form:account");
     };
 
-    public static class TransactionEditTabs extends CustomElement {
+    public static class TransactionEditTabs extends CustomWebElement {
     };
 }

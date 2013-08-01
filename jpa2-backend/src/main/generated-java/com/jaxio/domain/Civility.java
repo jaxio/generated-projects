@@ -4,7 +4,7 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/domain/Enum.enum.vm.java
+ * Template pack-backend-jpa:src/main/java/enum/Enum.enum.vm.java
  */
 package com.jaxio.domain;
 

@@ -4,7 +4,7 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/domain/Entity.e.vm.java
+ * Template pack-backend-jpa:src/main/java/domain/Entity.e.vm.java
  */
 package com.jaxio.domain;
 
@@ -133,14 +133,6 @@ public class SavedSearch implements Identifiable<Integer>, Serializable {
         return this;
     }
 
-    /**
-     * Determine without loading it, that is without risking a Lazy exception, if the formContent is loaded or not.
-     */
-    @Transient
-    public boolean isFormContentSet() {
-        return formContent != null;
-    }
-
     // -----------------------------------------------------------------
     // Many to One support
     // -----------------------------------------------------------------
@@ -168,9 +160,10 @@ public class SavedSearch implements Identifiable<Integer>, Serializable {
     }
 
     /**
-     * Set the default values.
+     * Apply the default values.
      */
-    public void initDefaultValues() {
+    public SavedSearch withDefaults() {
+        return this;
     }
 
     /**

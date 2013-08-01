@@ -23,13 +23,13 @@ import javax.inject.Named;
 
 import org.springframework.context.annotation.Scope;
 
-import com.jaxio.dao.support.JpaUniqueUtil;
 import com.jaxio.domain.Identifiable;
+import com.jaxio.repository.support.JpaUniqueUtil;
 import com.jaxio.util.ResourcesUtil;
 
 @Named
 @Scope(SCOPE_PROTOTYPE)
-@FacesValidator(value = "jpaUniqueValidator")
+@FacesValidator("jpaUniqueValidator")
 public class JpaUniqueValidator implements Validator {
 
     @Inject

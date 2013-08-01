@@ -29,7 +29,7 @@ import com.jaxio.web.converter.support.LocalDateConverter;
 import com.jaxio.web.converter.support.LocalDateTimeConverter;
 
 /**
- * Java side of the 'datePicker' composite component that supports
+ * Java side of the <code>datePicker</code> composite component that supports
  * <ul>
  * <li>{@link Date}</li>
  * <li>{@link LocalDate}</li>
@@ -39,7 +39,7 @@ import com.jaxio.web.converter.support.LocalDateTimeConverter;
  *
  * @see http://weblogs.java.net/blog/cayhorstmann/archive/2010/01/30/composite-input-components-jsf
  * @see http://www.w3.org/WAI/intro/aria.php
- * @see the followings jsf2 components : inputDateAria, inputDateTimeAria, inputLocalDateAria, inputLocalDateTimeAria
+ * @see the followings jsf components : inputDateAria, inputDateTimeAria, inputLocalDateAria, inputLocalDateTimeAria
  */
 @FacesComponent("components.DatePicker")
 public class DatePicker extends UIInput implements NamingContainer {

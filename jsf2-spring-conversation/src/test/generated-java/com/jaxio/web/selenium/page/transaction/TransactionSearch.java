@@ -10,7 +10,7 @@ package com.jaxio.web.selenium.page.transaction;
 
 import com.jaxio.web.selenium.support.Page;
 import com.jaxio.web.selenium.support.elements.Autocomplete;
-import com.jaxio.web.selenium.support.elements.CustomElement;
+import com.jaxio.web.selenium.support.elements.CustomWebElement;
 import com.jaxio.web.selenium.support.elements.EntityAction;
 import com.jaxio.web.selenium.support.elements.Messages;
 import com.jaxio.web.selenium.support.elements.OrderBy;
@@ -26,7 +26,7 @@ public class TransactionSearch {
     public TransactionSearchOrders orders;
     public TransactionSearchForm form;
 
-    public static class TransactionSearchOrders extends CustomElement {
+    public static class TransactionSearchOrders extends CustomWebElement {
         public OrderBy accountId = new OrderBy("transaction_accountId");
         public OrderBy amount = new OrderBy("transaction_amount");
         public OrderBy transactionDate = new OrderBy("transaction_transactionDate");

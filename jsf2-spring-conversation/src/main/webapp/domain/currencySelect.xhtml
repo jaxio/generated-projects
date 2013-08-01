@@ -15,7 +15,8 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search title="currency_search" model="#{currencyLazyDataModel}" searchForm="#{currencySearchForm}" controller="#{currencyController}" permission="#{currencyPermission}" savedSearch="true">
+	<app:search title="currency_search" model="#{currencyLazyDataModel}" searchForm="#{currencySearchForm}"
+		controller="#{currencyController}" permission="#{currencyPermission}" savedSearch="true">
 		<ui:define name="filters">
 			<app:inputMultiAutoComplete id="code" value="#{currencySearchForm.codeSelector}" label="currency_code" completeMethod="completeProperty" property="code" />
 			<app:inputMultiAutoComplete id="name" value="#{currencySearchForm.nameSelector}" label="currency_name" completeMethod="completeProperty" property="name" />

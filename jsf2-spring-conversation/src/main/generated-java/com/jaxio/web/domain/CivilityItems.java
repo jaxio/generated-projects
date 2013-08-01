@@ -19,14 +19,14 @@ import javax.inject.Singleton;
 import com.jaxio.domain.Civility;
 
 /**
- * Helper to support the h:selectOneRadio and h:selectOneMenu for Civility.
+ * Helper to support the <code>h:selectOneRadio</code> and <code>h:selectOneMenu</code> for {@link Civility}
  */
 @Named
 @Singleton
 public class CivilityItems {
 
     /**
-     * Returns a list of SelectItem/Civility ready to use in a h:selectOneRadio, h:selectOneMenu or p:selectManyCheckbox tags
+     * Returns a list of {@link SelectItem}/{@link Civility} ready to use in a <code>h:selectOneRadio</code>, <code>h:selectOneMenu</code> or <code>p:selectManyCheckbox</code> tags
      */
     public List<SelectItem> getList() {
         List<SelectItem> result = newArrayList();

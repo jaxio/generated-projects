@@ -68,7 +68,11 @@ public abstract class GenericToOneAssociation<E extends Identifiable<PK>, PK ext
 
         @Override
         protected void onSelected(E e) {
-            checkPermission(permission.canSelect(e));
+            if (!permission.canSelect(e)) {
+                messageUtil.error("error_action_denied");
+                return;
+            }
+
             set(e);
             messageUtil.infoEntity("status_selected_ok", get());
         }
@@ -83,7 +87,11 @@ public abstract class GenericToOneAssociation<E extends Identifiable<PK>, PK ext
 
         @Override
         protected void onOk(E e) {
-            checkPermission(permission.canCreate());
+            if (!permission.canCreate()) {
+                messageUtil.error("error_action_denied");
+                return;
+            }
+
             set(e);
             messageUtil.infoEntity("status_selected_new_ok", e);
         }
@@ -102,10 +110,4 @@ public abstract class GenericToOneAssociation<E extends Identifiable<PK>, PK ext
             messageUtil.infoEntity("status_edited_ok", e);
         }
     };
-
-    protected void checkPermission(boolean check) {
-        if (!check) {
-            throw new IllegalStateException();
-        }
-    }
 }

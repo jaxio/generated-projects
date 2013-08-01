@@ -13,9 +13,7 @@
 			sizeLimit="10000000"
 			allowTypes="/(\.|\/)(xml|zip|tgz|html|gif|jpg|jpeg|png|txt|doc|docx|rtf|ppt|pptx|pdf|epub|key|xls|xlsx|number|pages)$/"
 			rendered="#{!readonly}" />
-		<h:commandLink
-   			rendered="#{not empty stream}"
-   			value="#{empty object[filename] ? resourcesUtil.getProperty('download') : object[filename]}" disabled="#{not object.idSet}"><p:fileDownload value="#{stream}" /></h:commandLink>
+		<app:outputFile filename="#{object[filename]}" stream="#{stream}" />
 		<h:outputText rendered="#{empty stream}" value="#{resourcesUtil.getProperty('null_file_value')}" />
 		<p:tooltip for="#{id}" value="#{tooltip}" showEffect="slide" rendered="#{not empty tooltip}"/>
 	</h:panelGroup>

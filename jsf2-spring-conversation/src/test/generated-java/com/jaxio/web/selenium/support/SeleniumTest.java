@@ -8,28 +8,64 @@
  */
 package com.jaxio.web.selenium.support;
 
+import java.util.concurrent.TimeUnit;
+
+import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.BeforeClass;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.WebDriver;
 
 import com.jaxio.web.selenium.page.AnonymousHomePage;
 import com.jaxio.web.selenium.page.LoggedHomePage;
 import com.jaxio.web.selenium.page.LoginPage;
 
 public abstract class SeleniumTest {
-    @Rule
-    public WebClientRule webClientRule = new WebClientRule(this);
     protected WebClient webClient;
     protected LoginPage loginPage;
     protected AnonymousHomePage anonymousHomePage;
     protected LoggedHomePage loggedHomePage;
+    protected static WebDriver webDriver;
+    public static final String WEBDRIVER_PROPERTY = "selenium.webdriver";
+    public static final String BASE_URL_PROPERTY = "selenium.baseurl";
+    public static final String DEFAULT_BASE_URL = "http://localhost:8080/appli";
+
+    @BeforeClass
+    public static void setupBrowser() {
+        webDriver = buildDriver();
+        webDriver.manage().timeouts().implicitlyWait(8, TimeUnit.SECONDS);
+        webDriver.manage().window().setSize(new Dimension(1280, 1024));
+    }
+
+    private static WebDriver buildDriver() {
+        String webDriverName = System.getProperty(WEBDRIVER_PROPERTY, BrowserDriver.Firefox.name());
+        return BrowserDriver.valueOf(webDriverName).buildWebDriver();
+    }
+
+    protected String getBaseUrl() {
+        return System.getProperty(BASE_URL_PROPERTY, DEFAULT_BASE_URL);
+    }
 
     @Before
-    public void setup() {
-        webClient = webClientRule.getWebClient();
+    public void setupTest() {
+        webClient = new WebClient(webDriver, this);
+        webDriver.manage().deleteAllCookies();
+        webDriver.get(getBaseUrl());
+    }
+
+    @AfterClass
+    public static void closeBrowser() {
+        webDriver.close();
+        webDriver.quit();
+    }
+
+    public void page(String relative) {
+        webClient.step("Requesting url " + relative);
+        webDriver.get(getBaseUrl() + relative);
     }
 
     protected void englishHomePage() {
-        webClient.page("/home.faces?locale=en");
+        page("/home.faces?locale=en");
         webClient.waitUntilTextIsPresent("Please login first in order to access the application content.");
     }
 

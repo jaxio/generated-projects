@@ -9,7 +9,7 @@
 package com.jaxio.web.selenium.page.account;
 
 import com.jaxio.web.selenium.support.Page;
-import com.jaxio.web.selenium.support.elements.CustomElement;
+import com.jaxio.web.selenium.support.elements.CustomWebElement;
 import com.jaxio.web.selenium.support.elements.EditAction;
 import com.jaxio.web.selenium.support.elements.EntityAction;
 import com.jaxio.web.selenium.support.elements.ManyToOne;
@@ -20,13 +20,13 @@ import com.jaxio.web.selenium.support.elements.Tab;
 
 @Page
 public class AccountEdit {
-    public EditAction edit;
+    public EditAction action;
     public Messages messages;
     public EntityAction entity;
     public AccountEditForm form;
     public AccountEditTabs tabs;
 
-    public static class AccountEditForm extends CustomElement {
+    public static class AccountEditForm extends CustomWebElement {
         public StringInput accountNumber = new StringInput("form:accountNumber");
         public StringInput name = new StringInput("form:name");
 
@@ -35,7 +35,7 @@ public class AccountEdit {
         public ManyToOne customer = new ManyToOne("form:customer");
     };
 
-    public static class AccountEditTabs extends CustomElement {
+    public static class AccountEditTabs extends CustomWebElement {
         public Tab transactions = new Tab("transaction", "transactions");
     };
 }

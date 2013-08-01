@@ -4,7 +4,7 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/security/UserDetailsServiceImpl.p.vm.java
+ * Template pack-backend-jpa:src/main/java/security/UserDetailsServiceImpl.p.vm.java
  */
 package com.jaxio.security;
 
@@ -31,7 +31,9 @@ import com.jaxio.domain.User;
 import com.jaxio.repository.UserRepository;
 
 /**
- * An implementation of Spring Security's UserDetailsService.
+ * An implementation of Spring Security's {@link UserDetailsService}.
+ * 
+ * @see http://static.springsource.org/spring-security/site/reference.html
  */
 @Singleton
 @Named("userDetailsService")
@@ -47,12 +49,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     /**
-     * Retrieve an account depending on its login this method is not case sensitive.<br>
-     * use <code>obtainAccount</code> to match the login to either email, login or whatever is your login logic
+     * Retrieve an account depending on its login this method is not case sensitive.
      *
-     * @param username the user's login
-     * @return a Spring Security userdetails object that matches the login
-     * @see #obtainAccount(String)
+     * @param username the user's username
+     * @return a Spring Security userdetails object that matches the username
      * @throws UsernameNotFoundException when the user could not be found
      * @throws DataAccessException when an error occurred while retrieving the account
      */
@@ -62,7 +62,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (username == null || username.trim().isEmpty()) {
             throw new UsernameNotFoundException("Empty username");
         }
-
         log.debug("Security verification for user '{}'", username);
 
         User account = userRepository.getByUsername(username);
@@ -83,11 +82,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private Collection<GrantedAuthority> toGrantedAuthorities(List<String> roles) {
         List<GrantedAuthority> result = newArrayList();
-
         for (String role : roles) {
             result.add(new SimpleGrantedAuthority(role));
         }
-
         return result;
     }
 }

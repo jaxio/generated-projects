@@ -16,7 +16,7 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-public class Table extends CustomElement {
+public class Table extends CustomWebElement {
     public Paginator paginator;
 
     public void edit(String value) {
@@ -25,6 +25,10 @@ public class Table extends CustomElement {
 
     public void view(String value) {
         webClient.clickLinkTitle("View " + value);
+    }
+
+    public void select(String value) {
+        webClient.clickLinkTitle("Select " + value);
     }
 
     public void delete(String value) {
@@ -43,10 +47,6 @@ public class Table extends CustomElement {
         webClient.waitUntilInvisible(noButton);
     }
 
-    public void select(String value) {
-        webClient.clickLinkTitle("Select " + value);
-    }
-
     public void hasText(String... values) {
         for (String value : values) {
             webClient.waitUntilTextIsPresent(value);
@@ -58,22 +58,22 @@ public class Table extends CustomElement {
     }
 
     public void editLine(int line) {
-        clickLineWithIcon(line, "iconEdit");
+        clickNthLineWithIcon(line, "iconEdit");
     }
 
     public void selectLine(int line) {
-        clickLineWithIcon(line, "iconSelect");
+        clickNthLineWithIcon(line, "iconSelect");
     }
 
     public void viewLine(int line) {
-        clickLineWithIcon(line, "iconView");
+        clickNthLineWithIcon(line, "iconView");
     }
 
     public void deleteLine(int line) {
-        clickLineWithIcon(line, "iconDelete");
+        clickNthLineWithIcon(line, "iconDelete");
     }
 
-    private void clickLineWithIcon(int line, String icon) {
+    private void clickNthLineWithIcon(int line, String icon) {
         String xpath = "//div[@id='form:searchResults']//table/tbody/tr[" + line + "]/td[contains(@class,'actions-column')]//div[contains(@class,'" + icon
                 + "')]";
         webClient.click(By.xpath(xpath));

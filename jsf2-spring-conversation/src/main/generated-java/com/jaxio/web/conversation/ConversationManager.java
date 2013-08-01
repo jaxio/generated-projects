@@ -197,7 +197,7 @@ public class ConversationManager implements ApplicationContextAware {
      * Holds the current user's conversations.
      * Note: When calling this method, you must be sure that the FacesContext is present. For example, FacesContext is not present in ConversationFilter.
      */
-    Map<String, Conversation> conversationMap() {
+    public Map<String, Conversation> conversationMap() {
         @SuppressWarnings("unchecked")
         Map<String, Conversation> map = (Map<String, Conversation>) sessionMap().get(CONVERSATION_MAP);
         if (map == null) {

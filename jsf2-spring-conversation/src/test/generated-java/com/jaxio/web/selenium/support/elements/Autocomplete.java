@@ -16,22 +16,23 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import com.palominolabs.xpath.XPathUtils;
-
-public class Autocomplete extends CustomElement {
-    private final String id;
+public class Autocomplete extends ByCustomWebElement {
     private final By byInput;
+    private final String xPathId;
+    private final String xPathIdPanel;
 
     public Autocomplete(String id) {
-        this.id = id;
+        super(id);
         this.byInput = By.id(id + "_input");
+        this.xPathId = getXPathString(id);
+        this.xPathIdPanel = getXPathString(id + "_panel");
     }
 
     public List<String> autocompleteValues(String match) {
         webClient.fill(byInput, match);
         waitForCompletionPanel();
         List<String> ret = newArrayList();
-        for (WebElement webElement : webClient.findAll(By.xpath("//div[@id=" + XPathUtils.getXPathString(id + "_panel") + "]/*/li"))) {
+        for (WebElement webElement : webClient.findAll(By.xpath("//div[@id=" + xPathIdPanel + "]/*/li"))) {
             ret.add(webElement.getText());
         }
         webClient.find(byInput).clear();
@@ -46,27 +47,26 @@ public class Autocomplete extends CustomElement {
         webClient.message("Autocomplete " + text + " and select " + match);
         webClient.fill(byInput, text);
         waitForCompletionPanel();
-        String matchedLi = "//div[@id=" + getXPathString(id + "_panel") + "]/ul/li[@data-item-label=" + XPathUtils.getXPathString(match) + "]";
+        String matchedLi = "//div[@id=" + xPathIdPanel + "]/ul/li[@data-item-label=" + getXPathString(match) + "]";
         webClient.click(By.xpath(matchedLi));
     }
 
     private void waitForCompletionPanel() {
-        webClient.waitUntilDisplayed(By.xpath("//div[@id=" + getXPathString(id + "_panel") + "]"));
-        webClient.waitUntilDisplayed(By.xpath("//div[@id=" + getXPathString(id + "_panel") + "]/ul"));
+        webClient.waitUntilDisplayed(By.xpath("//div[@id=" + xPathIdPanel + "]"));
+        webClient.waitUntilDisplayed(By.xpath("//div[@id=" + xPathIdPanel + "]/ul"));
     }
 
     public void delete(String value) {
         if (!values().contains(value)) {
             return;
         }
-        String xpath = "//div[@id=" + getXPathString(id) + "]//span[@class='ui-autocomplete-token-label' and text()=" + getXPathString(value)
+        String xpath = "//div[@id=" + xPathId + "]//span[@class='ui-autocomplete-token-label' and text()=" + getXPathString(value)
                 + "]/../span[@class='ui-autocomplete-token-icon ui-icon ui-icon-close']";
-        By xpath2 = By.xpath(xpath);
-        for (WebElement webElement : webClient.findAll(xpath2)) {
+        for (WebElement webElement : webClient.findAll(By.xpath(xpath))) {
             webElement.click();
         }
 
-        String stillInContainer = "//div[@id=" + getXPathString(id)
+        String stillInContainer = "//div[@id=" + xPathId
                 + "]/ul[contains(@class,'ui-autocomplete-multiple-container')]/li/span[@class='ui-autocomplete-token-label' and text()="
                 + getXPathString(value) + "]";
         webClient.waitUntilRemoved(By.xpath(stillInContainer));
@@ -74,7 +74,7 @@ public class Autocomplete extends CustomElement {
 
     public List<String> values() {
         List<String> ret = newArrayList();
-        String spanValues = "//div[@id=" + getXPathString(id)
+        String spanValues = "//div[@id=" + xPathId
                 + "]/ul[contains(@class,'ui-autocomplete-multiple-container')]/li/span[@class='ui-autocomplete-token-label']";
         for (WebElement webElement : webClient.findAllNow(By.xpath(spanValues))) {
             ret.add(webElement.getText());

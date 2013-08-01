@@ -8,24 +8,24 @@
  */
 package com.jaxio.web.domain;
 
-import static com.jaxio.dao.support.EntitySelector.newEntitySelector;
-import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
-import static com.jaxio.dao.support.Ranges.RangeBigDecimal.newRangeBigDecimal;
-import static com.jaxio.dao.support.Ranges.RangeLocalDate.newRangeLocalDate;
+import static com.jaxio.repository.support.EntitySelector.newEntitySelector;
+import static com.jaxio.repository.support.PropertySelector.newPropertySelector;
+import static com.jaxio.repository.support.Ranges.RangeBigDecimal.newRangeBigDecimal;
+import static com.jaxio.repository.support.Ranges.RangeLocalDate.newRangeLocalDate;
 
 import java.math.BigDecimal;
 
 import javax.inject.Named;
 
-import com.jaxio.dao.support.EntitySelector;
-import com.jaxio.dao.support.PropertySelector;
-import com.jaxio.dao.support.Ranges.RangeBigDecimal;
-import com.jaxio.dao.support.Ranges.RangeLocalDate;
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Currency;
 import com.jaxio.domain.Transaction;
 import com.jaxio.domain.Transaction_;
+import com.jaxio.repository.support.EntitySelector;
+import com.jaxio.repository.support.PropertySelector;
+import com.jaxio.repository.support.Ranges.RangeBigDecimal;
+import com.jaxio.repository.support.Ranges.RangeLocalDate;
+import com.jaxio.repository.support.SearchParameters;
 import com.jaxio.web.domain.support.GenericSearchForm;
 import com.jaxio.web.faces.ConversationContextScoped;
 
@@ -37,7 +37,6 @@ import com.jaxio.web.faces.ConversationContextScoped;
 @ConversationContextScoped
 public class TransactionSearchForm extends GenericSearchForm<Transaction, Integer, TransactionSearchForm> {
     private static final long serialVersionUID = 1L;
-
     protected Transaction transaction = new Transaction();
     protected RangeBigDecimal<Transaction> amountRange = newRangeBigDecimal(Transaction_.amount);
     protected RangeLocalDate<Transaction> transactionDateRange = newRangeLocalDate(Transaction_.transactionDate);
@@ -63,15 +62,12 @@ public class TransactionSearchForm extends GenericSearchForm<Transaction, Intege
 
     @Override
     public SearchParameters toSearchParameters() {
-        return new SearchParameters() //
-                .limitBroadSearch() //
-                .anywhere() //
-                .caseInsensitive() //
-                .leftJoin(Transaction_.account) //
-                .range(amountRange, transactionDateRange, valueDateRange) //
-                .property(amountSelector, descriptionSelector) //
-                .entity(currencySelector, accountSelector) //
-        ;
+        SearchParameters sp = searchParameters();
+        sp.leftJoin(Transaction_.account);
+        sp.range(amountRange, transactionDateRange, valueDateRange);
+        sp.property(amountSelector, descriptionSelector);
+        sp.entity(currencySelector, accountSelector);
+        return sp;
     }
 
     @Override

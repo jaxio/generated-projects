@@ -17,8 +17,7 @@ import com.jaxio.repository.CurrencyRepository;
 import com.jaxio.web.converter.support.GenericJsfConverter;
 
 /**
- * JSF converter for {@link Currency}.
- * @see GenericJsfConverter
+ * {@link GenericJsfConverter} for {@link Currency}.
  */
 @Named
 @Singleton

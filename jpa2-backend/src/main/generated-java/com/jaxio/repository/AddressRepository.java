@@ -4,30 +4,25 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/repository/Repository.e.vm.java
+ * Template pack-backend-jpa:src/main/java/repository/Repository.e.vm.java
  */
 package com.jaxio.repository;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.jaxio.dao.AddressDao;
 import com.jaxio.domain.Address;
 import com.jaxio.repository.support.GenericRepository;
 
+/**
+ * {@link GenericRepository} for {@link Address} 
+ */
 @Named
 @Singleton
 public class AddressRepository extends GenericRepository<Address, Integer> {
 
-    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
-    protected AddressRepository() {
-        super();
-    }
-
-    @Inject
-    public AddressRepository(AddressDao addressDao) {
-        super(addressDao);
+    public AddressRepository() {
+        super(Address.class);
     }
 
     @Override
@@ -37,8 +32,6 @@ public class AddressRepository extends GenericRepository<Address, Integer> {
 
     @Override
     public Address getNewWithDefaults() {
-        Address result = getNew();
-        result.initDefaultValues();
-        return result;
+        return getNew().withDefaults();
     }
 }

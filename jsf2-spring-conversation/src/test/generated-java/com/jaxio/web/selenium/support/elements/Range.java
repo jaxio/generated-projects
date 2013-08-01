@@ -8,7 +8,7 @@
  */
 package com.jaxio.web.selenium.support.elements;
 
-public abstract class Range<T> extends CustomElement {
+public abstract class Range<T> extends CustomWebElement {
     public abstract void from(T value);
 
     public abstract void to(T value);

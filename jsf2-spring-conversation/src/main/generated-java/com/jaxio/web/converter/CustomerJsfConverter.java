@@ -17,8 +17,7 @@ import com.jaxio.repository.CustomerRepository;
 import com.jaxio.web.converter.support.GenericJsfConverter;
 
 /**
- * JSF converter for {@link Customer}.
- * @see GenericJsfConverter
+ * {@link GenericJsfConverter} for {@link Customer}.
  */
 @Named
 @Singleton

@@ -9,7 +9,7 @@
 package com.jaxio.web.selenium.page.customer;
 
 import com.jaxio.web.selenium.support.Page;
-import com.jaxio.web.selenium.support.elements.CustomElement;
+import com.jaxio.web.selenium.support.elements.CustomWebElement;
 import com.jaxio.web.selenium.support.elements.EditAction;
 import com.jaxio.web.selenium.support.elements.EntityAction;
 import com.jaxio.web.selenium.support.elements.Messages;
@@ -20,20 +20,20 @@ import com.jaxio.web.selenium.support.elements.Upload;
 
 @Page
 public class CustomerEdit {
-    public EditAction edit;
+    public EditAction action;
     public Messages messages;
     public EntityAction entity;
     public CustomerEditForm form;
     public CustomerEditTabs tabs;
 
-    public static class CustomerEditForm extends CustomElement {
+    public static class CustomerEditForm extends CustomWebElement {
         public StringInput companyName = new StringInput("form:companyName");
         public Upload contractBinary = new Upload("form:contractBinary");
 
         public NoInverseManyToOne address = new NoInverseManyToOne("form:address");
     };
 
-    public static class CustomerEditTabs extends CustomElement {
+    public static class CustomerEditTabs extends CustomWebElement {
         public Tab accounts = new Tab("account", "accounts");
     };
 }

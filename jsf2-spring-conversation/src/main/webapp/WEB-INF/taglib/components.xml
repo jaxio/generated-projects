@@ -176,13 +176,33 @@
 		<source>output/conversationDebug.xhtml</source>
 	</tag>
 	<tag>
-		<tag-name>outputLabel</tag-name>
-		<source>output/outputLabel.xhtml</source>
+		<tag-name>outputDate</tag-name>
+		<source>output/outputDate.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>outputDateTime</tag-name>
+		<source>output/outputDateTime.xhtml</source>
 	</tag>
 	<tag>
 		<tag-name>outputFile</tag-name>
 		<source>output/outputFile.xhtml</source>
 	</tag>
+	<tag>
+		<tag-name>outputLabel</tag-name>
+		<source>output/outputLabel.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>outputLocalDate</tag-name>
+		<source>output/outputLocalDate.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>outputLocalDateTime</tag-name>
+		<source>output/outputLocalDateTime.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>outputTime</tag-name>
+		<source>output/outputTime.xhtml</source>
+	</tag>	
 	<tag>
 		<tag-name>print</tag-name>
 		<source>output/print.xhtml</source>

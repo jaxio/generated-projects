@@ -10,15 +10,15 @@ package com.jaxio.web.selenium.support.elements;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.palominolabs.xpath.XPathUtils.getXPathString;
+import static org.apache.commons.lang.WordUtils.capitalize;
 
 import java.util.List;
 
-import org.apache.commons.lang.WordUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-public class Tab extends CustomElement {
-    String idPlural;
+public class Tab extends ByCustomWebElement {
+    private final String idPlural;
 
     public Tab(String id, String idPlural) {
         super(id);
@@ -72,13 +72,13 @@ public class Tab extends CustomElement {
     }
 
     public void confirmRemove() {
-        By yesButton = By.name("form:askForRemove" + WordUtils.capitalize(id) + "DialogYes");
+        By yesButton = By.name("form:askForRemove" + capitalize(id) + "DialogYes");
         webClient.click(yesButton);
         webClient.waitUntilInvisible(yesButton);
     }
 
     public void cancelRemove() {
-        By noButton = By.name("form:askForRemove" + WordUtils.capitalize(id) + "DialogNo");
+        By noButton = By.name("form:askForRemove" + capitalize(id) + "DialogNo");
         webClient.click(noButton);
         webClient.waitUntilInvisible(noButton);
     }

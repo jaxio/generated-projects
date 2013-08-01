@@ -28,9 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jaxio.context.LogContext;
-import com.jaxio.context.UserContext;
-
 /**
  * Filter responsible for creating/resuming {@link Conversation}.
  * By convention, the conversation id and the context id are carried by the _cid parameter.
@@ -47,11 +44,6 @@ public class ConversationFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-
-        // set up log context for this thread so these information can be used by the logging framework
-        String username = UserContext.getUsername();
-        LogContext.setLogin(username != null ? username : "no username");
-        LogContext.setSessionId(request.getSession().getId());
 
         String cid = getConversationId(request);
 

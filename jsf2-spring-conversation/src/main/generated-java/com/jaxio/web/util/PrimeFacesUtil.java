@@ -20,9 +20,9 @@ public class PrimeFacesUtil {
     /**
      * Tells the client to update the search results region with the passed text.
      */
-    public static void updateSearchResultsRegion(String text) {
+    public static void updateSearchResultsRegion(String text, int count) {
         if (RequestContext.getCurrentInstance() != null) {
-            RequestContext.getCurrentInstance().execute("APP.updateSearchResultsRegion(\"" + text + "\")");
+            RequestContext.getCurrentInstance().execute("APP.updateSearchResultsRegion(\"" + text + "\"," + count + ")");
         }
     }
 

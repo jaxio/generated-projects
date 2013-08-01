@@ -19,7 +19,7 @@ import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.SavedSearchPermission;
 
 /**
- * Stateless controller for {@link SavedSearch} conversation start. 
+ * Stateless controller for {@link SavedSearch} conversation start.
  */
 @Named
 @Singleton

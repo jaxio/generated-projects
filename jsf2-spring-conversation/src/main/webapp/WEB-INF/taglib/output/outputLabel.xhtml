@@ -2,6 +2,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" 
 	xmlns:h="http://java.sun.com/jsf/html">
 	<h:panelGrid rendered="#{empty rendered ? true : rendered}">
-		<label for="#{for}" class="#{(required and not (print or readonly)) ? 'required' : ''}"> #{resourcesUtil.getProperty(value)}#{(required and not (print or readonly))  ? msg.label_required_suffix : ''}</label>
+		<label for="#{for}" class="#{(required and not (print or readonly)) ? 'required' : ''}#{empty StyleClass ? '' : ' '}#{styleClass}"> #{resourcesUtil.getProperty(value)}#{(required and not (print or readonly))  ? msg.label_required_suffix : ''}</label>
 	</h:panelGrid>
 </ui:composition>

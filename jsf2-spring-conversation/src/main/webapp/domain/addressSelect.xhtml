@@ -15,9 +15,14 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search title="address_search" model="#{addressLazyDataModel}" searchForm="#{addressSearchForm}" controller="#{addressController}" permission="#{addressPermission}" savedSearch="true">
+	<app:search title="address_search" model="#{addressLazyDataModel}" searchForm="#{addressSearchForm}"
+		controller="#{addressController}" permission="#{addressPermission}" savedSearch="true" fullText="true">
+		<ui:define name="fullTextFilters">
+            <app:inputMultiAutoComplete id="fullTextQuery" value="#{addressSearchForm.termsOnAll}" label="search_full_text_all" completeMethod="completeSame" />
+			<app:inputMultiAutoComplete id="cityTerm" value="#{addressSearchForm.cityTermSelector}" label="address_city" completeMethod="completeSame" />
+			<app:inputMultiAutoComplete id="countryTerm" value="#{addressSearchForm.countryTermSelector}" label="address_country" completeMethod="completeSame" />
+		</ui:define>
 		<ui:define name="filters">
-			<app:input id="fullTextQuery" value="#{addressSearchForm.term}" label="search_full_text" />
 			<app:inputMultiAutoComplete id="street" value="#{addressSearchForm.streetSelector}" label="address_street" completeMethod="completeProperty" property="street" />
 			<app:inputMultiAutoComplete id="zipCode" value="#{addressSearchForm.zipCodeSelector}" label="address_zipCode" completeMethod="completeProperty" property="zipCode" />
 			<app:inputMultiAutoComplete id="city" value="#{addressSearchForm.citySelector}" label="address_city" completeMethod="completeProperty" property="city" />

@@ -16,13 +16,16 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-public class ListBox extends CustomElement {
+public class ListBox extends ByCustomWebElement {
+    private final String xPathId;
+
     public ListBox(String id) {
         super(id);
+        this.xPathId = getXPathString(id);
     }
 
     private List<WebElement> getOptions() {
-        String xpath = "//select[@id=" + getXPathString(id) + "]/option";
+        String xpath = "//select[@id=" + xPathId + "]/option";
         return webClient.findAll(By.xpath(xpath));
 
     }
@@ -83,14 +86,14 @@ public class ListBox extends CustomElement {
 
     public void text(String... texts) {
         for (String text : texts) {
-            String xpath = "//select[@id=" + getXPathString(id) + "]/option[contains(text(), " + getXPathString(text) + ")]";
+            String xpath = "//select[@id=" + xPathId + "]/option[contains(text(), " + getXPathString(text) + ")]";
             webClient.click(By.xpath(xpath));
         }
     }
 
     public void value(String... values) {
         for (String value : values) {
-            By xpath = By.xpath("//select[@id=" + getXPathString(id) + "]/option[contains(@value, " + getXPathString(value) + ")]");
+            By xpath = By.xpath("//select[@id=" + xPathId + "]/option[contains(@value, " + getXPathString(value) + ")]");
             if (!webClient.find(xpath).isSelected()) {
                 webClient.click(xpath);
             }

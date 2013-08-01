@@ -10,7 +10,7 @@ package com.jaxio.web.selenium.page.currency;
 
 import com.jaxio.web.selenium.support.Page;
 import com.jaxio.web.selenium.support.elements.Autocomplete;
-import com.jaxio.web.selenium.support.elements.CustomElement;
+import com.jaxio.web.selenium.support.elements.CustomWebElement;
 import com.jaxio.web.selenium.support.elements.EntityAction;
 import com.jaxio.web.selenium.support.elements.Messages;
 import com.jaxio.web.selenium.support.elements.OrderBy;
@@ -26,7 +26,7 @@ public class CurrencySearch {
     public CurrencySearchOrders orders;
     public CurrencySearchForm form;
 
-    public static class CurrencySearchOrders extends CustomElement {
+    public static class CurrencySearchOrders extends CustomWebElement {
         public OrderBy code = new OrderBy("currency_code");
         public OrderBy name = new OrderBy("currency_name");
         public OrderBy decimalCount = new OrderBy("currency_decimalCount");

@@ -8,6 +8,8 @@
  */
 package com.jaxio.web.domain.support;
 
+import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -113,33 +115,36 @@ public abstract class GenericToManyAssociation<E extends Identifiable<PK>, PK ex
     }
 
     /**
-     * This datatable row selection listener invokes the {@link #view()} action and force the navigation to the returned implicit view.
+     * This datatable row selection listener invokes the {@link #edit()} or {@link #view()} action depending on the context
+     * and force the navigation to the returned implicit view.
      * Use it from a p:ajax event="rowSelect".
      */
-    public void onRowSelectView(SelectEvent event) {
-        Faces.navigate(view());
-    }
-
-    /**
-     * This datatable row selection listener invokes the {@link #edit()} action and force the navigation to the returned implicit view.
-     * Use it from a p:ajax event="rowSelect".
-     */
-    public void onRowSelectEdit(SelectEvent event) {
-        Faces.navigate(edit());
+    public void onRowSelect(SelectEvent event) {
+        if (getCurrentConversation().getCurrentContext().isReadOnly()) {
+            Faces.navigate(view());
+        } else if (permission.canEdit(dataModel.getSelectedRow())) {
+            Faces.navigate(edit());
+        } else {
+            Faces.navigate(view());
+        }
     }
 
     /**
      * Remove the entity corresponding to the selected row from the x-to-many association.
      */
     public void remove() {
-        checkPermission(permission.canDelete(dataModel.getSelectedRow()));
+        if (!permission.canDelete(dataModel.getSelectedRow())) {
+            messageUtil.error("error_action_denied");
+            return;
+        }
+
         remove(dataModel.getSelectedRow());
         messageUtil.infoEntity("status_removed_ok", dataModel.getSelectedRow());
     }
 
     /**
      * Action to create a new entity. The entity is not added a priori to the x-to-many association. It is added
-     * if the 'ok' callback is invoked. 
+     * if the <code>ok</code> callback is invoked. 
      * @return the implicit jsf view.
      */
     public String add() {
@@ -169,16 +174,14 @@ public abstract class GenericToManyAssociation<E extends Identifiable<PK>, PK ex
 
         @Override
         protected void onSelected(E e) {
-            checkPermission(permission.canSelect(e));
+            if (!permission.canSelect(e)) {
+                messageUtil.error("error_action_denied");
+                return;
+            }
+
             remove(e); // in case it was already selected.
             add(e);
             messageUtil.infoEntity("status_added_existing_ok", e);
         }
     };
-
-    protected void checkPermission(boolean check) {
-        if (!check) {
-            throw new IllegalStateException();
-        }
-    }
 }

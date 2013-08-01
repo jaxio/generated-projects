@@ -4,30 +4,28 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/repository/Repository.e.vm.java
+ * Template pack-backend-jpa:src/main/java/repository/Repository.e.vm.java
  */
 package com.jaxio.repository;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.jaxio.dao.SavedSearchDao;
+import org.hibernate.LazyInitializationException;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.jaxio.domain.SavedSearch;
 import com.jaxio.repository.support.GenericRepository;
 
+/**
+ * {@link GenericRepository} for {@link SavedSearch} 
+ */
 @Named
 @Singleton
 public class SavedSearchRepository extends GenericRepository<SavedSearch, Integer> {
 
-    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
-    protected SavedSearchRepository() {
-        super();
-    }
-
-    @Inject
-    public SavedSearchRepository(SavedSearchDao savedSearchDao) {
-        super(savedSearchDao);
+    public SavedSearchRepository() {
+        super(SavedSearch.class);
     }
 
     @Override
@@ -37,8 +35,22 @@ public class SavedSearchRepository extends GenericRepository<SavedSearch, Intege
 
     @Override
     public SavedSearch getNewWithDefaults() {
-        SavedSearch result = getNew();
-        result.initDefaultValues();
-        return result;
+        return getNew().withDefaults();
+    }
+
+    /**
+     * Safe way to load the formContent content. 
+     */
+    @Transactional(readOnly = true)
+    public byte[] getFormContent(SavedSearch savedSearch) {
+        if (!savedSearch.isIdSet()) {
+            return savedSearch.getFormContent();
+        }
+
+        try {
+            return savedSearch.getFormContent();
+        } catch (LazyInitializationException lie) { // _HACK_ as we still rely on hibernate here
+            return get(savedSearch).getFormContent();
+        }
     }
 }

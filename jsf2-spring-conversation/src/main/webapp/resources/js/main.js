@@ -92,8 +92,9 @@ APP.focusTo = function(jsfId) {
 // Aria live region related
 //---------------------------------------
 /* todo: localization */
-APP.updateSearchResultsRegion = function(text) {
+APP.updateSearchResultsRegion = function(text, nbResults) {
 	jQuery("#searchResultsRegion").text(text);
+	jQuery("#searchResultsRegion").attr("nb-results", nbResults);
 };	
 
 //-------------------------------------

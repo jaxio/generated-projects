@@ -4,7 +4,7 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/printer/Printer.e.vm.java
+ * Template pack-backend-jpa:src/main/java/printer/Printer.e.vm.java
  */
 package com.jaxio.printer;
 

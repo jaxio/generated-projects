@@ -12,7 +12,7 @@ import static com.palominolabs.xpath.XPathUtils.getXPathString;
 
 import org.openqa.selenium.By;
 
-public class ChooseEnum<T extends Enum<? extends Enum<?>>> extends CustomElement {
+public class ChooseEnum<T extends Enum<? extends Enum<?>>> extends ByCustomWebElement {
     public ChooseEnum(String id) {
         super(id);
     }

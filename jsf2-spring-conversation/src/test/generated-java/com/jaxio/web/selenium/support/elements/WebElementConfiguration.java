@@ -48,37 +48,38 @@ public class WebElementConfiguration {
         }
     }
 
-    private void setupCustomElements(Object object, WebClient webClient) throws Exception {
+    private void setupCustomWebElements(Object object, WebClient webClient) throws Exception {
         FieldDecorator fieldDecorator = new AnotherFieldDecorator(new DefaultElementLocatorFactory(webClient.webDriver));
-        setupCustomElementsForClass(object, object.getClass(), fieldDecorator, webClient);
+        setupCustomWebElementsForClass(object, object.getClass(), fieldDecorator, webClient);
     }
 
-    private void setupCustomElementsForClass(Object object, Class<?> clazz, FieldDecorator fieldDecorator, WebClient webClient) throws Exception {
+    private void setupCustomWebElementsForClass(Object object, Class<?> clazz, FieldDecorator fieldDecorator, WebClient webClient) throws Exception {
         for (Field field : clazz.getDeclaredFields()) {
-            if (CustomElement.class.isAssignableFrom(field.getType())) {
+            if (CustomWebElement.class.isAssignableFrom(field.getType())) {
                 field.setAccessible(true);
-                CustomElement customElement = (CustomElement) field.get(object);
-                if (customElement == null) {
-                    customElement = (CustomElement) field.getType().getConstructor().newInstance();
+                CustomWebElement customWebElement = (CustomWebElement) field.get(object);
+                if (customWebElement == null) {
+                    customWebElement = (CustomWebElement) field.getType().getConstructor().newInstance();
                 }
-                field.set(object, customElement);
+                field.set(object, customWebElement);
 
                 // if the custom element has itself WebElement , let's dot it again
-                // we do it before assignating the proxy as our default webElement has no @FindBy annotation 
-                PageFactory.initElements(new DefaultElementLocatorFactory(webClient.webDriver), customElement);
-                setupCustomElements(customElement, webClient);
+                // we do it before assigning the proxy as our default webElement has no @FindBy annotation 
+                PageFactory.initElements(new DefaultElementLocatorFactory(webClient.webDriver), customWebElement);
+                setupCustomWebElements(customWebElement, webClient);
 
-                customElement.webClient = webClient;
+                customWebElement.webClient = webClient;
             }
         }
         if (clazz.getSuperclass() != null) {
-            setupCustomElementsForClass(object, clazz.getSuperclass(), fieldDecorator, webClient);
+            setupCustomWebElementsForClass(object, clazz.getSuperclass(), fieldDecorator, webClient);
         }
     }
 
     private Object initPage(Field field, WebClient webClient) throws Exception {
         Object page = createPage(field, webClient);
-        setupCustomElements(page, webClient);
+        setupCustomWebElements(page, webClient);
+        buildPages(page, page.getClass(), webClient);
         injectWebClient(page, page.getClass(), webClient);
         return page;
     }

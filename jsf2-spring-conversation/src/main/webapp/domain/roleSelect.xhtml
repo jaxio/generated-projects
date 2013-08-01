@@ -15,9 +15,12 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
-	<app:search title="role_search" model="#{roleLazyDataModel}" searchForm="#{roleSearchForm}" controller="#{roleController}" permission="#{rolePermission}" savedSearch="true">
+	<app:search title="role_search" model="#{roleLazyDataModel}" searchForm="#{roleSearchForm}"
+		controller="#{roleController}" permission="#{rolePermission}" savedSearch="true" fullText="true">
+		<ui:define name="fullTextFilters">
+			<app:inputMultiAutoComplete id="roleNameTerm" value="#{roleSearchForm.roleNameTermSelector}" label="role_roleName" completeMethod="completeSame" />
+		</ui:define>
 		<ui:define name="filters">
-			<app:input id="fullTextQuery" value="#{roleSearchForm.term}" label="search_full_text" />
 			<app:inputMultiAutoComplete id="roleName" value="#{roleSearchForm.roleNameSelector}" label="role_roleName" completeMethod="completeProperty" property="roleName" />
 		</ui:define>
 		<ui:define name="result">

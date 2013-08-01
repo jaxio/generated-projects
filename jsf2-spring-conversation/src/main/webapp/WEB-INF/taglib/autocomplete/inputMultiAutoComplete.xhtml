@@ -4,7 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:app="http://springfuse.jaxio.com/app">
-	<app:outputLabel for="#{id}_input" value="#{label}" required="#{required}" rendered="#{rendered}"/>
+	<app:outputLabel for="#{id}_input" value="#{label}" required="#{required}" rendered="#{rendered}" styleClass="#{styleClass}" />
 	<h:panelGroup id="#{id}Grid" styleClass="aria-role-presentation" rendered="#{empty rendered ? true : rendered}">
 		<p:autoComplete id="#{id}" value="#{value.selected}" label="#{resourcesUtil.getProperty(label)}"
 			completeMethod="#{controller[(empty completeMethod) ? 'complete' : completeMethod]}"
@@ -12,6 +12,7 @@
 			itemValue="#{item}"
 			itemLabel="#{item}"
 			multiple="true"
+			styleClass="#{styleClass}"
 			forceSelection="false">
 			<f:attribute name="property" value="#{property}" />
 			<ui:insert/>

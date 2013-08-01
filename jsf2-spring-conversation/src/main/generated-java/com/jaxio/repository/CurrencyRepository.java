@@ -4,30 +4,25 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/repository/Repository.e.vm.java
+ * Template pack-backend-jpa:src/main/java/repository/Repository.e.vm.java
  */
 package com.jaxio.repository;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.jaxio.dao.CurrencyDao;
 import com.jaxio.domain.Currency;
 import com.jaxio.repository.support.GenericRepository;
 
+/**
+ * {@link GenericRepository} for {@link Currency} 
+ */
 @Named
 @Singleton
 public class CurrencyRepository extends GenericRepository<Currency, Integer> {
 
-    // required by cglib to create a proxy around the object as we are using the @Transactional annotation
-    protected CurrencyRepository() {
-        super();
-    }
-
-    @Inject
-    public CurrencyRepository(CurrencyDao currencyDao) {
-        super(currencyDao);
+    public CurrencyRepository() {
+        super(Currency.class);
     }
 
     @Override
@@ -37,8 +32,6 @@ public class CurrencyRepository extends GenericRepository<Currency, Integer> {
 
     @Override
     public Currency getNewWithDefaults() {
-        Currency result = getNew();
-        result.initDefaultValues();
-        return result;
+        return getNew().withDefaults();
     }
 }

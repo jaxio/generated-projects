@@ -12,16 +12,16 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Account_;
 import com.jaxio.printer.AccountPrinter;
 import com.jaxio.repository.AccountRepository;
+import com.jaxio.repository.support.SearchParameters;
 import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.AccountPermission;
 
 /**
- * Stateless controller for {@link Account} conversation start. 
+ * Stateless controller for {@link Account} conversation start.
  */
 @Named
 @Singleton

@@ -4,7 +4,7 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/printer/support/TypeAwarePrinter.p.vm.java
+ * Template pack-backend-jpa:src/main/java/printer/support/TypeAwarePrinter.p.vm.java
  */
 package com.jaxio.printer.support;
 
@@ -21,7 +21,7 @@ import javax.inject.Named;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 /**
- * Given the type of the object use the corresponding {@link GenericPrinter}, or use toString method.
+ * Given the type of the object use the corresponding {@link GenericPrinter}, or use {@link #toString()} method.
  */
 @Named("printer")
 public class TypeAwarePrinter {

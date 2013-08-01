@@ -17,8 +17,7 @@ import com.jaxio.repository.UserRepository;
 import com.jaxio.web.converter.support.GenericJsfConverter;
 
 /**
- * JSF converter for {@link User}.
- * @see GenericJsfConverter
+ * {@link GenericJsfConverter} for {@link User}.
  */
 @Named
 @Singleton

@@ -4,7 +4,7 @@
  * Want to purchase Celerio ? email us at info@jaxio.com
  * Follow us on twitter: @springfuse
  * Documentation: http://www.jaxio.com/documentation/celerio/
- * Template pack-backend-jpa:src/main/java/project/audit/AuditTemplate.p.vm.java
+ * Template pack-backend-jpa:src/main/java/audit/AuditTemplate.p.vm.java
  */
 package com.jaxio.audit;
 

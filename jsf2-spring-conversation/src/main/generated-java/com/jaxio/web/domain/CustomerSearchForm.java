@@ -8,17 +8,17 @@
  */
 package com.jaxio.web.domain;
 
-import static com.jaxio.dao.support.EntitySelector.newEntitySelector;
-import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
+import static com.jaxio.repository.support.EntitySelector.newEntitySelector;
+import static com.jaxio.repository.support.PropertySelector.newPropertySelector;
 
 import javax.inject.Named;
 
-import com.jaxio.dao.support.EntitySelector;
-import com.jaxio.dao.support.PropertySelector;
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Address;
 import com.jaxio.domain.Customer;
 import com.jaxio.domain.Customer_;
+import com.jaxio.repository.support.EntitySelector;
+import com.jaxio.repository.support.PropertySelector;
+import com.jaxio.repository.support.SearchParameters;
 import com.jaxio.web.domain.support.GenericSearchForm;
 import com.jaxio.web.faces.ConversationContextScoped;
 
@@ -30,7 +30,6 @@ import com.jaxio.web.faces.ConversationContextScoped;
 @ConversationContextScoped
 public class CustomerSearchForm extends GenericSearchForm<Customer, Integer, CustomerSearchForm> {
     private static final long serialVersionUID = 1L;
-
     protected Customer customer = new Customer();
     protected PropertySelector<Customer, String> companyNameSelector = newPropertySelector(Customer_.companyName);
     protected EntitySelector<Customer, Address, Integer> addressSelector = newEntitySelector(Customer_.address);
@@ -51,13 +50,10 @@ public class CustomerSearchForm extends GenericSearchForm<Customer, Integer, Cus
 
     @Override
     public SearchParameters toSearchParameters() {
-        return new SearchParameters() //
-                .limitBroadSearch() //
-                .anywhere() //
-                .caseInsensitive() //
-                .property(companyNameSelector) //
-                .entity(addressSelector) //
-        ;
+        SearchParameters sp = searchParameters();
+        sp.property(companyNameSelector);
+        sp.entity(addressSelector);
+        return sp;
     }
 
     @Override

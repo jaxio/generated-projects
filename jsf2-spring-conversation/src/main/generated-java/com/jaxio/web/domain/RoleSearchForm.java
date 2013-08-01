@@ -8,14 +8,15 @@
  */
 package com.jaxio.web.domain;
 
-import static com.jaxio.dao.support.PropertySelector.newPropertySelector;
+import static com.jaxio.repository.support.PropertySelector.newPropertySelector;
 
 import javax.inject.Named;
 
-import com.jaxio.dao.support.PropertySelector;
-import com.jaxio.dao.support.SearchParameters;
 import com.jaxio.domain.Role;
 import com.jaxio.domain.Role_;
+import com.jaxio.repository.support.PropertySelector;
+import com.jaxio.repository.support.SearchParameters;
+import com.jaxio.repository.support.TermSelector;
 import com.jaxio.web.domain.support.GenericSearchForm;
 import com.jaxio.web.faces.ConversationContextScoped;
 
@@ -28,6 +29,10 @@ import com.jaxio.web.faces.ConversationContextScoped;
 public class RoleSearchForm extends GenericSearchForm<Role, Integer, RoleSearchForm> {
     private static final long serialVersionUID = 1L;
 
+    // full text search (applied first)
+    protected TermSelector roleNameTermSelector = new TermSelector(Role_.roleName);
+
+    // classic search
     protected Role role = new Role();
     protected PropertySelector<Role, String> roleNameSelector = newPropertySelector(Role_.roleName);
 
@@ -47,20 +52,26 @@ public class RoleSearchForm extends GenericSearchForm<Role, Integer, RoleSearchF
 
     @Override
     public SearchParameters toSearchParameters() {
-        return new SearchParameters() //
-                .limitBroadSearch() //
-                .anywhere() //
-                .caseInsensitive() //
-                .term(term) //
-                .property(roleNameSelector) //
-        ;
+        SearchParameters sp = searchParameters();
+        // full text search
+        sp.addTerm(termsOnAll);
+        sp.addTerm(roleNameTermSelector);
+        // classic search
+        sp.property(roleNameSelector);
+        return sp;
     }
 
     @Override
     public void resetWithOther(RoleSearchForm other) {
         this.role = other.getRole();
-        this.term = other.getTerm();
+        this.termsOnAll = other.getTermsOnAll();
+        this.roleNameTermSelector = other.getRoleNameTermSelector();
         this.roleNameSelector = other.getRoleNameSelector();
+    }
+
+    // Term selectors    
+    public TermSelector getRoleNameTermSelector() {
+        return roleNameTermSelector;
     }
 
     // Property selectors

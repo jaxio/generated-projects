@@ -19,11 +19,11 @@ import javax.persistence.OptimisticLockException;
 
 import org.apache.commons.lang.WordUtils;
 
-import com.jaxio.dao.support.JpaUniqueUtil;
 import com.jaxio.domain.Identifiable;
 import com.jaxio.printer.support.TypeAwarePrinter;
 import com.jaxio.repository.support.EntityGraphLoader;
 import com.jaxio.repository.support.GenericRepository;
+import com.jaxio.repository.support.JpaUniqueUtil;
 import com.jaxio.util.ResourcesUtil;
 import com.jaxio.web.conversation.ConversationCallBack;
 import com.jaxio.web.conversation.ConversationContext;
@@ -192,14 +192,14 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
             return false;
         }
 
-        E saved = saveEntity(entity);
+        this.entity = saveEntity(entity);
 
         if (context().isNewEntity()) {
             // if for some reason, save is invoked again, no need to persist anymore.
             context().setIsNewEntity(false);
         }
 
-        messageUtil.infoEntity("status_saved_ok", saved);
+        messageUtil.infoEntity("status_saved_ok", this.entity);
         return true;
     }
 
@@ -217,12 +217,6 @@ public abstract class GenericEditForm<E extends Identifiable<PK>, PK extends Ser
             messageUtil.error(error);
         }
         return errors.isEmpty();
-    }
-
-    protected void checkPermission(boolean check) {
-        if (!check) {
-            throw new IllegalStateException();
-        }
     }
 
     protected String getLabelName() {

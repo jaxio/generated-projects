@@ -19,7 +19,7 @@ import com.jaxio.web.domain.support.GenericController;
 import com.jaxio.web.permission.TransactionPermission;
 
 /**
- * Stateless controller for {@link Transaction} conversation start. 
+ * Stateless controller for {@link Transaction} conversation start.
  */
 @Named
 @Singleton
