@@ -11,7 +11,6 @@ package com.jaxio.repository.support;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.jaxio.repository.support.JpaUtil.applyPagination;
-import static com.jaxio.repository.support.MetamodelUtil.toAttribute;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -502,14 +501,14 @@ public abstract class GenericRepository<E extends Identifiable<PK>, PK extends S
         List<SingularAttribute<?, ?>> ret = newArrayList();
         for (Method m : type.getMethods()) {
             if (m.getAnnotation(Field.class) != null) {
-                ret.add(toAttribute(BeanUtils.findPropertyForMethod(m).getName(), type));
+                ret.add(MetamodelUtil.toAttribute(BeanUtils.findPropertyForMethod(m).getName(), type));
             }
         }
         return ret;
     }
 
     public boolean isIndexed(String property) {
-        return indexedAttributes.contains(toAttribute(property, type));
+        return indexedAttributes.contains(MetamodelUtil.toAttribute(property, type));
     }
 
     // -----------------

@@ -18,8 +18,7 @@ import com.jaxio.web.domain.support.GenericExcelExporter;
 import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
- * View Helper to search {@link Currency}.
- * It exposes a {@link Currency} instance so it can be used in search by-example-query.
+ * Exports to excel document {@link Currency} search criteria and result. 
  */
 @Named
 @ConversationContextScoped

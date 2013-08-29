@@ -11,7 +11,6 @@ package com.jaxio.web.domain.support;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.jaxio.repository.support.MetamodelUtil.toAttribute;
 import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -33,6 +32,7 @@ import com.jaxio.printer.support.GenericPrinter;
 import com.jaxio.printer.support.TypeAwarePrinter;
 import com.jaxio.repository.support.GenericRepository;
 import com.jaxio.repository.support.JpaUniqueUtil;
+import com.jaxio.repository.support.MetamodelUtil;
 import com.jaxio.repository.support.SearchParameters;
 import com.jaxio.repository.support.TermSelector;
 import com.jaxio.web.conversation.ConversationCallBack;
@@ -150,7 +150,7 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
             E template = repository.getNew();
             for (String property : completeProperties()) {
                 if (repository.isIndexed(property)) {
-                    TermSelector termSelector = new TermSelector(toAttribute(property, repository.getType()));
+                    TermSelector termSelector = new TermSelector(MetamodelUtil.toAttribute(property, repository.getType()));
                     termSelector.setSelected(value);
                     searchParameters.addTerm(termSelector);
                 } else {
@@ -200,7 +200,7 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
     private List<String> completePropertyUsingFullText(String term, String property, Integer maxResults) {
         try {
             SearchParameters searchParameters = new SearchParameters().limitBroadSearch().distinct();
-            TermSelector termSelector = new TermSelector(toAttribute(property, repository.getType()));
+            TermSelector termSelector = new TermSelector(MetamodelUtil.toAttribute(property, repository.getType()));
             termSelector.setSelected(term);
             searchParameters.addTerm(termSelector);
             if (maxResults != null) {

@@ -18,8 +18,7 @@ import com.jaxio.web.domain.support.GenericExcelExporter;
 import com.jaxio.web.faces.ConversationContextScoped;
 
 /**
- * View Helper to search {@link Transaction}.
- * It exposes a {@link Transaction} instance so it can be used in search by-example-query.
+ * Exports to excel document {@link Transaction} search criteria and result. 
  */
 @Named
 @ConversationContextScoped
