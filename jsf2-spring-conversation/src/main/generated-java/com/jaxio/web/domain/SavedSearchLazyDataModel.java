@@ -15,7 +15,6 @@ import org.primefaces.model.LazyDataModel;
 
 import com.jaxio.domain.SavedSearch;
 import com.jaxio.repository.SavedSearchRepository;
-import com.jaxio.web.converter.SavedSearchJsfConverter;
 import com.jaxio.web.domain.SavedSearchExcelExporter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
 import com.jaxio.web.faces.ConversationContextScoped;
@@ -29,8 +28,8 @@ public class SavedSearchLazyDataModel extends GenericLazyDataModel<SavedSearch, 
     private static final long serialVersionUID = 1L;
 
     @Inject
-    public SavedSearchLazyDataModel(SavedSearchRepository savedSearchRepository, SavedSearchJsfConverter savedSearchConverter,
-            SavedSearchController savedSearchController, SavedSearchSearchForm savedSearchSearchForm, SavedSearchExcelExporter savedSearchExcelExporter) {
-        super(savedSearchRepository, savedSearchConverter, savedSearchController, savedSearchSearchForm, savedSearchExcelExporter);
+    public SavedSearchLazyDataModel(SavedSearchRepository savedSearchRepository, SavedSearchController savedSearchController,
+            SavedSearchSearchForm savedSearchSearchForm, SavedSearchExcelExporter savedSearchExcelExporter) {
+        super(savedSearchRepository, savedSearchController, savedSearchSearchForm, savedSearchExcelExporter);
     }
 }

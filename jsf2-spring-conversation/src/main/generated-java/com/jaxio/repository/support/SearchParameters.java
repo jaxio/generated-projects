@@ -69,8 +69,8 @@ public class SearchParameters implements Serializable {
     private int first = 0;
     private int pageSize = 0;
 
-    // joins
-    private List<SingularAttribute<?, ?>> leftJoins = newArrayList();
+    // fetches
+    private List<List<Attribute<?, ?>>> fetches = newArrayList();
 
     // ranges
     private List<Range<?, ?>> ranges = newArrayList();
@@ -317,7 +317,7 @@ public class SearchParameters implements Serializable {
     // -----------------------------------
 
     public void addTerm(TermSelector term) {
-        terms.add(term);
+        terms.add(checkNotNull(term));
     }
 
     public List<TermSelector> getTerms() {
@@ -349,7 +349,7 @@ public class SearchParameters implements Serializable {
     }
 
     public void setLuceneQueryBuilder(LuceneQueryBuilder luceneQueryBuilder) {
-        this.luceneQueryBuilder = luceneQueryBuilder;
+        this.luceneQueryBuilder = checkNotNull(luceneQueryBuilder);
     }
 
     public SearchParameters luceneQueryBuilder(LuceneQueryBuilder luceneQueryBuilder) {
@@ -583,30 +583,46 @@ public class SearchParameters implements Serializable {
     // -----------------------------------------
 
     /**
-     * Returns the attribute (x-to-one association) which must be fetched with a left join.
+     * Returns the attributes (x-to-one association) which must be fetched with a left join.
      */
-    public List<SingularAttribute<?, ?>> getLeftJoins() {
-        return leftJoins;
+    public List<List<Attribute<?, ?>>> getFetches() {
+        return fetches;
     }
 
-    public boolean hasLeftJoins() {
-        return !leftJoins.isEmpty();
+    public boolean hasFetches() {
+        return !fetches.isEmpty();
+    }
+
+    /**
+     * The given attribute (x-to-one association) will be fetched with a left join.
+     * @deprecated use {@link #addFetch} instead
+     */
+    @Deprecated
+    public void addLeftJoin(SingularAttribute<?, ?> xToOneAttribute) {
+        addFetch(xToOneAttribute);
     }
 
     /**
      * The given attribute (x-to-one association) will be fetched with a left join.
      */
-    public void addLeftJoin(SingularAttribute<?, ?> xToOneAttribute) {
-        leftJoins.add(checkNotNull(xToOneAttribute));
+    public void addFetch(Attribute<?, ?>... attributes) {
+        fetches.add(newArrayList(checkNotNull(attributes)));
+    }
+
+    /**
+     * Fluently set the join attribute
+     * @deprecated use {@link #addFetch} instead
+     */
+    @Deprecated
+    public SearchParameters leftJoin(SingularAttribute<?, ?>... xToOneAttributes) {
+        return fetch(xToOneAttributes);
     }
 
     /**
      * Fluently set the join attribute
      */
-    public SearchParameters leftJoin(SingularAttribute<?, ?>... xToOneAttributes) {
-        for (SingularAttribute<?, ?> xToOneAttribute : checkNotNull(xToOneAttributes)) {
-            addLeftJoin(xToOneAttribute);
-        }
+    public SearchParameters fetch(Attribute<?, ?>... attributes) {
+        addFetch(attributes);
         return this;
     }
 

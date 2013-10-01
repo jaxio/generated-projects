@@ -8,10 +8,17 @@
  */
 package com.jaxio.web.domain.support;
 
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
+import static com.jaxio.repository.support.MetamodelUtil.getCascades;
 import static com.jaxio.web.conversation.ConversationHolder.getCurrentConversation;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.metamodel.PluralAttribute;
 
 import org.omnifaces.util.Faces;
 import org.primefaces.event.SelectEvent;
@@ -32,14 +39,16 @@ public abstract class GenericToManyAssociation<E extends Identifiable<PK>, PK ex
     protected GenericPermission<E> permission;
     protected GenericRepository<E, PK> repository;
     protected SelectableListDataModel<E> dataModel;
+    protected final Collection<CascadeType> cascades;
 
-    public GenericToManyAssociation(List<E> elements, String labelKey, GenericController<E, PK> controller) {
+    public GenericToManyAssociation(List<E> elements, GenericController<E, PK> controller, PluralAttribute<?, ?, E> attribute) {
         this.dataModel = new SelectableListDataModel<E>(elements);
-        this.labelKey = labelKey;
+        this.labelKey = buildLabelKey(attribute);
         this.controller = controller;
         this.messageUtil = controller.getMessageUtil();
         this.permission = controller.getPermission();
         this.repository = controller.getRepository();
+        this.cascades = getCascades(attribute);
     }
 
     /**
@@ -89,11 +98,20 @@ public abstract class GenericToManyAssociation<E extends Identifiable<PK>, PK ex
      * @return the implicit jsf view.
      */
     public String edit() {
-        return controller.editSubView(labelKey, dataModel.getSelectedRow(), editCallBack);
+        return controller.editView(labelKey, dataModel.getSelectedRow(), editCallBack, isSubView());
     }
 
     protected ConversationCallBack<E> editCallBack = new ConversationCallBack<E>() {
         private static final long serialVersionUID = 1L;
+
+        @Override
+        protected void onSaved(E e) {
+            E previous = dataModel.getSelectedRow();
+            // 'previous' is not necessarily the same instance as 'e', as 'e' may come form a merge... 
+            // so we replace the old instance with the new one.
+            remove(previous);
+            add(e);
+        }
 
         @Override
         protected void onOk(E e) {
@@ -111,7 +129,7 @@ public abstract class GenericToManyAssociation<E extends Identifiable<PK>, PK ex
      * @return the implicit jsf view.
      */
     public String view() {
-        return controller.editSubReadOnlyView(labelKey, dataModel.getSelectedRow());
+        return controller.editReadOnlyView(labelKey, dataModel.getSelectedRow(), isSubView());
     }
 
     /**
@@ -148,11 +166,16 @@ public abstract class GenericToManyAssociation<E extends Identifiable<PK>, PK ex
      * @return the implicit jsf view.
      */
     public String add() {
-        return controller.createSubView(labelKey, create(), addCallBack);
+        return controller.createView(labelKey, create(), addCallBack, isSubView());
     }
 
     protected ConversationCallBack<E> addCallBack = new ConversationCallBack<E>() {
         private static final long serialVersionUID = 1L;
+
+        @Override
+        protected void onSaved(E e) {
+            add(e);
+        }
 
         @Override
         protected void onOk(E e) {
@@ -166,7 +189,7 @@ public abstract class GenericToManyAssociation<E extends Identifiable<PK>, PK ex
     }
 
     public String select() {
-        return controller.multiSelectSubView(labelKey, selectCallBack);
+        return controller.multiSelectView(labelKey, selectCallBack, isSubView());
     }
 
     protected ConversationCallBack<E> selectCallBack = new ConversationCallBack<E>() {
@@ -184,4 +207,15 @@ public abstract class GenericToManyAssociation<E extends Identifiable<PK>, PK ex
             messageUtil.infoEntity("status_added_existing_ok", e);
         }
     };
+
+    /**
+     * @return <code>true</code> if view is related to a parent and should not be performed any persistance. <code>false</code> otherwise.
+     */
+    private boolean isSubView() {
+        return cascades.contains(CascadeType.ALL) || cascades.contains(CascadeType.PERSIST);
+    }
+
+    private String buildLabelKey(PluralAttribute<?, ?, E> attribute) {
+        return UPPER_CAMEL.to(LOWER_CAMEL, attribute.getDeclaringType().getJavaType().getSimpleName()) + "_" + attribute.getName();
+    }
 }

@@ -54,7 +54,7 @@ public class AccountSearchForm extends GenericSearchForm<Account, Integer, Accou
     @Override
     public SearchParameters toSearchParameters() {
         SearchParameters sp = searchParameters();
-        sp.leftJoin(Account_.customer);
+        sp.fetch(Account_.customer);
         sp.property(accountNumberSelector, nameSelector);
         sp.entity(currencySelector, customerSelector);
         return sp;

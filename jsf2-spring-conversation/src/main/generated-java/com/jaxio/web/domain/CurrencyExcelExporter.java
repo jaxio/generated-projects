@@ -8,8 +8,6 @@
  */
 package com.jaxio.web.domain;
 
-import static org.apache.commons.lang.StringUtils.join;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -27,7 +25,9 @@ public class CurrencyExcelExporter extends GenericExcelExporter<Currency> {
     protected CurrencySearchForm sf;
 
     public CurrencyExcelExporter() {
-        super("currency_code", "currency_name", "currency_decimalCount");
+        super("currency_code", //
+                "currency_name", //
+                "currency_decimalCount");
     }
 
     @Override

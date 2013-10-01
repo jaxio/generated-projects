@@ -23,7 +23,7 @@
 			fileupload="#{savedSearchController.getSavedSearchFileUpload(savedSearchEditForm.savedSearch)}" stream="#{savedSearchFileDownload.getFormContentStream(savedSearchEditForm.savedSearch)}" 
 			action="onFormContentFileUpload" />
 		<app:autoComplete id="user" value="#{savedSearchEditForm.user.selected}" label="savedSearch_user" title="savedSearch_user" required="false" 
-			model="#{savedSearchEditForm.user}" controller="#{userController}" converter="#{userJsfConverter}" permission="#{userPermission}">
+			model="#{savedSearchEditForm.user}" controller="#{userController}" permission="#{userPermission}">
 			<app:iconSearch id="selectUser" />
 			<app:iconAdd id="addUser" />
 			<app:iconEdit item="#{savedSearchEditForm.savedSearch.user}" />

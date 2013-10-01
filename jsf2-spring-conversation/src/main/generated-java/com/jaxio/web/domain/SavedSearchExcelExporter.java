@@ -8,8 +8,6 @@
  */
 package com.jaxio.web.domain;
 
-import static org.apache.commons.lang.StringUtils.join;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -27,7 +25,8 @@ public class SavedSearchExcelExporter extends GenericExcelExporter<SavedSearch> 
     protected SavedSearchSearchForm sf;
 
     public SavedSearchExcelExporter() {
-        super("savedSearch_name", "savedSearch_formClassname");
+        super("savedSearch_name", //
+                "savedSearch_formClassname");
     }
 
     @Override

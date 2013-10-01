@@ -18,14 +18,14 @@
 <app:edit bean="#{transactionEditForm}" title="#{transactionEditForm.title}">
 	<ui:define name="form">
 		<app:autoComplete id="account" value="#{transactionEditForm.account.selected}" label="transaction_account" title="transaction_account" required="true" 
-			model="#{transactionEditForm.account}" controller="#{accountController}" converter="#{accountJsfConverter}" permission="#{accountPermission}">
+			model="#{transactionEditForm.account}" controller="#{accountController}" permission="#{accountPermission}">
 			<app:iconView item="#{transactionEditForm.transaction.account}" />
 		</app:autoComplete>
-		<app:input id="amount" value="#{transactionEditForm.transaction.amount}" label="transaction_amount" required="true" />
+		<app:input id="amount" value="#{transactionEditForm.transaction.amount}" label="transaction_amount" size="20" required="true" />
 		<app:inputLocalDate id="transactionDate" value="#{transactionEditForm.transaction.transactionDate}" label="transaction_transactionDate" required="true" />
 		<app:inputLocalDate id="valueDate" value="#{transactionEditForm.transaction.valueDate}" label="transaction_valueDate" required="true" />
 		<app:autoComplete id="currency" value="#{transactionEditForm.currency.selected}" label="transaction_currency" title="transaction_currency" required="true" 
-			model="#{transactionEditForm.currency}" controller="#{currencyController}" converter="#{currencyJsfConverter}" permission="#{currencyPermission}">
+			model="#{transactionEditForm.currency}" controller="#{currencyController}" permission="#{currencyPermission}">
 			<app:iconSearch id="selectCurrency" />
 			<app:iconAdd id="addCurrency" />
 			<app:iconEdit item="#{transactionEditForm.transaction.currency}" />

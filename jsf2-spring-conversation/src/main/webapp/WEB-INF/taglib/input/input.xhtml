@@ -8,7 +8,7 @@
 	<h:panelGroup rendered="#{(empty readonly or not readonly) and (empty rendered or rendered)}">
 		<p:inputText id="#{id}" label="#{resourcesUtil.getProperty(label)}" value="#{value}" 
 			size="#{empty size ? 50 : (size lt 50 ? size : 50)}" 			
-			maxlength="#{not empty maxlength ? maxlength : (empty size ? 50 : (size lt 50 ? size : 50))}" 
+			maxlength="#{not empty maxlength ? maxlength : (not empty size ? size : 50)}" 
 			styleClass="#{styleClass}">
 			<f:validateBean binding="#{lenientBeanValidator}"/>
 			<ui:insert/>

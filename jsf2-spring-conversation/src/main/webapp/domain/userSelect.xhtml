@@ -29,11 +29,11 @@
 			<app:inputMultiAutoComplete id="password" value="#{userSearchForm.passwordSelector}" label="user_password" completeMethod="completeSame" />
 			<app:inputMultiAutoComplete id="email" value="#{userSearchForm.emailSelector}" label="user_email" completeMethod="completeProperty" property="email" />
 			<app:selectManyBoolean id="isEnabled" value="#{userSearchForm.isEnabledSelector}" label="user_isEnabled" />
-			<app:selectManyEnum id="civility" value="#{userSearchForm.civilitySelector}" items="#{civilityItems}" converter="#{civilityJsfConverter}" nullAllowed="true" label="user_civility" />
+			<app:selectManyEnum id="civility" value="#{userSearchForm.civilitySelector}" items="#{civilityItems}"  nullAllowed="true" label="user_civility" />
 			<app:inputMultiAutoComplete id="firstName" value="#{userSearchForm.firstNameSelector}" label="user_firstName" completeMethod="completeProperty" property="firstName" />
 			<app:inputMultiAutoComplete id="lastName" value="#{userSearchForm.lastNameSelector}" label="user_lastName" completeMethod="completeProperty" property="lastName" />
 			<app:multiAutoComplete id="securityRolesSelector" value="#{userSearchForm.user.securityRoles}" label="user_securityRoles" 
-				controller="#{roleController}" converter="#{roleJsfConverter}" permission="#{rolePermission}"/>
+				controller="#{roleController}" permission="#{rolePermission}"/>
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">

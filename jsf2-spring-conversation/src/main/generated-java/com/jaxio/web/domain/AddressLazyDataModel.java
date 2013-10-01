@@ -15,7 +15,6 @@ import org.primefaces.model.LazyDataModel;
 
 import com.jaxio.domain.Address;
 import com.jaxio.repository.AddressRepository;
-import com.jaxio.web.converter.AddressJsfConverter;
 import com.jaxio.web.domain.AddressExcelExporter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
 import com.jaxio.web.faces.ConversationContextScoped;
@@ -29,8 +28,8 @@ public class AddressLazyDataModel extends GenericLazyDataModel<Address, Integer,
     private static final long serialVersionUID = 1L;
 
     @Inject
-    public AddressLazyDataModel(AddressRepository addressRepository, AddressJsfConverter addressConverter, AddressController addressController,
-            AddressSearchForm addressSearchForm, AddressExcelExporter addressExcelExporter) {
-        super(addressRepository, addressConverter, addressController, addressSearchForm, addressExcelExporter);
+    public AddressLazyDataModel(AddressRepository addressRepository, AddressController addressController, AddressSearchForm addressSearchForm,
+            AddressExcelExporter addressExcelExporter) {
+        super(addressRepository, addressController, addressSearchForm, addressExcelExporter);
     }
 }

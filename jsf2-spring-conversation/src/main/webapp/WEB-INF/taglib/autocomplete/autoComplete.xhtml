@@ -12,7 +12,7 @@
 			var="item"
 			itemValue="#{item}"
 			itemLabel="#{printer.print(item)}"
-			converter="#{converter}"
+			converter="#{genericJsfConverter}"
 			minQueryLength="#{empty minQueryLength ? 2 : minQueryLength}"
 			forceSelection="#{empty forceSelection ? true : forceSelection}"
 			size="#{empty size ? 50 : size}"

@@ -24,12 +24,14 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.FetchParent;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.hibernate.search.annotations.Field;
@@ -174,7 +176,6 @@ public abstract class GenericRepository<E extends Identifiable<PK>, PK extends S
      * @param searchParameters carries additional search information
      * @return the entities matching the search.
      */
-    @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public List<E> find(E entity, SearchParameters sp) {
         if (sp.hasNamedQuery()) {
@@ -194,9 +195,7 @@ public abstract class GenericRepository<E extends Identifiable<PK>, PK extends S
         }
 
         // left join
-        for (SingularAttribute<?, ?> arg : sp.getLeftJoins()) {
-            root.fetch((SingularAttribute<E, ?>) arg, JoinType.LEFT);
-        }
+        leftJoins(sp, root);
 
         // order by
         criteriaQuery.orderBy(orderByUtil.buildJpaOrders(sp.getOrders(), root, builder, sp));
@@ -233,7 +232,20 @@ public abstract class GenericRepository<E extends Identifiable<PK>, PK extends S
      * @param attributes the list of attributes to the property
      * @return the entities property matching the search.
      */
-    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public <T> List<T> findProperty(Class<T> propertyType, E entity, SearchParameters sp, Attribute<?, ?>... attributes) {
+        return findProperty(propertyType, entity, sp, newArrayList(attributes));
+    }
+
+    /**
+     * Find a list of E property.
+     * 
+     * @param propertyType type of the property
+     * @param entity a sample entity whose non-null properties may be used as search hints
+     * @param searchParameters carries additional search information
+     * @param attributes the list of attributes to the property
+     * @return the entities property matching the search.
+     */
     @Transactional(readOnly = true)
     public <T> List<T> findProperty(Class<T> propertyType, E entity, SearchParameters sp, List<Attribute<?, ?>> attributes) {
         if (sp.hasNamedQuery()) {
@@ -255,9 +267,7 @@ public abstract class GenericRepository<E extends Identifiable<PK>, PK extends S
         }
 
         // left join
-        for (SingularAttribute<?, ?> arg : sp.getLeftJoins()) {
-            root.fetch((SingularAttribute<E, ?>) arg, JoinType.LEFT);
-        }
+        leftJoins(sp, root);
 
         // order by
         // we do not want to follow order by specified in search parameters
@@ -332,14 +342,75 @@ public abstract class GenericRepository<E extends Identifiable<PK>, PK extends S
         TypedQuery<Long> typedQuery = entityManager.createQuery(criteriaQuery);
 
         applyCacheHints(typedQuery, sp);
-        Long count = typedQuery.getSingleResult();
+        return typedQuery.getSingleResult().intValue();
+    }
 
-        if (count != null) {
-            return count.intValue();
-        } else {
-            log.warn("findCount returned null");
-            return 0;
+    /**
+     * Count the number of E instances.
+     * 
+     * @param entity a sample entity whose non-null properties may be used as search hint
+     * @param searchParameters carries additional search information
+     * @param path the path to the property
+     * @return the number of entities matching the search.
+     */
+    @Transactional(readOnly = true)
+    public int findPropertyCount(E entity, SearchParameters sp, String path) {
+        return findPropertyCount(entity, sp, MetamodelUtil.toAttributes(path, type));
+    }
+
+    /**
+     * Count the number of E instances.
+     * 
+     * @param entity a sample entity whose non-null properties may be used as search hint
+     * @param searchParameters carries additional search information
+     * @param attributes the list of attributes to the property
+     * @return the number of entities matching the search.
+     */
+    @Transactional(readOnly = true)
+    public int findPropertyCount(E entity, SearchParameters sp, Attribute<?, ?>... attributes) {
+        return findPropertyCount(entity, sp, newArrayList(attributes));
+    }
+
+    /**
+     * Count the number of E instances.
+     * 
+     * @param entity a sample entity whose non-null properties may be used as search hint
+     * @param searchParameters carries additional search information
+     * @param attributes the list of attributes to the property
+     * @return the number of entities matching the search.
+     */
+    @Transactional(readOnly = true)
+    public int findPropertyCount(E entity, SearchParameters sp, List<Attribute<?, ?>> attributes) {
+        if (sp.hasNamedQuery()) {
+            return byNamedQueryUtil.numberByNamedQuery(sp).intValue();
         }
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+        Root<E> root = criteriaQuery.from(type);
+        Path<?> path = JpaUtil.getPath(root, attributes);
+
+        if (sp.getDistinct()) {
+            criteriaQuery = criteriaQuery.select(builder.countDistinct(path));
+        } else {
+            criteriaQuery = criteriaQuery.select(builder.count(path));
+        }
+
+        // predicate
+        Predicate predicate = getPredicate(root, builder, entity, sp);
+        if (predicate != null) {
+            criteriaQuery = criteriaQuery.where(predicate);
+        }
+
+        // left join
+        leftJoins(sp, root);
+
+        // construct order by to fetch or joins if needed
+        orderByUtil.buildJpaOrders(sp.getOrders(), root, builder, sp);
+
+        TypedQuery<Long> typedQuery = entityManager.createQuery(criteriaQuery);
+
+        applyCacheHints(typedQuery, sp);
+        return typedQuery.getSingleResult().intValue();
     }
 
     @Transactional(readOnly = true)
@@ -359,6 +430,11 @@ public abstract class GenericRepository<E extends Identifiable<PK>, PK extends S
             return result;
         }
         throw new NoResultException("Developper: You expected 1 result but found none !");
+    }
+
+    @Transactional(readOnly = true)
+    public E findUniqueOrNone(SearchParameters sp) {
+        return findUniqueOrNone(getNew(), sp);
     }
 
     @Transactional(readOnly = true)
@@ -384,6 +460,26 @@ public abstract class GenericRepository<E extends Identifiable<PK>, PK extends S
             throw new NonUniqueResultException("Developper: You expected 1 result but we found more ! sample: " + entity);
         } else {
             return results.iterator().next();
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public E findUniqueOrNew(SearchParameters sp) {
+        return findUniqueOrNew(getNew(), sp);
+    }
+
+    @Transactional(readOnly = true)
+    public E findUniqueOrNew(E e) {
+        return findUniqueOrNew(e, new SearchParameters());
+    }
+
+    @Transactional(readOnly = true)
+    public E findUniqueOrNew(E entity, SearchParameters sp) {
+        E result = findUniqueOrNone(entity, sp);
+        if (result != null) {
+            return result;
+        } else {
+            return getNewWithDefaults();
         }
     }
 
@@ -535,14 +631,7 @@ public abstract class GenericRepository<E extends Identifiable<PK>, PK extends S
         criteriaQuery = criteriaQuery.where(JpaUtil.andPredicate(builder, idPredicate, isNullPredicate));
 
         TypedQuery<Long> typedQuery = entityManager.createQuery(criteriaQuery);
-        Long count = typedQuery.getSingleResult();
-
-        if (count != null) {
-            return count.intValue() == 1;
-        } else {
-            log.warn("findCount returned null");
-            return true;
-        }
+        return typedQuery.getSingleResult().intValue() == 1;
     }
 
     /**
@@ -587,6 +676,20 @@ public abstract class GenericRepository<E extends Identifiable<PK>, PK extends S
                 typedQuery.setHint("org.hibernate.cacheRegion", sp.getCacheRegion());
             } else {
                 typedQuery.setHint("org.hibernate.cacheRegion", cacheRegion);
+            }
+        }
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    protected void leftJoins(SearchParameters sp, Root<E> root) {
+        for (List<Attribute<?, ?>> args : sp.getFetches()) {
+            FetchParent<?, ?> from = root;
+            for (Attribute<?, ?> arg : args) {
+                if (arg instanceof PluralAttribute) {
+                    from = from.fetch((PluralAttribute) arg, JoinType.LEFT);
+                } else {
+                    from = from.fetch((SingularAttribute) arg, JoinType.LEFT);
+                }
             }
         }
     }

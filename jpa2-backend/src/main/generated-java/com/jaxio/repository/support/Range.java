@@ -8,9 +8,12 @@
  */
 package com.jaxio.repository.support;
 
-import java.io.Serializable;
+import static com.google.common.collect.Lists.newArrayList;
 
-import javax.persistence.metamodel.SingularAttribute;
+import java.io.Serializable;
+import java.util.List;
+
+import javax.persistence.metamodel.Attribute;
 
 /**
  * Range support for {@link Comparable} types.
@@ -18,28 +21,29 @@ import javax.persistence.metamodel.SingularAttribute;
 public class Range<E, D extends Comparable<? super D>> implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final SingularAttribute<E, D> field;
+    private final List<Attribute<?, ?>> attributes;
     private D from;
     private D to;
     private Boolean includeNull;
 
     /**
      * Constructs a new {@link Range} with no boundaries and no restrictions on field's nullability.
-     * @param field the attribute of an existing entity.
+     * @param attributes the path to the attribute of an existing entity.
      */
-    public Range(SingularAttribute<E, D> field) {
-        this.field = field;
+    public Range(Attribute<?, ?>... attributes) {
+        JpaUtil.verifyPath(attributes);
+        this.attributes = newArrayList(attributes);
     }
 
     /**
      * Constructs a new Range.
      *
-     * @param field the property's name of an existing entity.
      * @param from the lower boundary of this range. Null means no lower boundary.
      * @param to the upper boundary of this range. Null means no upper boundary.
+     * @param attributes the path to the attribute of an existing entity.
      */
-    public Range(SingularAttribute<E, D> field, D from, D to) {
-        this.field = field;
+    public Range(D from, D to, Attribute<?, ?>... attributes) {
+        this(attributes);
         this.from = from;
         this.to = to;
     }
@@ -47,15 +51,13 @@ public class Range<E, D extends Comparable<? super D>> implements Serializable {
     /**
      * Constructs a new Range.
      *
-     * @param field an entity's attribute
      * @param from the lower boundary of this range. Null means no lower boundary.
      * @param to the upper boundary of this range. Null means no upper boundary.
      * @param includeNull tells whether null should be filtered out or not.
+     * @param attributes the path to the attribute of an existing entity.
      */
-    public Range(SingularAttribute<E, D> field, D from, D to, Boolean includeNull) {
-        this.field = field;
-        this.from = from;
-        this.to = to;
+    public Range(D from, D to, Boolean includeNull, Attribute<?, ?>... attributes) {
+        this(from, to, attributes);
         this.includeNull = includeNull;
     }
 
@@ -63,7 +65,7 @@ public class Range<E, D extends Comparable<? super D>> implements Serializable {
      * Constructs a new Range by copy.
      */
     public Range(Range<E, D> other) {
-        this.field = other.getField();
+        this.attributes = other.getAttributes();
         this.from = other.getFrom();
         this.to = other.getTo();
         this.includeNull = other.getIncludeNull();
@@ -72,8 +74,8 @@ public class Range<E, D extends Comparable<? super D>> implements Serializable {
     /**
      * @return the entity's attribute this {@link Range} refers to.
      */
-    public SingularAttribute<E, D> getField() {
-        return field;
+    public List<Attribute<?, ?>> getAttributes() {
+        return attributes;
     }
 
     /**
@@ -90,6 +92,11 @@ public class Range<E, D extends Comparable<? super D>> implements Serializable {
         this.from = from;
     }
 
+    public Range<E, D> from(D from) {
+        setFrom(from);
+        return this;
+    }
+
     public boolean isFromSet() {
         return getFrom() != null;
     }
@@ -99,6 +106,11 @@ public class Range<E, D extends Comparable<? super D>> implements Serializable {
      */
     public D getTo() {
         return to;
+    }
+
+    public Range<E, D> to(D to) {
+        setTo(from);
+        return this;
     }
 
     /**
@@ -114,6 +126,11 @@ public class Range<E, D extends Comparable<? super D>> implements Serializable {
 
     public void setIncludeNull(Boolean includeNull) {
         this.includeNull = includeNull;
+    }
+
+    public Range<E, D> includeNull(Boolean includeNull) {
+        setIncludeNull(includeNull);
+        return this;
     }
 
     public Boolean getIncludeNull() {

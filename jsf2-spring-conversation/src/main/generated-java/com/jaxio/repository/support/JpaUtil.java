@@ -46,6 +46,7 @@ import org.springframework.util.ReflectionUtils;
 import com.jaxio.domain.Identifiable;
 
 public class JpaUtil {
+
     public static boolean isEntityIdManuallyAssigned(Class<?> type) {
         for (Method method : type.getMethods()) {
             if (isPrimaryKey(method)) {
@@ -175,6 +176,18 @@ public class JpaUtil {
             builder.append(attribute.getName()).append(".");
         }
         return builder.substring(0, builder.length() - 1);
+    }
+
+    public static void verifyPath(Attribute<?, ?>... path) {
+        List<Attribute<?, ?>> attributes = newArrayList(path);
+        Class<?> from = attributes.get(0).getJavaType();
+        attributes.remove(0);
+        for (Attribute<?, ?> attribute : attributes) {
+            if (!attribute.getDeclaringType().getJavaType().isAssignableFrom(from)) {
+                throw new IllegalStateException("Wrong path.");
+            }
+            from = attribute.getJavaType();
+        }
     }
 
     public static <T extends Identifiable<?>> String compositePkPropertyName(T entity) {

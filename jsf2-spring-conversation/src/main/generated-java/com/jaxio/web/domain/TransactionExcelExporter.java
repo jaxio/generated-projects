@@ -8,8 +8,6 @@
  */
 package com.jaxio.web.domain;
 
-import static org.apache.commons.lang.StringUtils.join;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -27,7 +25,11 @@ public class TransactionExcelExporter extends GenericExcelExporter<Transaction> 
     protected TransactionSearchForm sf;
 
     public TransactionExcelExporter() {
-        super("transaction_account", "transaction_amount", "transaction_transactionDate", "transaction_valueDate", "transaction_description");
+        super("transaction_account", //
+                "transaction_amount", //
+                "transaction_transactionDate", //
+                "transaction_valueDate", //
+                "transaction_description");
     }
 
     @Override

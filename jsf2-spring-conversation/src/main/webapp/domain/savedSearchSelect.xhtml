@@ -21,7 +21,7 @@
 			<app:inputMultiAutoComplete id="name" value="#{savedSearchSearchForm.nameSelector}" label="savedSearch_name" completeMethod="completeProperty" property="name" />
 			<app:inputMultiAutoComplete id="formClassname" value="#{savedSearchSearchForm.formClassnameSelector}" label="savedSearch_formClassname" completeMethod="completeProperty" property="formClassname" />
 			<app:multiAutoComplete id="userSelector" value="#{savedSearchSearchForm.userSelector.selected}" label="savedSearch_user" 
-				controller="#{userController}" converter="#{userJsfConverter}" permission="#{userPermission}"/>
+				controller="#{userController}" permission="#{userPermission}"/>
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">

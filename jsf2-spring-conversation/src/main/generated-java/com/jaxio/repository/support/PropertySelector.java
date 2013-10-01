@@ -47,18 +47,7 @@ public class PropertySelector<E, F> implements Serializable {
 
     public PropertySelector(Attribute<?, ?>... attributes) {
         this.attributes = newArrayList(checkNotNull(attributes));
-        verifyPath(newArrayList(attributes));
-    }
-
-    private void verifyPath(List<Attribute<?, ?>> attributes) {
-        Class<?> from = attributes.get(0).getJavaType();
-        attributes.remove(0);
-        for (Attribute<?, ?> attribute : attributes) {
-            if (!attribute.getDeclaringType().getJavaType().isAssignableFrom(from)) {
-                throw new IllegalStateException("Wrong path.");
-            }
-            from = attribute.getJavaType();
-        }
+        JpaUtil.verifyPath(attributes);
     }
 
     public List<Attribute<?, ?>> getAttributes() {
@@ -84,8 +73,13 @@ public class PropertySelector<E, F> implements Serializable {
         this.selected = selected;
     }
 
+    public PropertySelector<E, F> selected(F... selected) {
+        setSelected(newArrayList(selected));
+        return this;
+    }
+
     public boolean isNotEmpty() {
-        return (selected != null) && !selected.isEmpty();
+        return selected != null && !selected.isEmpty();
     }
 
     public void clearSelected() {

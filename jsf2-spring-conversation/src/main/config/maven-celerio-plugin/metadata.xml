@@ -9,7 +9,7 @@
   <tables>
     <table name="ACCOUNT" type="TABLE" remarks="The Account represent a basic bank account">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_1EEBC052_A038_49E9_A5D5_AEDDEEFE8A2F)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_07F6B8B4_5685_4558_8E59_A39B1475E9CC)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="ACCOUNT_NUMBER" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="100" type="VARCHAR"/>
         <column name="NAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="100" type="VARCHAR"/>
         <column name="CURRENCY_ID" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="4" size="10" type="INTEGER"/>
@@ -30,7 +30,7 @@
     </table>
     <table name="ADDRESS" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_F0B44B29_2275_4033_AA1A_FC5C69A11CF7)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_6CB1220E_FBA0_4BF5_BE91_BA947CAB7086)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="STREET" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="2" size="100" type="VARCHAR"/>
         <column name="ZIP_CODE" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="3" size="10" type="VARCHAR"/>
         <column name="CITY" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="4" size="100" type="VARCHAR"/>
@@ -47,7 +47,7 @@
     </table>
     <table name="CURRENCY" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_812ABDE6_6947_4CBD_8E62_383A1A7D4B49)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_CDE112A3_08A1_40CE_B823_195BF8420A61)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="CODE" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="3" type="CHAR"/>
         <column name="NAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="100" type="VARCHAR"/>
         <column name="DECIMAL_COUNT" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="4" size="10" type="INTEGER"/>
@@ -63,7 +63,7 @@
     </table>
     <table name="CUSTOMER" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_7031CA24_0FA5_4134_A5DA_524C2BF4D7C7)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_0DA8BE45_94A8_463A_9FFA_C39F64E78E5A)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="COMPANY_NAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="100" type="VARCHAR"/>
         <column name="ADDRESS_ID" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="3" size="10" type="INTEGER"/>
         <column name="CONTRACT_BINARY" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="4" size="2147483647" type="VARBINARY"/>
@@ -84,7 +84,7 @@
     </table>
     <table name="ROLE" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_4816DC4F_F40F_4CC0_9690_AC422DF7A6B3)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_A41B22D7_ADF8_437E_B9CE_A4FCBEF720AD)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="ROLE_NAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="100" type="VARCHAR"/>
       </columns>
       <indexes>
@@ -98,7 +98,7 @@
     </table>
     <table name="SAVED_SEARCH" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_3349E465_EC27_4F5A_B53C_712789727E79)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_8DCCE6BC_BDB5_4630_94AD_26108A09CFD4)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="NAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="128" type="VARCHAR"/>
         <column name="FORM_CLASSNAME" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="256" type="VARCHAR"/>
         <column name="FORM_CONTENT" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="4" size="2147483647" type="VARBINARY"/>
@@ -116,7 +116,7 @@
     </table>
     <table name="TRANSACTION" type="TABLE">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_1D7E7F26_F204_4EB3_B280_F06FD14B0B75)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_B5B9D3B7_10E4_4A60_9936_7EEA782F4572)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="ACCOUNT_ID" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" size="10" type="INTEGER"/>
         <column name="AMOUNT" decimalDigits="2" autoIncrement="false" nullable="false" ordinalPosition="3" size="20" type="DECIMAL"/>
         <column name="TRANSACTION_DATE" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="4" size="8" type="DATE"/>
@@ -138,7 +138,7 @@
     </table>
     <table name="USER" type="TABLE" remarks="The User is a human that can connect to this web application">
       <columns>
-        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_783EC5B9_8F65_4DA4_946E_59FAB0073BFF)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
+        <column name="ID" columnDef="(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_CC4FED19_4174_45FD_B18D_0B1B832206E9)" decimalDigits="0" autoIncrement="true" nullable="false" ordinalPosition="1" size="10" type="INTEGER"/>
         <column name="LOGIN" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="2" remarks="The login used to login" size="100" type="VARCHAR"/>
         <column name="PASSWORD" decimalDigits="0" autoIncrement="false" nullable="false" ordinalPosition="3" size="100" type="VARCHAR"/>
         <column name="EMAIL" decimalDigits="0" autoIncrement="false" nullable="true" ordinalPosition="4" size="100" type="VARCHAR"/>

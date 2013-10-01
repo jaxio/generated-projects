@@ -48,7 +48,6 @@ import com.google.common.base.Objects;
 import com.jaxio.audit.AuditContextHolder;
 import com.jaxio.domain.Civility;
 import com.jaxio.domain.Role;
-import com.jaxio.domain.User_;
 
 /**
  * The User is a human that can connect to this web application
@@ -427,19 +426,19 @@ public class User implements Identifiable<Integer>, Serializable {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add(User_.id.getName(), getId()) //
-                .add(User_.username.getName(), getUsername()) //
-                .add(User_.password.getName(), "XXXX") //
-                .add(User_.email.getName(), getEmail()) //
-                .add(User_.isEnabled.getName(), getIsEnabled()) //
-                .add(User_.civility.getName(), getCivility()) //
-                .add(User_.firstName.getName(), getFirstName()) //
-                .add(User_.lastName.getName(), getLastName()) //
-                .add(User_.creationDate.getName(), getCreationDate()) //
-                .add(User_.creationAuthor.getName(), getCreationAuthor()) //
-                .add(User_.lastModificationDate.getName(), getLastModificationDate()) //
-                .add(User_.lastModificationAuthor.getName(), getLastModificationAuthor()) //
-                .add(User_.version.getName(), getVersion()) //
+                .add("id", getId()) //
+                .add("username", getUsername()) //
+                .add("password", "XXXX") //
+                .add("email", getEmail()) //
+                .add("isEnabled", getIsEnabled()) //
+                .add("civility", getCivility()) //
+                .add("firstName", getFirstName()) //
+                .add("lastName", getLastName()) //
+                .add("creationDate", getCreationDate()) //
+                .add("creationAuthor", getCreationAuthor()) //
+                .add("lastModificationDate", getLastModificationDate()) //
+                .add("lastModificationAuthor", getLastModificationAuthor()) //
+                .add("version", getVersion()) //
                 .toString();
     }
 

@@ -7,7 +7,7 @@
 		process="#{empty process? '@form' : process}"
 		disabled="#{disabled}"
 		styleClass="ui-button"
-		rendered="#{empty rendered ? not readonly and not sub and permission.canEdit(item) : rendered}"
+		rendered="#{empty rendered ? not readonly and permission.canEdit(item) : rendered}"
 		title="#{empty item ? resourcesUtil.getProperty(title) : resourcesUtil.getProperty('icon_edit', printer.print(item))}">
 		<ui:insert/>
 		<div class="ui-button ui-icon iconEdit"/>

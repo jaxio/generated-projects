@@ -20,6 +20,7 @@
 	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="#{localeService.locale}" lang="#{localeService.locale}">
 	<h:head>
 		<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
 			<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
 			<title>#{empty title? msg.main_title : resourcesUtil.getProperty(title)}</title>
 		</f:facet>
@@ -42,6 +43,7 @@
 							<h1 style="text-align: center;">#{empty title? msg.main_title : resourcesUtil.getProperty(title)}</h1>
 							<h:panelGroup>
 								<div class="userInfo">
+								    <h:outputText class="version" value="#{versionService.format()}" />
 									<h:outputText value="#{userContextService.username} #{userContextService.roles}" styleClass="userInfo-username" rendered="#{userContextService.isLoggedIn()}"/>
 									<h:outputLink id="login_link" value="#{facesContext.externalContext.requestContextPath}/login.faces" styleClass="userInfo-user" rendered="#{userContextService.isAnonymousUser()}">#{msg.login}</h:outputLink>
 									<h:outputLink id="logout_link" value="#{facesContext.externalContext.requestContextPath}/logout.faces" styleClass="userInfo-user" rendered="#{userContextService.isLoggedIn()}">#{msg.logout}</h:outputLink>

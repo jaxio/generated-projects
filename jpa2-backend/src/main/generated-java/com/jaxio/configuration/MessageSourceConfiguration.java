@@ -16,7 +16,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 @Configuration
 public class MessageSourceConfiguration {
     /**
-     * Base message source to handle internationalization<b>
+     * Base message source to handle internationalization<p>
      * Order of basenames matters, the first found property is returned 
      */
     @Bean

@@ -18,7 +18,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.convert.Converter;
 import javax.inject.Inject;
 
 import org.omnifaces.util.Faces;
@@ -56,15 +55,13 @@ public abstract class GenericLazyDataModel<E extends Identifiable<PK>, PK extend
     private boolean bypassFirstOffset = true;
 
     protected GenericRepository<E, PK> repository;
-    protected Converter converter;
     protected GenericController<E, PK> controller;
     protected GenericSearchForm<E, PK, F> searchForm;
     protected GenericExcelExporter<E> excelExporter;
 
-    public GenericLazyDataModel(GenericRepository<E, PK> repository, Converter converter, GenericController<E, PK> controller,
-            GenericSearchForm<E, PK, F> searchForm, GenericExcelExporter<E> excelExporter) {
+    public GenericLazyDataModel(GenericRepository<E, PK> repository, GenericController<E, PK> controller, GenericSearchForm<E, PK, F> searchForm,
+            GenericExcelExporter<E> excelExporter) {
         this.repository = repository;
-        this.converter = converter;
         this.controller = controller;
         this.searchForm = searchForm;
         this.excelExporter = excelExporter;

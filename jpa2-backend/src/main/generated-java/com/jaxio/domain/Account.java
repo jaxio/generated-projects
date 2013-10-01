@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
-import com.jaxio.domain.Account_;
 import com.jaxio.domain.Currency;
 import com.jaxio.domain.Customer;
 import com.jaxio.domain.Transaction;
@@ -286,10 +285,10 @@ public class Account implements Identifiable<Integer>, Serializable {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add(Account_.id.getName(), getId()) //
-                .add(Account_.accountNumber.getName(), getAccountNumber()) //
-                .add(Account_.name.getName(), getName()) //
-                .add(Account_.version.getName(), getVersion()) //
+                .add("id", getId()) //
+                .add("accountNumber", getAccountNumber()) //
+                .add("name", getName()) //
+                .add("version", getVersion()) //
                 .toString();
     }
 }

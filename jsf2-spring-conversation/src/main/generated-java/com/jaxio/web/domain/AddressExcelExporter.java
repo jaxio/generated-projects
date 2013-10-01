@@ -27,7 +27,10 @@ public class AddressExcelExporter extends GenericExcelExporter<Address> {
     protected AddressSearchForm sf;
 
     public AddressExcelExporter() {
-        super("address_street", "address_zipCode", "address_city", "address_country");
+        super("address_street", //
+                "address_zipCode", //
+                "address_city", //
+                "address_country");
     }
 
     @Override
@@ -42,9 +45,10 @@ public class AddressExcelExporter extends GenericExcelExporter<Address> {
     @Override
     public void fillSearchCriteria(int row) {
         useCriteriaSheet();
-
         setLeftHeader(row, 0, "search_full_text");
         setValue(row++, 1, join(sf.getTermsOnAll().getSelected(), ' '));
+        setTermSelector(row++, 0, "address_city", sf.getCityTermSelector());
+        setTermSelector(row++, 0, "address_country", sf.getCountryTermSelector());
 
         setSelector(row++, 0, "address_street", sf.getStreetSelector());
         setSelector(row++, 0, "address_zipCode", sf.getZipCodeSelector());

@@ -30,6 +30,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -40,7 +41,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Address;
-import com.jaxio.domain.Customer_;
 import com.jaxio.domain.IdentifiableHashBuilder;
 
 @Entity
@@ -163,6 +163,7 @@ public class Customer implements Identifiable<Integer>, Serializable {
 
     // -- [contractSize] ------------------------
 
+    @Digits(integer = 10, fraction = 0)
     @Column(name = "CONTRACT_SIZE", precision = 10)
     public Integer getContractSize() {
         return contractSize;
@@ -304,13 +305,13 @@ public class Customer implements Identifiable<Integer>, Serializable {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add(Customer_.id.getName(), getId()) //
-                .add(Customer_.companyName.getName(), getCompanyName()) //
-                .add(Customer_.contractBinary.getName(), getContractBinary()) //
-                .add(Customer_.contractFileName.getName(), getContractFileName()) //
-                .add(Customer_.contractContentType.getName(), getContractContentType()) //
-                .add(Customer_.contractSize.getName(), getContractSize()) //
-                .add(Customer_.version.getName(), getVersion()) //
+                .add("id", getId()) //
+                .add("companyName", getCompanyName()) //
+                .add("contractBinary", getContractBinary()) //
+                .add("contractFileName", getContractFileName()) //
+                .add("contractContentType", getContractContentType()) //
+                .add("contractSize", getContractSize()) //
+                .add("version", getVersion()) //
                 .toString();
     }
 }

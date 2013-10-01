@@ -286,6 +286,15 @@ div.ui-tabs div.ui-tabs-panel {
 	background: transparent url("#{resource['icons/environment/production.gif']}") no-repeat center left;
 }
 
+.version {
+	position: fixed;
+	left: 170px; 
+	top: 5px;
+	font-size: 10px;
+	font-weight: bold;
+	z-index: 1;
+}
+
 div.ui-layout-north td {
 	vertical-align:top;
 }

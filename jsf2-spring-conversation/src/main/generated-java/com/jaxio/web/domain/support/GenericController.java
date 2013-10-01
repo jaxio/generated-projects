@@ -150,9 +150,7 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
             E template = repository.getNew();
             for (String property : completeProperties()) {
                 if (repository.isIndexed(property)) {
-                    TermSelector termSelector = new TermSelector(MetamodelUtil.toAttribute(property, repository.getType()));
-                    termSelector.setSelected(value);
-                    searchParameters.addTerm(termSelector);
+                    searchParameters.addTerm(new TermSelector(MetamodelUtil.toAttribute(property, repository.getType())).selected(value));
                 } else {
                     PropertyUtils.setProperty(template, property, value);
                 }
@@ -164,7 +162,7 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
         }
     }
 
-    private Iterable<String> completeProperties() {
+    protected Iterable<String> completeProperties() {
         String completeOnProperties = parameter("completeOnProperties", String.class);
         return isBlank(completeOnProperties) ? printer.getDisplayedAttributes() : Splitter.on(";,").omitEmptyStrings().split(completeOnProperties);
     }
@@ -197,12 +195,10 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
         }
     }
 
-    private List<String> completePropertyUsingFullText(String term, String property, Integer maxResults) {
+    protected List<String> completePropertyUsingFullText(String term, String property, Integer maxResults) {
         try {
             SearchParameters searchParameters = new SearchParameters().limitBroadSearch().distinct();
-            TermSelector termSelector = new TermSelector(MetamodelUtil.toAttribute(property, repository.getType()));
-            termSelector.setSelected(term);
-            searchParameters.addTerm(termSelector);
+            searchParameters.addTerm(new TermSelector(MetamodelUtil.toAttribute(property, repository.getType())).selected(term));
             if (maxResults != null) {
                 searchParameters.maxResults(maxResults);
             }
@@ -213,7 +209,7 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
         }
     }
 
-    private List<String> completePropertyInDatabase(String value, String property, Integer maxResults) {
+    protected List<String> completePropertyInDatabase(String value, String property, Integer maxResults) {
         try {
             SearchParameters searchParameters = new SearchParameters().limitBroadSearch().caseInsensitive().anywhere().distinct();
             if (maxResults != null) {
@@ -236,7 +232,7 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T parameter(String propertyName, Class<T> expectedType) {
+    protected <T> T parameter(String propertyName, Class<T> expectedType) {
         return (T) UIComponent.getCurrentComponent(FacesContext.getCurrentInstance()).getAttributes().get(propertyName);
     }
 
@@ -300,10 +296,14 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
      * @return the implicit view to access this context.
      */
     public String editSubReadOnlyView(String labelKey, E e) {
+        return editReadOnlyView(labelKey, e, true);
+    }
+
+    public String editReadOnlyView(String labelKey, E e, boolean sub) {
         if (!permission.canView(e)) {
             return getPermissionDenied();
         }
-        ConversationContext<E> ctx = newEditContext(labelKey, e).sub().readonly();
+        ConversationContext<E> ctx = newEditContext(labelKey, e).sub(sub).readonly();
         return getCurrentConversation().nextContext(ctx).view();
     }
 
@@ -317,10 +317,14 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
      * @return the implicit view to access this context.
      */
     public String editSubView(String labelKey, E e, ConversationCallBack<E> editCallBack) {
+        return editView(labelKey, e, editCallBack, true);
+    }
+
+    public String editView(String labelKey, E e, ConversationCallBack<E> editCallBack, boolean sub) {
         if (!permission.canEdit(e)) {
             return getPermissionDenied();
         }
-        ConversationContext<E> ctx = newEditContext(labelKey, e, editCallBack).sub();
+        ConversationContext<E> ctx = newEditContext(labelKey, e, editCallBack).sub(sub);
         return getCurrentConversation().nextContext(ctx).view();
     }
 
@@ -332,7 +336,7 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
      * @return the implicit view to access this context.
      */
     public String createSubView(String labelKey, ConversationCallBack<E> createCallBack) {
-        return createSubView(labelKey, repository.getNewWithDefaults(), createCallBack);
+        return createView(labelKey, createCallBack, true);
     }
 
     /**
@@ -345,10 +349,18 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
      * @return the implicit view to access this context.
      */
     public String createSubView(String labelKey, E e, ConversationCallBack<E> createCallBack) {
+        return createView(labelKey, e, createCallBack, true);
+    }
+
+    public String createView(String labelKey, ConversationCallBack<E> createCallBack, boolean sub) {
+        return createView(labelKey, repository.getNewWithDefaults(), createCallBack, sub);
+    }
+
+    public String createView(String labelKey, E e, ConversationCallBack<E> createCallBack, boolean sub) {
         if (!permission.canCreate()) {
             return getPermissionDenied();
         }
-        ConversationContext<E> ctx = newEditContext(labelKey, e, createCallBack).sub();
+        ConversationContext<E> ctx = newEditContext(labelKey, e, createCallBack).sub(sub);
         return getCurrentConversation().nextContext(ctx).view();
     }
 
@@ -357,18 +369,26 @@ public abstract class GenericController<E extends Identifiable<PK>, PK extends S
     // ----------------------------------------
 
     public String selectSubView(String labelKey, ConversationCallBack<E> selectCallBack) {
+        return selectView(labelKey, selectCallBack, true);
+    }
+
+    public String selectView(String labelKey, ConversationCallBack<E> selectCallBack, boolean sub) {
         if (!permission.canSelect()) {
             return getPermissionDenied();
         }
-        ConversationContext<E> ctx = newSearchContext(labelKey, selectCallBack).sub();
+        ConversationContext<E> ctx = newSearchContext(labelKey, selectCallBack).sub(sub);
         return getCurrentConversation().nextContext(ctx).view();
     }
 
     public String multiSelectSubView(String labelKey, ConversationCallBack<E> selectCallBack) {
+        return multiSelectView(labelKey, selectCallBack, true);
+    }
+
+    public String multiSelectView(String labelKey, ConversationCallBack<E> selectCallBack, boolean sub) {
         if (!permission.canSelect()) {
             return getPermissionDenied();
         }
-        ConversationContext<E> ctx = newSearchContext(labelKey, selectCallBack).sub();
+        ConversationContext<E> ctx = newSearchContext(labelKey, selectCallBack).sub(sub);
         ctx.setVar("multiCheckboxSelection", true);
         return getCurrentConversation().nextContext(ctx).view();
     }

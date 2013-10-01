@@ -20,7 +20,7 @@
 		<ui:define name="filters">
 			<app:inputMultiAutoComplete id="companyName" value="#{customerSearchForm.companyNameSelector}" label="customer_companyName" completeMethod="completeProperty" property="companyName" />
 			<app:multiAutoComplete id="addressSelector" value="#{customerSearchForm.addressSelector.selected}" label="customer_address" 
-				controller="#{addressController}" converter="#{addressJsfConverter}" permission="#{addressPermission}"/>
+				controller="#{addressController}" permission="#{addressPermission}"/>
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">

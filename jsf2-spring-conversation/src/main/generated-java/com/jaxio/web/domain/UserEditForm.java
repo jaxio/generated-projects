@@ -14,6 +14,7 @@ import javax.inject.Named;
 
 import com.jaxio.domain.Role;
 import com.jaxio.domain.User;
+import com.jaxio.domain.User_;
 import com.jaxio.repository.UserRepository;
 import com.jaxio.web.domain.RoleController;
 import com.jaxio.web.domain.UserController;
@@ -62,7 +63,7 @@ public class UserEditForm extends GenericEditForm<User, Integer> {
 
     @PostConstruct
     void setupSecurityRolesActions() {
-        securityRoles = new GenericToManyAssociation<Role, Integer>(getUser().getSecurityRoles(), "user_securityRoles", roleController) {
+        securityRoles = new GenericToManyAssociation<Role, Integer>(getUser().getSecurityRoles(), roleController, User_.securityRoles) {
             @Override
             protected void remove(Role role) {
                 getUser().removeSecurityRole(role);

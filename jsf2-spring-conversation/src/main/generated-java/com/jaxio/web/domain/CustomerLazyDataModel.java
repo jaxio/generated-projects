@@ -15,7 +15,6 @@ import org.primefaces.model.LazyDataModel;
 
 import com.jaxio.domain.Customer;
 import com.jaxio.repository.CustomerRepository;
-import com.jaxio.web.converter.CustomerJsfConverter;
 import com.jaxio.web.domain.CustomerExcelExporter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
 import com.jaxio.web.faces.ConversationContextScoped;
@@ -29,8 +28,8 @@ public class CustomerLazyDataModel extends GenericLazyDataModel<Customer, Intege
     private static final long serialVersionUID = 1L;
 
     @Inject
-    public CustomerLazyDataModel(CustomerRepository customerRepository, CustomerJsfConverter customerConverter, CustomerController customerController,
-            CustomerSearchForm customerSearchForm, CustomerExcelExporter customerExcelExporter) {
-        super(customerRepository, customerConverter, customerController, customerSearchForm, customerExcelExporter);
+    public CustomerLazyDataModel(CustomerRepository customerRepository, CustomerController customerController, CustomerSearchForm customerSearchForm,
+            CustomerExcelExporter customerExcelExporter) {
+        super(customerRepository, customerController, customerSearchForm, customerExcelExporter);
     }
 }

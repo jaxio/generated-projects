@@ -19,7 +19,7 @@
 	<ui:define name="form">
 		<app:input id="companyName" value="#{customerEditForm.customer.companyName}" size="100" label="customer_companyName" required="true" />
 		<app:autoComplete id="address" value="#{customerEditForm.address.selected}" label="customer_address" title="customer_address" required="false" 
-			model="#{customerEditForm.address}" controller="#{addressController}" converter="#{addressJsfConverter}" permission="#{addressPermission}">
+			model="#{customerEditForm.address}" controller="#{addressController}" permission="#{addressPermission}">
 			<app:iconSearch id="selectAddress" />
 			<app:iconAdd id="addAddress" />
 			<app:iconEdit item="#{customerEditForm.customer.address}" />

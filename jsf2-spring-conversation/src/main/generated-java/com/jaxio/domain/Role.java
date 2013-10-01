@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
-import com.jaxio.domain.Role_;
 
 @Entity
 @Table(name = "`ROLE`")
@@ -123,8 +122,8 @@ public class Role implements Identifiable<Integer>, Serializable {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add(Role_.id.getName(), getId()) //
-                .add(Role_.roleName.getName(), getRoleName()) //
+                .add("id", getId()) //
+                .add("roleName", getRoleName()) //
                 .toString();
     }
 }

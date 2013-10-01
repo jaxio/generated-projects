@@ -20,6 +20,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;

@@ -28,7 +28,6 @@ public class SavedSearchSearch {
     public static class SavedSearchSearchOrders extends CustomWebElement {
         public OrderBy name = new OrderBy("savedSearch_name");
         public OrderBy formClassname = new OrderBy("savedSearch_formClassname");
-        public OrderBy formContent = new OrderBy("savedSearch_formContent");
         public OrderBy userId = new OrderBy("savedSearch_userId");
     }
 

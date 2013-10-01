@@ -17,12 +17,14 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 /**
  * Helper to create a predicate out of {@link Range}s.
  */
+@SuppressWarnings("unchecked")
 @Named
 @Singleton
 public class ByRangeUtil {
@@ -30,24 +32,11 @@ public class ByRangeUtil {
         List<Range<?, ?>> ranges = sp.getRanges();
         List<Predicate> predicates = newArrayList();
         for (Range<?, ?> r : ranges) {
-            @SuppressWarnings("unchecked")
             Range<E, ?> range = (Range<E, ?>) r;
             if (range.isSet()) {
                 Predicate rangePredicate = buildRangePredicate(range, root, builder);
-
                 if (rangePredicate != null) {
-                    if (!range.isIncludeNullSet() || range.getIncludeNull() == FALSE) {
-                        predicates.add(rangePredicate);
-                    } else {
-                        predicates.add(builder.or(rangePredicate, builder.isNull(root.get(range.getField()))));
-                    }
-                } else {
-                    // no from/to is set, but include null or not could be:
-                    if (TRUE == range.getIncludeNull()) {
-                        predicates.add(builder.isNull(root.get(range.getField())));
-                    } else if (FALSE == range.getIncludeNull()) {
-                        predicates.add(builder.isNotNull(root.get(range.getField())));
-                    }
+                    predicates.add(rangePredicate);
                 }
             }
         }
@@ -56,12 +45,29 @@ public class ByRangeUtil {
     }
 
     private static <D extends Comparable<? super D>, E> Predicate buildRangePredicate(Range<E, D> range, Root<E> root, CriteriaBuilder builder) {
+        Predicate rangePredicate = null;
+        Path<D> path = JpaUtil.getPath(root, range.getAttributes());
         if (range.isBetween()) {
-            return builder.between(root.get(range.getField()), range.getFrom(), range.getTo());
+            rangePredicate = builder.between(path, range.getFrom(), range.getTo());
         } else if (range.isFromSet()) {
-            return builder.greaterThanOrEqualTo(root.get(range.getField()), range.getFrom());
+            rangePredicate = builder.greaterThanOrEqualTo(path, range.getFrom());
         } else if (range.isToSet()) {
-            return builder.lessThanOrEqualTo(root.get(range.getField()), range.getTo());
+            rangePredicate = builder.lessThanOrEqualTo(path, range.getTo());
+        }
+
+        if (rangePredicate != null) {
+            if (!range.isIncludeNullSet() || range.getIncludeNull() == FALSE) {
+                return rangePredicate;
+            } else {
+                return builder.or(rangePredicate, builder.isNull(path));
+            }
+        } else {
+            // no from/to is set, but include null or not could be:
+            if (TRUE == range.getIncludeNull()) {
+                return builder.isNull(path);
+            } else if (FALSE == range.getIncludeNull()) {
+                return builder.isNotNull(path);
+            }
         }
         return null;
     }

@@ -52,7 +52,7 @@
 			<p:autoComplete id="searchFormName" rendered="#{savedSearch}"
 				value="#{searchForm.currentSavedSearch}"
 				completeMethod="#{savedSearchService.finderFor(searchForm).find}"
-				var="item" itemValue="#{item}" itemLabel="#{savedSearchPrinter.print(item)}" converter="#{savedSearchJsfConverter}"
+				var="item" itemValue="#{item}" itemLabel="#{savedSearchPrinter.print(item)}" converter="#{genericJsfConverter}"
 				dropdown="true" size="30">
 				<p:ajax event="itemSelect" update="fullTextFieldset filtersFieldset messages searchResults searchFormName" />
 			</p:autoComplete>
@@ -87,7 +87,7 @@
 		<!-- safari/voiceover requires 'span' (not 'div') for live region-->
 		<span id="searchResultsRegion" aria-label="#{msg.search_results}" aria-live="assertive" aria-relevant="additions">
 		</span>
-		<c:if test="#{not multiCheckboxSelection}">
+		<c:if test="#{empty multiCheckboxSelection or not multiCheckboxSelection}">
 			<p:dataTable id="searchResults"
 				value="#{model}" var="item" lazy="true"
 				paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom"
@@ -97,7 +97,7 @@
 				<ui:insert name="result" />
 			</p:dataTable>
 		</c:if>
-		<c:if test="#{multiCheckboxSelection}">
+		<c:if test="#{not empty multiCheckboxSelection and multiCheckboxSelection}">
 			<p:dataTable id="searchResults"
 				value="#{model}" var="item" lazy="true"
 				paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom"

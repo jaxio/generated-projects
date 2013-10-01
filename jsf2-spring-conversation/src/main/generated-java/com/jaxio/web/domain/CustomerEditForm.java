@@ -15,6 +15,7 @@ import javax.inject.Named;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Address;
 import com.jaxio.domain.Customer;
+import com.jaxio.domain.Customer_;
 import com.jaxio.repository.CustomerRepository;
 import com.jaxio.web.domain.AccountController;
 import com.jaxio.web.domain.AddressController;
@@ -68,7 +69,7 @@ public class CustomerEditForm extends GenericEditForm<Customer, Integer> {
 
     @PostConstruct
     void setupAddressActions() {
-        address = new GenericToOneAssociation<Address, Integer>("customer_address", addressController) {
+        address = new GenericToOneAssociation<Address, Integer>(addressController, Customer_.address) {
             @Override
             protected Address get() {
                 return getCustomer().getAddress();
@@ -87,7 +88,7 @@ public class CustomerEditForm extends GenericEditForm<Customer, Integer> {
 
     @PostConstruct
     void setupAccountsActions() {
-        accounts = new GenericToManyAssociation<Account, Integer>(getCustomer().getAccounts(), "customer_accounts", accountController) {
+        accounts = new GenericToManyAssociation<Account, Integer>(getCustomer().getAccounts(), accountController, Customer_.accounts) {
             @Override
             protected void remove(Account account) {
                 getCustomer().removeAccount(account);

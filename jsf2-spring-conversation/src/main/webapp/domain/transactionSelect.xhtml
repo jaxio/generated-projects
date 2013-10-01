@@ -19,12 +19,12 @@
 		controller="#{transactionController}" permission="#{transactionPermission}" savedSearch="true">
 		<ui:define name="filters">
 			<app:multiAutoComplete id="accountSelector" value="#{transactionSearchForm.accountSelector.selected}" label="transaction_account" 
-				controller="#{accountController}" converter="#{accountJsfConverter}" permission="#{accountPermission}"/>
+				controller="#{accountController}" permission="#{accountPermission}"/>
 			<app:rangeBigDec id="amount" value="#{transactionSearchForm.amountRange}" label="transaction_amount" />
 			<app:rangeLocalDate id="transactionDate" value="#{transactionSearchForm.transactionDateRange}" label="transaction_transactionDate" />
 			<app:rangeLocalDate id="valueDate" value="#{transactionSearchForm.valueDateRange}" label="transaction_valueDate" />
 			<app:multiAutoComplete id="currencySelector" value="#{transactionSearchForm.currencySelector.selected}" label="transaction_currency" 
-				controller="#{currencyController}" converter="#{currencyJsfConverter}" permission="#{currencyPermission}"/>
+				controller="#{currencyController}" permission="#{currencyPermission}"/>
 			<app:inputMultiAutoComplete id="description" value="#{transactionSearchForm.descriptionSelector}" label="transaction_description" completeMethod="completeProperty" property="description" />
 		</ui:define>
 		<ui:define name="result">

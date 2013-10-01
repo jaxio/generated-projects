@@ -39,6 +39,7 @@ import com.jaxio.repository.support.Range;
 import com.jaxio.repository.support.Ranges.RangeDate;
 import com.jaxio.repository.support.Ranges.RangeLocalDate;
 import com.jaxio.repository.support.Ranges.RangeLocalDateTime;
+import com.jaxio.repository.support.TermSelector;
 import com.jaxio.util.ResourcesUtil;
 import com.jaxio.web.util.DownloadUtil;
 
@@ -206,6 +207,18 @@ public abstract class GenericExcelExporter<E> {
             }
         } else {
             throw new IllegalStateException("fix me");
+        }
+    }
+
+    protected void setTermSelector(int row, int col, String labelKey, TermSelector selector) {
+        setLeftHeader(row, col++, labelKey);
+
+        if (selector.getSelected() == null) {
+            return;
+        }
+
+        for (String o : selector.getSelected()) {
+            setValue(row, col++, o);
         }
     }
 
@@ -413,7 +426,7 @@ public abstract class GenericExcelExporter<E> {
         }
     }
 
-    private int maxCriteriaCellNum() {
+    protected int maxCriteriaCellNum() {
         int max = 0;
 
         for (int i = criteria.getFirstRowNum(); i <= criteria.getLastRowNum(); i++) {

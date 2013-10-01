@@ -11,7 +11,7 @@
 			var="item"
 			itemValue="#{item}"
 			itemLabel="#{printer.print(item)}"
-			converter="#{converter}"
+			converter="#{genericJsfConverter}"
 			dropdown="true"
 			multiple="true"
 			minQueryLength="#{empty minQueryLength ? 2 : minQueryLength}"

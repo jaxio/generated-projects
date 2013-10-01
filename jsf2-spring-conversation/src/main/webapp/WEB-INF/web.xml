@@ -26,6 +26,11 @@
 			WEB-INF/applicationContext-security-http.xml
 		</param-value>
 	</context-param>
+	<!-- Secure cookies: https://www.owasp.org/index.php/HttpOnly -->
+    <cookie-config>
+        <http-only>true</http-only>
+        <secure>true</secure>
+    </cookie-config>
 	<!-- listeners -->
 	<listener>
 		<description>Parse JavaServer Faces configuration resources</description>

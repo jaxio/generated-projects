@@ -1,6 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" 
 	xmlns:ui="http://java.sun.com/jsf/facelets" 
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:app="http://springfuse.jaxio.com/app">
@@ -8,6 +9,9 @@
 	<p:selectOneRadio id="#{id}" value="#{value}" label="#{resourcesUtil.getProperty(label)}" rendered="#{not readonly}" disabled="#{empty disabled ? false : disabled}"
 		layout="#{empty layout ? (values.size() lt 4 ? 'lineDirection' : 'pageDirection') : layout}">
 		<f:selectItems value="#{values}" />
+		<c:if test="#{not empty nullAllowed and nullAllowed}">
+			<f:selectItem itemLabel="#{msg.null_value}" itemValue="#{null}" />
+		</c:if>
 		<f:validateBean binding="#{lenientBeanValidator}" />
 		<ui:insert/>
 	</p:selectOneRadio>

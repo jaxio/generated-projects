@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
-import com.jaxio.domain.Address_;
 import com.jaxio.domain.IdentifiableHashBuilder;
 
 @Entity
@@ -191,12 +190,12 @@ public class Address implements Identifiable<Integer>, Serializable {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add(Address_.id.getName(), getId()) //
-                .add(Address_.street.getName(), getStreet()) //
-                .add(Address_.zipCode.getName(), getZipCode()) //
-                .add(Address_.city.getName(), getCity()) //
-                .add(Address_.country.getName(), getCountry()) //
-                .add(Address_.version.getName(), getVersion()) //
+                .add("id", getId()) //
+                .add("street", getStreet()) //
+                .add("zipCode", getZipCode()) //
+                .add("city", getCity()) //
+                .add("country", getCountry()) //
+                .add("version", getVersion()) //
                 .toString();
     }
 }

@@ -12,5 +12,5 @@
 		</p:inputTextarea>
 		<p:tooltip for="#{id}" value="#{tooltip}" showEffect="slide" rendered="#{not empty tooltip}"/>
 	</h:panelGroup>
-	<h:outputText value="#{value}" rendered="#{readonly and (empty rendered or rendered)}" />
+	<h:outputText value="#{value}" rendered="#{readonly and (empty rendered or rendered)}" style="display:block;white-space:pre-line;word-wrap:break-word;width:#{(empty cols ? 37 : cols) * 7}px;" />
 </ui:composition>

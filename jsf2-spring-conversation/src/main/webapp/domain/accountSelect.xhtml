@@ -21,9 +21,9 @@
 			<app:inputMultiAutoComplete id="accountNumber" value="#{accountSearchForm.accountNumberSelector}" label="account_accountNumber" completeMethod="completeProperty" property="accountNumber" />
 			<app:inputMultiAutoComplete id="name" value="#{accountSearchForm.nameSelector}" label="account_name" completeMethod="completeProperty" property="name" />
 			<app:multiAutoComplete id="currencySelector" value="#{accountSearchForm.currencySelector.selected}" label="account_currency" 
-				controller="#{currencyController}" converter="#{currencyJsfConverter}" permission="#{currencyPermission}"/>
+				controller="#{currencyController}" permission="#{currencyPermission}"/>
 			<app:multiAutoComplete id="customerSelector" value="#{accountSearchForm.customerSelector.selected}" label="account_customer" 
-				controller="#{customerController}" converter="#{customerJsfConverter}" permission="#{customerPermission}"/>
+				controller="#{customerController}" permission="#{customerPermission}"/>
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">

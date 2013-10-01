@@ -29,7 +29,7 @@
 		<!-- Note: this regexp does not work if you try to escape the '.' -->
 		<context:exclude-filter type="regex" expression="com.jaxio.web.*" />
 	</context:component-scan>
-	<context:property-placeholder location="classpath*:database.properties,classpath*:hibernate.properties" />
+	<context:property-placeholder location="classpath*:database.properties,classpath*:hibernate.properties,classpath*:app-version.properties" />
 
 	<!-- security -->
 	<security:authentication-manager>

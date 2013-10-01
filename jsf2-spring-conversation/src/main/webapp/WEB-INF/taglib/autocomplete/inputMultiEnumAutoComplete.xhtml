@@ -8,7 +8,6 @@
 	<h:panelGroup id="#{id}Grid" styleClass="aria-role-presentation" rendered="#{empty rendered ? true : rendered}">
 		<p:autoComplete id="#{id}" value="#{value.selected}" label="#{resourcesUtil.getProperty(label)}"
 			completeMethod="#{controller['complete']}"
-			converter="#{converter}"
 			var="item"
 			itemValue="#{item}"
 			itemLabel="#{item}"

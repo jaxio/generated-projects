@@ -31,7 +31,8 @@ import com.jaxio.domain.User;
 @Lazy(false)
 public class MassIndexerService {
     private static final Logger log = LoggerFactory.getLogger(MassIndexerService.class);
-    protected static final Class<?>[] CLASSES_TO_BE_INDEXED = { Address.class //
+    protected static final Class<?>[] CLASSES_TO_BE_INDEXED = { //
+    Address.class //
             , Role.class //
             , User.class //
     };
@@ -49,15 +50,31 @@ public class MassIndexerService {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         try {
-            getFullTextEntityManager(entityManager) //
-                    .createIndexer(CLASSES_TO_BE_INDEXED) //
-                    .batchSizeToLoadObjects(batchSizeToLoadObjects) //
-                    .threadsToLoadObjects(threadsToLoadObjects) //
-                    .threadsForSubsequentFetching(threadsForSubsequentFetching) //
-                    .start();
+            for (Class<?> classToBeIndexed : CLASSES_TO_BE_INDEXED) {
+                indexClass(classToBeIndexed);
+            }
         } finally {
             stopWatch.stop();
             log.info("Indexed {} in {}", Arrays.toString(CLASSES_TO_BE_INDEXED), stopWatch.toString());
+        }
+    }
+
+    private void indexClass(Class<?> classToBeIndexed) {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        try {
+            getFullTextEntityManager(entityManager) //
+                    .createIndexer(classToBeIndexed) //
+                    .batchSizeToLoadObjects(batchSizeToLoadObjects) //
+                    .threadsToLoadObjects(threadsToLoadObjects) //
+                    .threadsForSubsequentFetching(threadsForSubsequentFetching) //
+                    .startAndWait();
+        } catch (InterruptedException e) {
+            log.warn("Interrupted while indexing " + classToBeIndexed.getSimpleName(), e);
+            Thread.currentThread().interrupt();
+        } finally {
+            stopWatch.stop();
+            log.info("Indexed {} in {}", classToBeIndexed.getSimpleName(), stopWatch.toString());
         }
     }
 }

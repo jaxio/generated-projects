@@ -8,8 +8,6 @@
  */
 package com.jaxio.web.domain;
 
-import static org.apache.commons.lang.StringUtils.join;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -39,9 +37,7 @@ public class RoleExcelExporter extends GenericExcelExporter<Role> {
     @Override
     public void fillSearchCriteria(int row) {
         useCriteriaSheet();
-
-        setLeftHeader(row, 0, "search_full_text");
-        setValue(row++, 1, join(sf.getTermsOnAll().getSelected(), ' '));
+        setTermSelector(row++, 0, "role_roleName", sf.getRoleNameTermSelector());
 
         setSelector(row++, 0, "role_roleName", sf.getRoleNameSelector());
     }

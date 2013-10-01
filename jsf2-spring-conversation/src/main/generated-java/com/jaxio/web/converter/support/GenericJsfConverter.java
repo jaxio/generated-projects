@@ -8,90 +8,37 @@
  */
 package com.jaxio.web.converter.support;
 
-import static org.apache.commons.lang.StringUtils.removeEnd;
-import static org.apache.commons.lang.StringUtils.removeStart;
-
-import java.io.Serializable;
-
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
-import org.springframework.core.convert.support.DefaultConversionService;
-
-import com.jaxio.domain.Identifiable;
-import com.jaxio.repository.support.GenericRepository;
+import org.apache.commons.lang.RandomStringUtils;
 
 /**
- * Base JSF converter for JPA entities. Handle cases when primary key is not yet set or when it is set manually.
+ * Base JSF converter to store objects in the jsf tree. 
  */
-public class GenericJsfConverter<E extends Identifiable<PK>, PK extends Serializable> implements Converter {
-    public static final String NULL_OBJECT_AS_STRING = "__null__";
-    public static final String NEW_OBJECT_AS_STRING = "__new__";
-    public static final String PK_PREFIX = "__pk:";
-    public static final String PK_SUFFIX = "__";
+@Named
+@Singleton
+public class GenericJsfConverter implements Converter {
+    private static final String COMPONENT_UNIQUE_PREFIX = "object:";
+    private static final String COMPONENT_NULL_VALUE = COMPONENT_UNIQUE_PREFIX + "null";
 
-    private Class<E> type;
-    private Class<PK> pkType;
-
-    protected DefaultConversionService conversionService = new DefaultConversionService();
-    protected GenericRepository<E, PK> entityService;
-
-    protected GenericJsfConverter(GenericRepository<E, PK> entityService, Class<E> type, Class<PK> pkType) {
-        this.entityService = entityService;
-        this.type = type;
-        this.pkType = pkType;
-    }
-
-    public Class<E> getType() {
-        return type;
-    }
-
-    @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
-        if (value == null || NULL_OBJECT_AS_STRING.equals(value)) {
+        if (value == null || COMPONENT_NULL_VALUE.equals(value)) {
             return null;
-        } else if (component instanceof UIInput && NEW_OBJECT_AS_STRING.equals(value)) {
-            return ((UIInput) component).getValue();
         }
-
-        E entity = null;
-        if (value.startsWith(PK_PREFIX) && value.endsWith(PK_SUFFIX)) {
-            String pkAsString = removeStart(value, PK_PREFIX);
-            pkAsString = removeEnd(pkAsString, PK_SUFFIX);
-            entity = entityService.getById(toPk(pkAsString));
-        }
-        if (entity == null && component instanceof UIInput) {
-            // id is manually set and entity is not yet persisted
-            return ((UIInput) component).getValue();
-        }
-
-        return entity;
+        return component.getAttributes().get(value);
     }
 
-    /**
-     * Converts the passed value to a PK instance. Entity having a composite PK must override it.
-     */
-    public PK toPk(String value) {
-        return conversionService.convert(value, pkType);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
     public String getAsString(FacesContext context, UIComponent component, Object object) {
-        if (object == null || !Identifiable.class.isAssignableFrom(object.getClass())) {
-            return NULL_OBJECT_AS_STRING;
+        if (object == null) {
+            return COMPONENT_NULL_VALUE;
         }
-
-        Identifiable<PK> io = (Identifiable<PK>) object;
-        if (io.isIdSet()) {
-            return PK_PREFIX + io.getId().toString() + PK_SUFFIX;
-        } else if (component instanceof UIInput) {
-            return NEW_OBJECT_AS_STRING;
-        } else {
-            return NULL_OBJECT_AS_STRING;
-        }
+        String unique = COMPONENT_UNIQUE_PREFIX + RandomStringUtils.randomAlphanumeric(36);
+        component.getAttributes().put(unique, object);
+        return unique;
     }
 }

@@ -40,7 +40,7 @@ public class ByFullTextUtil {
 
     public <T extends Identifiable<?>> Predicate byFullText(Root<T> root, CriteriaBuilder builder, SearchParameters sp, T entity,
             List<SingularAttribute<?, ?>> indexedAttributes) {
-        if (!sp.hasTerms()) {
+        if (!hasNonEmptyTerms(sp)) {
             return null;
         }
 
@@ -49,6 +49,15 @@ public class ByFullTextUtil {
         } else {
             return onCompositePrimaryKeys(root, builder, sp, indexedAttributes);
         }
+    }
+
+    private boolean hasNonEmptyTerms(SearchParameters sp) {
+        for (TermSelector termSelector : sp.getTerms()) {
+            if (termSelector.isNotEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private <T extends Identifiable<?>> Predicate onCompositePrimaryKeys(Root<T> root, CriteriaBuilder builder, SearchParameters sp,

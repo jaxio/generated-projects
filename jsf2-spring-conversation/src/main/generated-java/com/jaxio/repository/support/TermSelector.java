@@ -9,8 +9,10 @@
 package com.jaxio.repository.support;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.metamodel.SingularAttribute;
@@ -50,13 +52,47 @@ public class TermSelector implements Serializable {
         this.selected = selected;
     }
 
+    public TermSelector selected(String... selected) {
+        setSelected(newArrayList(selected));
+        return this;
+    }
+
     public boolean isNotEmpty() {
-        return (selected != null) && !selected.isEmpty();
+        if (selected == null || selected.isEmpty()) {
+            return false;
+        }
+        for (String word : selected) {
+            if (isNotBlank(word)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void clearSelected() {
         if (selected != null) {
             selected.clear();
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        if (selected != null) {
+            s.append("term");
+            if (selected.size() > 1) {
+                s.append('s');
+            }
+            s.append(": ");
+            s.append(Arrays.toString(selected.toArray()));
+        }
+        if (attribute != null) {
+            if (s.length() > 0) {
+                s.append(' ');
+            }
+            s.append("on ");
+            s.append(attribute.getName());
+        }
+        return s.toString();
     }
 }

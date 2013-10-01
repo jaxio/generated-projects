@@ -11,10 +11,17 @@ package com.jaxio.repository.support;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
@@ -63,5 +70,46 @@ public class MetamodelUtil {
         Class<?> metamodelClass = Class.forName(current.getName() + "_");
         metamodelCache.put(current, metamodelClass);
         return metamodelClass;
+    }
+
+    /**
+     * Retrieves cascade from metamodel attribute on a xToMany relation.
+     * 
+     * @return an empty collection if no jpa relation annotation can be found.
+     */
+    public static Collection<CascadeType> getCascades(PluralAttribute<?, ?, ?> attribute) {
+        if (attribute.getJavaMember() instanceof AccessibleObject) {
+            AccessibleObject accessibleObject = (AccessibleObject) attribute.getJavaMember();
+            OneToMany oneToMany = accessibleObject.getAnnotation(OneToMany.class);
+            if (oneToMany != null) {
+                return newArrayList(oneToMany.cascade());
+            }
+            ManyToMany manyToMany = accessibleObject.getAnnotation(ManyToMany.class);
+            if (manyToMany != null) {
+                return newArrayList(manyToMany.cascade());
+            }
+        }
+        return newArrayList();
+    }
+
+    /**
+     * Retrieves cascade from metamodel attribute on a xToOne relation.
+     * 
+     * @return an empty collection if no jpa relation annotation can be found.
+     */
+    public static Collection<CascadeType> getCascades(SingularAttribute<?, ?> attribute) {
+        if (attribute.getJavaMember() instanceof AccessibleObject) {
+            AccessibleObject accessibleObject = (AccessibleObject) attribute.getJavaMember();
+            ManyToOne manyToOne = accessibleObject.getAnnotation(ManyToOne.class);
+            if (manyToOne != null) {
+                return newArrayList(manyToOne.cascade());
+            }
+
+            OneToOne oneToOne = accessibleObject.getAnnotation(OneToOne.class);
+            if (oneToOne != null) {
+                return newArrayList(oneToOne.cascade());
+            }
+        }
+        return newArrayList();
     }
 }

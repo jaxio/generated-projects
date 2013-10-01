@@ -14,7 +14,6 @@ import java.util.Collection;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jaxio.domain.Identifiable;
-import com.jaxio.repository.support.GenericRepository;
 
 /**
  * The EntityGraphLoader is used to load within a single read-only transaction all the desired associations that 

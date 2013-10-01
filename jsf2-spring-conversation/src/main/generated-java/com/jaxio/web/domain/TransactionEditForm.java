@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Currency;
 import com.jaxio.domain.Transaction;
+import com.jaxio.domain.Transaction_;
 import com.jaxio.repository.TransactionRepository;
 import com.jaxio.web.domain.AccountController;
 import com.jaxio.web.domain.CurrencyController;
@@ -58,7 +59,7 @@ public class TransactionEditForm extends GenericEditForm<Transaction, Integer> {
 
     @PostConstruct
     void setupCurrencyActions() {
-        currency = new GenericToOneAssociation<Currency, Integer>("transaction_currency", currencyController) {
+        currency = new GenericToOneAssociation<Currency, Integer>(currencyController, Transaction_.currency) {
             @Override
             protected Currency get() {
                 return getTransaction().getCurrency();
@@ -83,7 +84,7 @@ public class TransactionEditForm extends GenericEditForm<Transaction, Integer> {
 
     @PostConstruct
     void setupAccountActions() {
-        account = new GenericToOneAssociation<Account, Integer>("transaction_account", accountController) {
+        account = new GenericToOneAssociation<Account, Integer>(accountController, Transaction_.account) {
             @Override
             protected Account get() {
                 return getTransaction().getAccount();

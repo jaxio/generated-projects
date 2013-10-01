@@ -8,7 +8,7 @@
 		immediate="true" 
 		oncomplete="askForDeleteItemDialog.show(); APP.focusTo('form:askForDeleteItemDialogNo');"
 		styleClass="ui-button"
-		rendered="#{empty rendered ? not readonly and not sub and permission.canDelete(item) : rendered}"
+		rendered="#{empty rendered ? not readonly and permission.canDelete(item) : rendered}"
 		title="#{empty item ? resourcesUtil.getProperty(title) : resourcesUtil.getProperty('icon_delete', printer.print(item))}" >
 		<f:setPropertyActionListener value="#{item}" target="#{model.selectedRow}" />
 		<div class="ui-button ui-icon iconDelete"/>

@@ -19,7 +19,7 @@
 	<ui:define name="form">
 		<app:input id="code" value="#{currencyEditForm.currency.code}" size="3" label="currency_code" required="true" />
 		<app:input id="name" value="#{currencyEditForm.currency.name}" size="100" label="currency_name" required="true" />
-		<app:input id="decimalCount" value="#{currencyEditForm.currency.decimalCount}" label="currency_decimalCount" />
+		<app:input id="decimalCount" value="#{currencyEditForm.currency.decimalCount}" label="currency_decimalCount" size="10" />
 	</ui:define>
 </app:edit>
 </ui:composition>

@@ -5,13 +5,15 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 	<h:outputText value="" />
 	<p:fieldset legend="#{resourcesUtil.getProperty(label)}">
-		<p:selectManyCheckbox id="#{id}" value="#{value.selected}" converter="#{converter}" disabled="#{empty disabled ? false : disabled}"
-			layout="#{items.list.size() lt 5 ? 'lineDirection' : 'pageDirection'}" rendered="#{not nullAllowed}">
+		<p:selectManyCheckbox id="#{id}" value="#{value.selected}" disabled="#{empty disabled ? false : disabled}"
+			layout="#{items.list.size() lt 5 ? 'lineDirection' : 'pageDirection'}" rendered="#{not nullAllowed}"
+			converter="#{genericJsfConverter}">
 			<f:selectItems value="#{items.list}" />
 			<ui:insert/>
 		</p:selectManyCheckbox>
-		<p:selectManyCheckbox id="#{id}_null_allowed" value="#{value.selected}" converter="#{converter}" disabled="#{empty disabled ? false : disabled}"
-			layout="#{items.list.size() lt 5 ? 'lineDirection' : 'pageDirection'}" rendered="#{nullAllowed}">
+		<p:selectManyCheckbox id="#{id}_null_allowed" value="#{value.selected}" disabled="#{empty disabled ? false : disabled}"
+			layout="#{items.list.size() lt 5 ? 'lineDirection' : 'pageDirection'}" rendered="#{nullAllowed}"
+			converter="#{genericJsfConverter}">
 			<f:selectItems value="#{items.list}" />
 			<f:selectItem itemLabel="#{msg.null_value}" itemValue="#{null}" />
 			<ui:insert/>

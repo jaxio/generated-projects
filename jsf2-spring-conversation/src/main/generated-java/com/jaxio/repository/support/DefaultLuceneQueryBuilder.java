@@ -11,23 +11,23 @@ package com.jaxio.repository.support;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.lucene.queryParser.QueryParser.escape;
 import static org.apache.lucene.util.Version.LUCENE_36;
 
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.ASCIIFoldingFilter;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Query;
 import org.hibernate.search.jpa.FullTextEntityManager;
 
-import com.google.common.collect.ArrayListMultimap;
-
 public class DefaultLuceneQueryBuilder implements LuceneQueryBuilder {
+
+    private static final String SPACES_OR_PUNCTUATION = "\\p{Punct}|\\p{Blank}";
 
     @Override
     public Query build(FullTextEntityManager fullTextEntityManager, SearchParameters searchParameters, List<SingularAttribute<?, ?>> availableProperties) {
@@ -58,44 +58,68 @@ public class DefaultLuceneQueryBuilder implements LuceneQueryBuilder {
 
     private void addAllClauses(SearchParameters sp, List<TermSelector> terms, List<String> clauses, List<SingularAttribute<?, ?>> availableProperties) {
         for (TermSelector term : terms) {
-            addClause(sp, term.getSelected(), term.getAttribute(), clauses, availableProperties);
+            if (term.isNotEmpty()) {
+                addClause(sp, term.getSelected(), term.getAttribute(), clauses, availableProperties);
+            }
         }
     }
 
-    private void addClause(SearchParameters sp, List<String> words, SingularAttribute<?, ?> property, List<String> clauses,
+    private void addClause(SearchParameters sp, List<String> terms, SingularAttribute<?, ?> property, List<String> clauses,
             List<SingularAttribute<?, ?>> availableProperties) {
         if (property != null) {
             checkArgument(availableProperties.contains(property), property + " is not indexed");
             StringBuilder subQuery = new StringBuilder();
-            subQuery.append("(");
-            if (words != null) {
-                for (String word : words) {
-                    if (StringUtils.isNotBlank(word)) {
+            if (terms != null) {
+                subQuery.append("(");
+                for (String wordWithSpacesOrPunctuation : terms) {
+                    if (isBlank(wordWithSpacesOrPunctuation)) {
+                        continue;
+                    }
+                    List<String> wordElements = newArrayList();
+                    for (String str : wordWithSpacesOrPunctuation.split(SPACES_OR_PUNCTUATION)) {
+                        if (isNotBlank(str)) {
+                            wordElements.add(str);
+                        }
+                    }
+                    if (!wordElements.isEmpty()) {
                         if (subQuery.length() > 1) {
                             subQuery.append(" OR ");
                         }
-                        if (sp.getSearchSimilarity() != null) {
-                            subQuery.append(property.getName() + ":" + escapeForFuzzy(word) + "~" + sp.getSearchSimilarity());
-                        } else {
-                            subQuery.append(property.getName() + ":" + escape(word));
-                        }
+                        subQuery.append(buildSubQuery(property, wordElements, sp));
                     }
                 }
+                subQuery.append(")");
             }
-            subQuery.append(")");
             if (subQuery.length() > 2) {
                 clauses.add(subQuery.toString());
             }
         } else {
-            addOnAnyClause(sp, words, availableProperties, clauses, availableProperties);
+            addOnAnyClause(sp, terms, availableProperties, clauses, availableProperties);
         }
     }
 
-    private void addOnAnyClause(SearchParameters sp, List<String> term, List<SingularAttribute<?, ?>> properties, List<String> clauses,
+    private String buildSubQuery(SingularAttribute<?, ?> property, List<String> terms, SearchParameters sp) {
+        StringBuilder subQuery = new StringBuilder();
+        subQuery.append("(");
+        for (String term : terms) {
+            if (subQuery.length() > 1) {
+                subQuery.append(" AND ");
+            }
+            if (sp.getSearchSimilarity() != null) {
+                subQuery.append(property.getName() + ":" + escapeForFuzzy(term) + "~" + sp.getSearchSimilarity());
+            } else {
+                subQuery.append(property.getName() + ":" + escape(term));
+            }
+        }
+        subQuery.append(")");
+        return subQuery.toString();
+    }
+
+    private void addOnAnyClause(SearchParameters sp, List<String> terms, List<SingularAttribute<?, ?>> properties, List<String> clauses,
             List<SingularAttribute<?, ?>> availableProperties) {
         List<String> subClauses = newArrayList();
         for (SingularAttribute<?, ?> property : properties) {
-            addClause(sp, term, property, subClauses, availableProperties);
+            addClause(sp, terms, property, subClauses, availableProperties);
         }
         if (subClauses.isEmpty()) {
             return;

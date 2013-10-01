@@ -38,7 +38,6 @@ import com.google.common.base.Objects;
 import com.jaxio.domain.Account;
 import com.jaxio.domain.Currency;
 import com.jaxio.domain.IdentifiableHashBuilder;
-import com.jaxio.domain.Transaction_;
 
 @Entity
 @Table(name = "`TRANSACTION`")
@@ -88,7 +87,7 @@ public class Transaction implements Identifiable<Integer>, Serializable {
     // -- [amount] ------------------------
 
     @NotNull
-    @Digits(integer = 20, fraction = 2)
+    @Digits(integer = 18, fraction = 2)
     @Column(name = "AMOUNT", nullable = false, precision = 20, scale = 2)
     public BigDecimal getAmount() {
         return amount;
@@ -253,12 +252,12 @@ public class Transaction implements Identifiable<Integer>, Serializable {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add(Transaction_.id.getName(), getId()) //
-                .add(Transaction_.amount.getName(), getAmount()) //
-                .add(Transaction_.transactionDate.getName(), getTransactionDate()) //
-                .add(Transaction_.valueDate.getName(), getValueDate()) //
-                .add(Transaction_.description.getName(), getDescription()) //
-                .add(Transaction_.version.getName(), getVersion()) //
+                .add("id", getId()) //
+                .add("amount", getAmount()) //
+                .add("transactionDate", getTransactionDate()) //
+                .add("valueDate", getValueDate()) //
+                .add("description", getDescription()) //
+                .add("version", getVersion()) //
                 .toString();
     }
 }

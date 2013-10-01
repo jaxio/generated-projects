@@ -8,8 +8,6 @@
  */
 package com.jaxio.web.domain;
 
-import static org.apache.commons.lang.StringUtils.join;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -27,7 +25,8 @@ public class CustomerExcelExporter extends GenericExcelExporter<Customer> {
     protected CustomerSearchForm sf;
 
     public CustomerExcelExporter() {
-        super("customer_companyName", "customer_contractFileName");
+        super("customer_companyName", //
+                "customer_contractFileName");
     }
 
     @Override

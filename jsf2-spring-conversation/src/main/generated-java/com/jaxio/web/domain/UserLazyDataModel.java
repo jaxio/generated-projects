@@ -15,7 +15,6 @@ import org.primefaces.model.LazyDataModel;
 
 import com.jaxio.domain.User;
 import com.jaxio.repository.UserRepository;
-import com.jaxio.web.converter.UserJsfConverter;
 import com.jaxio.web.domain.UserExcelExporter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
 import com.jaxio.web.faces.ConversationContextScoped;
@@ -29,8 +28,7 @@ public class UserLazyDataModel extends GenericLazyDataModel<User, Integer, UserS
     private static final long serialVersionUID = 1L;
 
     @Inject
-    public UserLazyDataModel(UserRepository userRepository, UserJsfConverter userConverter, UserController userController, UserSearchForm userSearchForm,
-            UserExcelExporter userExcelExporter) {
-        super(userRepository, userConverter, userController, userSearchForm, userExcelExporter);
+    public UserLazyDataModel(UserRepository userRepository, UserController userController, UserSearchForm userSearchForm, UserExcelExporter userExcelExporter) {
+        super(userRepository, userController, userSearchForm, userExcelExporter);
     }
 }

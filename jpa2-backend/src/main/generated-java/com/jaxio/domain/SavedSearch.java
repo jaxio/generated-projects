@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
 import com.jaxio.domain.IdentifiableHashBuilder;
-import com.jaxio.domain.SavedSearch_;
 import com.jaxio.domain.User;
 
 @Entity
@@ -188,10 +187,10 @@ public class SavedSearch implements Identifiable<Integer>, Serializable {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add(SavedSearch_.id.getName(), getId()) //
-                .add(SavedSearch_.name.getName(), getName()) //
-                .add(SavedSearch_.formClassname.getName(), getFormClassname()) //
-                .add(SavedSearch_.formContent.getName(), getFormContent()) //
+                .add("id", getId()) //
+                .add("name", getName()) //
+                .add("formClassname", getFormClassname()) //
+                .add("formContent", getFormContent()) //
                 .toString();
     }
 }

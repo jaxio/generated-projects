@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -25,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
-import com.jaxio.domain.Currency_;
 import com.jaxio.domain.IdentifiableHashBuilder;
 import com.jaxio.validation.FixedLength;
 
@@ -107,6 +107,7 @@ public class Currency implements Identifiable<Integer>, Serializable {
 
     // -- [decimalCount] ------------------------
 
+    @Digits(integer = 10, fraction = 0)
     @Column(name = "DECIMAL_COUNT", precision = 10)
     public Integer getDecimalCount() {
         return decimalCount;
@@ -167,11 +168,11 @@ public class Currency implements Identifiable<Integer>, Serializable {
     @Override
     public String toString() {
         return Objects.toStringHelper(this) //
-                .add(Currency_.id.getName(), getId()) //
-                .add(Currency_.code.getName(), getCode()) //
-                .add(Currency_.name.getName(), getName()) //
-                .add(Currency_.decimalCount.getName(), getDecimalCount()) //
-                .add(Currency_.version.getName(), getVersion()) //
+                .add("id", getId()) //
+                .add("code", getCode()) //
+                .add("name", getName()) //
+                .add("decimalCount", getDecimalCount()) //
+                .add("version", getVersion()) //
                 .toString();
     }
 }

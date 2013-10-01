@@ -27,7 +27,9 @@ public class UserExcelExporter extends GenericExcelExporter<User> {
     protected UserSearchForm sf;
 
     public UserExcelExporter() {
-        super("user_username", "user_email", "user_isEnabled");
+        super("user_username", //
+                "user_email", //
+                "user_isEnabled");
     }
 
     @Override
@@ -41,9 +43,12 @@ public class UserExcelExporter extends GenericExcelExporter<User> {
     @Override
     public void fillSearchCriteria(int row) {
         useCriteriaSheet();
-
         setLeftHeader(row, 0, "search_full_text");
         setValue(row++, 1, join(sf.getTermsOnAll().getSelected(), ' '));
+        setTermSelector(row++, 0, "user_username", sf.getUsernameTermSelector());
+        setTermSelector(row++, 0, "user_email", sf.getEmailTermSelector());
+        setTermSelector(row++, 0, "user_firstName", sf.getFirstNameTermSelector());
+        setTermSelector(row++, 0, "user_lastName", sf.getLastNameTermSelector());
 
         setSelector(row++, 0, "user_username", sf.getUsernameSelector());
         setSelector(row++, 0, "user_password", sf.getPasswordSelector());

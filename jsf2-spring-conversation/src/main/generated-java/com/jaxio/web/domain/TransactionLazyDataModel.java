@@ -15,7 +15,6 @@ import org.primefaces.model.LazyDataModel;
 
 import com.jaxio.domain.Transaction;
 import com.jaxio.repository.TransactionRepository;
-import com.jaxio.web.converter.TransactionJsfConverter;
 import com.jaxio.web.domain.TransactionExcelExporter;
 import com.jaxio.web.domain.support.GenericLazyDataModel;
 import com.jaxio.web.faces.ConversationContextScoped;
@@ -29,8 +28,8 @@ public class TransactionLazyDataModel extends GenericLazyDataModel<Transaction, 
     private static final long serialVersionUID = 1L;
 
     @Inject
-    public TransactionLazyDataModel(TransactionRepository transactionRepository, TransactionJsfConverter transactionConverter,
-            TransactionController transactionController, TransactionSearchForm transactionSearchForm, TransactionExcelExporter transactionExcelExporter) {
-        super(transactionRepository, transactionConverter, transactionController, transactionSearchForm, transactionExcelExporter);
+    public TransactionLazyDataModel(TransactionRepository transactionRepository, TransactionController transactionController,
+            TransactionSearchForm transactionSearchForm, TransactionExcelExporter transactionExcelExporter) {
+        super(transactionRepository, transactionController, transactionSearchForm, transactionExcelExporter);
     }
 }

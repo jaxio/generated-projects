@@ -22,14 +22,14 @@
 		</app:input>
 		<app:input id="name" value="#{accountEditForm.account.name}" size="100" label="account_name" required="true" />
 		<app:autoComplete id="currency" value="#{accountEditForm.currency.selected}" label="account_currency" title="account_currency" required="true" 
-			model="#{accountEditForm.currency}" controller="#{currencyController}" converter="#{currencyJsfConverter}" permission="#{currencyPermission}">
+			model="#{accountEditForm.currency}" controller="#{currencyController}" permission="#{currencyPermission}">
 			<app:iconSearch id="selectCurrency" />
 			<app:iconAdd id="addCurrency" />
 			<app:iconEdit item="#{accountEditForm.account.currency}" />
 			<app:iconView item="#{accountEditForm.account.currency}" />
 		</app:autoComplete>
 		<app:autoComplete id="customer" value="#{accountEditForm.customer.selected}" label="account_customer" title="account_customer" required="true" 
-			model="#{accountEditForm.customer}" controller="#{customerController}" converter="#{customerJsfConverter}" permission="#{customerPermission}">
+			model="#{accountEditForm.customer}" controller="#{customerController}" permission="#{customerPermission}">
 			<app:iconView item="#{accountEditForm.account.customer}" />
 		</app:autoComplete>
 	</ui:define>

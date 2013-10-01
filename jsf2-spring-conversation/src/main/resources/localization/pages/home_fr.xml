@@ -12,9 +12,14 @@
 	<comment>Homepage</comment>
 	<entry key="home_about">A propos</entry>
 	<entry key="home_generated_by"><![CDATA[
-		<p>Cette application a été générée par <a href="http://www.jaxio.com/celerio.html" target="_jaxio">Celerio</a>, un outil de la société <a href="http://www.jaxio.com/" target="_jaxio">Jaxio</a>, basée à Paris, en France.</p>
-		<p>Vous avez des suggestions ? Des questions ? Des remarques ? Vous aimeriez utiliser le générateur Celerio dans votre entreprise ?
-			<a href="http://www.jaxio.com/nous-contacter.html" target="_jaxio">Contactez-nous...</a>
+		<p>Cette application a été générée par <a href="http://www.jaxio.com/celerio.html" target="_jaxio">Celerio</a>,
+		un outil de la société <a href="http://www.jaxio.com/" target="_jaxio">Jaxio</a>, basée à Paris, en France.</p>
+		<p>Si vous faites un usage du code généré dans un cadre professionnel nous vous encourageons à acheter une Licence Celerio,
+		pour bénéficier de fonctionnalités avancées et soutenir notre activité.
+		<br/>
+		<a href="http://www.jaxio.com/licence-utilisation-celerio.html" target="_jaxio">Voir les tarifs Celerio</a>.</p>
+		<p>
+			Pour toute remarque/suggestion/question/bug, <a href="http://www.jaxio.com/nous-contacter.html" target="_jaxio">Contactez-nous...</a>
 		</p>
 	]]></entry>
 	<entry key="home_please_connect_first">Connectez-vous afin d'accéder au contenu.</entry>

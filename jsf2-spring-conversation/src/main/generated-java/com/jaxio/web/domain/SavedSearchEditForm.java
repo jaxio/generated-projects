@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.jaxio.domain.SavedSearch;
+import com.jaxio.domain.SavedSearch_;
 import com.jaxio.domain.User;
 import com.jaxio.repository.SavedSearchRepository;
 import com.jaxio.web.domain.SavedSearchController;
@@ -52,7 +53,7 @@ public class SavedSearchEditForm extends GenericEditForm<SavedSearch, Integer> {
 
     @PostConstruct
     void setupUserActions() {
-        user = new GenericToOneAssociation<User, Integer>("savedSearch_user", userController) {
+        user = new GenericToOneAssociation<User, Integer>(userController, SavedSearch_.user) {
             @Override
             protected User get() {
                 return getSavedSearch().getUser();

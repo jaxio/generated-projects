@@ -12,7 +12,6 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_1.xsd"
 	version="2.1">
 	<application>
-		<resource-handler>com.jaxio.web.util.CachedPrimeResourceHandler</resource-handler>
 		<locale-config>
 			<supported-locale>en</supported-locale>
 			<supported-locale>fr</supported-locale>

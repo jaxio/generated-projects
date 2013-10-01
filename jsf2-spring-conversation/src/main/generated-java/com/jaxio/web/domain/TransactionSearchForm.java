@@ -63,7 +63,7 @@ public class TransactionSearchForm extends GenericSearchForm<Transaction, Intege
     @Override
     public SearchParameters toSearchParameters() {
         SearchParameters sp = searchParameters();
-        sp.leftJoin(Transaction_.account);
+        sp.fetch(Transaction_.account);
         sp.range(amountRange, transactionDateRange, valueDateRange);
         sp.property(amountSelector, descriptionSelector);
         sp.entity(currencySelector, accountSelector);
