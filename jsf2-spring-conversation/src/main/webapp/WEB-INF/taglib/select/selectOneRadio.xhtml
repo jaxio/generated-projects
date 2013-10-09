@@ -5,8 +5,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:app="http://springfuse.jaxio.com/app">
-	<app:outputLabel for="#{id}" value="#{label}" required="#{required}" rendered="#{rendered}" />
-	<p:selectOneRadio id="#{id}" value="#{value}" label="#{resourcesUtil.getProperty(label)}" rendered="#{not readonly}" disabled="#{empty disabled ? false : disabled}"
+	<app:outputLabel for="#{id}" value="#{label}" required="#{required}" rendered="#{(empty rendered or rendered)}" />
+	<p:selectOneRadio id="#{id}" value="#{value}" label="#{resourcesUtil.getProperty(label)}" rendered="#{(empty rendered or rendered) and not readonly}" disabled="#{empty disabled ? false : disabled}"
 		layout="#{empty layout ? (values.size() lt 4 ? 'lineDirection' : 'pageDirection') : layout}">
 		<f:selectItems value="#{values}" />
 		<c:if test="#{not empty nullAllowed and nullAllowed}">

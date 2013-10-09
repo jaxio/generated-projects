@@ -55,9 +55,9 @@
 	<logger name="SLF4J" level="WARN" />
 	<logger name="JCL" level="INFO" />
 
-	<logger name="com.jaxio" level="@log.level@" />
-	<logger name="com.jaxio.repository.support.HibernateSearchUtil" level="@log.level@" />
-	<logger name="com.jaxio.repository" level="warn" />
+	<logger name="com.jaxio.appli" level="@log.level@" />
+	<logger name="com.jaxio.appli.repository.support.HibernateSearchUtil" level="@log.level@" />
+	<logger name="com.jaxio.appli.repository" level="warn" />
 
 	<root level="warn">
 		<appender-ref ref="Console" />

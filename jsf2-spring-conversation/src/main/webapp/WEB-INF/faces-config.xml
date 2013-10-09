@@ -16,20 +16,20 @@
 			<supported-locale>en</supported-locale>
 			<supported-locale>fr</supported-locale>
 		</locale-config>
-		<el-resolver>com.jaxio.web.faces.ConversationAwareElResolver</el-resolver>
-		<message-bundle>com.jaxio.web.util.MessageBundle</message-bundle>
+		<el-resolver>com.jaxio.appli.web.faces.ConversationAwareElResolver</el-resolver>
+		<message-bundle>com.jaxio.appli.web.util.MessageBundle</message-bundle>
 		<resource-bundle>
-			<base-name>com.jaxio.web.util.MessageBundle</base-name>
+			<base-name>com.jaxio.appli.web.util.MessageBundle</base-name>
 			<var>msg</var>
 		</resource-bundle>
 	</application>
 	<factory>
-		<exception-handler-factory>com.jaxio.web.faces.CustomExceptionHandlerFactory</exception-handler-factory>
+		<exception-handler-factory>com.jaxio.appli.web.faces.CustomExceptionHandlerFactory</exception-handler-factory>
 	</factory>
 	<lifecycle>
-		<phase-listener>com.jaxio.web.faces.LocaleSetterListener</phase-listener>
-		<phase-listener>com.jaxio.web.faces.LogPhaseListener</phase-listener>
-		<phase-listener>com.jaxio.web.faces.MultiPageMessagesListener</phase-listener>
-		<phase-listener>com.jaxio.web.faces.ExceptionInRenderPhaseListener</phase-listener>
+		<phase-listener>com.jaxio.appli.web.faces.LocaleSetterListener</phase-listener>
+		<phase-listener>com.jaxio.appli.web.faces.LogPhaseListener</phase-listener>
+		<phase-listener>com.jaxio.appli.web.faces.MultiPageMessagesListener</phase-listener>
+		<phase-listener>com.jaxio.appli.web.faces.ExceptionInRenderPhaseListener</phase-listener>
 	</lifecycle>
 </faces-config>

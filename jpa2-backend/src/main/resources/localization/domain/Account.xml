@@ -11,28 +11,42 @@
 <properties>
 	<comment>Domain resources for Account</comment>
 
-	<entry key="account">Bank account</entry>
-	<entry key="account_search">Search Bank account</entry>
-	<entry key="account_create">Create Bank account</entry>
+	<entry key="account">User Account</entry>
+	<entry key="account_search">Search User Account</entry>
+	<entry key="account_create">Create User Account</entry>
 	<entry key="account_edit">Edit {0}</entry>
 	<entry key="account_view">View {0}</entry>
 
 	<!-- attributes -->
 	<entry key="account_id">Id</entry>
-	<entry key="account_accountNumber">Account Number</entry>
-	<entry key="account_name">Name</entry>
-	<entry key="account_currencyId">Currency Id</entry>
-	<entry key="account_customerId">Customer Id</entry>
+	<entry key="account_username">Username</entry>
+	<entry key="account_password">Password</entry>
+	<entry key="account_email">Email</entry>
+	<entry key="account_isEnabled">Is Enabled?</entry>
+	<entry key="account_civility">Civility</entry>
+	<entry key="account_firstName">First Name</entry>
+	<entry key="account_lastName">Last Name</entry>
+	<entry key="account_birthDate">Birth Date</entry>
+	<entry key="account_description">Description</entry>
+	<entry key="account_addressId">Address Id</entry>
+	<entry key="account_creationDate">Creation Date</entry>
+	<entry key="account_creationAuthor">Creation Author</entry>
+	<entry key="account_lastModificationDate">Last Modification Date</entry>
+	<entry key="account_lastModificationAuthor">Last Modification Author</entry>
 	<entry key="account_version">Version</entry>
 
 	<!-- x-to-one -->
-	<entry key="account_currency">Currency</entry>
-	<entry key="account_customer">Account owner</entry>
+	<entry key="account_homeAddress">Home Address</entry>
 
 	<!-- one-to-many -->
-	<entry key="account_transactions">Transactions</entry>
+	<entry key="account_coolBooks">Cool Books</entry>
+	<entry key="account_edocs">Attached docs</entry>
+
+	<!-- many-to-many -->
+	<entry key="account_securityRoles">Security Roles</entry>
 
 	<!-- uniques -->
-	<entry key="account_accountNumber_already_exists">Account Number already exists</entry>
-	<entry key="account_composite_unique_constraint_error">A composite unique constraint has failed on Bank account</entry>
+	<entry key="account_username_already_exists">Username already exists</entry>
+	<entry key="account_email_already_exists">Email already exists</entry>
+	<entry key="account_composite_unique_constraint_error">A composite unique constraint has failed on User Account</entry>
 </properties>

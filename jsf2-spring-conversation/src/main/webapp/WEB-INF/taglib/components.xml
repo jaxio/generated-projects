@@ -176,6 +176,10 @@
 		<source>output/conversationDebug.xhtml</source>
 	</tag>
 	<tag>
+		<tag-name>outputCurrency</tag-name>
+		<source>output/outputCurrency.xhtml</source>
+	</tag>
+	<tag>
 		<tag-name>outputDate</tag-name>
 		<source>output/outputDate.xhtml</source>
 	</tag>
@@ -184,8 +188,16 @@
 		<source>output/outputDateTime.xhtml</source>
 	</tag>
 	<tag>
+		<tag-name>outputDecimal</tag-name>
+		<source>output/outputDecimal.xhtml</source>
+	</tag>
+	<tag>
 		<tag-name>outputFile</tag-name>
 		<source>output/outputFile.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>outputInteger</tag-name>
+		<source>output/outputInteger.xhtml</source>
 	</tag>
 	<tag>
 		<tag-name>outputLabel</tag-name>

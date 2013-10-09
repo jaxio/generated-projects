@@ -11,22 +11,22 @@
 <properties>
 	<comment>Domain resources for SavedSearch for the french locale</comment>
 
-	<entry key="savedSearch">Recherche pré-remplie</entry>
-	<entry key="savedSearch_search">Recherche de Recherche pré-remplie</entry>
-	<entry key="savedSearch_create">Création de Recherche pré-remplie</entry>
+	<entry key="savedSearch">Saved Search</entry>
+	<entry key="savedSearch_search">Recherche de Saved Search</entry>
+	<entry key="savedSearch_create">Création de Saved Search</entry>
 	<entry key="savedSearch_edit">Édition de {0}</entry>
 	<entry key="savedSearch_view">Affichage de {0}</entry>
 
 	<!-- attributes -->
 	<entry key="savedSearch_id">Id</entry>
-	<entry key="savedSearch_name">Alias</entry>
-	<entry key="savedSearch_formClassname">Classe Java</entry>
-	<entry key="savedSearch_formContent">Contenu sérialisé</entry>
-	<entry key="savedSearch_userId">User Id</entry>
+	<entry key="savedSearch_name">Name</entry>
+	<entry key="savedSearch_formClassname">Form Classname</entry>
+	<entry key="savedSearch_formContent">Form Content</entry>
+	<entry key="savedSearch_accountId">Account Id</entry>
 
 	<!-- x-to-one -->
-	<entry key="savedSearch_user">User</entry>
+	<entry key="savedSearch_account">Account</entry>
 
 	<!-- uniques -->
-	<entry key="savedSearch_composite_unique_constraint_error">Une contrainte d'unicité multiple n'est pas respectée sur Recherche pré-remplie</entry>
+	<entry key="savedSearch_composite_unique_constraint_error">Une contrainte d'unicité multiple n'est pas respectée sur Saved Search</entry>
 </properties>

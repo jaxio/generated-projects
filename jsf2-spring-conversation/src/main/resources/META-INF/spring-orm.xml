@@ -54,16 +54,16 @@
 		named query starts with "from" instead of "select", the "select count(*) "
 		will be dynamically appended so it returns what you expect.
 	]]></description>
-	<entity metadata-complete="false" class="com.jaxio.domain.User">
+	<entity metadata-complete="false" class="com.jaxio.appli.domain.Account">
 		<!-- basic example with dynamic ordering support -->
-		<named-query name="User.selectAll">
-			<query>from com.jaxio.domain.User</query>
+		<named-query name="Account.selectAll">
+			<query>from com.jaxio.appli.domain.Account</query>
 			<hint name="dynamic" value="true" />
-			<hint name="query" value="from com.jaxio.domain.User" />
+			<hint name="query" value="from com.jaxio.appli.domain.Account" />
 			<hint name="org.hibernate.cacheable" value="true" />
 		</named-query>
-		<named-native-query name="User.selectAll.native" result-class="com.jaxio.domain.User">
-			<query>select {account.*} from USER</query>
+		<named-native-query name="Account.selectAll.native" result-class="com.jaxio.appli.domain.Account">
+			<query>select {account.*} from ACCOUNT</query>
 		</named-native-query>
 	</entity>
 </entity-mappings>

@@ -19,10 +19,8 @@
 
 	<!-- attributes -->
 	<entry key="address_id">Id</entry>
-	<entry key="address_street">Rue</entry>
-	<entry key="address_zipCode">Code postal</entry>
+	<entry key="address_streetName">Nom de la rue</entry>
 	<entry key="address_city">Ville</entry>
-	<entry key="address_country">Pays</entry>
 	<entry key="address_version">Version</entry>
 
 	<!-- uniques -->

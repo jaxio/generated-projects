@@ -10,6 +10,6 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 	<comment>Base resources for the enum Civility</comment>
-	<entry key="Civility_MISTER">Mister</entry>
-	<entry key="Civility_MISS">Miss</entry>
+	<entry key="Civility_MR">Mister</entry>
+	<entry key="Civility_MS">Miss</entry>
 </properties>

@@ -17,7 +17,7 @@
 	<import resource="classpath*:spring/applicationContext.xml" />
 
 	<!-- Simulate part of the web application context (does not apply for backend only project) -->
-	<context:component-scan base-package="com.jaxio.web" />
+	<context:component-scan base-package="com.jaxio.appli.web" />
     
     <!-- Fresh H2 is used for tests. If you want to use the dev database, comment it out -->
 	<jdbc:embedded-database id="dataSource" type="H2">

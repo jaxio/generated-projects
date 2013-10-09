@@ -11,28 +11,42 @@
 <properties>
 	<comment>Domain resources for Account for the french locale</comment>
 
-	<entry key="account">Compte bancaire</entry>
-	<entry key="account_search">Recherche de Compte bancaire</entry>
-	<entry key="account_create">Création de Compte bancaire</entry>
+	<entry key="account">Compte Utilisateur</entry>
+	<entry key="account_search">Recherche de Compte Utilisateur</entry>
+	<entry key="account_create">Création de Compte Utilisateur</entry>
 	<entry key="account_edit">Édition de {0}</entry>
 	<entry key="account_view">Affichage de {0}</entry>
 
 	<!-- attributes -->
 	<entry key="account_id">Id</entry>
-	<entry key="account_accountNumber">No de compte</entry>
-	<entry key="account_name">Libellé</entry>
-	<entry key="account_currencyId">Currency Id</entry>
-	<entry key="account_customerId">Customer Id</entry>
+	<entry key="account_username">Identifiant</entry>
+	<entry key="account_password">Mot de passe</entry>
+	<entry key="account_email">Email</entry>
+	<entry key="account_isEnabled">Compte activé</entry>
+	<entry key="account_civility">Civilité</entry>
+	<entry key="account_firstName">Prénom</entry>
+	<entry key="account_lastName">Nom</entry>
+	<entry key="account_birthDate">Date de naissance</entry>
+	<entry key="account_description">Description</entry>
+	<entry key="account_addressId">Address Id</entry>
+	<entry key="account_creationDate">Creation Date</entry>
+	<entry key="account_creationAuthor">Creation Author</entry>
+	<entry key="account_lastModificationDate">Last Modification Date</entry>
+	<entry key="account_lastModificationAuthor">Last Modification Author</entry>
 	<entry key="account_version">Version</entry>
 
 	<!-- x-to-one -->
-	<entry key="account_currency">Devise</entry>
-	<entry key="account_customer">Client propriétaire</entry>
+	<entry key="account_homeAddress">Adresse domicile</entry>
 
 	<!-- one-to-many -->
-	<entry key="account_transactions">Transactions</entry>
+	<entry key="account_coolBooks">Livres intéressants</entry>
+	<entry key="account_edocs">Documents attachés</entry>
+
+	<!-- many-to-many -->
+	<entry key="account_securityRoles">Droits attribués</entry>
 
 	<!-- uniques -->
-	<entry key="account_accountNumber_already_exists">No de compte existe déjà</entry>
-	<entry key="account_composite_unique_constraint_error">Une contrainte d'unicité multiple n'est pas respectée sur Compte bancaire</entry>
+	<entry key="account_username_already_exists">Identifiant existe déjà</entry>
+	<entry key="account_email_already_exists">Email existe déjà</entry>
+	<entry key="account_composite_unique_constraint_error">Une contrainte d'unicité multiple n'est pas respectée sur Compte Utilisateur</entry>
 </properties>

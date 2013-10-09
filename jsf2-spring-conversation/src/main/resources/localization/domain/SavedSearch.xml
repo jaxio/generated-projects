@@ -11,9 +11,9 @@
 <properties>
 	<comment>Domain resources for SavedSearch</comment>
 
-	<entry key="savedSearch">Pre-filled search form</entry>
-	<entry key="savedSearch_search">Search Pre-filled search form</entry>
-	<entry key="savedSearch_create">Create Pre-filled search form</entry>
+	<entry key="savedSearch">Saved Search</entry>
+	<entry key="savedSearch_search">Search Saved Search</entry>
+	<entry key="savedSearch_create">Create Saved Search</entry>
 	<entry key="savedSearch_edit">Edit {0}</entry>
 	<entry key="savedSearch_view">View {0}</entry>
 
@@ -21,12 +21,12 @@
 	<entry key="savedSearch_id">Id</entry>
 	<entry key="savedSearch_name">Name</entry>
 	<entry key="savedSearch_formClassname">Form Classname</entry>
-	<entry key="savedSearch_formContent">Serialized content</entry>
-	<entry key="savedSearch_userId">User Id</entry>
+	<entry key="savedSearch_formContent">Form Content</entry>
+	<entry key="savedSearch_accountId">Account Id</entry>
 
 	<!-- x-to-one -->
-	<entry key="savedSearch_user">User</entry>
+	<entry key="savedSearch_account">Account</entry>
 
 	<!-- uniques -->
-	<entry key="savedSearch_composite_unique_constraint_error">A composite unique constraint has failed on Pre-filled search form</entry>
+	<entry key="savedSearch_composite_unique_constraint_error">A composite unique constraint has failed on Saved Search</entry>
 </properties>

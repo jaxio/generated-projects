@@ -6,7 +6,7 @@
 	xmlns:app="http://springfuse.jaxio.com/app">
 	<app:outputLabel for="#{id}_input" value="#{label}" required="#{required}" rendered="#{rendered}" styleClass="#{styleClass}" />
 	<h:panelGroup id="#{id}Grid" styleClass="aria-role-presentation" rendered="#{empty rendered ? true : rendered}">
-		<p:autoComplete id="#{id}" value="#{value}" label="#{resourcesUtil.getProperty(label)}"
+		<p:autoComplete id="#{id}" value="#{value.selected}" label="#{resourcesUtil.getProperty(label)}"
 			completeMethod="#{controller[(empty completeMethod) ? 'complete' : completeMethod]}"
 			var="item"
 			itemValue="#{item}"

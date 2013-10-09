@@ -17,10 +17,8 @@
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
 <app:edit bean="#{addressEditForm}" title="#{addressEditForm.title}">
 	<ui:define name="form">
-		<app:input id="street" value="#{addressEditForm.address.street}" size="100" label="address_street" />
-		<app:input id="zipCode" value="#{addressEditForm.address.zipCode}" size="10" label="address_zipCode" />
+		<app:input id="streetName" value="#{addressEditForm.address.streetName}" size="100" label="address_streetName" />
 		<app:input id="city" value="#{addressEditForm.address.city}" size="100" label="address_city" required="true" />
-		<app:input id="country" value="#{addressEditForm.address.country}" size="100" label="address_country" required="true" />
 	</ui:define>
 </app:edit>
 </ui:composition>

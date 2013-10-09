@@ -64,12 +64,13 @@
 									model="#{conversationMenu.model}" 
 									rendered="#{conversationMenu.render}"/>
 								<p:menuButton value="Domain">
+									<p:menuitem value="#{msg.account}" action="#{accountController.beginSearch()}" rendered="#{accountPermission.canSearch()}" />
 									<p:menuitem value="#{msg.address}" action="#{addressController.beginSearch()}" rendered="#{addressPermission.canSearch()}" />
-									<p:menuitem value="#{msg.currency}" action="#{currencyController.beginSearch()}" rendered="#{currencyPermission.canSearch()}" />
-									<p:menuitem value="#{msg.customer}" action="#{customerController.beginSearch()}" rendered="#{customerPermission.canSearch()}" />
+									<p:menuitem value="#{msg.auditLog}" action="#{auditLogController.beginSearch()}" rendered="#{auditLogPermission.canSearch()}" />
+									<p:menuitem value="#{msg.legacy}" action="#{legacyController.beginSearch()}" rendered="#{legacyPermission.canSearch()}" />
+									<p:menuitem value="#{msg.moreTypesDemo}" action="#{moreTypesDemoController.beginSearch()}" rendered="#{moreTypesDemoPermission.canSearch()}" />
 									<p:menuitem value="#{msg.role}" action="#{roleController.beginSearch()}" rendered="#{rolePermission.canSearch()}" />
 									<p:menuitem value="#{msg.savedSearch}" action="#{savedSearchController.beginSearch()}" rendered="#{savedSearchPermission.canSearch()}" />
-									<p:menuitem value="#{msg.user}" action="#{userController.beginSearch()}" rendered="#{userPermission.canSearch()}" />
 								</p:menuButton>
 								<p:menuButton value="Debug" id="debug">
 									<p:menuitem id="throwException" value="Throw exception" action="#{exceptionUtil.throwRuntimeException()}" process="@this" ajax="false" immediate="true" icon="ui-icon ui-icon-alert" />

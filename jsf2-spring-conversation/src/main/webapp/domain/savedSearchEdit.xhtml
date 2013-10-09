@@ -22,12 +22,12 @@
 		<app:inputFile id="formContent" label="savedSearch_formContent" object="#{savedSearchEditForm.savedSearch}"
 			fileupload="#{savedSearchController.getSavedSearchFileUpload(savedSearchEditForm.savedSearch)}" stream="#{savedSearchFileDownload.getFormContentStream(savedSearchEditForm.savedSearch)}" 
 			action="onFormContentFileUpload" />
-		<app:autoComplete id="user" value="#{savedSearchEditForm.user.selected}" label="savedSearch_user" title="savedSearch_user" required="false" 
-			model="#{savedSearchEditForm.user}" controller="#{userController}" permission="#{userPermission}">
-			<app:iconSearch id="selectUser" />
-			<app:iconAdd id="addUser" />
-			<app:iconEdit item="#{savedSearchEditForm.savedSearch.user}" />
-			<app:iconView item="#{savedSearchEditForm.savedSearch.user}" />
+		<app:autoComplete id="account" value="#{savedSearchEditForm.account.selected}" label="savedSearch_account" title="savedSearch_account" required="false" 
+			model="#{savedSearchEditForm.account}" controller="#{accountController}" permission="#{accountPermission}">
+			<app:iconSearch id="selectAccount" />
+			<app:iconAdd id="addAccount" />
+			<app:iconEdit item="#{savedSearchEditForm.savedSearch.account}" />
+			<app:iconView item="#{savedSearchEditForm.savedSearch.account}" />
 		</app:autoComplete>
 	</ui:define>
 </app:edit>

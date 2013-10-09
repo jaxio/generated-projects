@@ -63,22 +63,52 @@
 					</h:commandLink>
 				</li>
 				<li>
-					<h:outputText value="#{msg.currency} " />
-					<h:commandLink id="selectCurrencies" action="#{currencyController.beginSearch()}" rendered="#{currencyPermission.canSearch()}" ajax="false" immediate="true">
+					<h:outputText value="#{msg.auditLog} " />
+					<h:commandLink id="selectAuditLogs" action="#{auditLogController.beginSearch()}" rendered="#{auditLogPermission.canSearch()}" ajax="false" immediate="true">
 						<h:outputText value="#{msg.home_conversation_search}"/>
 					</h:commandLink>
 					<h:outputText value=" " />
-					<h:commandLink id="newCurrencies" action="#{currencyController.beginCreate()}" rendered="#{currencyPermission.canCreate()}" ajax="false" immediate="true">
+					<h:commandLink id="newAuditLogs" action="#{auditLogController.beginCreate()}" rendered="#{auditLogPermission.canCreate()}" ajax="false" immediate="true">
 						<h:outputText value="#{msg.home_conversation_create}"/>
 					</h:commandLink>
 				</li>
 				<li>
-					<h:outputText value="#{msg.customer} " />
-					<h:commandLink id="selectCustomers" action="#{customerController.beginSearch()}" rendered="#{customerPermission.canSearch()}" ajax="false" immediate="true">
+					<h:outputText value="#{msg.book} " />
+					<h:commandLink id="selectBooks" action="#{bookController.beginSearch()}" rendered="#{bookPermission.canSearch()}" ajax="false" immediate="true">
 						<h:outputText value="#{msg.home_conversation_search}"/>
 					</h:commandLink>
 					<h:outputText value=" " />
-					<h:commandLink id="newCustomers" action="#{customerController.beginCreate()}" rendered="#{customerPermission.canCreate()}" ajax="false" immediate="true">
+					<h:commandLink id="newBooks" action="#{bookController.beginCreate()}" rendered="#{bookPermission.canCreate()}" ajax="false" immediate="true">
+						<h:outputText value="#{msg.home_conversation_create}"/>
+					</h:commandLink>
+				</li>
+				<li>
+					<h:outputText value="#{msg.document} " />
+					<h:commandLink id="selectDocuments" action="#{documentController.beginSearch()}" rendered="#{documentPermission.canSearch()}" ajax="false" immediate="true">
+						<h:outputText value="#{msg.home_conversation_search}"/>
+					</h:commandLink>
+					<h:outputText value=" " />
+					<h:commandLink id="newDocuments" action="#{documentController.beginCreate()}" rendered="#{documentPermission.canCreate()}" ajax="false" immediate="true">
+						<h:outputText value="#{msg.home_conversation_create}"/>
+					</h:commandLink>
+				</li>
+				<li>
+					<h:outputText value="#{msg.legacy} " />
+					<h:commandLink id="selectLegacies" action="#{legacyController.beginSearch()}" rendered="#{legacyPermission.canSearch()}" ajax="false" immediate="true">
+						<h:outputText value="#{msg.home_conversation_search}"/>
+					</h:commandLink>
+					<h:outputText value=" " />
+					<h:commandLink id="newLegacies" action="#{legacyController.beginCreate()}" rendered="#{legacyPermission.canCreate()}" ajax="false" immediate="true">
+						<h:outputText value="#{msg.home_conversation_create}"/>
+					</h:commandLink>
+				</li>
+				<li>
+					<h:outputText value="#{msg.moreTypesDemo} " />
+					<h:commandLink id="selectMoreTypesDemos" action="#{moreTypesDemoController.beginSearch()}" rendered="#{moreTypesDemoPermission.canSearch()}" ajax="false" immediate="true">
+						<h:outputText value="#{msg.home_conversation_search}"/>
+					</h:commandLink>
+					<h:outputText value=" " />
+					<h:commandLink id="newMoreTypesDemos" action="#{moreTypesDemoController.beginCreate()}" rendered="#{moreTypesDemoPermission.canCreate()}" ajax="false" immediate="true">
 						<h:outputText value="#{msg.home_conversation_create}"/>
 					</h:commandLink>
 				</li>
@@ -99,26 +129,6 @@
 					</h:commandLink>
 					<h:outputText value=" " />
 					<h:commandLink id="newSavedSearchs" action="#{savedSearchController.beginCreate()}" rendered="#{savedSearchPermission.canCreate()}" ajax="false" immediate="true">
-						<h:outputText value="#{msg.home_conversation_create}"/>
-					</h:commandLink>
-				</li>
-				<li>
-					<h:outputText value="#{msg.transaction} " />
-					<h:commandLink id="selectTransactions" action="#{transactionController.beginSearch()}" rendered="#{transactionPermission.canSearch()}" ajax="false" immediate="true">
-						<h:outputText value="#{msg.home_conversation_search}"/>
-					</h:commandLink>
-					<h:outputText value=" " />
-					<h:commandLink id="newTransactions" action="#{transactionController.beginCreate()}" rendered="#{transactionPermission.canCreate()}" ajax="false" immediate="true">
-						<h:outputText value="#{msg.home_conversation_create}"/>
-					</h:commandLink>
-				</li>
-				<li>
-					<h:outputText value="#{msg.user} " />
-					<h:commandLink id="selectUsers" action="#{userController.beginSearch()}" rendered="#{userPermission.canSearch()}" ajax="false" immediate="true">
-						<h:outputText value="#{msg.home_conversation_search}"/>
-					</h:commandLink>
-					<h:outputText value=" " />
-					<h:commandLink id="newUsers" action="#{userController.beginCreate()}" rendered="#{userPermission.canCreate()}" ajax="false" immediate="true">
 						<h:outputText value="#{msg.home_conversation_create}"/>
 					</h:commandLink>
 				</li>

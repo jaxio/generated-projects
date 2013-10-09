@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<celerio xmlns="http://www.jaxio.com/schema/celerio" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xsi:schemaLocation="http://www.jaxio.com/schema/celerio ./celerio.xsd">
-	<configuration rootPackage="com.jaxio" applicationName="appli">
+<celerio xmlns="http://www.jaxio.com/schema/celerio" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.jaxio.com/schema/celerio ./celerio.xsd">
+	<configuration rootPackage="com.jaxio.appli" applicationName="appli">
 		<!-- Which tables are used for generation -->
 		<tables>
 			<!-- <table include="false" pattern="*_AUDIT"/> -->
@@ -10,8 +9,7 @@
 
 		<!-- global number mapping (optional) -->
 		<numberMappings>
-			<numberMapping mappedType="M_BOOLEAN" columnSizeMin="1"
-				columnSizeMax="2" columnDecimalDigitsMin="0" columnDecimalDigitsMax="0" />
+			<numberMapping mappedType="M_BOOLEAN" columnSizeMin="1" columnSizeMax="2" columnDecimalDigitsMin="0" columnDecimalDigitsMax="0" />
 			<!-- <numberMapping mappedType="M_BIGDECIMAL" columnSizeMin="10" columnDecimalDigitsMin="4"/> -->
 		</numberMappings>
 
@@ -31,8 +29,7 @@
 				<cascade type="MERGE" />
 			</cascades>
 			<cacheConfig usage="NONE" />
-			<associationAction create="true" edit="true" view="true"
-				select="true" autoComplete="true" remove="false" />
+			<associationAction create="true" edit="true" view="true" select="true" autoComplete="true" remove="false" />
 		</defaultManyToOneConfig>
 
 		<defaultOneToManyConfig orphanRemoval="true">
@@ -40,8 +37,7 @@
 				<cascade type="ALL" />
 			</cascades>
 			<cacheConfig usage="NONE" />
-			<associationAction create="true" edit="true" view="true"
-				select="true" autoComplete="true" remove="true" />
+			<associationAction create="true" edit="true" view="true" select="true" autoComplete="true" remove="true" />
 		</defaultOneToManyConfig>
 
 		<defaultOneToOneConfig fetch="LAZY">
@@ -49,8 +45,7 @@
 				<cascade type="NONE" />
 			</cascades>
 			<cacheConfig usage="NONE" />
-			<associationAction create="true" edit="true" view="true"
-				select="false" autoComplete="true" remove="false" />
+			<associationAction create="true" edit="true" view="true" select="false" autoComplete="true" remove="false" />
 		</defaultOneToOneConfig>
 
 		<defaultInverseOneToOneConfig fetch="LAZY">
@@ -58,8 +53,7 @@
 				<cascade type="ALL" />
 			</cascades>
 			<cacheConfig usage="NONE" />
-			<associationAction create="false" edit="false"
-				view="true" select="false" autoComplete="false" remove="false" />
+			<associationAction create="false" edit="false" view="true" select="false" autoComplete="false" remove="false" />
 		</defaultInverseOneToOneConfig>
 
 		<defaultManyToManyConfig>
@@ -68,8 +62,7 @@
 				<cascade type="MERGE" />
 			</cascades>
 			<cacheConfig usage="NONE" />
-			<associationAction create="true" edit="true" view="true"
-				select="true" autoComplete="false" remove="true" />
+			<associationAction create="true" edit="true" view="true" select="true" autoComplete="false" remove="true" />
 		</defaultManyToManyConfig>
 
 		<defaultInverseManyToManyConfig>
@@ -77,19 +70,22 @@
 				<cascade type="ALL" />
 			</cascades>
 			<cacheConfig usage="NONE" />
-			<associationAction create="false" edit="true" view="true"
-				select="false" autoComplete="false" remove="false" />
+			<associationAction create="false" edit="true" view="true" select="false" autoComplete="false" remove="false" />
 		</defaultInverseManyToManyConfig>
 
 		<conventions identifiableProperty="id">
-			<!-- <columnRenamers> <columnRenamer regexp="^.{3}_" replace="" /> </columnRenamers> -->
+			<!-- <columnRenamers>
+				<columnRenamer regexp="^.{3}_" replace="" />
+			</columnRenamers> -->
 		</conventions>
 	</configuration>
 
 	<entityConfigs>
-		<entityConfig tableName="USER">
+		<!-- Account demonstrates misc column configurations -->
+		<entityConfig tableName="ACCOUNT">
 			<labels>
-				<label value="Utilisateur" lang="fr" />
+				<label value="User Account" />
+				<label value="Compte Utilisateur" lang="fr" />
 			</labels>
 			<columnConfigs>
 				<columnConfig columnName="login" min="4" fieldName="username" searchResult="true">
@@ -106,16 +102,6 @@
 				<columnConfig columnName="email" searchResult="true">
 					<indexedField />
 				</columnConfig>
-				<columnConfig columnName="is_enabled" searchResult="true">
-					<labels>
-						<label value="Activé" lang="fr" />
-					</labels>
-				</columnConfig>
-				<columnConfig columnName="civility" sharedEnumName="Civility">
-					<labels>
-						<label value="Civilité" lang="fr" />
-					</labels>
-				</columnConfig>
 				<columnConfig columnName="first_name">
 					<labels>
 						<label value="Prénom" lang="fr" />
@@ -128,65 +114,108 @@
 					</labels>
 					<indexedField />
 				</columnConfig>
+				<columnConfig columnName="birth_date">
+					<labels>
+						<label value="Date de naissance" lang="fr" />
+					</labels>
+				</columnConfig>
+				<columnConfig columnName="is_enabled" searchResult="true">
+					<labels>
+						<label value="Compte activé" lang="fr" />
+					</labels>
+				</columnConfig>
+				<columnConfig columnName="civility" sharedEnumName="Civility">
+					<labels>
+						<label value="Civilité" lang="fr" />
+					</labels>
+				</columnConfig>				
+				<columnConfig columnName="address_id" searchResult="true">
+					<manyToOneConfig var="homeAddress">
+						<labels>
+							<label value="Adresse domicile" lang="fr" />
+						</labels>
+					</manyToOneConfig>
+				</columnConfig>
+			</columnConfigs>
+		</entityConfig>
+
+		<!-- Book demonstrates one-to-many relation -->
+		<entityConfig tableName="BOOK">
+			<labels>
+				<label value="Livre" lang="fr" />
+			</labels>
+			<columnConfigs>
+				<columnConfig columnName="title" fieldName="bookTitle">
+					<labels>
+						<label value="Titre" lang="fr" />
+					</labels>
+					<indexedField />
+				</columnConfig>
+				<columnConfig columnName="number_of_pages">
+					<labels>
+						<label value="Nombre de pages" lang="fr" />
+					</labels>
+					<indexedField />
+				</columnConfig>
+				<columnConfig columnName="account_id">
+					<manyToOneConfig var="owner">
+						<labels>
+							<label value="Propriétaire" lang="fr" />
+						</labels>				
+					</manyToOneConfig>
+					<oneToManyConfig var="coolBooks" elementVar="book"><!-- orderBy="bookTitle" does not work on jboss EAS 7.1 -->
+						<labels>
+							<label value="Livres intéressants" lang="fr" />
+						</labels>
+					</oneToManyConfig>
+				</columnConfig>
+			</columnConfigs>
+		</entityConfig>
+
+		<!-- Document demonstrates one-to-many relation and upload/download -->
+		<entityConfig tableName="DOCUMENT">
+			<columnConfigs>
+				<columnConfig columnName="account_id">
+					<manyToOneConfig var="owner">
+						<labels>
+							<label value="Propriétaire" lang="fr" />
+						</labels>				
+					</manyToOneConfig>
+					<oneToManyConfig var="edocs" elementVar="edoc">
+						<labels>
+							<label value="Attached docs" />
+							<label value="Documents attachés" lang="fr" />
+						</labels>
+					</oneToManyConfig>
+				</columnConfig>
+				<columnConfig columnName="document_binary">
+					<labels>
+						<label value="File" />
+						<label value="Fichier" lang="fr" />
+					</labels>
+					<indexedField />
+				</columnConfig>
+				<columnConfig columnName="document_file_name">
+					<labels>
+						<label value="Nom du fichier" lang="fr" />
+					</labels>				
+					<indexedField />
+				</columnConfig>
 			</columnConfigs>
 		</entityConfig>
 
 		<!-- Role demonstrates many-to-many relation and spring-security integration -->
 		<entityConfig tableName="ROLE">
 			<labels>
-				<label value="Security Role" />
 				<label value="Droit" lang="fr" />
-			</labels>
+			</labels>				
 			<columnConfigs>
-				<columnConfig columnName="role_name">
+				<columnConfig columnName="role_name" messageKey="true">
 					<labels>
+						<label value="Role" />
 						<label value="Droit" lang="fr" />
-					</labels>
+					</labels>				
 					<indexedField />
-				</columnConfig>
-			</columnConfigs>
-		</entityConfig>
-
-		<entityConfig tableName="USER_ROLE">
-			<columnConfigs>
-				<columnConfig columnName="user_id">
-					<!-- <manyToManyConfig var="accounts" elementVar="account" /> -->
-				</columnConfig>
-				<columnConfig columnName="role_id" inverse="true">
-					<manyToManyConfig var="securityRoles" elementVar="securityRole">
-						<labels>
-							<label value="Assigned roles" />
-							<label value="Droits attributés" lang="fr" />
-						</labels>
-					</manyToManyConfig>
-				</columnConfig>
-			</columnConfigs>
-		</entityConfig>
-
-		<entityConfig tableName="CUSTOMER">
-			<labels>
-				<label value="Corporate customer" />
-				<label value="Client institutionnel" lang="fr" />
-			</labels>
-			<columnConfigs>
-				<columnConfig columnName="company_name">
-					<labels>
-						<label value="Dénomination sociale" lang="fr" />
-					</labels>
-				</columnConfig>
-				<columnConfig columnName="contract_binary">
-					<labels>
-						<label value="Contract (file)" />
-						<label value="Contrat (fichier)" lang="fr" />
-					</labels>
-				</columnConfig>
-				<columnConfig columnName="address_id">
-					<manyToOneConfig var="address">
-						<labels>
-							<label value="Headquarter address" />
-							<label value="Adresse du siège" lang="fr" />
-						</labels>
-					</manyToOneConfig>
 				</columnConfig>
 			</columnConfigs>
 		</entityConfig>
@@ -194,16 +223,11 @@
 		<entityConfig tableName="ADDRESS">
 			<labels>
 				<label value="Adresse" lang="fr" />
-			</labels>
+			</labels>				
 			<columnConfigs>
-				<columnConfig columnName="street">
+				<columnConfig columnName="street_name">
 					<labels>
-						<label value="Rue" lang="fr" />
-					</labels>
-				</columnConfig>
-				<columnConfig columnName="zip_code">
-					<labels>
-						<label value="Code postal" lang="fr" />
+						<label value="Nom de la rue" lang="fr" />
 					</labels>
 				</columnConfig>
 				<columnConfig columnName="city">
@@ -212,153 +236,52 @@
 					</labels>
 					<indexedField />
 				</columnConfig>
-				<columnConfig columnName="country">
-					<labels>
-						<label value="Pays" lang="fr" />
-					</labels>
-					<indexedField />
-				</columnConfig>
 			</columnConfigs>
 		</entityConfig>
 
-		<entityConfig tableName="CURRENCY">
-			<labels>
-				<label value="Devise" lang="fr" />
-			</labels>
-	 		<columnConfigs>
-				<columnConfig columnName="name">
-					<labels>
-						<label value="Currency name" />
-						<label value="Nom de la devise" lang="fr" />
-					</labels>
-				</columnConfig>
-				<columnConfig columnName="code" min="3" />
-				<columnConfig columnName="decimal_count">
-					<labels>
-						<label value="Nombre de décimales" lang="fr" />
-					</labels>
-				</columnConfig>
-			</columnConfigs>
-		</entityConfig>
-
-
-		<entityConfig tableName="ACCOUNT">
-			<labels>
-				<label value="Bank account"/>
-				<label value="Compte bancaire" lang="fr"/>
-			</labels>
-			<columnConfigs>
-				<columnConfig columnName="account_number">
-					<labels>
-						<label value="No de compte" lang="fr"/>
-					</labels>
-				</columnConfig>			
-				<columnConfig columnName="name">
-					<labels>
-						<label value="Libellé" lang="fr"/>
-					</labels>
-				</columnConfig>			
-				<columnConfig columnName="currency_id">
-					<manyToOneConfig>
-						<labels>
-							<label value="Devise" lang="fr"/>
-						</labels>
-					</manyToOneConfig>
-				</columnConfig>			
-				<columnConfig columnName="customer_id">
-					<manyToOneConfig var="customer">
-						<labels>
-							<label value="Account owner" />
-							<label value="Client propriétaire" lang="fr"/>
-						</labels>
-					</manyToOneConfig>
-					<oneToManyConfig var="accounts" elementVar="account">
-						<labels>
-							<label value="Compte Bancaires" lang="fr" />
-						</labels>					
-					</oneToManyConfig>
-				</columnConfig>
-			</columnConfigs>
-		</entityConfig>
-
-		<entityConfig tableName="TRANSACTION">
+		<entityConfig tableName="ACCOUNT_ROLE" associationDirection="UNIDIRECTIONAL">
 			<columnConfigs>
 				<columnConfig columnName="account_id">
-					<manyToOneConfig var="account">
+					<!-- <manyToManyConfig var="accounts" elementVar="account" /> -->
+				</columnConfig>
+				<columnConfig columnName="role_id" inverse="true">
+					<manyToManyConfig var="securityRoles" elementVar="securityRole">
 						<labels>
-							<label value="Bank account" />
-							<label value="Compte Bancaire" lang="fr" />
+							<label value="Droits attribués" lang="fr" />
 						</labels>
-					</manyToOneConfig>
-					<oneToManyConfig var="transactions" elementVar="transaction" />
+					</manyToManyConfig>
 				</columnConfig>
-				<columnConfig columnName="amount">
-					<labels>
-						<label value="Montant" lang="fr" />
-					</labels>					
-				</columnConfig>
-				<columnConfig columnName="transaction_date" mappedType="M_JODA_LOCALDATE">
-					<labels>
-						<label value="Date de la transaction" lang="fr" />
-					</labels>					
-				</columnConfig>
-				<columnConfig columnName="value_date" mappedType="M_JODA_LOCALDATE">
-					<labels>
-						<label value="Date de valeur" lang="fr" />
-					</labels>
-				</columnConfig>
-				<columnConfig columnName="currency_id">
-					<manyToOneConfig var="currency">
-						<labels>
-							<label value="Devise" lang="fr" />
-						</labels>
-					</manyToOneConfig>
-				</columnConfig>
-				<columnConfig columnName="description" />				
 			</columnConfigs>
 		</entityConfig>
-		<entityConfig tableName="SAVED_SEARCH">
+
+		<!-- MoreTypesDemo demonstrates sub-packages and various types support such as joda time, BigDecimal etc. -->
+		<entityConfig tableName="MORE_TYPES_DEMO" subPackage="more">
 			<labels>
-				<label value="Pre-filled search form" />
-				<label value="Recherche pré-remplie" lang="fr" />
+				<label value="Démo de Types variés" lang="fr" />
 			</labels>
-    		<columnConfigs>
-				<columnConfig columnName="name">
-					<labels>
-						<label value="Alias" lang="fr" />
-					</labels>
-				</columnConfig>
-				<columnConfig columnName="form_classname">
-					<labels>
-						<label value="Classe Java" lang="fr" />
-					</labels>
-				</columnConfig>
-				<columnConfig columnName="form_content">
-					<labels>
-						<label value="Serialized content" />
-						<label value="Contenu sérialisé" lang="fr" />
-					</labels>
-				</columnConfig>
+			<columnConfigs>
+				<columnConfig columnName="date_joda" mappedType="M_JODA_LOCALDATE" />
+				<columnConfig columnName="date_time_joda" mappedType="M_JODA_LOCALDATETIME" />
 			</columnConfigs>
 		</entityConfig>
 	</entityConfigs>
 
 	<!-- Generate enums used by the entities above -->
 	<sharedEnumConfigs>
-		<sharedEnumConfig name="Civility" type="CUSTOM">
+		<sharedEnumConfig name="Civility" type="STRING">
 			<enumValues>
-				<enumValue name="MISTER" value="MR">
+				<enumValue value="MR">
 					<labels>
 						<label value="Mister" />
 						<label value="Monsieur" lang="fr" />
 					</labels>
 				</enumValue>
-				<enumValue name="MISS" value="MS">
+				<enumValue value="MS">
 					<labels>
 						<label value="Miss" />
 						<label value="Madame" lang="fr" />
 					</labels>
-				</enumValue>
+				</enumValue>				
 			</enumValues>
 		</sharedEnumConfig>
 	</sharedEnumConfigs>

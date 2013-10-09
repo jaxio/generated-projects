@@ -9,7 +9,7 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.jaxio</groupId>
+	<groupId>com.jaxio.appli</groupId>
 	<artifactId>appli</artifactId>
 	<packaging>war</packaging>
 	<version>1.0.0-SNAPSHOT</version>
@@ -46,9 +46,9 @@
 		<!-- Version dependencies when used in multiple dependencies -->
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 		<maven-celerio-plugin.outputDir>${project.basedir}</maven-celerio-plugin.outputDir>
-		<maven-celerio-plugin.version>3.0.105</maven-celerio-plugin.version>
-		<hibernate.version>4.2.3.Final</hibernate.version>
-		<spring.version>3.2.3.RELEASE</spring.version>
+		<maven-celerio-plugin.version>3.0.106-SNAPSHOT</maven-celerio-plugin.version>
+		<hibernate.version>4.2.6.Final</hibernate.version>
+		<spring.version>3.2.4.RELEASE</spring.version>
 		<spring-security.version>3.1.4.RELEASE</spring-security.version>
 		<jsf-api.version>2.1.24</jsf-api.version>
 		<primefaces.version>3.5</primefaces.version>
@@ -493,7 +493,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>2.2</version>
+			<version>2.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jadira.usertype</groupId>
@@ -546,7 +546,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-search</artifactId>
-			<version>4.2.0.Final</version>
+			<version>4.3.0.Final</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>lucene-kuromoji</artifactId>
@@ -581,7 +581,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>4.2.0.Final</version>
+			<version>4.3.1.Final</version>
 		</dependency>
 		<dependency> <!-- validation html -->
 			<groupId>org.jsoup</groupId>
@@ -628,7 +628,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>14.0.1</version>
+			<version>15.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -800,7 +800,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>org.omnifaces</groupId>
 			<artifactId>omnifaces</artifactId>
-			<version>1.5</version>
+			<version>1.6</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
@@ -839,7 +839,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>net.bull.javamelody</groupId>
 			<artifactId>javamelody-core</artifactId>
-			<version>1.45.0</version>
+			<version>1.47.0</version>
 		</dependency>
 		<!-- ~~~~ -->
 		<!-- TEST -->
@@ -871,7 +871,7 @@ GRANT CONNECT, RESOURCE TO ${database.user};
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
-			<version>2.33.0</version>
+			<version>2.35.0</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>

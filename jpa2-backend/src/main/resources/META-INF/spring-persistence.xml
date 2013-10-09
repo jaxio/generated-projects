@@ -16,16 +16,17 @@
 			With JBoss/Spring it is required to list the classes explicitly.
 		]]></description>
 		<mapping-file>META-INF/spring-orm.xml</mapping-file>
-		<class>com.jaxio.domain.Account</class>
-		<class>com.jaxio.domain.Address</class>
-		<class>com.jaxio.domain.Currency</class>
-		<class>com.jaxio.domain.Customer</class>
-		<class>com.jaxio.domain.Role</class>
-		<class>com.jaxio.domain.SavedSearch</class>
-		<class>com.jaxio.domain.Transaction</class>
-		<class>com.jaxio.domain.User</class>
+		<class>com.jaxio.appli.domain.Account</class>
+		<class>com.jaxio.appli.domain.Address</class>
+		<class>com.jaxio.appli.domain.AuditLog</class>
+		<class>com.jaxio.appli.domain.Book</class>
+		<class>com.jaxio.appli.domain.Document</class>
+		<class>com.jaxio.appli.domain.Legacy</class>
+		<class>com.jaxio.appli.domain.more.MoreTypesDemo</class>
+		<class>com.jaxio.appli.domain.Role</class>
+		<class>com.jaxio.appli.domain.SavedSearch</class>
 		<properties>
-			<property name="hibernate.search.model_mapping" value="com.jaxio.search.SearchMappingFactory" />
+			<property name="hibernate.search.model_mapping" value="com.jaxio.appli.search.SearchMappingFactory" />
 		</properties>
 	</persistence-unit>
 </persistence>

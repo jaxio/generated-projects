@@ -18,31 +18,21 @@
 	<app:search title="address_search" model="#{addressLazyDataModel}" searchForm="#{addressSearchForm}"
 		controller="#{addressController}" permission="#{addressPermission}" savedSearch="true" fullText="true">
 		<ui:define name="fullTextFilters">
-            <app:inputMultiAutoComplete id="fullTextQuery" value="#{addressSearchForm.termsOnAll}" label="search_full_text_all" completeMethod="completeSame" />
 			<app:inputMultiAutoComplete id="cityTerm" value="#{addressSearchForm.cityTermSelector}" label="address_city" completeMethod="completeSame" />
-			<app:inputMultiAutoComplete id="countryTerm" value="#{addressSearchForm.countryTermSelector}" label="address_country" completeMethod="completeSame" />
 		</ui:define>
 		<ui:define name="filters">
-			<app:inputMultiAutoComplete id="street" value="#{addressSearchForm.streetSelector}" label="address_street" completeMethod="completeProperty" property="street" />
-			<app:inputMultiAutoComplete id="zipCode" value="#{addressSearchForm.zipCodeSelector}" label="address_zipCode" completeMethod="completeProperty" property="zipCode" />
+			<app:inputMultiAutoComplete id="streetName" value="#{addressSearchForm.streetNameSelector}" label="address_streetName" completeMethod="completeProperty" property="streetName" />
 			<app:inputMultiAutoComplete id="city" value="#{addressSearchForm.citySelector}" label="address_city" completeMethod="completeProperty" property="city" />
-			<app:inputMultiAutoComplete id="country" value="#{addressSearchForm.countrySelector}" label="address_country" completeMethod="completeProperty" property="country" />
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">
 				<p:ajax event="rowSelect" listener="#{addressLazyDataModel.onRowSelect}" />
 			</c:if>
-			<p:column id="address_street" headerText="#{msg.address_street}" sortBy="#{item.street}" styleClass="street">
-				<h:outputText value="#{item.street}" />
-			</p:column>
-			<p:column id="address_zipCode" headerText="#{msg.address_zipCode}" sortBy="#{item.zipCode}" styleClass="zipCode">
-				<h:outputText value="#{item.zipCode}" />
+			<p:column id="address_streetName" headerText="#{msg.address_streetName}" sortBy="#{item.streetName}" styleClass="streetName">
+				<h:outputText value="#{item.streetName}" />
 			</p:column>
 			<p:column id="address_city" headerText="#{msg.address_city}" sortBy="#{item.city}" styleClass="city">
 				<h:outputText value="#{item.city}" />
-			</p:column>
-			<p:column id="address_country" headerText="#{msg.address_country}" sortBy="#{item.country}" styleClass="country">
-				<h:outputText value="#{item.country}" />
 			</p:column>
 			<p:column id="actions" headerText="#{msg.actions}" styleClass="actions-column" resizable="false">
 				<app:iconSelect item="#{item}" />

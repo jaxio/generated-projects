@@ -17,60 +17,118 @@
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
 <app:edit bean="#{accountEditForm}" title="#{accountEditForm.title}">
 	<ui:define name="form">
-		<app:input id="accountNumber" value="#{accountEditForm.account.accountNumber}" size="100" label="account_accountNumber" required="true">
-			<f:validateBean binding="#{jpaUniqueValidator}" entity="#{accountEditForm.account}" property="accountNumber" />
+		<app:input id="username" value="#{accountEditForm.account.username}" size="100" label="account_username" required="true">
+			<f:validateBean binding="#{jpaUniqueValidator}" entity="#{accountEditForm.account}" property="username" />
 		</app:input>
-		<app:input id="name" value="#{accountEditForm.account.name}" size="100" label="account_name" required="true" />
-		<app:autoComplete id="currency" value="#{accountEditForm.currency.selected}" label="account_currency" title="account_currency" required="true" 
-			model="#{accountEditForm.currency}" controller="#{currencyController}" permission="#{currencyPermission}">
-			<app:iconSearch id="selectCurrency" />
-			<app:iconAdd id="addCurrency" />
-			<app:iconEdit item="#{accountEditForm.account.currency}" />
-			<app:iconView item="#{accountEditForm.account.currency}" />
+		<app:inputPassword id="password" value="#{accountEditForm.account.password}" size="100" label="account_password" required="true" />
+		<app:input id="email" value="#{accountEditForm.account.email}" size="100" label="account_email" required="true">
+			<f:validateBean binding="#{jpaUniqueValidator}" entity="#{accountEditForm.account}" property="email" />
+		</app:input>
+		<app:inputBoolean id="isEnabled" value="#{accountEditForm.account.isEnabled}" label="account_isEnabled" required="true" />
+		<app:selectOneRadio id="civility" value="#{accountEditForm.account.civility}" values="#{civilityItems.list}" label="account_civility" />
+		<app:input id="firstName" value="#{accountEditForm.account.firstName}" size="100" label="account_firstName" />
+		<app:input id="lastName" value="#{accountEditForm.account.lastName}" size="100" label="account_lastName" />
+		<app:inputDateTime id="birthDate" value="#{accountEditForm.account.birthDate}" label="account_birthDate" />
+		<app:inputTextArea id="description" value="#{accountEditForm.account.description}" label="account_description" />
+		<app:autoComplete id="homeAddress" value="#{accountEditForm.homeAddress.selected}" label="account_homeAddress" title="account_homeAddress" required="false" 
+			model="#{accountEditForm.homeAddress}" controller="#{addressController}" permission="#{addressPermission}">
+			<app:iconSearch id="selectHomeAddress" />
+			<app:iconAdd id="addHomeAddress" />
+			<app:iconEdit item="#{accountEditForm.account.homeAddress}" />
+			<app:iconView item="#{accountEditForm.account.homeAddress}" />
 		</app:autoComplete>
-		<app:autoComplete id="customer" value="#{accountEditForm.customer.selected}" label="account_customer" title="account_customer" required="true" 
-			model="#{accountEditForm.customer}" controller="#{customerController}" permission="#{customerPermission}">
-			<app:iconView item="#{accountEditForm.account.customer}" />
-		</app:autoComplete>
+		<app:audit
+			creationAuthor="#{accountEditForm.account.creationAuthor}"
+			creationDate="#{accountEditForm.account.creationDate}"
+			lastModificationAuthor="#{accountEditForm.account.lastModificationAuthor}"
+			lastModificationDate="#{accountEditForm.account.lastModificationDate}"
+		/>
 	</ui:define>
 	<ui:define name="tabs">
-			<p:tab id="transactions" title="#{msg.account_transactions}" rendered="#{transactionPermission.canUse() and not (print and accountEditForm.account.transactions.isEmpty())}">
-				<p:dataTable id="transactionsList" var="item" value="#{accountEditForm.transactions.model}"
-					paginator="#{not print and accountEditForm.account.transactions.size() gt 10}" rows="#{print ? null : 10}"
+			<p:tab id="coolBooks" title="#{msg.account_coolBooks}" rendered="#{bookPermission.canUse() and not (print and accountEditForm.account.coolBooks.isEmpty())}">
+				<p:dataTable id="coolBooksList" var="item" value="#{accountEditForm.coolBooks.model}"
+					paginator="#{not print and accountEditForm.account.coolBooks.size() gt 10}" rows="#{print ? null : 10}"
 					rowsPerPageTemplate="10,25,50,100" paginatorPosition="bottom"
-					selection="#{accountEditForm.transactions.model.selectedRow}" selectionMode="single" emptyMessage="#{msg.collection_empty}">
-					<p:ajax event="rowSelect" listener="#{accountEditForm.transactions.onRowSelect}" />
-					<p:column id="transaction_amount" headerText="#{msg.transaction_amount}" sortBy="#{item.amount}" styleClass="amount numeric">
-						<h:outputText value="#{item.amount}" />
+					selection="#{accountEditForm.coolBooks.model.selectedRow}" selectionMode="single" emptyMessage="#{msg.collection_empty}">
+					<p:ajax event="rowSelect" listener="#{accountEditForm.coolBooks.onRowSelect}" />
+					<p:column id="book_bookTitle" headerText="#{msg.book_bookTitle}" sortBy="#{item.bookTitle}" styleClass="bookTitle">
+						<h:outputText value="#{item.bookTitle}" />
 					</p:column>
-					<p:column id="transaction_transactionDate" headerText="#{msg.transaction_transactionDate}" sortBy="#{item.transactionDate}" styleClass="transactionDate">
-						<app:outputLocalDate value="#{item.transactionDate}" />
-					</p:column>
-					<p:column id="transaction_valueDate" headerText="#{msg.transaction_valueDate}" sortBy="#{item.valueDate}" styleClass="valueDate">
-						<app:outputLocalDate value="#{item.valueDate}" />
-					</p:column>
-					<p:column id="transaction_description" headerText="#{msg.transaction_description}" sortBy="#{item.description}" styleClass="description">
-						<h:outputText value="#{item.description}" />
+					<p:column id="book_numberOfPages" headerText="#{msg.book_numberOfPages}" sortBy="#{item.numberOfPages}" styleClass="numberOfPages numeric">
+						<app:outputInteger value="#{item.numberOfPages}" />
 					</p:column>
 					<p:column id="actions" styleClass="actions-column" resizable="false">
 						<f:facet name="header">
-							<app:iconAdd id="addTransaction" model="#{accountEditForm.transactions}" title="account_transactions" permission="#{transactionPermission}"/>
+							<app:iconAdd id="addBook" model="#{accountEditForm.coolBooks}" title="account_coolBooks" permission="#{bookPermission}"/>
 						</f:facet>
-						<app:iconView model="#{accountEditForm.transactions}" item="#{item}" permission="#{transactionPermission}">
-							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.transactions.model.selectedRow}" />
+						<app:iconView model="#{accountEditForm.coolBooks}" item="#{item}" permission="#{bookPermission}">
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.coolBooks.model.selectedRow}" />
 						</app:iconView>
-						<app:iconEdit model="#{accountEditForm.transactions}" item="#{item}" permission="#{transactionPermission}">
-							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.transactions.model.selectedRow}" />
+						<app:iconEdit model="#{accountEditForm.coolBooks}" item="#{item}" permission="#{bookPermission}">
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.coolBooks.model.selectedRow}" />
 						</app:iconEdit>
-						<app:iconRemove dialogWidgetVar="askForRemoveTransactionDialog" item="#{item}" permission="#{transactionPermission}">
-							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.transactions.model.selectedRow}" />
+						<app:iconRemove dialogWidgetVar="askForRemoveBookDialog" item="#{item}" permission="#{bookPermission}">
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.coolBooks.model.selectedRow}" />
+						</app:iconRemove>
+					</p:column>
+				</p:dataTable>
+			</p:tab>
+			<p:tab id="edocs" title="#{msg.account_edocs}" rendered="#{documentPermission.canUse() and not (print and accountEditForm.account.edocs.isEmpty())}">
+				<p:dataTable id="edocsList" var="item" value="#{accountEditForm.edocs.model}"
+					paginator="#{not print and accountEditForm.account.edocs.size() gt 10}" rows="#{print ? null : 10}"
+					rowsPerPageTemplate="10,25,50,100" paginatorPosition="bottom"
+					selection="#{accountEditForm.edocs.model.selectedRow}" selectionMode="single" emptyMessage="#{msg.collection_empty}">
+					<p:ajax event="rowSelect" listener="#{accountEditForm.edocs.onRowSelect}" />
+					<p:column id="document_documentFileName" headerText="#{msg.document_documentFileName}" sortBy="#{item.documentFileName}" styleClass="documentFileName">
+						<app:outputFile filename="#{item.documentFileName}" stream="#{documentFileDownload.getDocumentBinaryStream(item)}" />
+					</p:column>
+					<p:column id="actions" styleClass="actions-column" resizable="false">
+						<f:facet name="header">
+							<app:iconAdd id="addEdoc" model="#{accountEditForm.edocs}" title="account_edocs" permission="#{documentPermission}"/>
+						</f:facet>
+						<app:iconView model="#{accountEditForm.edocs}" item="#{item}" permission="#{documentPermission}">
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.edocs.model.selectedRow}" />
+						</app:iconView>
+						<app:iconEdit model="#{accountEditForm.edocs}" item="#{item}" permission="#{documentPermission}">
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.edocs.model.selectedRow}" />
+						</app:iconEdit>
+						<app:iconRemove dialogWidgetVar="askForRemoveEdocDialog" item="#{item}" permission="#{documentPermission}">
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.edocs.model.selectedRow}" />
+						</app:iconRemove>
+					</p:column>
+				</p:dataTable>
+			</p:tab>
+			<p:tab id="securityRoles" title="#{msg.account_securityRoles}" rendered="#{rolePermission.canUse() and not (print and accountEditForm.account.securityRoles.isEmpty())}">
+				<p:dataTable id="securityRolesList" var="item" value="#{accountEditForm.securityRoles.model}"
+					paginator="#{not print and accountEditForm.account.securityRoles.size() gt 10}" rows="#{print ? null : 10}"
+					rowsPerPageTemplate="10,25,50,100" paginatorPosition="bottom"
+					selection="#{accountEditForm.securityRoles.model.selectedRow}" selectionMode="single" emptyMessage="#{msg.collection_empty}">
+					<p:ajax event="rowSelect" listener="#{accountEditForm.securityRoles.onRowSelect}" />
+					<p:column id="role_roleName" headerText="#{msg.role_roleName}" sortBy="#{item.roleName}" styleClass="roleName">
+						<h:outputText value="#{item.roleName}" />
+					</p:column>
+					<p:column id="actions" styleClass="actions-column" resizable="false">
+						<f:facet name="header">
+							<app:iconSearch id="selectSecurityRole" model="#{accountEditForm.securityRoles}" title="account_securityRoles" permission="#{rolePermission}" />
+							<app:iconAdd id="addSecurityRole" model="#{accountEditForm.securityRoles}" title="account_securityRoles" permission="#{rolePermission}"/>
+						</f:facet>
+						<app:iconView model="#{accountEditForm.securityRoles}" item="#{item}" permission="#{rolePermission}">
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.securityRoles.model.selectedRow}" />
+						</app:iconView>
+						<app:iconEdit model="#{accountEditForm.securityRoles}" item="#{item}" permission="#{rolePermission}">
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.securityRoles.model.selectedRow}" />
+						</app:iconEdit>
+						<app:iconRemove dialogWidgetVar="askForRemoveSecurityRoleDialog" item="#{item}" permission="#{rolePermission}">
+							<f:setPropertyActionListener value="#{item}" target="#{accountEditForm.securityRoles.model.selectedRow}" />
 						</app:iconRemove>
 					</p:column>
 				</p:dataTable>
 			</p:tab>
 	</ui:define>
 	<ui:define name="custom-dialogs">
-		<app:confirmToManyRemoveDialog widgetVar="askForRemoveTransactionDialog" toManyAction="#{accountEditForm.transactions}" update=":form:tabs:transactionsList :form:messages" />
+		<app:confirmToManyRemoveDialog widgetVar="askForRemoveBookDialog" toManyAction="#{accountEditForm.coolBooks}" update=":form:tabs:coolBooksList :form:messages" />
+		<app:confirmToManyRemoveDialog widgetVar="askForRemoveEdocDialog" toManyAction="#{accountEditForm.edocs}" update=":form:tabs:edocsList :form:messages" />
+		<app:confirmToManyRemoveDialog widgetVar="askForRemoveSecurityRoleDialog" toManyAction="#{accountEditForm.securityRoles}" update=":form:tabs:securityRolesList :form:messages" />
 	</ui:define>
 </app:edit>
 </ui:composition>

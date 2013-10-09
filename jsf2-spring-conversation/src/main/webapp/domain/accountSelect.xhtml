@@ -16,27 +16,44 @@
 	xmlns:app="http://springfuse.jaxio.com/app"
 	xmlns:appcc="http://java.sun.com/jsf/composite/components">
 	<app:search title="account_search" model="#{accountLazyDataModel}" searchForm="#{accountSearchForm}"
-		controller="#{accountController}" permission="#{accountPermission}" savedSearch="true">
+		controller="#{accountController}" permission="#{accountPermission}" savedSearch="true" fullText="true">
+		<ui:define name="fullTextFilters">
+            <app:inputMultiAutoComplete id="fullTextQuery" value="#{accountSearchForm.termsOnAll}" label="search_full_text_all" completeMethod="completeSame" />
+			<app:inputMultiAutoComplete id="usernameTerm" value="#{accountSearchForm.usernameTermSelector}" label="account_username" completeMethod="completeSame" />
+			<app:inputMultiAutoComplete id="emailTerm" value="#{accountSearchForm.emailTermSelector}" label="account_email" completeMethod="completeSame" />
+			<app:inputMultiAutoComplete id="firstNameTerm" value="#{accountSearchForm.firstNameTermSelector}" label="account_firstName" completeMethod="completeSame" />
+			<app:inputMultiAutoComplete id="lastNameTerm" value="#{accountSearchForm.lastNameTermSelector}" label="account_lastName" completeMethod="completeSame" />
+		</ui:define>
 		<ui:define name="filters">
-			<app:inputMultiAutoComplete id="accountNumber" value="#{accountSearchForm.accountNumberSelector}" label="account_accountNumber" completeMethod="completeProperty" property="accountNumber" />
-			<app:inputMultiAutoComplete id="name" value="#{accountSearchForm.nameSelector}" label="account_name" completeMethod="completeProperty" property="name" />
-			<app:multiAutoComplete id="currencySelector" value="#{accountSearchForm.currencySelector.selected}" label="account_currency" 
-				controller="#{currencyController}" permission="#{currencyPermission}"/>
-			<app:multiAutoComplete id="customerSelector" value="#{accountSearchForm.customerSelector.selected}" label="account_customer" 
-				controller="#{customerController}" permission="#{customerPermission}"/>
+			<app:inputMultiAutoComplete id="username" value="#{accountSearchForm.usernameSelector}" label="account_username" completeMethod="completeProperty" property="username" />
+			<app:inputMultiAutoComplete id="password" value="#{accountSearchForm.passwordSelector}" label="account_password" completeMethod="completeSame" />
+			<app:inputMultiAutoComplete id="email" value="#{accountSearchForm.emailSelector}" label="account_email" completeMethod="completeProperty" property="email" />
+			<app:selectManyBoolean id="isEnabled" value="#{accountSearchForm.isEnabledSelector}" label="account_isEnabled" />
+			<app:selectManyEnum id="civility" value="#{accountSearchForm.civilitySelector}" items="#{civilityItems}"  nullAllowed="true" label="account_civility" />
+			<app:inputMultiAutoComplete id="firstName" value="#{accountSearchForm.firstNameSelector}" label="account_firstName" completeMethod="completeProperty" property="firstName" />
+			<app:inputMultiAutoComplete id="lastName" value="#{accountSearchForm.lastNameSelector}" label="account_lastName" completeMethod="completeProperty" property="lastName" />
+			<app:rangeDateTime id="birthDate" value="#{accountSearchForm.birthDateRange}" label="account_birthDate" />
+			<app:inputMultiAutoComplete id="description" value="#{accountSearchForm.descriptionSelector}" label="account_description" completeMethod="completeProperty" property="description" />
+			<app:multiAutoComplete id="homeAddressSelector" value="#{accountSearchForm.homeAddressSelector}" label="account_homeAddress" 
+				controller="#{addressController}" permission="#{addressPermission}"/>
+			<app:multiAutoComplete id="securityRolesSelector" value="#{accountSearchForm.securityRolesSelector}" label="account_securityRoles" 
+				controller="#{roleController}" permission="#{rolePermission}"/>
 		</ui:define>
 		<ui:define name="result">
 			<c:if test="#{not multiCheckboxSelection}">
 				<p:ajax event="rowSelect" listener="#{accountLazyDataModel.onRowSelect}" />
 			</c:if>
-			<p:column id="account_accountNumber" headerText="#{msg.account_accountNumber}" sortBy="#{item.accountNumber}" styleClass="accountNumber">
-				<h:outputText value="#{item.accountNumber}" />
+			<p:column id="account_username" headerText="#{msg.account_username}" sortBy="#{item.username}" styleClass="username">
+				<h:outputText value="#{item.username}" />
 			</p:column>
-			<p:column id="account_name" headerText="#{msg.account_name}" sortBy="#{item.name}" styleClass="name">
-				<h:outputText value="#{item.name}" />
+			<p:column id="account_email" headerText="#{msg.account_email}" sortBy="#{item.email}" styleClass="email">
+				<h:outputText value="#{item.email}" />
 			</p:column>
-			<p:column id="account_customer" headerText="#{msg.account_customer}" sortBy="#{item.customer.companyName}" styleClass="customer">
-				<h:outputText value="#{printer.print(item.customer)}" />
+			<p:column id="account_isEnabled" headerText="#{msg.account_isEnabled}" sortBy="#{item.isEnabled}" styleClass="isEnabled">
+				<appcc:outputBoolean value="#{item.isEnabled}" />
+			</p:column>
+			<p:column id="account_homeAddress" headerText="#{msg.account_homeAddress}" sortBy="#{item.homeAddress.city}" styleClass="homeAddress">
+				<h:outputText value="#{printer.print(item.homeAddress)}" />
 			</p:column>
 			<p:column id="actions" headerText="#{msg.actions}" styleClass="actions-column" resizable="false">
 				<app:iconSelect item="#{item}" />

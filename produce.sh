@@ -1,8 +1,8 @@
 #!/bin/bash
 git checkout master
-for release in {105..105}
+for release in {106..106}
 do
-  version=3.0.${release}
+  version=3.0.${release}-SNAPSHOT
 
   echo producing backend ${version}  
   rm -rf jpa2-backend
@@ -24,6 +24,6 @@ do
 
 git add . --a 
 git commit -m "generated with Celerio v${version} - http://www.springfuse.com/" 
-git tag ${version}
+# git tag ${version}
 #git checkout master
 done;

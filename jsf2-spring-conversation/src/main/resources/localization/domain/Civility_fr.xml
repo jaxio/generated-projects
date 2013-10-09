@@ -10,6 +10,6 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 	<comment>French resources for the enum Civility</comment>
-	<entry key="Civility_MISTER">Monsieur</entry>
-	<entry key="Civility_MISS">Madame</entry>
+	<entry key="Civility_MR">Monsieur</entry>
+	<entry key="Civility_MS">Madame</entry>
 </properties>

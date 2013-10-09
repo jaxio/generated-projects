@@ -68,24 +68,26 @@
 		org.hibernate.cache.spi.UpdateTimestampsCache
 
 		# database related
-		com.jaxio.domain.Account
-		com.jaxio.domain.Transaction.transactions
+		com.jaxio.appli.domain.Account
+		com.jaxio.appli.domain.Book.coolBooks
+		com.jaxio.appli.domain.Document.edocs
+		com.jaxio.appli.domain.Account.securityRoles
 
-		com.jaxio.domain.Address
+		com.jaxio.appli.domain.Address
 
-		com.jaxio.domain.Currency
+		com.jaxio.appli.domain.AuditLog
 
-		com.jaxio.domain.Customer
-		com.jaxio.domain.Account.accounts
+		com.jaxio.appli.domain.Book
 
-		com.jaxio.domain.Role
+		com.jaxio.appli.domain.Document
 
-		com.jaxio.domain.SavedSearch
+		com.jaxio.appli.domain.Legacy
 
-		com.jaxio.domain.Transaction
+		com.jaxio.appli.domain.more.MoreTypesDemo
 
-		com.jaxio.domain.User
-		com.jaxio.domain.User.securityRoles
+		com.jaxio.appli.domain.Role
+
+		com.jaxio.appli.domain.SavedSearch
 
 	-->
 </ehcache>

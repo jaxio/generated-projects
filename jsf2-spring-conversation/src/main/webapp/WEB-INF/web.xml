@@ -26,11 +26,6 @@
 			WEB-INF/applicationContext-security-http.xml
 		</param-value>
 	</context-param>
-	<!-- Secure cookies: https://www.owasp.org/index.php/HttpOnly -->
-    <cookie-config>
-        <http-only>true</http-only>
-        <secure>true</secure>
-    </cookie-config>
 	<!-- listeners -->
 	<listener>
 		<description>Parse JavaServer Faces configuration resources</description>
@@ -103,7 +98,7 @@
 	</filter-mapping>
 	<filter>
 		<filter-name>localeResolverRequestFilter</filter-name>
-		<filter-class>com.jaxio.web.filter.LocaleResolverRequestFilter</filter-class>
+		<filter-class>com.jaxio.appli.web.filter.LocaleResolverRequestFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>localeResolverRequestFilter</filter-name>
@@ -111,7 +106,7 @@
 	</filter-mapping>
 	<filter>
 		<filter-name>logContextFilter</filter-name>
-		<filter-class>com.jaxio.web.filter.LogContextFilter</filter-class>
+		<filter-class>com.jaxio.appli.web.filter.LogContextFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>logContextFilter</filter-name>
@@ -259,8 +254,21 @@
 	<session-config>
 		<!-- session timeout in minutes -->
 		<session-timeout>10</session-timeout>
+		<tracking-mode>COOKIE</tracking-mode>
+		<cookie-config>
+			<http-only>true</http-only>
+			<secure>true</secure>
+		</cookie-config>
 	</session-config>
 	<!-- Error pages. -->
+	<error-page>
+		<exception-type>javax.faces.application.ViewExpiredException</exception-type>
+		<location>/home.faces?session_expired=true</location>
+	</error-page>
+	<error-page>
+		<exception-type>org.springframework.security.core.AuthenticationException</exception-type>
+		<location>/home.faces?session_expired=true</location>
+	</error-page>
 	<error-page>
 		<exception-type>org.springframework.dao.DataAccessException</exception-type>
 		<location>/error/data-error.faces</location>
@@ -272,10 +280,6 @@
 	</error-page>
 	<error-page>
 		<exception-type>java.lang.Throwable</exception-type>
-		<location>/error/error.faces</location>
-	</error-page>
-	<error-page>
-		<exception-type>org.springframework.security.core.AuthenticationException</exception-type>
 		<location>/error/error.faces</location>
 	</error-page>
 		<error-page>

@@ -31,7 +31,8 @@ div .ui-menu.ui-menubar {
 }
 
 /*only apply to topmenu entries */
-li.topmenu>a>.ui-menuitem-text { 
+li.topmenu>a>.ui-menuitem-text,
+a.topmenu>.ui-menuitem-text { 
 	color:#ffffff ;
 }
 
@@ -131,14 +132,8 @@ div.searchResult {
 .iconAdd { 
 	background-image: url("#{resource['icons/add.png']}") !important;
 }
-.iconPerson { 
-	background-image: url("#{resource['icons/person.png']}") !important;
-}
 .iconExcel { 
 	background-image: url("#{resource['icons/excel.png']}") !important;
-}
-.iconWarning { 
-	 background-image: url("#{resource['icons/warning.png']}") !important;
 }
 
 /* p:fieldSet */
@@ -185,8 +180,8 @@ div.ui-tabs div.ui-tabs-panel {
 	text-align: center;
 }
 
-/* right align numbers in p:dataTable, header/footer included */
-.ui-datatable .ui-datatable-data td.numeric, .ui-datatable-tablewrapper td.numeric {
+/* right align numbers in p:dataTable */
+.ui-datatable .ui-datatable-data td.numeric {
 	text-align: right;
 }
 
@@ -295,6 +290,25 @@ div.ui-tabs div.ui-tabs-panel {
 	z-index: 1;
 }
 
+.title {
+	white-space: pre-line;
+	text-align: center;
+}
+
+#form\:logo_link, #logo_link {
+	position: fixed;
+	left: 5px;
+	top: 5px;
+}
+
+.navigation {
+	position: fixed;
+	left:0;
+	top: 82px;
+	height: 28px;
+	width: 100%;
+}
+
 div.ui-layout-north td {
 	vertical-align:top;
 }
@@ -327,7 +341,6 @@ div.ui-layout-center div.ui-layout-unit-content div.ui-toolbar button.ui-button 
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#B8D4FF', endColorstr='#91B9C9',GradientType=0 ); /* IE6-9 */
 	border:#eee outset 1px;
 	margin:0px 3px;
-	/*background:#88b5ca;*/
 	font-weight:bold;
 }
 
@@ -346,4 +359,52 @@ div.ui-layout-center div.ui-layout-unit-content div.ui-toolbar button.ui-button:
 
 .ui-state-highlight .ui-icon {
 	background-image: url("#{resource['primefaces-bootstrap:images/ui-icons_333333_256x240.png']}");
+}
+
+
+.ui-autocomplete-panel {
+	max-height: 200px;
+}
+
+/* Autocomplete multiple*/
+.ui-autocomplete-multiple  {
+	width :400px !important;
+}
+
+.ui-autocomplete-multiple ul{
+	display:inline-block;
+	width:90% !important;
+}
+.ui-autocomplete-multiple .ui-button{
+	display:inline-block;
+	vertical-align:top;
+}
+.ui-autocomplete-multiple .ui-button .ui-button-text{
+	line-height:1.1;
+}
+
+/* Autocomplete multiple : extend text zone in which the user types */
+.ui-autocomplete-input-token {
+	width: 100% !important;
+}
+.ui-autocomplete-input-token input {
+	width: 100% !important;
+}
+
+/* Autocomplete multiple : if all selected elements are too big, make sure the button to remove them is visible and clickable */
+.ui-autocomplete-token {
+	max-width:100%;
+}
+
+.ui-row-editor {
+	display: inline-block;
+}
+
+.ui-cell-editor {
+	margin-right: 25px;
+}
+
+.ui-cell-editor-input {
+	margin-left: 10px;
+	margin-right: 10px;
 }
